@@ -1,4 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { TouchableOpacity, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { DashboardScreen, UsersScreen, UserDetailScreen, RolesScreen } from '@/screens/admin';
 import type { AdminStackParamList } from './types';
 
@@ -7,29 +9,50 @@ const Stack = createNativeStackNavigator<AdminStackParamList>();
 export default function AdminNavigator() {
   return (
     <Stack.Navigator
-      screenOptions={{
+      screenOptions={({ navigation, route }) => ({
         headerStyle: {
           backgroundColor: '#0f766e',
         },
         headerTintColor: '#ffffff',
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '600',
+          fontSize: 17,
         },
-      }}>
+        headerTitleAlign: 'center',
+        headerShadowVisible: false,
+        headerLeft:
+          route.name !== 'Dashboard'
+            ? () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  className="-ml-1 flex-row items-center py-2 pr-3"
+                  activeOpacity={0.7}>
+                  <Ionicons name="chevron-back" size={24} color="#ffffff" />
+                  <Text className="-ml-0.5 text-base font-medium text-white">Geri</Text>
+                </TouchableOpacity>
+              )
+            : undefined,
+      })}>
       <Stack.Screen
         name="Dashboard"
         component={DashboardScreen}
-        options={{
-          title: 'Admin Paneli',
-        }}
+        options={{ title: 'Admin Paneli' }}
       />
-      <Stack.Screen name="Users" component={UsersScreen} options={{ title: 'Kullanıcılar' }} />
+      <Stack.Screen 
+        name="Users" 
+        component={UsersScreen} 
+        options={{ title: 'Kullanıcılar' }} 
+      />
       <Stack.Screen
         name="UserDetail"
         component={UserDetailScreen}
         options={{ title: 'Kullanıcı Detayı' }}
       />
-      <Stack.Screen name="Roles" component={RolesScreen} options={{ title: 'Roller' }} />
+      <Stack.Screen 
+        name="Roles" 
+        component={RolesScreen} 
+        options={{ title: 'Roller' }} 
+      />
     </Stack.Navigator>
   );
 }

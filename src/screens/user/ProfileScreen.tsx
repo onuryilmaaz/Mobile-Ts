@@ -9,6 +9,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { UploadOverlay } from '@/components/feedback/UploadOverlay';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import type { UserProfile } from '@/modules/user/user.types';
@@ -183,6 +184,8 @@ export default function ProfileScreen({ navigation }: Props) {
 
   return (
     <Screen className="bg-slate-50">
+      <UploadOverlay visible={avatarLoading} message="Fotoğraf yükleniyor" />
+      
       <ScrollView 
         showsVerticalScrollIndicator={false} 
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -203,12 +206,9 @@ export default function ProfileScreen({ navigation }: Props) {
             <TouchableOpacity 
               onPress={handlePickImage}
               disabled={avatarLoading}
+              activeOpacity={0.8}
               className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full bg-primary-600 border-2 border-white shadow-sm">
-              {avatarLoading ? (
-                 <Ionicons name="sync" size={18} color="white" />
-              ) : (
-                 <Ionicons name="camera" size={18} color="white" />
-              )}
+              <Ionicons name="camera" size={18} color="white" />
             </TouchableOpacity>
           </View>
           

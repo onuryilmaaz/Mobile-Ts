@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View, Alert, TouchableOpacity, RefreshControl } from 'react-native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AdminStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
 import { adminApi } from '@/modules/admin/admin.api';
 import type { AdminRole } from '@/modules/admin/admin.types';
@@ -11,9 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { Ionicons } from '@expo/vector-icons';
 
-type Props = NativeStackScreenProps<AdminStackParamList, 'Roles'>;
-
-export default function RolesScreen(_props: Props) {
+export default function RolesScreen() {
   const [roles, setRoles] = useState<AdminRole[]>([]);
   const [newRole, setNewRole] = useState('');
   
@@ -123,14 +119,9 @@ export default function RolesScreen(_props: Props) {
 
   return (
     <Screen className="bg-slate-50">
-       <View className="mb-4 pt-4">
-        <Text className="text-2xl font-bold text-slate-900">Rol Yönetimi</Text>
-        <Text className="text-slate-500">Sistem rollerini tanımla ve düzenle</Text>
-      </View>
-
       <ScrollView 
         showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}
         refreshControl={
           <RefreshControl refreshing={loading && !initialLoading} onRefresh={() => loadRoles()} />
         }>

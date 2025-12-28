@@ -79,9 +79,8 @@ export default function UsersScreen({ navigation }: Props) {
 
   return (
     <Screen className="bg-slate-50">
-      <View className="mb-4 pt-4">
-        <Text className="text-2xl font-bold text-slate-900">Kullanıcılar</Text>
-        <Text className="text-slate-500">Tüm kayıtlı kullanıcıları yönet</Text>
+      <View className="mb-2 pt-3">
+        <Text className="text-sm text-slate-500">Toplam {users.length} kullanıcı</Text>
       </View>
 
       {error && (

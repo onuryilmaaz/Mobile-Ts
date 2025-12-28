@@ -217,18 +217,10 @@ export default function UserDetailScreen({ route, navigation }: Props) {
     <Screen className="bg-slate-50">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} />
         }>
-        <View className="mb-4 flex-row items-center justify-between pt-4">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
-            <Ionicons name="arrow-back" size={24} color="#0f172a" />
-          </TouchableOpacity>
-          <Text className="text-xl font-bold text-slate-900">Kullanıcı Detayı</Text>
-          <View className="w-10" />
-        </View>
-
         <Card className="mb-4">
           <View className="mb-4 flex-row items-center justify-between">
             <View className="h-16 w-16 items-center justify-center rounded-full bg-slate-100">

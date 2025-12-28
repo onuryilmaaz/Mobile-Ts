@@ -31,17 +31,41 @@ export default function LoginScreen() {
       setLoading(true);
       setError(null);
 
+      console.log('Login attempt for:', email);
       const { data } = await authApi.login({ email, password });
+      console.log('Login response:', JSON.stringify(data, null, 2));
 
       if (!data.user.emailVerified) {
+        console.log('Email not verified, redirecting to OTP');
         navigation.replace('Otp', { email, password });
         return;
       }
 
+      console.log('Calling login with user:', data.user);
       await login(data.user, data.accessToken, data.refreshToken);
-    } catch (err) {
-      console.log(err);
-      setError('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
+      console.log('Login completed successfully');
+    } catch (err: any) {
+      console.log('Login error:', err);
+      console.log('Login error response:', err?.response?.data);
+      console.log('Login error status:', err?.response?.status);
+      
+      const status = err?.response?.status;
+      const serverMessage = err?.response?.data?.message;
+      
+      let errorMessage = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
+      
+      if (serverMessage) {
+        // Backend'den gelen mesajı kullan
+        errorMessage = serverMessage;
+      } else if (status === 401) {
+        errorMessage = 'Email veya şifre hatalı.';
+      } else if (status === 403) {
+        errorMessage = 'Hesabınız pasif durumda. Lütfen yönetici ile iletişime geçin.';
+      } else if (status === 423) {
+        errorMessage = 'Hesabınız kilitlenmiş. Lütfen daha sonra tekrar deneyin.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

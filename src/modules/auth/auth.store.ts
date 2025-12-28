@@ -131,11 +131,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   login: async (user, accessToken, refreshToken) => {
+    console.log('Auth Store - login called with user:', user);
     await setAccessToken(accessToken);
     await setRefreshToken(refreshToken);
+    console.log('Auth Store - tokens saved');
 
     try {
       const { data } = await userApi.profile();
+      console.log('Auth Store - profile fetched:', data);
       const userData = (data as any).user ? (data as any).user : data;
       set({
         user: userData as AuthUser,
@@ -143,13 +146,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         accessToken,
         refreshToken,
       });
-    } catch {
+      console.log('Auth Store - state set with profile data, isAuthenticated: true');
+    } catch (err) {
+      console.log('Auth Store - profile fetch failed, using login user data:', err);
       set({
         user,
         isAuthenticated: true,
         accessToken,
         refreshToken,
       });
+      console.log('Auth Store - state set with login user data, isAuthenticated: true');
     }
   },
 
@@ -175,6 +181,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setUser: (user) => set({ user }),
 
   refreshUser: async () => {
+    // Token yoksa API çağrısı yapma
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      console.log('refreshUser: No access token, skipping refresh');
+      return;
+    }
+    
     try {
       const { data } = await userApi.profile();
       const userData = (data as any).user ? (data as any).user : data;
