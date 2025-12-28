@@ -1,20 +1,13 @@
 import type { NavigatorScreenParams } from '@react-navigation/native';
 
-// Auth Stack
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
-  Otp: undefined;
+  Otp: { email: string; password?: string };
+  ForgotPassword: undefined;
+  ResetPassword: { email?: string };
 };
 
-// User Tab Navigator
-export type UserTabParamList = {
-  Home: undefined;
-  Profile: undefined;
-  Settings: undefined;
-};
-
-// Admin Stack
 export type AdminStackParamList = {
   Dashboard: undefined;
   Users: undefined;
@@ -22,16 +15,28 @@ export type AdminStackParamList = {
   Roles: undefined;
 };
 
-// Root Stack
+export type ProfileStackParamList = {
+  ProfileMain: undefined;
+  ChangePassword: undefined;
+  ChangeEmail: undefined;
+  Sessions: undefined;
+  Account: undefined;
+};
+
+export type UserTabParamList = {
+  Home: undefined;
+  Profile: NavigatorScreenParams<ProfileStackParamList>;
+  AdminStack: NavigatorScreenParams<AdminStackParamList>;
+};
+
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   UserTabs: NavigatorScreenParams<UserTabParamList>;
-  Admin: NavigatorScreenParams<AdminStackParamList>;
 };
 
 declare global {
   namespace ReactNavigation {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface RootParamList extends RootStackParamList {}
   }
 }
-

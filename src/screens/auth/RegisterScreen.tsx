@@ -1,27 +1,117 @@
-import { View, Text, Pressable } from 'react-native';
+import { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@/navigation/types';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Screen } from '@/components/layout/Screen';
+import { Card } from '@/components/ui/Card';
+import { authApi } from '@/modules/auth/auth.api';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 export default function RegisterScreen({ navigation }: Props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleRegister() {
+    if (!email || !password || !firstName || !lastName) {
+      setError('Tüm alanları doldurun');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data } = await authApi.register({
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+
+      if (!data.user.emailVerified) {
+        navigation.navigate('Otp', { email, password });
+        return;
+      }
+
+      navigation.replace('Login');
+    } catch (err: any) {
+      console.log(err);
+      const msg = err?.response?.data?.message || 'Kayıt başarısız';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <View className="flex-1 items-center justify-center bg-white px-6">
-      <Text className="mb-8 text-3xl font-bold text-gray-900">Kayıt Ol</Text>
+    <Screen className="justify-center bg-slate-50">
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+        showsVerticalScrollIndicator={false}>
+        <Card className="shadow-lg shadow-primary-500/10">
+          <View className="mb-8 items-center">
+            <Text className="text-3xl font-bold text-slate-900">Hesap Oluştur</Text>
+            <Text className="mt-2 text-slate-500">Hemen aramıza katıl ve başla</Text>
+          </View>
+          {error && (
+            <View className="mb-4 rounded-xl bg-red-50 p-3">
+              <Text className="text-center text-sm font-medium text-red-600">{error}</Text>
+            </View>
+          )}
 
-      <Pressable
-        className="mb-4 w-full rounded-xl bg-blue-500 py-4"
-        onPress={() => navigation.navigate('Otp')}
-      >
-        <Text className="text-center text-lg font-semibold text-white">
-          Kayıt Ol
-        </Text>
-      </Pressable>
+          <View className="flex-row gap-3">
+            <View className="flex-1">
+              <Input label="Ad" placeholder="Adın" value={firstName} onChangeText={setFirstName} />
+            </View>
+            <View className="flex-1">
+              <Input
+                label="Soyad"
+                placeholder="Soyadın"
+                value={lastName}
+                onChangeText={setLastName}
+              />
+            </View>
+          </View>
 
-      <Pressable onPress={() => navigation.navigate('Login')}>
-        <Text className="text-blue-500">Zaten hesabın var mı? Giriş yap</Text>
-      </Pressable>
-    </View>
+          <Input
+            label="Email"
+            placeholder="ornek@email.com"
+            value={email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            onChangeText={setEmail}
+          />
+
+          <Input
+            label="Şifre"
+            placeholder="Güçlü bir şifre seç"
+            value={password}
+            onChangeText={setPassword}
+            isPassword
+          />
+
+          <Button
+            title={loading ? 'Kayıt Olunuyor...' : 'Kayıt Ol'}
+            onPress={handleRegister}
+            loading={loading}
+            className="mt-2"
+          />
+
+          <View className="mt-6 flex-row justify-center">
+            <Text className="text-slate-600">Zaten hesabın var mı? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text className="font-bold text-primary-600">Giriş Yap</Text>
+            </TouchableOpacity>
+          </View>
+        </Card>
+      </ScrollView>
+    </Screen>
   );
 }
-
