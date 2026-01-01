@@ -14,6 +14,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '@/screens/user';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { HEADER_CONFIG } from './header.config';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -28,19 +29,23 @@ function HomeHeader() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<HomeHeaderNavigationProp>();
 
-  // React Navigation header yüksekliği: Android'de 56px, iOS'ta 44px
-  const headerHeight = Platform.OS === 'android' ? 44 : 44;
-  const statusBarHeight = Platform.OS === 'android' ? RNStatusBar.currentHeight || 0 : insets.top;
+  // Tüm cihazlarda aynı header yüksekliği: 56px
+  const headerHeight = HEADER_CONFIG.height;
+  // Status bar yüksekliği: Android'de 0 (status bar ayrı), iOS'ta safe area top
+  const statusBarHeight = Platform.OS === 'android' ? 0 : insets.top;
+  // Toplam yükseklik: status bar + header
+  const totalHeight = statusBarHeight + headerHeight;
 
   return (
     <View
       style={{
-        backgroundColor: '#0f766e',
+        backgroundColor: HEADER_CONFIG.backgroundColor,
         paddingTop: statusBarHeight,
-        paddingBottom: Platform.OS === 'android' ? 12 : 8,
+        paddingBottom: 0,
         paddingHorizontal: 16,
-        minHeight: statusBarHeight + headerHeight,
+        height: totalHeight,
         justifyContent: 'center',
+        width: '100%',
       }}>
       <View className="flex-row items-center justify-between">
         <View className="flex-1">
@@ -69,7 +74,7 @@ function HomeHeader() {
 export default function HomeNavigator() {
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor="#0f766e" translucent={false} />
+      <RNStatusBar barStyle="light-content" backgroundColor={HEADER_CONFIG.backgroundColor} translucent={false} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
