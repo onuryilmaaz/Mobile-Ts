@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Platform } from 'react-native';
-import { HomeScreen } from '@/screens/user';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
 import ProfileNavigator from './ProfileNavigator';
+import HomeNavigator from './HomeNavigator';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -11,6 +12,7 @@ const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
   const user = useAuthStore((s) => s.user);
+  const insets = useSafeAreaInsets();
 
   const isAdmin =
     user?.roles?.some((role: any) => {
@@ -19,6 +21,10 @@ export default function UserNavigator() {
     }) ?? false;
 
   console.log('UserNavigator - User Roles:', user?.roles, 'IsAdmin:', isAdmin);
+
+  // Android için minimum 16px bottom padding, iOS için safe area kullan
+  const bottomPadding = Platform.OS === 'ios' ? insets.bottom : Math.max(insets.bottom, 16);
+  const tabBarHeight = 56 + bottomPadding;
 
   return (
     <Tab.Navigator
@@ -30,11 +36,14 @@ export default function UserNavigator() {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
           borderTopColor: '#f1f5f9',
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingTop: 6,
-          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
-          elevation: 0,
-          shadowOpacity: 0,
+          height: tabBarHeight,
+          paddingTop: 8,
+          paddingBottom: bottomPadding,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -43,9 +52,10 @@ export default function UserNavigator() {
       }}>
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeNavigator}
         options={{
           tabBarLabel: 'Ana Sayfa',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),

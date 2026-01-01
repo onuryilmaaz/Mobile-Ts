@@ -3,9 +3,11 @@ import { View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-na
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AdminStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
+import { EmptyState } from '@/components/layout/EmptyState';
 import { adminApi } from '@/modules/admin/admin.api';
 import type { AdminUser } from '@/modules/admin/admin.types';
 import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { Ionicons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'Users'>;
@@ -45,29 +47,23 @@ export default function UsersScreen({ navigation }: Props) {
       onPress={() => navigation.navigate('UserDetail', { userId: item.id })}>
       <Card className="mb-3 flex-row items-center justify-between p-4">
         <View className="flex-1">
-          <View className="flex-row items-center gap-2">
+          <View className="mb-2 flex-row items-center gap-2">
             <Text className="text-base font-bold text-slate-900" numberOfLines={1}>
               {item.firstName && item.lastName
                 ? `${item.firstName} ${item.lastName}`
                 : 'İsimsiz Kullanıcı'}
             </Text>
-            {!item.isActive && (
-              <View className="rounded-md bg-red-100 px-2 py-0.5">
-                <Text className="text-[10px] font-bold text-red-600">PASİF</Text>
-              </View>
-            )}
+            {!item.isActive && <Badge variant="danger" size="sm">PASİF</Badge>}
           </View>
-          <Text className="text-sm text-slate-500" numberOfLines={1}>
+          <Text className="mb-2 text-sm text-slate-500" numberOfLines={1}>
             {item.email}
           </Text>
 
-          <View className="mt-2 flex-row flex-wrap gap-1">
+          <View className="flex-row flex-wrap gap-1">
             {(item.roles || []).map((role) => (
-              <View
-                key={role}
-                className="rounded-full border border-primary-100 bg-primary-50 px-2 py-0.5">
-                <Text className="text-[10px] text-primary-700">{role}</Text>
-              </View>
+              <Badge key={role} variant="primary" size="sm">
+                {role}
+              </Badge>
             ))}
           </View>
         </View>
@@ -79,14 +75,19 @@ export default function UsersScreen({ navigation }: Props) {
 
   return (
     <Screen className="bg-slate-50">
-      <View className="mb-2 pt-3">
-        <Text className="text-sm text-slate-500">Toplam {users.length} kullanıcı</Text>
+      <View className="mb-3 flex-row items-center justify-between pt-3">
+        <Text className="text-sm font-medium text-slate-700">
+          Toplam <Text className="font-bold text-slate-900">{users.length}</Text> kullanıcı
+        </Text>
       </View>
 
       {error && (
-        <View className="mb-4 rounded-xl bg-red-50 p-3">
-          <Text className="text-red-600">{error}</Text>
-        </View>
+        <Card className="mb-4 border-red-200 bg-red-50">
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="alert-circle" size={20} color="#dc2626" />
+            <Text className="flex-1 text-sm text-red-700">{error}</Text>
+          </View>
+        </Card>
       )}
 
       <FlatList
@@ -98,9 +99,11 @@ export default function UsersScreen({ navigation }: Props) {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={loadUsers} />}
         ListEmptyComponent={
           !loading ? (
-            <View className="mt-10 items-center">
-              <Text className="text-slate-400">Kullanıcı bulunamadı</Text>
-            </View>
+            <EmptyState
+              icon="people-outline"
+              title="Kullanıcı bulunamadı"
+              message="Henüz sistemde kayıtlı kullanıcı yok"
+            />
           ) : null
         }
       />

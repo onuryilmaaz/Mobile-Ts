@@ -1,4 +1,4 @@
-import { Pressable, Text, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator, View, StyleSheet } from 'react-native';
 
 type ButtonProps = {
   title: string;
@@ -8,6 +8,51 @@ type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   className?: string;
 };
+
+const styles = StyleSheet.create({
+  button: {
+    height: 48,
+    borderRadius: 16,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primary: {
+    backgroundColor: '#0d9488',
+    borderColor: '#0d9488',
+  },
+  secondary: {
+    backgroundColor: '#e2e8f0',
+    borderColor: '#e2e8f0',
+  },
+  danger: {
+    backgroundColor: '#dc2626',
+    borderColor: '#dc2626',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderColor: '#0d9488',
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  textPrimary: {
+    color: '#ffffff',
+  },
+  textSecondary: {
+    color: '#475569',
+  },
+  textDanger: {
+    color: '#ffffff',
+  },
+  textOutline: {
+    color: '#0d9488',
+  },
+});
 
 export function Button({
   title,
@@ -19,48 +64,41 @@ export function Button({
 }: ButtonProps) {
   const isDisabled = loading || disabled;
 
-  let bgClass = 'bg-primary-600';
-  let textClass = 'text-white';
-  let borderClass = 'border-primary-600';
+  const buttonStyle = [
+    styles.button,
+    variant === 'primary' && styles.primary,
+    variant === 'secondary' && styles.secondary,
+    variant === 'danger' && styles.danger,
+    variant === 'outline' && styles.outline,
+    isDisabled && styles.disabled,
+  ];
 
-  if (variant === 'secondary') {
-    bgClass = 'bg-slate-200';
-    textClass = 'text-slate-700';
-    borderClass = 'border-slate-200';
-  } else if (variant === 'danger') {
-    bgClass = 'bg-red-600';
-    textClass = 'text-white';
-    borderClass = 'border-red-600';
-  } else if (variant === 'outline') {
-    bgClass = 'bg-transparent';
-    textClass = 'text-primary-600';
-    borderClass = 'border-primary-600';
-  }
+  const textStyle = [
+    styles.text,
+    variant === 'primary' && styles.textPrimary,
+    variant === 'secondary' && styles.textSecondary,
+    variant === 'danger' && styles.textDanger,
+    variant === 'outline' && styles.textOutline,
+  ];
 
-  if (isDisabled) {
-    if (variant === 'outline') {
-      textClass = 'text-primary-300';
-      borderClass = 'border-primary-300';
-    } else {
-      bgClass = 'bg-primary-300';
-      borderClass = 'border-primary-300';
-    }
-  }
+  const getLoaderColor = () => {
+    if (variant === 'outline') return '#0d9488';
+    if (variant === 'secondary') return '#475569';
+    return '#ffffff';
+  };
 
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      className={`
-        h-12 items-center justify-center rounded-2xl border
-        ${bgClass} ${borderClass} shadow-sm active:opacity-90
-        ${className}
-      `}>
+      activeOpacity={0.7}
+      style={buttonStyle}
+      className={className}>
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' ? '#0d9488' : '#fff'} />
+        <ActivityIndicator color={getLoaderColor()} />
       ) : (
-        <Text className={`text-base font-bold ${textClass}`}>{title}</Text>
+        <Text style={textStyle}>{title}</Text>
       )}
-    </Pressable>
+    </TouchableOpacity>
   );
 }

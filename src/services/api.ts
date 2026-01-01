@@ -8,7 +8,8 @@ import {
   setRefreshToken,
 } from './token.service';
 
-const BASE_URL = 'http://localhost:3000';
+//const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
 
 export const api = axios.create({
   baseURL: BASE_URL,

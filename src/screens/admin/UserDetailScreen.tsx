@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View, Alert, TouchableOpacity, RefreshControl } from 'react-native';
+import { ScrollView, Text, View, TouchableOpacity, RefreshControl } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AdminStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
 import { adminApi } from '@/modules/admin/admin.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { useAlertStore } from '@/store/alert.store';
 import type { AdminUser, AdminRole } from '@/modules/admin/admin.types';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Divider } from '@/components/ui/Divider';
 import { PageLoading } from '@/components/feedback/Loading';
 import { ErrorView } from '@/components/feedback/ErrorView';
+import { EmptyState } from '@/components/layout/EmptyState';
 import { Ionicons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'UserDetail'>;
@@ -18,6 +22,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
   const { userId } = route.params;
   const currentUser = useAuthStore((s) => s.user);
   const refreshUser = useAuthStore((s) => s.refreshUser);
+  const alert = useAlertStore();
   
   const [user, setUser] = useState<AdminUser | null>(null);
   const [availableRoles, setAvailableRoles] = useState<AdminRole[]>([]);
@@ -55,7 +60,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
       loadSessions();
     } catch (err) {
       console.log(err);
-      Alert.alert('Hata', 'Kullanıcı bilgileri alınamadı');
+      alert.error('Hata', 'Kullanıcı bilgileri alınamadı');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -87,12 +92,12 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         await adminApi.deactivateUser(user.id);
       }
       await loadData();
-      Alert.alert(
+      alert.success(
         'Başarılı',
         `Kullanıcı ${user.isActive === false ? 'aktif edildi' : 'pasife alındı'}`
       );
     } catch {
-      Alert.alert('Hata', 'Durum değiştirilemedi');
+      alert.error('Hata', 'Durum değiştirilemedi');
     } finally {
       setActionLoading(false);
     }
@@ -128,11 +133,11 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         }
       }
       
-      Alert.alert('Başarılı', 'Rol atandı');
+      alert.success('Başarılı', 'Rol atandı');
     } catch {
       // Hata durumunda veriyi sunucudan tekrar yükle
       await loadData();
-      Alert.alert('Hata', 'Rol atanamadı');
+      alert.error('Hata', 'Rol atanamadı');
     } finally {
       setActionLoading(false);
     }
@@ -166,11 +171,11 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         }
       }
       
-      Alert.alert('Başarılı', 'Rol kaldırıldı');
+      alert.success('Başarılı', 'Rol kaldırıldı');
     } catch {
       // Hata durumunda veriyi sunucudan tekrar yükle
       await loadData();
-      Alert.alert('Hata', 'Rol kaldırılamadı');
+      alert.error('Hata', 'Rol kaldırılamadı');
     } finally {
       setActionLoading(false);
     }
@@ -181,9 +186,9 @@ export default function UserDetailScreen({ route, navigation }: Props) {
       setActionLoading(true);
       await adminApi.revokeAllSessions(userId);
       setSessions([]);
-      Alert.alert('Başarılı', 'Tüm oturumlar kapatıldı');
+      alert.success('Başarılı', 'Tüm oturumlar kapatıldı');
     } catch {
-      Alert.alert('Hata', 'Oturumlar kapatılamadı');
+      alert.error('Hata', 'Oturumlar kapatılamadı');
     } finally {
       setActionLoading(false);
     }
@@ -223,16 +228,12 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         }>
         <Card className="mb-4">
           <View className="mb-4 flex-row items-center justify-between">
-            <View className="h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-              <Text className="text-2xl">👤</Text>
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-100">
+              <Ionicons name="person" size={32} color="#0f766e" />
             </View>
-            <View
-              className={`rounded-full px-3 py-1 ${user.isActive === false ? 'bg-red-100' : 'bg-green-100'}`}>
-              <Text
-                className={`text-xs font-bold ${user.isActive === false ? 'text-red-700' : 'text-green-700'}`}>
-                {user.isActive === false ? 'PASİF' : 'AKTİF'}
-              </Text>
-            </View>
+            <Badge variant={user.isActive === false ? 'danger' : 'success'} size="md">
+              {user.isActive === false ? 'PASİF' : 'AKTİF'}
+            </Badge>
           </View>
 
           <Text className="text-xl font-bold text-slate-900">
@@ -252,32 +253,34 @@ export default function UserDetailScreen({ route, navigation }: Props) {
           <Text className="mb-3 text-lg font-bold text-slate-900">Roller</Text>
 
           <View className="mb-4 flex-row flex-wrap gap-2">
-            {userRoles.length === 0 && (
+            {userRoles.length === 0 ? (
               <Text className="text-sm text-slate-400">Hiç rol atanmamış</Text>
-            )}
-            {userRoles.map((roleName) => {
-              const roleObj = (availableRoles || []).find((r) => r.name === roleName);
-              const roleId = roleObj?.id;
+            ) : (
+              userRoles.map((roleName) => {
+                const roleObj = (availableRoles || []).find((r) => r.name === roleName);
+                const roleId = roleObj?.id;
 
-              return (
-                <View
-                  key={roleName}
-                  className="flex-row items-center rounded-full bg-primary-100 py-1 pl-3 pr-1">
-                  <Text className="mr-1 text-xs font-semibold text-primary-700">{roleName}</Text>
-                  {roleId && (
-                    <TouchableOpacity
-                      onPress={() => handleRemoveRole(roleId)}
-                      disabled={actionLoading}
-                      className="ml-1 rounded-full bg-white p-1">
-                      <Ionicons name="close" size={10} color="#0f766e" />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              );
-            })}
+                return (
+                  <View key={roleName} className="flex-row items-center">
+                    <Badge variant="primary" size="md" className="mr-1">
+                      {roleName}
+                    </Badge>
+                    {roleId && (
+                      <TouchableOpacity
+                        onPress={() => handleRemoveRole(roleId)}
+                        disabled={actionLoading}
+                        className="rounded-full bg-red-50 p-1">
+                        <Ionicons name="close" size={12} color="#dc2626" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                );
+              })
+            )}
           </View>
 
-          <View className="border-t border-slate-100 pt-3">
+          <Divider />
+          <View className="pt-3">
             <Text className="mb-2 text-sm font-medium text-slate-700">Rol Ekle</Text>
             <View className="flex-row flex-wrap gap-2">
               {(availableRoles || [])
@@ -287,13 +290,16 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                     key={role.id}
                     onPress={() => handleAssignRole(role.id)}
                     disabled={actionLoading}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                    <Text className="text-sm font-medium text-slate-700">+ {role.name}</Text>
+                    className="rounded-lg border border-primary-200 bg-primary-50 px-3 py-2">
+                    <View className="flex-row items-center gap-1">
+                      <Ionicons name="add" size={16} color="#0f766e" />
+                      <Text className="text-sm font-medium text-primary-700">{role.name}</Text>
+                    </View>
                   </TouchableOpacity>
                 ))}
               {availableRoles.length === 0 && (
                 <Text className="text-xs text-slate-400">
-                  Eklenebilecek rol bulunamadı (rolleri yükleyememiş olabiliriz)
+                  Eklenebilecek rol bulunamadı
                 </Text>
               )}
             </View>
@@ -311,18 +317,27 @@ export default function UserDetailScreen({ route, navigation }: Props) {
           </View>
 
           {sessions.length === 0 ? (
-            <Text className="text-sm text-slate-400">Aktif oturum yok</Text>
+            <EmptyState
+              icon="phone-portrait-outline"
+              title="Aktif oturum yok"
+              message="Bu kullanıcının aktif oturumu bulunmuyor"
+            />
           ) : (
-            sessions.map((s, index) => (
-              <View
-                key={s.id || index}
-                className="mb-2 border-b border-slate-50 pb-2 last:border-0">
-                <Text className="text-xs font-bold text-slate-700">IP: {s.ip}</Text>
-                <Text className="text-[10px] text-slate-500" numberOfLines={1}>
-                  {s.userAgent}
-                </Text>
-              </View>
-            ))
+            <View className="gap-2">
+              {sessions.map((s, index) => (
+                <View
+                  key={s.id || index}
+                  className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  <View className="flex-row items-center gap-2 mb-1">
+                    <Ionicons name="phone-portrait-outline" size={16} color="#64748b" />
+                    <Text className="text-xs font-semibold text-slate-700">IP: {s.ip || 'Bilinmiyor'}</Text>
+                  </View>
+                  <Text className="text-[10px] text-slate-500" numberOfLines={1}>
+                    {s.userAgent || 'Bilinmeyen cihaz'}
+                  </Text>
+                </View>
+              ))}
+            </View>
           )}
         </Card>
       </ScrollView>

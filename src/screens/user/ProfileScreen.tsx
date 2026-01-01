@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert, Image, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -9,9 +9,11 @@ import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { UploadOverlay } from '@/components/feedback/UploadOverlay';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { useAlertStore } from '@/store/alert.store';
 import type { UserProfile } from '@/modules/user/user.types';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -65,6 +67,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const setUser = useAuthStore((s) => s.setUser);
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const user = useAuthStore((s) => s.user);
+  const alertStore = useAlertStore();
 
   const [profile, setProfile] = useState<UserProfile | null>(user as UserProfile | null);
   const [firstName, setFirstName] = useState(user?.firstName ?? '');
@@ -94,11 +97,11 @@ export default function ProfileScreen({ navigation }: Props) {
       }
     } catch (err) {
       console.log(err);
-      Alert.alert('Hata', 'Profil bilgileri alınamadı');
+      alertStore.error('Hata', 'Profil bilgileri alınamadı');
     } finally {
       setRefreshing(false);
     }
-  }, [setUser]);
+  }, [setUser, alertStore]);
 
   async function handleUpdateProfile() {
     try {
@@ -113,10 +116,10 @@ export default function ProfileScreen({ navigation }: Props) {
       await refreshUser();
       
       setIsEditing(false);
-      Alert.alert('Başarılı', 'Profil bilgileriniz güncellendi');
+      alertStore.success('Başarılı', 'Profil bilgileriniz güncellendi');
     } catch (err) {
       console.log(err);
-      Alert.alert('Hata', 'Profil güncellenemedi');
+      alertStore.error('Hata', 'Profil güncellenemedi');
     } finally {
       setUpdateLoading(false);
     }
@@ -127,7 +130,7 @@ export default function ProfileScreen({ navigation }: Props) {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       
       if (!permissionResult.granted) {
-        Alert.alert('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
+        alertStore.warning('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
         return;
       }
 
@@ -145,7 +148,7 @@ export default function ProfileScreen({ navigation }: Props) {
       }
     } catch (err) {
       console.log(err);
-      Alert.alert('Hata', 'Resim seçilemedi');
+      alertStore.error('Hata', 'Resim seçilemedi');
     }
   }
 
@@ -161,7 +164,7 @@ export default function ProfileScreen({ navigation }: Props) {
       } as any);
 
       await userApi.uploadAvatar(formData);
-      Alert.alert('Başarılı', 'Avatar yüklendi');
+      alertStore.success('Başarılı', 'Avatar yüklendi');
       
       await loadProfile();
       // Auth store'u güncelle
@@ -169,7 +172,7 @@ export default function ProfileScreen({ navigation }: Props) {
       setLocalAvatarUri(null);
     } catch (err) {
       console.log(err);
-      Alert.alert('Hata', 'Avatar yüklenemedi');
+      alertStore.error('Hata', 'Avatar yüklenemedi');
     } finally {
       setAvatarLoading(false);
     }
@@ -194,9 +197,9 @@ export default function ProfileScreen({ navigation }: Props) {
         }>
         
         {/* Header Section */}
-        <View className="mb-6 items-center pt-4">
+        <View className="mb-6 items-center">
           <View className="relative">
-            <View className="h-28 w-28 items-center justify-center rounded-full bg-primary-100 border-4 border-white shadow-sm overflow-hidden">
+            <View className="h-28 w-28 items-center justify-center rounded-full bg-primary-100 border-4 border-white shadow-sm overflow-hidden mt-8">
               {avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
@@ -217,11 +220,11 @@ export default function ProfileScreen({ navigation }: Props) {
           </Text>
           <Text className="text-slate-500">{profile?.email ?? user?.email}</Text>
           
-          <View className="mt-2 flex-row gap-2">
+          <View className="mt-2 flex-row flex-wrap gap-2">
             {roles.map((role) => (
-              <View key={role} className="rounded-full bg-primary-100 px-3 py-1">
-                <Text className="text-xs font-semibold text-primary-700 capitalize">{role}</Text>
-              </View>
+              <Badge key={role} variant="primary" size="sm">
+                {role}
+              </Badge>
             ))}
           </View>
         </View>

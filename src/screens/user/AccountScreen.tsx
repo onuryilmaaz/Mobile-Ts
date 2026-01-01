@@ -1,14 +1,17 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Alert, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
+import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { useAlertStore } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function AccountScreen() {
   const logout = useAuthStore((s) => s.logout);
   const refreshUser = useAuthStore((s) => s.refreshUser);
+  const alert = useAlertStore();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -22,49 +25,49 @@ export default function AccountScreen() {
   }, [refreshUser]);
 
   async function handleDeactivate() {
-    Alert.alert(
+    alert.confirm(
       'Hesabı Devre Dışı Bırak',
       'Hesabınızı devre dışı bırakmak istediğinize emin misiniz? Bu işlem geri alınabilir ancak hesabınıza erişiminiz kısıtlanacaktır.',
-      [
-        { text: 'Vazgeç', style: 'cancel' },
-        {
-          text: 'Devre Dışı Bırak',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setLoading(true);
-              await userApi.deactivate();
-              Alert.alert('Başarılı', 'Hesap devre dışı bırakıldı');
-              await logout();
-            } catch (err) {
-              console.log(err);
-              Alert.alert('Hata', 'Hesap devre dışı bırakılamadı');
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ]
+      async () => {
+        try {
+          setLoading(true);
+          await userApi.deactivate();
+          alert.success('Başarılı', 'Hesap devre dışı bırakıldı');
+          await logout();
+        } catch (err) {
+          console.log(err);
+          alert.error('Hata', 'Hesap devre dışı bırakılamadı');
+        } finally {
+          setLoading(false);
+        }
+      },
+      'Devre Dışı Bırak',
+      'Vazgeç',
+      true
     );
   }
 
-  async function handleLogout() {
-    Alert.alert('Çıkış Yap', 'Çıkış yapmak istediğinize emin misiniz?', [
-      { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Çıkış Yap', style: 'destructive', onPress: logout },
-    ]);
+  function handleLogout() {
+    alert.confirm(
+      'Çıkış Yap',
+      'Çıkış yapmak istediğinize emin misiniz?',
+      logout,
+      'Çıkış Yap',
+      'Vazgeç',
+      true
+    );
   }
 
   return (
-    <Screen>
+    <Screen className="bg-slate-50">
       <ScrollView 
-        className="flex-1 px-4 pt-4"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        contentContainerStyle={{ paddingBottom: 40 }}>
-        <View className="mb-8 rounded-2xl border border-slate-200 bg-white p-5">
-          <View className="flex-row items-center gap-3">
+        }>
+        <Card className="mt-4 mb-4">
+          <View className="mb-4 flex-row items-center gap-3">
             <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-100">
               <Ionicons name="log-out-outline" size={24} color="#0f766e" />
             </View>
@@ -75,17 +78,15 @@ export default function AccountScreen() {
               </Text>
             </View>
           </View>
-          <View className="mt-4">
-            <Button 
-              title="Çıkış Yap" 
-              onPress={handleLogout} 
-              variant="outline"
-            />
-          </View>
-        </View>
+          <Button 
+            title="Çıkış Yap" 
+            onPress={handleLogout} 
+            variant="outline"
+          />
+        </Card>
 
-        <View className="rounded-2xl border border-red-200 bg-red-50 p-5">
-          <View className="flex-row items-center gap-3">
+        <Card className="border-red-200 bg-red-50">
+          <View className="mb-4 flex-row items-center gap-3">
             <View className="h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <Ionicons name="warning-outline" size={24} color="#dc2626" />
             </View>
@@ -96,15 +97,13 @@ export default function AccountScreen() {
               </Text>
             </View>
           </View>
-          <View className="mt-4">
-            <Button 
-              title="Hesabı Devre Dışı Bırak" 
-              onPress={handleDeactivate} 
-              loading={loading}
-              variant="danger"
-            />
-          </View>
-        </View>
+          <Button 
+            title="Hesabı Devre Dışı Bırak" 
+            onPress={handleDeactivate} 
+            loading={loading}
+            variant="danger"
+          />
+        </Card>
       </ScrollView>
     </Screen>
   );

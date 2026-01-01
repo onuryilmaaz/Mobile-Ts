@@ -35,7 +35,11 @@ export default function RegisterScreen({ navigation }: Props) {
         lastName,
       });
 
-      if (!data.user.emailVerified) {
+      console.log('Register response:', JSON.stringify(data, null, 2));
+
+      // Backend user dönmeyebilir veya emailVerified false olabilir
+      // Her iki durumda da OTP'ye yönlendir
+      if (!data?.user?.emailVerified) {
         navigation.navigate('Otp', { email, password });
         return;
       }

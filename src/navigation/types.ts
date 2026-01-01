@@ -23,8 +23,12 @@ export type ProfileStackParamList = {
   Account: undefined;
 };
 
+export type HomeStackParamList = {
+  HomeMain: undefined;
+};
+
 export type UserTabParamList = {
-  Home: undefined;
+  Home: NavigatorScreenParams<HomeStackParamList>;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };

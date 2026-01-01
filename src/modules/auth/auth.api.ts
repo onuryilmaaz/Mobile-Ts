@@ -15,7 +15,8 @@ import {
 } from './auth.types';
 import { getRefreshToken } from '@/services/token.service';
 
-const BASE_URL = 'http://localhost:3000';
+//const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
 
 const refreshClient = axios.create({
   baseURL: BASE_URL,
@@ -38,8 +39,7 @@ export const authApi = {
 
   resendEmailOtp: (email: string) => api.post('/auth/resend-email-otp', { email }),
 
-  forgotPassword: (payload: ForgotPasswordPayload) =>
-    api.post('/auth/forgot-password', payload),
+  forgotPassword: (payload: ForgotPasswordPayload) => api.post('/auth/forgot-password', payload),
 
   resetPassword: (payload: ResetPasswordPayload) => api.post('/auth/reset-password', payload),
 

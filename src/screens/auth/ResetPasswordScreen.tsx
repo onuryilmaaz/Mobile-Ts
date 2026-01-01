@@ -78,9 +78,6 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         keyboardShouldPersistTaps="handled">
         
         <View className="mb-8 items-center">
-          <View className="mb-4 h-20 w-20 items-center justify-center rounded-3xl bg-primary-100">
-            <Ionicons name={step === 'otp' ? 'keypad' : 'lock-closed'} size={40} color="#0d9488" />
-          </View>
           <Text className="text-3xl font-bold text-slate-900">
             {step === 'otp' ? 'Kodu Gir' : 'Yeni Şifre'}
           </Text>
