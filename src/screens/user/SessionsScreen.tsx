@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@/components/layout/Screen';
@@ -18,7 +18,7 @@ export default function SessionsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  async function loadSessions(isInitial = false) {
+  const loadSessions = useCallback(async (isInitial = false) => {
     try {
       if (isInitial) setInitialLoading(true);
       else setRefreshing(true);
@@ -32,11 +32,11 @@ export default function SessionsScreen() {
       setRefreshing(false);
       setInitialLoading(false);
     }
-  }
+  }, [alert]);
 
   useEffect(() => {
     loadSessions(true);
-  }, []);
+  }, [loadSessions]);
 
   function handleRevokeSession(id: string) {
     alert.confirm(

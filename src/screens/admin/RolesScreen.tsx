@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ScrollView, Text, View, TouchableOpacity, RefreshControl } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { EmptyState } from '@/components/layout/EmptyState';
@@ -23,7 +23,7 @@ export default function RolesScreen() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  async function loadRoles(isInitial = false) {
+  const loadRoles = useCallback(async (isInitial = false) => {
     try {
       if (isInitial) setInitialLoading(true);
       setLoading(true);
@@ -38,11 +38,11 @@ export default function RolesScreen() {
       setLoading(false);
       setInitialLoading(false);
     }
-  }
+  }, [alert]);
 
   useEffect(() => {
     loadRoles(true);
-  }, []);
+  }, [loadRoles]);
 
   function validateRoleName(name: string): boolean {
     const regex = /^[a-z_]+$/;

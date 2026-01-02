@@ -54,7 +54,7 @@ export function AlertDialog() {
       scaleAnim.setValue(0.8);
       opacityAnim.setValue(0);
     }
-  }, [visible]);
+  }, [visible, opacityAnim, scaleAnim]);
 
   const handleButtonPress = async (button: AlertButton) => {
     if (button.onPress) {

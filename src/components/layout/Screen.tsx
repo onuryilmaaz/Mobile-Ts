@@ -1,6 +1,5 @@
 import { SafeAreaView, Edge } from 'react-native-safe-area-context';
 import { View, ViewProps, KeyboardAvoidingView, Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type ScreenProps = ViewProps & {
   children: React.ReactNode;
@@ -18,7 +17,6 @@ export function Screen({
 }: ScreenProps) {
   const defaultEdges: Edge[] = Platform.OS === 'ios' ? ['top', 'left', 'right'] : ['left', 'right'];
   const edges = safeAreaEdges ?? defaultEdges;
-  const insets = useSafeAreaInsets();
 
   const content = (
     <View className={`flex-1 px-4 ${className}`} style={style} {...props}>
