@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@/navigation/types';
@@ -11,12 +11,19 @@ import { authApi } from '@/modules/auth/auth.api';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 export default function RegisterScreen({ navigation }: Props) {
+  const scrollViewRef = useRef<ScrollView>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleInputFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
 
   async function handleRegister() {
     if (!email || !password || !firstName || !lastName) {
@@ -37,8 +44,6 @@ export default function RegisterScreen({ navigation }: Props) {
 
       console.log('Register response:', JSON.stringify(data, null, 2));
 
-      // Backend user dönmeyebilir veya emailVerified false olabilir
-      // Her iki durumda da OTP'ye yönlendir
       if (!data?.user?.emailVerified) {
         navigation.navigate('Otp', { email, password });
         return;
@@ -57,8 +62,12 @@ export default function RegisterScreen({ navigation }: Props) {
   return (
     <Screen className="justify-center bg-slate-50">
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-        showsVerticalScrollIndicator={false}>
+        ref={scrollViewRef}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        bounces={false}>
         <Card className="shadow-lg shadow-primary-500/10">
           <View className="mb-8 items-center">
             <Text className="text-3xl font-bold text-slate-900">Hesap Oluştur</Text>
@@ -72,7 +81,13 @@ export default function RegisterScreen({ navigation }: Props) {
 
           <View className="flex-row gap-3">
             <View className="flex-1">
-              <Input label="Ad" placeholder="Adın" value={firstName} onChangeText={setFirstName} />
+              <Input 
+                label="Ad" 
+                placeholder="Adın" 
+                value={firstName} 
+                onChangeText={setFirstName}
+                onFocus={handleInputFocus}
+              />
             </View>
             <View className="flex-1">
               <Input
@@ -80,6 +95,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 placeholder="Soyadın"
                 value={lastName}
                 onChangeText={setLastName}
+                onFocus={handleInputFocus}
               />
             </View>
           </View>
@@ -91,6 +107,7 @@ export default function RegisterScreen({ navigation }: Props) {
             autoCapitalize="none"
             keyboardType="email-address"
             onChangeText={setEmail}
+            onFocus={handleInputFocus}
           />
 
           <Input
@@ -99,6 +116,7 @@ export default function RegisterScreen({ navigation }: Props) {
             value={password}
             onChangeText={setPassword}
             isPassword
+            onFocus={handleInputFocus}
           />
 
           <Button

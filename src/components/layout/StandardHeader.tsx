@@ -1,6 +1,7 @@
-import { Platform, View, Text, TouchableOpacity } from 'react-native';
+import { Platform, View, Text, TouchableOpacity, StatusBar as RNStatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { HEADER_CONFIG } from '@/navigation/header.config';
 
@@ -10,26 +11,31 @@ type StandardHeaderProps = {
   rightComponent?: React.ReactNode;
 };
 
-/**
- * Tüm sayfalarda tutarlı header bileşeni
- * iOS ve Android için aynı yükseklik (56px), genişlik (100%) ve renk
- */
-export function StandardHeader({ title, showBackButton = true, rightComponent }: StandardHeaderProps) {
+export function StandardHeader({
+  title,
+  showBackButton = true,
+  rightComponent,
+}: StandardHeaderProps) {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const [statusBarHeight, setStatusBarHeight] = useState(0);
 
-  // Tüm cihazlarda aynı header yüksekliği: 56px
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const height = RNStatusBar.currentHeight || 0;
+      setStatusBarHeight(height);
+    }
+  }, []);
+
   const headerHeight = HEADER_CONFIG.height;
-  // Status bar yüksekliği: Android'de 0 (status bar ayrı), iOS'ta safe area top
-  const statusBarHeight = Platform.OS === 'android' ? 0 : insets.top;
-  // Toplam yükseklik: status bar + header
-  const totalHeight = statusBarHeight + headerHeight;
+  const finalStatusBarHeight = Platform.OS === 'android' ? statusBarHeight : insets.top;
+  const totalHeight = finalStatusBarHeight + headerHeight;
 
   return (
     <View
       style={{
         backgroundColor: HEADER_CONFIG.backgroundColor,
-        paddingTop: statusBarHeight,
+        paddingTop: finalStatusBarHeight,
         paddingBottom: 0,
         paddingHorizontal: 16,
         height: totalHeight,
@@ -61,4 +67,3 @@ export function StandardHeader({ title, showBackButton = true, rightComponent }:
     </View>
   );
 }
-

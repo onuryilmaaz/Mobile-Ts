@@ -8,7 +8,6 @@ import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { authApi } from '@/modules/auth/auth.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
-import { Ionicons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Otp'>;
 
@@ -74,10 +73,11 @@ export default function OtpScreen({ navigation, route }: Props) {
   return (
     <Screen className="justify-center bg-slate-50">
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
-        
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        bounces={false}>
         <View className="mb-8 items-center">
           <Text className="text-3xl font-bold text-slate-900">OTP Doğrulama</Text>
           <Text className="mt-2 text-center text-slate-500">
@@ -98,11 +98,7 @@ export default function OtpScreen({ navigation, route }: Props) {
           )}
 
           <View className="mb-6">
-            <OtpInput
-              value={otp}
-              onChange={setOtp}
-              onComplete={handleOtpComplete}
-            />
+            <OtpInput value={otp} onChange={setOtp} onComplete={handleOtpComplete} />
           </View>
 
           <Button
@@ -112,18 +108,13 @@ export default function OtpScreen({ navigation, route }: Props) {
             disabled={otp.length !== 6}
           />
 
-          <TouchableOpacity 
-            onPress={handleResend}
-            className="mt-4"
-            disabled={loading}>
+          <TouchableOpacity onPress={handleResend} className="mt-4" disabled={loading}>
             <Text className="text-center font-medium text-primary-600">
               Kod gelmedi mi? Tekrar gönder
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            onPress={() => navigation.goBack()}
-            className="mt-3">
+          <TouchableOpacity onPress={() => navigation.goBack()} className="mt-3">
             <Text className="text-center text-slate-500">Geri dön</Text>
           </TouchableOpacity>
         </Card>

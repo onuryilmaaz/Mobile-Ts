@@ -19,7 +19,6 @@ type AlertState = {
 type AlertStore = AlertState & {
   show: (config: Omit<AlertState, 'visible'>) => void;
   hide: () => void;
-  // Kısayol metodlar
   success: (title: string, message?: string) => void;
   error: (title: string, message?: string) => void;
   warning: (title: string, message?: string) => void;
@@ -96,7 +95,14 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
     });
   },
 
-  confirm: (title, message, onConfirm, confirmText = 'Evet', cancelText = 'Vazgeç', destructive = false) => {
+  confirm: (
+    title,
+    message,
+    onConfirm,
+    confirmText = 'Evet',
+    cancelText = 'Vazgeç',
+    destructive = false
+  ) => {
     set({
       visible: true,
       type: 'confirm',
@@ -110,7 +116,6 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
   },
 }));
 
-// Helper function - Alert.alert benzeri kullanım için
 export const alert = {
   show: useAlertStore.getState().show,
   hide: useAlertStore.getState().hide,
@@ -120,4 +125,3 @@ export const alert = {
   info: useAlertStore.getState().info,
   confirm: useAlertStore.getState().confirm,
 };
-

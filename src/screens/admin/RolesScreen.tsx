@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Divider } from '@/components/ui/Divider';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,7 +16,7 @@ export default function RolesScreen() {
   const alert = useAlertStore();
   const [roles, setRoles] = useState<AdminRole[]>([]);
   const [newRole, setNewRole] = useState('');
-  
+
   const [editingRole, setEditingRole] = useState<AdminRole | null>(null);
   const [editName, setEditName] = useState('');
 
@@ -30,11 +29,7 @@ export default function RolesScreen() {
       setLoading(true);
       const { data } = await adminApi.listRoles();
       console.log('Roles API Response:', data);
-      const rolesArray = Array.isArray(data) 
-        ? data 
-        : Array.isArray(data?.roles) 
-          ? data.roles 
-          : [];
+      const rolesArray = Array.isArray(data) ? data : Array.isArray(data?.roles) ? data.roles : [];
       setRoles(rolesArray);
     } catch (err) {
       console.log(err);
@@ -50,7 +45,6 @@ export default function RolesScreen() {
   }, []);
 
   function validateRoleName(name: string): boolean {
-    // Sadece küçük harf ve underscore kabul et
     const regex = /^[a-z_]+$/;
     return regex.test(name.toLowerCase().trim());
   }
@@ -124,56 +118,55 @@ export default function RolesScreen() {
 
   return (
     <Screen className="bg-slate-50">
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
+      <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}
         refreshControl={
           <RefreshControl refreshing={loading && !initialLoading} onRefresh={() => loadRoles()} />
         }>
-        
         <Card className="mb-4">
           <View className="mb-3 flex-row items-center gap-2">
-            <Ionicons 
-              name={editingRole ? 'create-outline' : 'add-circle-outline'} 
-              size={20} 
-              color="#0f766e" 
+            <Ionicons
+              name={editingRole ? 'create-outline' : 'add-circle-outline'}
+              size={20}
+              color="#0f766e"
             />
             <Text className="text-lg font-bold text-slate-900">
               {editingRole ? 'Rolü Düzenle' : 'Yeni Rol Oluştur'}
             </Text>
           </View>
-          
-          <Input 
-            placeholder={editingRole ? 'Rol adı' : 'Örn: editor'} 
-            value={editingRole ? editName : newRole} 
-            onChangeText={editingRole ? setEditName : setNewRole} 
+
+          <Input
+            placeholder={editingRole ? 'Rol adı' : 'Örn: editor'}
+            value={editingRole ? editName : newRole}
+            onChangeText={editingRole ? setEditName : setNewRole}
           />
-          
-          <View className="flex-row gap-2 mt-3">
+
+          <View className="mt-3 flex-row gap-2">
             {editingRole && (
               <View className="flex-1">
-                 <Button 
-                   title="İptal" 
-                   onPress={() => {
-                     setEditingRole(null);
-                     setEditName('');
-                   }} 
-                   variant="outline"
-                 />
+                <Button
+                  title="İptal"
+                  onPress={() => {
+                    setEditingRole(null);
+                    setEditName('');
+                  }}
+                  variant="outline"
+                />
               </View>
             )}
             <View className="flex-1">
-              <Button 
-                title={editingRole ? 'Güncelle' : 'Oluştur'} 
-                onPress={editingRole ? handleUpdate : handleCreate} 
-                loading={loading} 
+              <Button
+                title={editingRole ? 'Güncelle' : 'Oluştur'}
+                onPress={editingRole ? handleUpdate : handleCreate}
+                loading={loading}
               />
             </View>
           </View>
         </Card>
 
-        <Text className="text-lg font-bold text-slate-900 mb-3 ml-1">Mevcut Roller</Text>
-        
+        <Text className="mb-3 ml-1 text-lg font-bold text-slate-900">Mevcut Roller</Text>
+
         {initialLoading ? (
           <InlineLoading message="Roller yükleniyor..." />
         ) : roles.length === 0 ? (
@@ -187,13 +180,15 @@ export default function RolesScreen() {
             <Card key={role.id} className="mb-3 flex-row items-center justify-between p-4">
               <View className="flex-1">
                 <View className="mb-1 flex-row items-center gap-2">
-                  <Badge variant="primary" size="md">{role.name}</Badge>
+                  <Badge variant="primary" size="md">
+                    {role.name}
+                  </Badge>
                 </View>
                 <Text className="text-xs text-slate-400">ID: {role.id}</Text>
               </View>
-              
+
               <View className="flex-row gap-2">
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => {
                     setEditingRole(role);
                     setEditName(role.name);
@@ -202,8 +197,8 @@ export default function RolesScreen() {
                   activeOpacity={0.7}>
                   <Ionicons name="pencil" size={18} color="#475569" />
                 </TouchableOpacity>
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   onPress={() => handleDelete(role.id)}
                   className="rounded-full bg-red-50 p-2"
                   activeOpacity={0.7}>
@@ -213,7 +208,6 @@ export default function RolesScreen() {
             </Card>
           ))
         )}
-
       </ScrollView>
     </Screen>
   );

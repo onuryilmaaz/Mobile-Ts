@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
@@ -14,11 +14,18 @@ import { Ionicons } from '@expo/vector-icons';
 export default function ChangeEmailScreen() {
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
+  const scrollViewRef = useRef<ScrollView>(null);
   const [newEmail, setNewEmail] = useState('');
   const [emailOtp, setEmailOtp] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const handleInputFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -72,8 +79,11 @@ export default function ChangeEmailScreen() {
   return (
     <Screen className="bg-slate-50">
       <ScrollView 
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }>
@@ -94,6 +104,7 @@ export default function ChangeEmailScreen() {
               autoCapitalize="none"
               keyboardType="email-address"
               onChangeText={setNewEmail}
+              onFocus={handleInputFocus}
             />
             
             {!codeSent ? (

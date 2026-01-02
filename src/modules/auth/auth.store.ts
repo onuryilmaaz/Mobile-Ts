@@ -181,13 +181,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setUser: (user) => set({ user }),
 
   refreshUser: async () => {
-    // Token yoksa API çağrısı yapma
     const accessToken = await getAccessToken();
     if (!accessToken) {
       console.log('refreshUser: No access token, skipping refresh');
       return;
     }
-    
+
     try {
       const { data } = await userApi.profile();
       const userData = (data as any).user ? (data as any).user : data;

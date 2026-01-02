@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import { Card } from '@/components/ui/Card';
 export default function LoginScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const login = useAuthStore((s) => s.login);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,14 +49,13 @@ export default function LoginScreen() {
       console.log('Login error:', err);
       console.log('Login error response:', err?.response?.data);
       console.log('Login error status:', err?.response?.status);
-      
+
       const status = err?.response?.status;
       const serverMessage = err?.response?.data?.message;
-      
+
       let errorMessage = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
-      
+
       if (serverMessage) {
-        // Backend'den gelen mesajı kullan
         errorMessage = serverMessage;
       } else if (status === 401) {
         errorMessage = 'Email veya şifre hatalı.';
@@ -64,19 +64,29 @@ export default function LoginScreen() {
       } else if (status === 423) {
         errorMessage = 'Hesabınız kilitlenmiş. Lütfen daha sonra tekrar deneyin.';
       }
-      
+
       setError(errorMessage);
     } finally {
       setLoading(false);
     }
   }
 
+  const handleInputFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+
   return (
     <Screen className="justify-center bg-slate-50">
       <ScrollView
+        ref={scrollViewRef}
         className="m-0"
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-        showsVerticalScrollIndicator={false}>
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        bounces={false}>
         <Card className="border-primary-500 shadow-xl shadow-primary-500/10">
           <View className="mb-8 items-center">
             <Text className="text-3xl font-bold text-slate-900">Hoş Geldin!</Text>
@@ -95,6 +105,7 @@ export default function LoginScreen() {
             autoCapitalize="none"
             keyboardType="email-address"
             onChangeText={setEmail}
+            onFocus={handleInputFocus}
           />
 
           <Input
@@ -104,6 +115,7 @@ export default function LoginScreen() {
             secureTextEntry
             onChangeText={setPassword}
             isPassword
+            onFocus={handleInputFocus}
           />
 
           <View className="mb-6 items-end">

@@ -16,7 +16,6 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
 
   useEffect(() => {
     if (visible) {
-      // Giriş animasyonu
       Animated.parallel([
         Animated.timing(opacityAnim, {
           toValue: 1,
@@ -31,7 +30,6 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
         }),
       ]).start();
 
-      // Dönen animasyon
       const rotateAnimation = Animated.loop(
         Animated.timing(rotateAnim, {
           toValue: 1,
@@ -42,7 +40,6 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
       );
       rotateAnimation.start();
 
-      // Pulse animasyonu
       const pulseAnimation = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
@@ -66,7 +63,6 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
         pulseAnimation.stop();
       };
     } else {
-      // Çıkış animasyonu
       Animated.parallel([
         Animated.timing(opacityAnim, {
           toValue: 0,
@@ -97,31 +93,25 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
             transform: [{ scale: scaleAnim }],
           }}
           className="items-center rounded-3xl bg-white/90 px-10 py-8 shadow-xl">
-          {/* Dış halka - pulse */}
           <Animated.View
             style={{ transform: [{ scale: pulseAnim }] }}
             className="absolute h-24 w-24 rounded-full bg-primary-100/30"
           />
 
-          {/* Dönen halka */}
           <Animated.View
             style={{ transform: [{ rotate: spin }] }}
             className="mb-4 h-20 w-20 items-center justify-center">
-            {/* Gradient efekti için katmanlı halkalar */}
             <View className="absolute h-20 w-20 rounded-full border-4 border-slate-200/50" />
-            <View className="absolute h-20 w-20 rounded-full border-4 border-transparent border-t-primary-500 border-r-primary-300" />
+            <View className="absolute h-20 w-20 rounded-full border-4 border-transparent border-r-primary-300 border-t-primary-500" />
 
-            {/* Merkez ikon */}
             <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-100/80">
               <Ionicons name="cloud-upload" size={24} color="#0f766e" />
             </View>
           </Animated.View>
 
-          {/* Mesaj */}
           <Text className="text-center text-base font-semibold text-slate-800">{message}</Text>
           <Text className="mt-1 text-center text-sm text-slate-500">Lütfen bekleyin...</Text>
 
-          {/* Alt dekoratif noktalar */}
           <View className="mt-4 flex-row gap-1.5">
             <AnimatedDot delay={0} />
             <AnimatedDot delay={200} />
@@ -168,11 +158,5 @@ function AnimatedDot({ delay }: { delay: number }) {
     return () => animation.stop();
   }, [opacity, delay]);
 
-  return (
-    <Animated.View
-      style={{ opacity }}
-      className="h-2 w-2 rounded-full bg-primary-500"
-    />
-  );
+  return <Animated.View style={{ opacity }} className="h-2 w-2 rounded-full bg-primary-500" />;
 }
-

@@ -27,7 +27,6 @@ export const useToastStore = create<ToastStore>((set) => ({
       toasts: [...state.toasts, { ...toast, id }],
     }));
     
-    // Auto remove after duration
     const duration = toast.duration ?? 3000;
     setTimeout(() => {
       set((state) => ({

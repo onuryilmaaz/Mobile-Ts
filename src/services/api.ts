@@ -71,21 +71,18 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     const requestUrl = originalRequest?.url || '';
 
-    // 401 hatası için özel işlem
     if (status === 401) {
-      // Auth endpoint'leri için direkt hata döndür
       if (requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh')) {
         return Promise.reject(error);
       }
 
-      // Daha önce retry yapılmışsa tekrar deneme
       if (originalRequest?._retry) {
         return Promise.reject(error);
       }
 
       originalRequest._retry = true;
       console.log('401 detected on:', requestUrl, '- attempting token refresh...');
-      
+
       const newToken = await refreshAccessToken();
 
       if (newToken) {
@@ -94,7 +91,6 @@ api.interceptors.response.use(
         return api(originalRequest);
       } else {
         console.log('Token refresh failed, user needs to re-login');
-        // Token refresh başarısız - sessizce hata döndür
       }
     }
 

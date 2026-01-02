@@ -11,10 +11,9 @@ import { AlertDialog } from '@/components/feedback/AlertDialog';
 
 function App() {
   useEffect(() => {
-    // Android'de sistem navigasyon bar'ının rengini tabbar ile aynı yap (beyaz)
     if (Platform.OS === 'android') {
       NavigationBar.setBackgroundColorAsync('#ffffff');
-      NavigationBar.setButtonStyleAsync('dark'); // Butonları koyu renk yap (beyaz arka plan için)
+      NavigationBar.setButtonStyleAsync('dark');
     }
   }, []);
 
@@ -30,4 +29,3 @@ function App() {
 }
 
 registerRootComponent(App);
-

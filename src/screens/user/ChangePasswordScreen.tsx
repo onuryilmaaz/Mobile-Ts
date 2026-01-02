@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
@@ -12,10 +12,17 @@ import { Ionicons } from '@expo/vector-icons';
 export default function ChangePasswordScreen() {
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
+  const scrollViewRef = useRef<ScrollView>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const handleInputFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -49,8 +56,11 @@ export default function ChangePasswordScreen() {
   return (
     <Screen className="bg-slate-50">
       <ScrollView 
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }>
@@ -70,6 +80,7 @@ export default function ChangePasswordScreen() {
               secureTextEntry
               value={currentPassword}
               onChangeText={setCurrentPassword}
+              onFocus={handleInputFocus}
             />
             <Input
               label="Yeni Şifre"
@@ -77,6 +88,7 @@ export default function ChangePasswordScreen() {
               secureTextEntry
               value={newPassword}
               onChangeText={setNewPassword}
+              onFocus={handleInputFocus}
             />
             
             <Button 

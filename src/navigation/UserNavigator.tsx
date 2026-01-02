@@ -22,7 +22,6 @@ export default function UserNavigator() {
 
   console.log('UserNavigator - User Roles:', user?.roles, 'IsAdmin:', isAdmin);
 
-  // Android için minimum 16px bottom padding, iOS için safe area kullan
   const bottomPadding = Platform.OS === 'ios' ? insets.bottom : Math.max(insets.bottom, 16);
   const tabBarHeight = 56 + bottomPadding;
 

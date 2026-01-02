@@ -21,9 +21,9 @@ type Props = NativeStackScreenProps<AdminStackParamList, 'UserDetail'>;
 export default function UserDetailScreen({ route, navigation }: Props) {
   const { userId } = route.params;
   const currentUser = useAuthStore((s) => s.user);
-  const refreshUser = useAuthStore((s) => s.refreshUser);
+  //const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
-  
+
   const [user, setUser] = useState<AdminUser | null>(null);
   const [availableRoles, setAvailableRoles] = useState<AdminRole[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
@@ -31,15 +31,14 @@ export default function UserDetailScreen({ route, navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  
-  // Düzenlenen kullanıcı mevcut giriş yapmış kullanıcı mı?
+
   const isCurrentUser = currentUser?.id === userId;
 
   async function loadData(isRefresh = false) {
     try {
       if (isRefresh) setRefreshing(true);
       else setLoading(true);
-      
+
       const [{ data: userData }, { data: rolesData }] = await Promise.all([
         adminApi.getUser(userId),
         adminApi.listRoles(),
@@ -105,22 +104,19 @@ export default function UserDetailScreen({ route, navigation }: Props) {
 
   async function handleAssignRole(roleIdToAssign: string) {
     if (!roleIdToAssign) return;
-    
-    // Atanacak rolün adını bul
+
     const roleToAssign = availableRoles.find((r) => r.id === roleIdToAssign);
     const roleNameToAssign = roleToAssign?.name;
-    
+
     try {
       setActionLoading(true);
       await adminApi.assignRole(userId, roleIdToAssign);
-      
-      // Optimistic update - UI'ı hemen güncelle
+
       if (roleNameToAssign && user) {
         const updatedRoles = [...user.roles, roleNameToAssign];
         setUser({ ...user, roles: updatedRoles });
         console.log('After assign role (optimistic) - User Roles:', updatedRoles);
-        
-        // Eğer mevcut kullanıcının rolü değiştiyse auth store'u da optimistic güncelle
+
         if (isCurrentUser) {
           const currentUserData = useAuthStore.getState().user;
           if (currentUserData) {
@@ -132,10 +128,9 @@ export default function UserDetailScreen({ route, navigation }: Props) {
           }
         }
       }
-      
+
       alert.success('Başarılı', 'Rol atandı');
     } catch {
-      // Hata durumunda veriyi sunucudan tekrar yükle
       await loadData();
       alert.error('Hata', 'Rol atanamadı');
     } finally {
@@ -144,21 +139,18 @@ export default function UserDetailScreen({ route, navigation }: Props) {
   }
 
   async function handleRemoveRole(roleIdToRemove: string) {
-    // Kaldırılacak rolün adını bul
     const roleToRemove = availableRoles.find((r) => r.id === roleIdToRemove);
     const roleNameToRemove = roleToRemove?.name;
-    
+
     try {
       setActionLoading(true);
       await adminApi.removeRole(userId, roleIdToRemove);
-      
-      // Optimistic update - UI'ı hemen güncelle
+
       if (roleNameToRemove && user) {
         const updatedRoles = user.roles.filter((r) => r !== roleNameToRemove);
         setUser({ ...user, roles: updatedRoles });
         console.log('After remove role (optimistic) - User Roles:', updatedRoles);
-        
-        // Eğer mevcut kullanıcının rolü değiştiyse auth store'u da optimistic güncelle
+
         if (isCurrentUser) {
           const currentUserData = useAuthStore.getState().user;
           if (currentUserData) {
@@ -170,10 +162,9 @@ export default function UserDetailScreen({ route, navigation }: Props) {
           }
         }
       }
-      
+
       alert.success('Başarılı', 'Rol kaldırıldı');
     } catch {
-      // Hata durumunda veriyi sunucudan tekrar yükle
       await loadData();
       alert.error('Hata', 'Rol kaldırılamadı');
     } finally {
@@ -298,9 +289,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                   </TouchableOpacity>
                 ))}
               {availableRoles.length === 0 && (
-                <Text className="text-xs text-slate-400">
-                  Eklenebilecek rol bulunamadı
-                </Text>
+                <Text className="text-xs text-slate-400">Eklenebilecek rol bulunamadı</Text>
               )}
             </View>
           </View>
@@ -328,9 +317,11 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                 <View
                   key={s.id || index}
                   className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <View className="flex-row items-center gap-2 mb-1">
+                  <View className="mb-1 flex-row items-center gap-2">
                     <Ionicons name="phone-portrait-outline" size={16} color="#64748b" />
-                    <Text className="text-xs font-semibold text-slate-700">IP: {s.ip || 'Bilinmiyor'}</Text>
+                    <Text className="text-xs font-semibold text-slate-700">
+                      IP: {s.ip || 'Bilinmiyor'}
+                    </Text>
                   </View>
                   <Text className="text-[10px] text-slate-500" numberOfLines={1}>
                     {s.userAgent || 'Bilinmeyen cihaz'}

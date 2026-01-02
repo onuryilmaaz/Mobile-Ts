@@ -42,9 +42,7 @@ export default function HomeScreen({ navigation }: Props) {
         className="flex-1"
         refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 16 }}>
-        {/* İçerik buraya gelecek */}
-      </ScrollView>
+        contentContainerStyle={{ paddingTop: 16 }}></ScrollView>
     </Screen>
   );
 }

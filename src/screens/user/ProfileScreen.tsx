@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -68,6 +68,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const user = useAuthStore((s) => s.user);
   const alertStore = useAlertStore();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const [profile, setProfile] = useState<UserProfile | null>(user as UserProfile | null);
   const [firstName, setFirstName] = useState(user?.firstName ?? '');
@@ -75,46 +76,48 @@ export default function ProfileScreen({ navigation }: Props) {
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [localAvatarUri, setLocalAvatarUri] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   const [updateLoading, setUpdateLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadProfile = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    try {
-      const { data } = await userApi.profile();
-      
-      const profileData = (data as any).user ? (data as any).user : data;
+  const loadProfile = useCallback(
+    async (isRefresh = false) => {
+      if (isRefresh) setRefreshing(true);
+      try {
+        const { data } = await userApi.profile();
 
-      setProfile(profileData);
-      setFirstName(profileData.firstName ?? '');
-      setLastName(profileData.lastName ?? '');
-      setPhone(profileData.phone ?? '');
-      
-      if (profileData.roles) {
-        setUser(profileData);
+        const profileData = (data as any).user ? (data as any).user : data;
+
+        setProfile(profileData);
+        setFirstName(profileData.firstName ?? '');
+        setLastName(profileData.lastName ?? '');
+        setPhone(profileData.phone ?? '');
+
+        if (profileData.roles) {
+          setUser(profileData);
+        }
+      } catch (err) {
+        console.log(err);
+        alertStore.error('Hata', 'Profil bilgileri alınamadı');
+      } finally {
+        setRefreshing(false);
       }
-    } catch (err) {
-      console.log(err);
-      alertStore.error('Hata', 'Profil bilgileri alınamadı');
-    } finally {
-      setRefreshing(false);
-    }
-  }, [setUser, alertStore]);
+    },
+    [setUser, alertStore]
+  );
 
   async function handleUpdateProfile() {
     try {
       setUpdateLoading(true);
       const { data } = await userApi.updateProfile({ firstName, lastName, phone });
-      
+
       const profileData = (data as any).user ? (data as any).user : data;
 
       setProfile(profileData);
-      
-      // Auth store'u güncelle
+
       await refreshUser();
-      
+
       setIsEditing(false);
       alertStore.success('Başarılı', 'Profil bilgileriniz güncellendi');
     } catch (err) {
@@ -128,7 +131,7 @@ export default function ProfileScreen({ navigation }: Props) {
   async function handlePickImage() {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (!permissionResult.granted) {
         alertStore.warning('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
         return;
@@ -165,9 +168,8 @@ export default function ProfileScreen({ navigation }: Props) {
 
       await userApi.uploadAvatar(formData);
       alertStore.success('Başarılı', 'Avatar yüklendi');
-      
+
       await loadProfile();
-      // Auth store'u güncelle
       await refreshUser();
       setLocalAvatarUri(null);
     } catch (err) {
@@ -188,38 +190,39 @@ export default function ProfileScreen({ navigation }: Props) {
   return (
     <Screen className="bg-slate-50">
       <UploadOverlay visible={avatarLoading} message="Fotoğraf yükleniyor" />
-      
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
+
+      <ScrollView
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => loadProfile(true)} />
         }>
-        
-        {/* Header Section */}
         <View className="mb-6 items-center">
           <View className="relative">
-            <View className="h-28 w-28 items-center justify-center rounded-full bg-primary-100 border-4 border-white shadow-sm overflow-hidden mt-8">
+            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-primary-100 shadow-sm">
               {avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
                 <Text className="text-4xl">👤</Text>
               )}
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handlePickImage}
               disabled={avatarLoading}
               activeOpacity={0.8}
-              className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full bg-primary-600 border-2 border-white shadow-sm">
+              className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-primary-600 shadow-sm">
               <Ionicons name="camera" size={18} color="white" />
             </TouchableOpacity>
           </View>
-          
+
           <Text className="mt-4 text-2xl font-bold text-slate-900">
             {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
           </Text>
           <Text className="text-slate-500">{profile?.email ?? user?.email}</Text>
-          
+
           <View className="mt-2 flex-row flex-wrap gap-2">
             {roles.map((role) => (
               <Badge key={role} variant="primary" size="sm">
@@ -230,7 +233,7 @@ export default function ProfileScreen({ navigation }: Props) {
         </View>
 
         <Card className="mb-4">
-          <View className="flex-row items-center justify-between mb-4">
+          <View className="mb-4 flex-row items-center justify-between">
             <Text className="text-lg font-bold text-slate-900">Kişisel Bilgiler</Text>
             {!isEditing && (
               <TouchableOpacity onPress={() => setIsEditing(true)}>
@@ -238,48 +241,44 @@ export default function ProfileScreen({ navigation }: Props) {
               </TouchableOpacity>
             )}
           </View>
-          
+
           {isEditing ? (
             <>
-              <Input 
-                label="Ad" 
-                value={firstName} 
-                onChangeText={setFirstName} 
+              <Input
+                label="Ad"
+                value={firstName}
+                onChangeText={setFirstName}
                 placeholder="Adınız"
               />
-              <Input 
-                label="Soyad" 
-                value={lastName} 
-                onChangeText={setLastName} 
+              <Input
+                label="Soyad"
+                value={lastName}
+                onChangeText={setLastName}
                 placeholder="Soyadınız"
               />
-              <Input 
-                label="Telefon" 
-                value={phone} 
-                onChangeText={setPhone} 
+              <Input
+                label="Telefon"
+                value={phone}
+                onChangeText={setPhone}
                 keyboardType="phone-pad"
                 placeholder="+90 555 123 45 67"
               />
 
               <View className="mt-2 flex-row gap-3">
                 <View className="flex-1">
-                  <Button 
-                    title="Vazgeç" 
+                  <Button
+                    title="Vazgeç"
                     onPress={() => {
                       setIsEditing(false);
                       setFirstName(profile?.firstName ?? '');
                       setLastName(profile?.lastName ?? '');
                       setPhone(profile?.phone ?? '');
-                    }} 
+                    }}
                     variant="outline"
                   />
                 </View>
                 <View className="flex-1">
-                  <Button 
-                    title="Kaydet" 
-                    onPress={handleUpdateProfile} 
-                    loading={updateLoading}
-                  />
+                  <Button title="Kaydet" onPress={handleUpdateProfile} loading={updateLoading} />
                 </View>
               </View>
             </>
@@ -298,9 +297,7 @@ export default function ProfileScreen({ navigation }: Props) {
                 <Ionicons name="call-outline" size={20} color="#64748b" />
                 <View>
                   <Text className="text-xs text-slate-500">Telefon</Text>
-                  <Text className="font-medium text-slate-900">
-                    {profile?.phone || '—'}
-                  </Text>
+                  <Text className="font-medium text-slate-900">{profile?.phone || '—'}</Text>
                 </View>
               </View>
               <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3">
@@ -318,7 +315,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
         <Card>
           <Text className="mb-4 text-lg font-bold text-slate-900">Ayarlar</Text>
-          
+
           <View className="gap-2">
             {settingsItems.map((item) => (
               <TouchableOpacity
@@ -326,20 +323,21 @@ export default function ProfileScreen({ navigation }: Props) {
                 className={`flex-row items-center justify-between rounded-xl p-4 ${
                   item.danger ? 'bg-red-50' : 'bg-slate-50'
                 }`}
-                onPress={() => navigation.navigate(item.screen)}
-              >
-                <View className="flex-row items-center gap-3 flex-1">
-                  <View className={`h-10 w-10 items-center justify-center rounded-full ${
-                    item.danger ? 'bg-red-100' : 'bg-white'
-                  }`}>
-                    <Ionicons 
-                      name={item.icon} 
-                      size={20} 
-                      color={item.danger ? '#dc2626' : '#64748b'} 
+                onPress={() => navigation.navigate(item.screen)}>
+                <View className="flex-1 flex-row items-center gap-3">
+                  <View
+                    className={`h-10 w-10 items-center justify-center rounded-full ${
+                      item.danger ? 'bg-red-100' : 'bg-white'
+                    }`}>
+                    <Ionicons
+                      name={item.icon}
+                      size={20}
+                      color={item.danger ? '#dc2626' : '#64748b'}
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className={`font-medium ${item.danger ? 'text-red-700' : 'text-slate-900'}`}>
+                    <Text
+                      className={`font-medium ${item.danger ? 'text-red-700' : 'text-slate-900'}`}>
                       {item.title}
                     </Text>
                     <Text className={`text-xs ${item.danger ? 'text-red-500' : 'text-slate-500'}`}>
@@ -347,12 +345,15 @@ export default function ProfileScreen({ navigation }: Props) {
                     </Text>
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color={item.danger ? '#fca5a5' : '#94a3b8'} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={item.danger ? '#fca5a5' : '#94a3b8'}
+                />
               </TouchableOpacity>
             ))}
           </View>
         </Card>
-
       </ScrollView>
     </Screen>
   );

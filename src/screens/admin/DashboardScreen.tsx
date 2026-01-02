@@ -97,7 +97,6 @@ export default function DashboardScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => loadData()} />}
         contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Sistem Sağlığı */}
         <Card
           className={`mb-4 mt-4 ${healthy ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
           <View className="flex-row items-center gap-3">
@@ -119,7 +118,6 @@ export default function DashboardScreen({ navigation }: Props) {
           </View>
         </Card>
 
-        {/* İstatistikler */}
         {stats?.users && (
           <Card className="mb-4">
             <Text className="mb-3 text-base font-bold text-slate-900">Özet İstatistikler</Text>
@@ -160,7 +158,6 @@ export default function DashboardScreen({ navigation }: Props) {
           </Card>
         )}
 
-        {/* Yönetim Menüsü */}
         <Card>
           <Text className="mb-3 text-base font-bold text-slate-900">Yönetim</Text>
           <View className="gap-2">

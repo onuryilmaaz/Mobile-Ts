@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@/navigation/types';
@@ -14,6 +14,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
 export default function ResetPasswordScreen({ navigation, route }: Props) {
   const email = route.params?.email ?? '';
+  const scrollViewRef = useRef<ScrollView>(null);
   
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -21,6 +22,12 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
   const [step, setStep] = useState<'otp' | 'password'>('otp');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleInputFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
 
   const handleOtpComplete = (code: string) => {
     setOtp(code);
@@ -73,9 +80,12 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
   return (
     <Screen className="justify-center bg-slate-50">
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+        ref={scrollViewRef}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        bounces={false}>
         
         <View className="mb-8 items-center">
           <Text className="text-3xl font-bold text-slate-900">
@@ -126,6 +136,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
                 value={newPassword}
                 onChangeText={setNewPassword}
                 isPassword
+                onFocus={handleInputFocus}
               />
 
               <Input
@@ -134,6 +145,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 isPassword
+                onFocus={handleInputFocus}
               />
 
               <Button
