@@ -24,7 +24,12 @@ type HomeHeaderNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<UserTabParamList>
 >;
 
+import { useThemeStore } from '@/store/theme.store';
+
+// ... imports
+
 function HomeHeader() {
+  const headerColor = useThemeStore((s) => s.headerColor);
   const user = useAuthStore((s) => s.user);
   const avatarUrl = user?.avatarUrl;
   const insets = useSafeAreaInsets();
@@ -45,7 +50,7 @@ function HomeHeader() {
   return (
     <View
       style={{
-        backgroundColor: HEADER_CONFIG.backgroundColor,
+        backgroundColor: headerColor,
         paddingTop: finalStatusBarHeight,
         paddingBottom: 0,
         paddingHorizontal: 16,
@@ -65,7 +70,7 @@ function HomeHeader() {
               (parent as any).navigate('Profile', { screen: 'ProfileMain' });
             }
           }}
-          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-teal-300 bg-teal-100">
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white bg-white/20 ring-4 ">
           {avatarUrl ? (
             <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
           ) : (
@@ -78,13 +83,11 @@ function HomeHeader() {
 }
 
 export default function HomeNavigator() {
+  const headerColor = useThemeStore((s) => s.headerColor);
+
   return (
     <>
-      <RNStatusBar
-        barStyle="light-content"
-        backgroundColor={HEADER_CONFIG.backgroundColor}
-        translucent={false}
-      />
+      <RNStatusBar barStyle="light-content" backgroundColor={headerColor} translucent={false} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,

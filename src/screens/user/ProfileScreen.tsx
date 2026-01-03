@@ -1,5 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  RefreshControl,
+  Modal,
+  FlatList,
+} from 'react-native';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,6 +25,9 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { useAlertStore } from '@/store/alert.store';
 import type { UserProfile } from '@/modules/user/user.types';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TURKEY_CITIES } from '@/constants/cities';
+import { BlurView } from 'expo-blur';
 
 type Props = CompositeScreenProps<
   NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>,
@@ -80,6 +92,48 @@ export default function ProfileScreen({ navigation }: Props) {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  // City Selection Logic
+  const [selectedCity, setSelectedCity] = useState('İstanbul');
+  const [cityModalVisible, setCityModalVisible] = useState(false);
+
+  useEffect(() => {
+    loadCity();
+  }, []);
+
+  const loadCity = async () => {
+    try {
+      const savedCity = await AsyncStorage.getItem('SELECTED_CITY');
+      if (savedCity) {
+        setSelectedCity(savedCity);
+      }
+    } catch (e) {
+      console.error('Failed to load city', e);
+    }
+  };
+
+  const handleCitySelect = async (city: string) => {
+    try {
+      setSelectedCity(city);
+      await AsyncStorage.setItem('SELECTED_CITY', city);
+      setCityModalVisible(false);
+      alertStore.success('Başarılı', `Konum ${city} olarak güncellendi`);
+    } catch (e) {
+      console.error('Failed to save city', e);
+    }
+  };
+
+  const renderCityItem = ({ item }: { item: string }) => (
+    <TouchableOpacity
+      className={`flex-row items-center justify-between border-b border-slate-100 p-4 ${item === selectedCity ? 'bg-teal-50' : ''}`}
+      onPress={() => handleCitySelect(item)}>
+      <Text
+        className={`text-base ${item === selectedCity ? 'font-bold text-teal-700' : 'text-slate-700'}`}>
+        {item}
+      </Text>
+      {item === selectedCity && <Ionicons name="checkmark-circle" size={20} color="#0f766e" />}
+    </TouchableOpacity>
+  );
 
   const loadProfile = useCallback(
     async (isRefresh = false) => {
@@ -223,7 +277,16 @@ export default function ProfileScreen({ navigation }: Props) {
           </Text>
           <Text className="text-slate-500">{profile?.email ?? user?.email}</Text>
 
-          <View className="mt-2 flex-row flex-wrap gap-2">
+          {/* City Selection Badge */}
+          <TouchableOpacity
+            onPress={() => setCityModalVisible(true)}
+            className="mt-3 flex-row items-center gap-1.5 rounded-full border border-teal-100 bg-teal-50 px-3 py-1.5">
+            <Ionicons name="location" size={14} color="#0f766e" />
+            <Text className="text-sm font-semibold text-teal-700">{selectedCity}</Text>
+            <Ionicons name="create-outline" size={14} color="#0f766e" />
+          </TouchableOpacity>
+
+          <View className="mt-4 flex-row flex-wrap gap-2">
             {roles.map((role) => (
               <Badge key={role} variant="primary" size="sm">
                 {role}
@@ -355,6 +418,40 @@ export default function ProfileScreen({ navigation }: Props) {
           </View>
         </Card>
       </ScrollView>
+
+      {/* City Selection Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={cityModalVisible}
+        onRequestClose={() => setCityModalVisible(false)}
+        statusBarTranslucent>
+        <BlurView intensity={20} tint="dark" className="flex-1">
+          <TouchableOpacity
+            className="flex-1"
+            activeOpacity={1}
+            onPress={() => setCityModalVisible(false)}
+          />
+          <View className="h-[75%] overflow-hidden rounded-t-[32px] bg-white shadow-2xl">
+            <View className="z-10 flex-row items-center justify-between border-b border-slate-100 bg-white px-6 py-5">
+              <Text className="text-xl font-bold text-slate-800">Şehir Seçin</Text>
+              <TouchableOpacity
+                onPress={() => setCityModalVisible(false)}
+                className="h-8 w-8 items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+                <Ionicons name="close" size={20} color="#64748b" />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={TURKEY_CITIES}
+              renderItem={renderCityItem}
+              keyExtractor={(item) => item}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 40 }}
+              className="bg-slate-50"
+            />
+          </View>
+        </BlurView>
+      </Modal>
     </Screen>
   );
 }
