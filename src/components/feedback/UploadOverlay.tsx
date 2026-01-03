@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, Animated, Easing, StyleSheet } from 'react-native';
+import { View, Text, Animated, Easing } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -86,8 +86,8 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
   if (!visible) return null;
 
   return (
-    <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
-      <BlurView intensity={40} tint="light" style={styles.blurView}>
+    <Animated.View className="absolute inset-0 z-[1000]" style={{ opacity: opacityAnim }}>
+      <BlurView intensity={40} tint="light" className="flex-1 items-center justify-center">
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }],
@@ -122,18 +122,6 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1000,
-  },
-  blurView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 function AnimatedDot({ delay }: { delay: number }) {
   const opacity = useRef(new Animated.Value(0.3)).current;

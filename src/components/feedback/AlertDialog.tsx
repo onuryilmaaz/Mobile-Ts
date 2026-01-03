@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
-  StyleSheet,
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -65,23 +64,35 @@ export function AlertDialog() {
 
   const iconConfig = getIconConfig(type);
 
-  const getButtonStyle = (style?: 'default' | 'cancel' | 'destructive', index?: number, total?: number) => {
+  const getButtonStyle = (
+    style?: 'default' | 'cancel' | 'destructive',
+    index?: number,
+    total?: number
+  ) => {
     const isCancel = style === 'cancel';
     const isDestructive = style === 'destructive';
-    
+
+    const containerClass = [
+      'flex-1 h-12 rounded-[14px] justify-center items-center min-w-[100px]',
+      isCancel && 'bg-slate-100',
+      isDestructive && 'bg-red-500',
+      !isCancel && !isDestructive && 'bg-teal-600',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const textClass = [
+      'text-base font-semibold',
+      isCancel && 'text-slate-500',
+      isDestructive && 'text-white',
+      !isCancel && !isDestructive && 'text-white',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
     return {
-      container: [
-        styles.button,
-        isCancel && styles.buttonCancel,
-        isDestructive && styles.buttonDestructive,
-        !isCancel && !isDestructive && styles.buttonPrimary,
-      ],
-      text: [
-        styles.buttonText,
-        isCancel && styles.buttonTextCancel,
-        isDestructive && styles.buttonTextDestructive,
-        !isCancel && !isDestructive && styles.buttonTextPrimary,
-      ],
+      container: containerClass,
+      text: textClass,
     };
   };
 
@@ -89,39 +100,43 @@ export function AlertDialog() {
 
   return (
     <Modal transparent visible={visible} animationType="none" statusBarTranslucent>
-      <BlurView intensity={20} tint="dark" style={styles.overlay}>
+      <BlurView intensity={20} tint="dark" className="flex-1 items-center justify-center">
         <TouchableWithoutFeedback onPress={hide}>
-          <View style={styles.backdrop} />
+          <View className="absolute inset-0 bg-black/40" />
         </TouchableWithoutFeedback>
-        
+
         <Animated.View
-          style={[
-            styles.container,
-            {
-              transform: [{ scale: scaleAnim }],
-              opacity: opacityAnim,
-            },
-          ]}>
+          className="w-[85%] max-w-[340px] items-center rounded-3xl bg-white p-6 shadow-xl shadow-black/25"
+          style={{
+            transform: [{ scale: scaleAnim }],
+            opacity: opacityAnim,
+          }}>
           {/* Icon */}
-          <View style={[styles.iconContainer, { backgroundColor: iconConfig.bgColor }]}>
+          <View
+            className="mb-4 h-16 w-16 items-center justify-center rounded-full"
+            style={{ backgroundColor: iconConfig.bgColor }}>
             <Ionicons name={iconConfig.name} size={32} color={iconConfig.color} />
           </View>
 
           {/* Content */}
-          <Text style={styles.title}>{title}</Text>
-          {message && <Text style={styles.message}>{message}</Text>}
+          <Text className="mb-2 text-center text-xl font-bold text-slate-800">{title}</Text>
+          {message && (
+            <Text className="mb-2 text-center text-[15px] leading-[22px] text-slate-500">
+              {message}
+            </Text>
+          )}
 
           {/* Buttons */}
-          <View style={[styles.buttonContainer, buttons.length > 2 && styles.buttonContainerVertical]}>
+          <View className={`mt-4 w-full flex-row gap-3 ${buttons.length > 2 ? 'flex-col' : ''}`}>
             {buttons.map((button, index) => {
               const buttonStyle = getButtonStyle(button.style, index, buttons.length);
               return (
                 <TouchableOpacity
                   key={index}
-                  style={buttonStyle.container}
+                  className={buttonStyle.container}
                   onPress={() => handleButtonPress(button)}
                   activeOpacity={0.8}>
-                  <Text style={buttonStyle.text}>{button.text}</Text>
+                  <Text className={buttonStyle.text}>{button.text}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -131,90 +146,3 @@ export function AlertDialog() {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
-  container: {
-    width: width * 0.85,
-    maxWidth: 340,
-    backgroundColor: '#ffffff',
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 20,
-  },
-  iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1e293b',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  message: {
-    fontSize: 15,
-    color: '#64748b',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 16,
-    gap: 12,
-    width: '100%',
-  },
-  buttonContainerVertical: {
-    flexDirection: 'column',
-  },
-  button: {
-    flex: 1,
-    height: 48,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minWidth: 100,
-  },
-  buttonPrimary: {
-    backgroundColor: '#0d9488',
-  },
-  buttonCancel: {
-    backgroundColor: '#f1f5f9',
-  },
-  buttonDestructive: {
-    backgroundColor: '#ef4444',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  buttonTextPrimary: {
-    color: '#ffffff',
-  },
-  buttonTextCancel: {
-    color: '#64748b',
-  },
-  buttonTextDestructive: {
-    color: '#ffffff',
-  },
-});
-
