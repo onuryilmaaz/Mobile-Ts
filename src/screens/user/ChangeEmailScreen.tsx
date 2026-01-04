@@ -78,22 +78,21 @@ export default function ChangeEmailScreen() {
 
   return (
     <Screen className="bg-slate-50">
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
         <Card className="mt-4">
           <View className="mb-4 flex-row items-center gap-2">
             <Ionicons name="mail-outline" size={20} color="#0f766e" />
             <Text className="text-base font-semibold text-slate-900">E-posta Değiştir</Text>
           </View>
           <Text className="mb-6 text-sm text-slate-600">
-            E-posta adresinizi değiştirmek için yeni adresinizi girin. Size bir doğrulama kodu göndereceğiz.
+            E-posta adresinizi değiştirmek için yeni adresinizi girin. Size bir doğrulama kodu
+            göndereceğiz.
           </Text>
 
           <View className="gap-4">
@@ -106,13 +105,9 @@ export default function ChangeEmailScreen() {
               onChangeText={setNewEmail}
               onFocus={handleInputFocus}
             />
-            
+
             {!codeSent ? (
-              <Button 
-                title="Doğrulama Kodu Gönder" 
-                onPress={handleSendCode} 
-                loading={loading} 
-              />
+              <Button title="Doğrulama Kodu Gönder" onPress={handleSendCode} loading={loading} />
             ) : (
               <>
                 <Divider />
@@ -127,15 +122,15 @@ export default function ChangeEmailScreen() {
                   />
                 </View>
                 <View className="gap-3">
-                  <Button 
-                    title="E-postayı Güncelle" 
-                    onPress={handleConfirm} 
+                  <Button
+                    title="E-postayı Güncelle"
+                    onPress={handleConfirm}
                     loading={loading}
                     disabled={emailOtp.length !== 6}
                   />
-                  <Button 
-                    title="Kodu Tekrar Gönder" 
-                    onPress={handleSendCode} 
+                  <Button
+                    title="Kodu Tekrar Gönder"
+                    onPress={handleSendCode}
                     loading={loading}
                     variant="outline"
                   />
@@ -148,4 +143,3 @@ export default function ChangeEmailScreen() {
     </Screen>
   );
 }
-

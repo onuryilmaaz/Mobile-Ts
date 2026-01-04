@@ -14,7 +14,7 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
 
   const handleChange = (text: string, index: number) => {
     const digit = text.replace(/[^0-9]/g, '').slice(-1);
-    
+
     const newValue = value.split('');
     newValue[index] = digit;
     const result = newValue.join('').slice(0, length);
@@ -63,7 +63,9 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
               ${isFocused ? 'border-primary-500' : hasValue ? 'border-primary-300' : 'border-slate-200'}
             `}>
             <TextInput
-              ref={(ref) => { inputRefs.current[index] = ref; }}
+              ref={(ref) => {
+                inputRefs.current[index] = ref;
+              }}
               value={value[index] || ''}
               onChangeText={(text) => handleChange(text, index)}
               onKeyPress={(e) => handleKeyPress(e, index)}
@@ -81,4 +83,3 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
     </View>
   );
 }
-

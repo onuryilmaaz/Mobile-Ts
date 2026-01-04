@@ -10,7 +10,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon = 'document-outline', title, message, action }: EmptyStateProps) {
   return (
-    <View className="items-center justify-center py-12 px-4">
+    <View className="items-center justify-center px-4 py-12">
       <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-slate-100">
         <Ionicons name={icon} size={32} color="#94a3b8" />
       </View>
@@ -20,4 +20,3 @@ export function EmptyState({ icon = 'document-outline', title, message, action }
     </View>
   );
 }
-

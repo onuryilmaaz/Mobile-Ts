@@ -6,6 +6,6 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
-  headerColor: 'bg-teal-600', // Default color
+  headerColor: 'bg-teal-600',
   setHeaderColor: (color) => set({ headerColor: color }),
 }));

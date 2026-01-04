@@ -15,7 +15,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 export default function ResetPasswordScreen({ navigation, route }: Props) {
   const email = route.params?.email ?? '';
   const scrollViewRef = useRef<ScrollView>(null);
-  
+
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -64,7 +64,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
       setError(null);
 
       await authApi.resetPassword({ email, otp, newPassword });
-      
+
       navigation.navigate('Login');
     } catch (err: any) {
       console.log(err);
@@ -86,16 +86,14 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         bounces={false}>
-        
         <View className="mb-8 items-center">
           <Text className="text-3xl font-bold text-slate-900">
             {step === 'otp' ? 'Kodu Gir' : 'Yeni Şifre'}
           </Text>
           <Text className="mt-2 text-center text-slate-500">
-            {step === 'otp' 
+            {step === 'otp'
               ? `${email} adresine gönderilen 6 haneli kodu girin`
-              : 'Yeni şifrenizi belirleyin'
-            }
+              : 'Yeni şifrenizi belirleyin'}
           </Text>
         </View>
 
@@ -109,22 +107,12 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
           {step === 'otp' ? (
             <>
               <View className="mb-6">
-                <OtpInput
-                  value={otp}
-                  onChange={setOtp}
-                  onComplete={handleOtpComplete}
-                />
+                <OtpInput value={otp} onChange={setOtp} onComplete={handleOtpComplete} />
               </View>
 
-              <Button
-                title="Devam Et"
-                onPress={handleOtpContinue}
-                disabled={otp.length !== 6}
-              />
+              <Button title="Devam Et" onPress={handleOtpContinue} disabled={otp.length !== 6} />
 
-              <TouchableOpacity 
-                onPress={() => navigation.goBack()}
-                className="mt-4">
+              <TouchableOpacity onPress={() => navigation.goBack()} className="mt-4">
                 <Text className="text-center text-slate-500">Geri dön</Text>
               </TouchableOpacity>
             </>
@@ -155,7 +143,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
                 className="mt-2"
               />
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => {
                   setStep('otp');
                   setError(null);

@@ -17,7 +17,6 @@ export const qiblaService = {
 
     let bearing = (Math.atan2(y, x) * 180) / Math.PI;
 
-    // Normalize to 0-360
     bearing = (bearing + 360) % 360;
 
     return bearing;

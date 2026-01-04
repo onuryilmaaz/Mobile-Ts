@@ -51,7 +51,6 @@ export function DailyHadithCard() {
   return (
     <View className="mx-4 mb-6">
       <View className="overflow-hidden rounded-3xl border border-amber-100 bg-white shadow-xl shadow-amber-900/10">
-        {/* Header */}
         <View className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
@@ -63,11 +62,8 @@ export function DailyHadithCard() {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* Content */}
         <View className="p-6">
           <Text className="mb-4 text-base leading-7 text-slate-700">{truncatedText}</Text>
-
           {hadith.text.length > 150 && (
             <TouchableOpacity onPress={() => setExpanded(!expanded)} className="mb-4">
               <Text className="text-sm font-semibold text-amber-600">
@@ -75,8 +71,6 @@ export function DailyHadithCard() {
               </Text>
             </TouchableOpacity>
           )}
-
-          {/* Footer */}
           <View className="mt-2 flex-row items-center justify-between border-t border-slate-100 pt-4">
             <View>
               <Text className="text-xs font-medium text-slate-500">Kaynak</Text>

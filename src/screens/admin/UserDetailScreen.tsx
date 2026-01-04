@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View, TouchableOpacity, RefreshControl } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -21,7 +22,6 @@ type Props = NativeStackScreenProps<AdminStackParamList, 'UserDetail'>;
 export default function UserDetailScreen({ route, navigation }: Props) {
   const { userId } = route.params;
   const currentUser = useAuthStore((s) => s.user);
-  //const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
 
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -78,7 +78,6 @@ export default function UserDetailScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   async function toggleUserStatus() {

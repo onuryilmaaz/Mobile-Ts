@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NOTIFICATION_ENABLED_KEY = 'PRAYER_NOTIFICATIONS_ENABLED';
 
-// Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -50,7 +49,6 @@ export const notificationService = {
 
   async schedulePrayerNotifications(prayerTimes: Record<string, string>) {
     try {
-      // Cancel all existing scheduled notifications
       await Notifications.cancelAllScheduledNotificationsAsync();
 
       const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
@@ -73,7 +71,6 @@ export const notificationService = {
 
         const [hours, minutes] = prayer.time.split(':').map(Number);
 
-        // Schedule notification at exact prayer time
         const exactTime = new Date();
         exactTime.setHours(hours, minutes, 0, 0);
 
@@ -91,7 +88,6 @@ export const notificationService = {
           });
         }
 
-        // Schedule notification 30 minutes before
         const thirtyMinBefore = new Date();
         thirtyMinBefore.setHours(hours, minutes - 30, 0, 0);
 

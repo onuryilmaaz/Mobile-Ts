@@ -55,15 +55,13 @@ export default function ChangePasswordScreen() {
 
   return (
     <Screen className="bg-slate-50">
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
         <Card className="mt-4">
           <View className="mb-4 flex-row items-center gap-2">
             <Ionicons name="lock-closed-outline" size={20} color="#0f766e" />
@@ -90,16 +88,11 @@ export default function ChangePasswordScreen() {
               onChangeText={setNewPassword}
               onFocus={handleInputFocus}
             />
-            
-            <Button 
-              title="Şifreyi Güncelle" 
-              onPress={handleChangePassword} 
-              loading={loading} 
-            />
+
+            <Button title="Şifreyi Güncelle" onPress={handleChangePassword} loading={loading} />
           </View>
         </Card>
       </ScrollView>
     </Screen>
   );
 }
-

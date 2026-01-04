@@ -94,7 +94,6 @@ export default function ProfileScreen({ navigation }: Props) {
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // City Selection Logic
   const [selectedCity, setSelectedCity] = useState('İstanbul');
   const [cityModalVisible, setCityModalVisible] = useState(false);
 
@@ -287,7 +286,6 @@ export default function ProfileScreen({ navigation }: Props) {
           </Text>
           <Text className="text-slate-500">{profile?.email ?? user?.email}</Text>
 
-          {/* City Selection Badge */}
           <TouchableOpacity
             onPress={() => setCityModalVisible(true)}
             className="mt-3 flex-row items-center gap-1.5 rounded-full border border-teal-100 bg-teal-50 px-3 py-1.5">
@@ -449,7 +447,6 @@ export default function ProfileScreen({ navigation }: Props) {
         </Card>
       </ScrollView>
 
-      {/* City Selection Modal */}
       <Modal
         animationType="slide"
         transparent={true}

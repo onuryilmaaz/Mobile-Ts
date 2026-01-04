@@ -18,21 +18,24 @@ export default function SessionsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const loadSessions = useCallback(async (isInitial = false) => {
-    try {
-      if (isInitial) setInitialLoading(true);
-      else setRefreshing(true);
-      const { data } = await authApi.sessions();
-      const list = Array.isArray(data) ? data : (data as any)?.sessions ?? [];
-      setSessions(list);
-    } catch (err) {
-      console.log(err);
-      alert.error('Hata', 'Oturumlar alınamadı');
-    } finally {
-      setRefreshing(false);
-      setInitialLoading(false);
-    }
-  }, [alert]);
+  const loadSessions = useCallback(
+    async (isInitial = false) => {
+      try {
+        if (isInitial) setInitialLoading(true);
+        else setRefreshing(true);
+        const { data } = await authApi.sessions();
+        const list = Array.isArray(data) ? data : ((data as any)?.sessions ?? []);
+        setSessions(list);
+      } catch (err) {
+        console.log(err);
+        alert.error('Hata', 'Oturumlar alınamadı');
+      } finally {
+        setRefreshing(false);
+        setInitialLoading(false);
+      }
+    },
+    [alert]
+  );
 
   useEffect(() => {
     loadSessions(true);
@@ -86,14 +89,14 @@ export default function SessionsScreen() {
 
   return (
     <Screen className="bg-slate-50">
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => loadSessions()} />
         }>
         <Card className="mb-4 mt-4">
-          <View className="flex-row items-center gap-2 mb-2">
+          <View className="mb-2 flex-row items-center gap-2">
             <Ionicons name="information-circle-outline" size={20} color="#64748b" />
             <Text className="text-sm font-medium text-slate-700">Bilgi</Text>
           </View>
@@ -113,30 +116,32 @@ export default function SessionsScreen() {
         ) : (
           <View className="gap-3">
             {sessions.map((session) => (
-              <Card 
-                key={session.id} 
-                className={session.isCurrent ? 'border-primary-200 bg-primary-50' : ''}
-              >
+              <Card
+                key={session.id}
+                className={session.isCurrent ? 'border-primary-200 bg-primary-50' : ''}>
                 <View className="flex-row items-start justify-between">
                   <View className="flex-1">
                     <View className="mb-2 flex-row items-center gap-2">
-                      <Ionicons 
-                        name={session.isCurrent ? 'phone-portrait' : 'phone-portrait-outline'} 
-                        size={20} 
-                        color={session.isCurrent ? '#0f766e' : '#64748b'} 
+                      <Ionicons
+                        name={session.isCurrent ? 'phone-portrait' : 'phone-portrait-outline'}
+                        size={20}
+                        color={session.isCurrent ? '#0f766e' : '#64748b'}
                       />
-                      <Text className={`font-semibold ${session.isCurrent ? 'text-primary-700' : 'text-slate-900'}`}>
+                      <Text
+                        className={`font-semibold ${session.isCurrent ? 'text-primary-700' : 'text-slate-900'}`}>
                         {session.isCurrent ? 'Bu Cihaz' : 'Diğer Cihaz'}
                       </Text>
                       {session.isCurrent && (
-                        <Badge variant="success" size="sm">Aktif</Badge>
+                        <Badge variant="success" size="sm">
+                          Aktif
+                        </Badge>
                       )}
                     </View>
-                    
+
                     <Text className="mb-2 text-xs text-slate-500" numberOfLines={2}>
                       {session.userAgent?.slice(0, 60) ?? 'Bilinmeyen cihaz'}
                     </Text>
-                    
+
                     <View className="flex-row items-center gap-1">
                       <Ionicons name="location-outline" size={14} color="#94a3b8" />
                       <Text className="text-xs text-slate-400">
@@ -144,13 +149,12 @@ export default function SessionsScreen() {
                       </Text>
                     </View>
                   </View>
-                  
+
                   {!session.isCurrent && (
                     <TouchableOpacity
                       onPress={() => handleRevokeSession(session.id)}
                       className="ml-3 rounded-full bg-red-50 p-2"
-                      activeOpacity={0.7}
-                    >
+                      activeOpacity={0.7}>
                       <Ionicons name="close" size={20} color="#ef4444" />
                     </TouchableOpacity>
                   )}
@@ -163,16 +167,16 @@ export default function SessionsScreen() {
         {sessions.length > 0 && (
           <Card className="mt-4">
             <View className="gap-3">
-              <Button 
-                title="Oturumları Yenile" 
-                onPress={() => loadSessions()} 
+              <Button
+                title="Oturumları Yenile"
+                onPress={() => loadSessions()}
                 loading={refreshing}
                 variant="outline"
               />
               {sessions.length > 1 && (
-                <Button 
-                  title="Diğer Oturumları Kapat" 
-                  onPress={handleRevokeOthers} 
+                <Button
+                  title="Diğer Oturumları Kapat"
+                  onPress={handleRevokeOthers}
                   loading={loading}
                   variant="danger"
                 />
@@ -184,4 +188,3 @@ export default function SessionsScreen() {
     </Screen>
   );
 }
-

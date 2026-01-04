@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { NavigatorScreenParams } from '@react-navigation/native';
 
 export type AuthStackParamList = {
@@ -41,7 +42,6 @@ export type RootStackParamList = {
 
 declare global {
   namespace ReactNavigation {
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface RootParamList extends RootStackParamList {}
   }
 }

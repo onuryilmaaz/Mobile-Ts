@@ -6,13 +6,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
-  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAlertStore, AlertType, AlertButton } from '@/store/alert.store';
 import { BlurView } from 'expo-blur';
-
-const { width } = Dimensions.get('window');
 
 const getIconConfig = (type: AlertType) => {
   switch (type) {
@@ -111,14 +108,12 @@ export function AlertDialog() {
             transform: [{ scale: scaleAnim }],
             opacity: opacityAnim,
           }}>
-          {/* Icon */}
           <View
             className="mb-4 h-16 w-16 items-center justify-center rounded-full"
             style={{ backgroundColor: iconConfig.bgColor }}>
             <Ionicons name={iconConfig.name} size={32} color={iconConfig.color} />
           </View>
 
-          {/* Content */}
           <Text className="mb-2 text-center text-xl font-bold text-slate-800">{title}</Text>
           {message && (
             <Text className="mb-2 text-center text-[15px] leading-[22px] text-slate-500">
@@ -126,7 +121,6 @@ export function AlertDialog() {
             </Text>
           )}
 
-          {/* Buttons */}
           <View className={`mt-4 w-full flex-row gap-3 ${buttons.length > 2 ? 'flex-col' : ''}`}>
             {buttons.map((button, index) => {
               const buttonStyle = getButtonStyle(button.style, index, buttons.length);

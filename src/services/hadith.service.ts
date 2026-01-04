@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/array-type */
 const BASE_URL = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
 
 export interface Hadith {
@@ -25,7 +26,6 @@ export interface HadithBook {
 }
 
 export const hadithService = {
-  // Get random hadith from a specific book
   async getRandomHadith(book: 'bukhari' | 'muslim' | 'abudawud' | 'tirmidhi' = 'bukhari') {
     try {
       const response = await fetch(`${BASE_URL}/editions/tur-${book}.json`);
@@ -45,7 +45,6 @@ export const hadithService = {
     }
   },
 
-  // Get specific hadith by number
   async getHadithByNumber(book: 'bukhari' | 'muslim' | 'abudawud' | 'tirmidhi', number: number) {
     try {
       const response = await fetch(`${BASE_URL}/editions/tur-${book}.json`);
@@ -65,7 +64,6 @@ export const hadithService = {
     }
   },
 
-  // Get hourly hadith (uses current hour to pick a consistent hadith for the hour)
   async getHourlyHadith() {
     try {
       const response = await fetch(`${BASE_URL}/editions/tur-bukhari.json`);
@@ -77,7 +75,6 @@ export const hadithService = {
           (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000
         );
         const hour = now.getHours();
-        // Shift index every hour
         const index = (dayOfYear * 24 + hour) % data.hadiths.length;
 
         return {

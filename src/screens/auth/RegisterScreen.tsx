@@ -81,10 +81,10 @@ export default function RegisterScreen({ navigation }: Props) {
 
           <View className="flex-row gap-3">
             <View className="flex-1">
-              <Input 
-                label="Ad" 
-                placeholder="Adın" 
-                value={firstName} 
+              <Input
+                label="Ad"
+                placeholder="Adın"
+                value={firstName}
                 onChangeText={setFirstName}
                 onFocus={handleInputFocus}
               />

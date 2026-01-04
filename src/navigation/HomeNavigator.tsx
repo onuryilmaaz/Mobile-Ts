@@ -16,6 +16,8 @@ import { HomeScreen, QiblaFinderScreen } from '@/screens/user';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
+import { useThemeStore } from '@/store/theme.store';
+import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -23,9 +25,6 @@ type HomeHeaderNavigationProp = CompositeNavigationProp<
   any,
   BottomTabNavigationProp<UserTabParamList>
 >;
-
-import { useThemeStore } from '@/store/theme.store';
-import { Ionicons } from '@expo/vector-icons';
 
 function HomeHeader() {
   const headerColor = useThemeStore((s) => s.headerColor);

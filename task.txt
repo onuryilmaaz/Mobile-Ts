@@ -1,0 +1,6 @@
+Günün Ayeti (Kur'an-ı Kerim Entegrasyonu) 📖
+Detay: Tıpkı hadis gibi, her gün veya her saat değişen, altında tefsiriyle birlikte bir ayet kartı.
+Görsellik: Hadis kartının altına veya yanına kaydırılabilir (Carousel) bir yapıda eklenebilir.
+
+İnteraktif Namaz Rehberi ✨
+Detay: Yeni başlayanlar veya bilgilerini tazelemek isteyenler için; abdestin ve namazın adım adım görsel/animasyonlu anlatımı.

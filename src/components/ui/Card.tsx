@@ -9,4 +9,3 @@ export function Card({ children, className, ...props }: ViewProps) {
     </View>
   );
 }
-

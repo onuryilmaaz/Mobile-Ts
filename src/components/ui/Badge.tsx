@@ -32,7 +32,13 @@ const textColors: Record<BadgeVariant, string> = {
   neutral: 'text-slate-700',
 };
 
-export function Badge({ children, variant = 'primary', size = 'md', className = '', ...props }: BadgeProps) {
+export function Badge({
+  children,
+  variant = 'primary',
+  size = 'md',
+  className = '',
+  ...props
+}: BadgeProps) {
   return (
     <View
       className={`inline-flex items-center rounded-full border ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
@@ -45,4 +51,3 @@ export function Badge({ children, variant = 'primary', size = 'md', className = 
     </View>
   );
 }
-

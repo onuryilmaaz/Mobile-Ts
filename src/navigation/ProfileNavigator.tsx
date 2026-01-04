@@ -8,7 +8,6 @@ import {
   SessionsScreen,
   AccountScreen,
 } from '@/screens/user';
-import { HEADER_CONFIG } from './header.config';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();

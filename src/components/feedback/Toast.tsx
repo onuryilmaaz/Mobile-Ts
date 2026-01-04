@@ -26,7 +26,7 @@ export const useToastStore = create<ToastStore>((set) => ({
     set((state) => ({
       toasts: [...state.toasts, { ...toast, id }],
     }));
-    
+
     const duration = toast.duration ?? 3000;
     setTimeout(() => {
       set((state) => ({
@@ -42,23 +42,26 @@ export const useToastStore = create<ToastStore>((set) => ({
 }));
 
 export const toast = {
-  success: (title: string, message?: string) => 
+  success: (title: string, message?: string) =>
     useToastStore.getState().addToast({ type: 'success', title, message }),
-  error: (title: string, message?: string) => 
+  error: (title: string, message?: string) =>
     useToastStore.getState().addToast({ type: 'error', title, message }),
-  warning: (title: string, message?: string) => 
+  warning: (title: string, message?: string) =>
     useToastStore.getState().addToast({ type: 'warning', title, message }),
-  info: (title: string, message?: string) => 
+  info: (title: string, message?: string) =>
     useToastStore.getState().addToast({ type: 'info', title, message }),
 };
 
-const toastConfig: Record<ToastType, { 
-  bg: string; 
-  border: string;
-  icon: keyof typeof Ionicons.glyphMap; 
-  iconColor: string;
-  textColor: string;
-}> = {
+const toastConfig: Record<
+  ToastType,
+  {
+    bg: string;
+    border: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    iconColor: string;
+    textColor: string;
+  }
+> = {
   success: {
     bg: 'bg-green-50',
     border: 'border-green-200',
@@ -115,17 +118,16 @@ function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismis
         opacity: fadeAnim,
         transform: [{ translateY }],
       }}
-      className={`mx-4 mb-2 flex-row items-center rounded-xl border ${config.bg} ${config.border} p-4 shadow-sm`}
-    >
+      className={`mx-4 mb-2 flex-row items-center rounded-xl border ${config.bg} ${config.border} p-4 shadow-sm`}>
       <Ionicons name={config.icon} size={24} color={config.iconColor} />
-      
+
       <View className="ml-3 flex-1">
         <Text className={`font-semibold ${config.textColor}`}>{toastData.title}</Text>
         {toastData.message && (
           <Text className={`text-sm ${config.textColor} opacity-80`}>{toastData.message}</Text>
         )}
       </View>
-      
+
       <TouchableOpacity onPress={onDismiss} className="ml-2 p-1">
         <Ionicons name="close" size={18} color="#64748b" />
       </TouchableOpacity>
@@ -146,4 +148,3 @@ export function ToastContainer() {
     </View>
   );
 }
-
