@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useState, useEffect } from 'react';
-import { HomeScreen, QiblaFinderScreen } from '@/screens/user';
+import { HomeScreen, QiblaFinderScreen, LocationSelectionScreen } from '@/screens/user';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
@@ -111,6 +111,18 @@ export default function HomeNavigator() {
             headerShown: true,
             header: undefined,
             title: 'Kıble Bulucu',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: '#fff',
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="LocationSelection"
+          component={LocationSelectionScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Konum Seç',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: '#fff',
             headerBackTitle: '',

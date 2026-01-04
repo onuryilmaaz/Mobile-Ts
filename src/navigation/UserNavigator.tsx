@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import HomeNavigator from './HomeNavigator';
+import SurahsNavigator from './SurahsNavigator';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -57,6 +58,18 @@ export default function UserNavigator() {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Surahs"
+        component={SurahsNavigator}
+        options={{
+          tabBarLabel: 'Sureler',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />

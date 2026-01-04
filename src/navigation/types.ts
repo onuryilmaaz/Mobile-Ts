@@ -27,10 +27,16 @@ export type ProfileStackParamList = {
 export type HomeStackParamList = {
   HomeMain: undefined;
   QiblaFinder: undefined;
+  LocationSelection: undefined;
+};
+
+export type SurahsStackParamList = {
+  SurahsMain: undefined;
 };
 
 export type UserTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
+  Surahs: NavigatorScreenParams<SurahsStackParamList>;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };

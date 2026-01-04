@@ -1,0 +1,109 @@
+{
+    "success": true,
+    "code": 200,
+    "message": "İlçeler başarıyla getirildi.",
+    "data": [
+        {
+            "_id": "9648",
+            "name": "ÇAYIROVA",
+            "name_en": "CAYIROVA",
+            "url": "/tr-TR/9648/cayirova-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9649",
+            "name": "DARICA",
+            "name_en": "DARICA",
+            "url": "/tr-TR/9649/darica-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9650",
+            "name": "DİLOVASI",
+            "name_en": "DILOVASI",
+            "url": "/tr-TR/9650/dilovasi-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9651",
+            "name": "GEBZE",
+            "name_en": "GEBZE",
+            "url": "/tr-TR/9651/gebze-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9652",
+            "name": "KANDIRA",
+            "name_en": "KANDIRA",
+            "url": "/tr-TR/9652/kandira-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9653",
+            "name": "KARAMÜRSEL",
+            "name_en": "KARAMURSEL",
+            "url": "/tr-TR/9653/karamursel-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "17902",
+            "name": "KARTEPE",
+            "name_en": "KARTEPE",
+            "url": "/tr-TR/17902/kartepe-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9654",
+            "name": "KOCAELİ",
+            "name_en": "KOCAELI",
+            "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        },
+        {
+            "_id": "9655",
+            "name": "KÖRFEZ",
+            "name_en": "KORFEZ",
+            "url": "/tr-TR/9655/korfez-icin-namaz-vakti",
+            "state_id": "551",
+            "country_id": "2",
+            "createdAt": "2025-03-14T01:01:06.368Z",
+            "updatedAt": "2025-03-14T01:01:06.368Z",
+            "updated_at": "2026-01-03T10:49:30.681Z"
+        }
+    ],
+    "meta": {},
+    "requestId": "9f3f03cc-5cfb-48ca-92bf-cbdc17e2687b",
+    "timestamp": 1767549299967
+}

@@ -1,13 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef } from 'react';
-import { View, Text, ActivityIndicator, Switch } from 'react-native';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { HomeStackParamList } from '@/navigation/types';
 import { prayerService } from '@/services/prayer.service';
 import { notificationService } from '@/services/notification.service';
 import { useThemeStore } from '@/store/theme.store';
+import { getDistrictById, getStateById } from '@/constants/locations';
+import type { PrayerTimeData } from '@/types/prayer';
 
-const STORAGE_KEY = 'SELECTED_CITY';
+const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
+const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
+const DEFAULT_DISTRICT_ID = '9654'; // Kocaeli - Kocaeli (default)
+
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
 const PRAYER_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   İmsak: 'moon-outline',
@@ -38,12 +47,14 @@ const NEXT_TO_CURRENT: Record<string, string> = {
 };
 
 export function PrayerTimesCard() {
+  const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any>(null);
-  const [selectedCity, setSelectedCity] = useState('İstanbul');
+  const [data, setData] = useState<PrayerTimeData | null>(null);
+  const [selectedDistrictId, setSelectedDistrictId] = useState<string>(DEFAULT_DISTRICT_ID);
+  const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
   const [remainingTime, setRemainingTime] = useState<string>('');
   const [nextPrayerName, setNextPrayerName] = useState<string>('');
-  const [isCityLoaded, setIsCityLoaded] = useState(false);
+  const [isDistrictLoaded, setIsDistrictLoaded] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const targetTimeRef = useRef<number | null>(null);
@@ -51,14 +62,20 @@ export function PrayerTimesCard() {
 
   const setHeaderColor = useThemeStore((s) => s.setHeaderColor);
 
+  const selectedDistrict = selectedDistrictId ? getDistrictById(selectedDistrictId) : null;
+  const selectedState = selectedStateId ? getStateById(selectedStateId) : null;
+
   useEffect(() => {
-    loadCity();
+    loadDistrict();
     initNotifications();
-    const interval = setInterval(() => {
-      loadCity();
-    }, 2000);
-    return () => clearInterval(interval);
   }, []);
+
+  // Reload when screen is focused (user might have changed location)
+  useFocusEffect(
+    useCallback(() => {
+      loadDistrict();
+    }, [])
+  );
 
   const initNotifications = async () => {
     const hasPermission = await notificationService.requestPermissions();
@@ -80,32 +97,34 @@ export function PrayerTimesCard() {
     }
   };
 
-  const loadCity = async () => {
+  const loadDistrict = async () => {
     try {
-      const savedCity = await AsyncStorage.getItem(STORAGE_KEY);
-      if (savedCity && savedCity !== selectedCity) {
-        setSelectedCity(savedCity);
+      const savedStateId = await AsyncStorage.getItem(STORAGE_STATE_ID_KEY);
+      const savedDistrictId = await AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY);
+      
+      if (savedStateId) {
+        setSelectedStateId(savedStateId);
       }
-      setIsCityLoaded(true);
+      
+      if (savedDistrictId) {
+        setSelectedDistrictId(savedDistrictId);
+      } else if (savedStateId) {
+        // If state is selected but district is not, use default district for that state
+        // This shouldn't happen normally, but handle it gracefully
+        setSelectedDistrictId(DEFAULT_DISTRICT_ID);
+      }
+      
+      setIsDistrictLoaded(true);
     } catch (e) {
-      console.error('Failed to load city', e);
-      setIsCityLoaded(true);
+      console.error('Failed to load district', e);
+      setIsDistrictLoaded(true);
     }
   };
 
-  const normalizeCity = (city: string) => {
-    return city.replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
-  };
+  const calculateNextPrayer = (prayerData: PrayerTimeData) => {
+    if (!prayerData || !prayerData.times) return;
 
-  const fixTime = (timeStr: string) => {
-    if (!timeStr) return '';
-    const [h, m] = timeStr.split(':').map(Number);
-    let newH = h - 3;
-    if (newH < 0) newH += 24;
-    return `${newH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-  };
-
-  const calculateNextPrayer = (times: Record<string, string>) => {
+    const times = prayerData.times;
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     const currentSeconds = now.getSeconds();
@@ -157,27 +176,26 @@ export function PrayerTimesCard() {
     setHeaderColor(color);
   }, [nextPrayerName, setHeaderColor]);
 
-  const fetchPrayerTimes = async (city: string) => {
+  const fetchPrayerTimes = async (districtId: string) => {
     try {
       setLoading(true);
-      const normalizedCity = normalizeCity(city);
-      const res = await prayerService.getPrayerTimes(normalizedCity);
+      const prayerData = await prayerService.getTodayPrayerTimes(districtId);
 
-      if (res && res.success && res.data && res.data.prayers) {
-        const raw = res.data.prayers;
-        const corrected = {
-          imsak: fixTime(raw.sabah),
-          gunes: fixTime(raw.imsak),
-          ogle: fixTime(raw.öğle),
-          ikindi: fixTime(raw.ikindi),
-          aksam: fixTime(raw.akşam),
-          yatsi: fixTime(raw.yatsı),
-        };
-        setData(corrected);
-        calculateNextPrayer(corrected);
+      if (prayerData) {
+        setData(prayerData);
+        calculateNextPrayer(prayerData);
 
         if (notificationsEnabled) {
-          await notificationService.schedulePrayerNotifications(corrected);
+          // Convert to old format for notification service compatibility
+          const notificationData = {
+            imsak: prayerData.times.imsak,
+            gunes: prayerData.times.gunes,
+            ogle: prayerData.times.ogle,
+            ikindi: prayerData.times.ikindi,
+            aksam: prayerData.times.aksam,
+            yatsi: prayerData.times.yatsi,
+          };
+          await notificationService.schedulePrayerNotifications(notificationData);
         }
       }
     } catch (error: any) {
@@ -188,10 +206,10 @@ export function PrayerTimesCard() {
   };
 
   useEffect(() => {
-    if (isCityLoaded) {
-      fetchPrayerTimes(selectedCity);
+    if (isDistrictLoaded && selectedDistrictId) {
+      fetchPrayerTimes(selectedDistrictId);
     }
-  }, [selectedCity, isCityLoaded]);
+  }, [selectedDistrictId, isDistrictLoaded]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -237,14 +255,14 @@ export function PrayerTimesCard() {
 
   const themeColor = getThemeColor();
 
-  const prayers = data
+  const prayers = data?.times
     ? [
-        { label: 'İmsak', time: data.imsak, key: 'imsak' },
-        { label: 'Güneş', time: data.gunes, key: 'gunes' },
-        { label: 'Öğle', time: data.ogle, key: 'ogle' },
-        { label: 'İkindi', time: data.ikindi, key: 'ikindi' },
-        { label: 'Akşam', time: data.aksam, key: 'aksam' },
-        { label: 'Yatsı', time: data.yatsi, key: 'yatsi' },
+        { label: 'İmsak', time: data.times.imsak, key: 'imsak' },
+        { label: 'Güneş', time: data.times.gunes, key: 'gunes' },
+        { label: 'Öğle', time: data.times.ogle, key: 'ogle' },
+        { label: 'İkindi', time: data.times.ikindi, key: 'ikindi' },
+        { label: 'Akşam', time: data.times.aksam, key: 'aksam' },
+        { label: 'Yatsı', time: data.times.yatsi, key: 'yatsi' },
       ]
     : [];
 
@@ -308,6 +326,30 @@ export function PrayerTimesCard() {
               })}
             </View>
           )}
+          
+          {/* Location Selection */}
+          <View className="mt-4 border-t border-slate-100 pt-4">
+            <TouchableOpacity
+              onPress={() => navigation.navigate('LocationSelection')}
+              className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <View className="flex-1">
+                <View className="flex-row items-center gap-2">
+                  <Ionicons name="location-outline" size={20} color="#0f766e" />
+                  <Text className="text-sm font-semibold text-slate-900">Konum</Text>
+                </View>
+                <Text className="mt-1 text-xs text-slate-600">
+                  {selectedState && selectedDistrict
+                    ? `${selectedState.name} - ${selectedDistrict.name}`
+                    : selectedDistrict
+                      ? selectedDistrict.name
+                      : 'Konum seçin'}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Notifications */}
           <View className="mt-4 border-t border-slate-100 pt-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">

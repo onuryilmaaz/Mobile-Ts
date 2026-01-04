@@ -1,5 +1,5 @@
 {
-  "name": "my-expo-app",
+  "name": "salah",
   "version": "1.0.0",
   "scripts": {
     "android": "expo start --android",
@@ -8,7 +8,8 @@
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "fetch-districts": "node scripts/fetch-districts.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

@@ -27,8 +27,8 @@ export function ReligiousDaysCard() {
 
   return (
     <View className="mx-4 mb-6">
-      <View className="overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-xl shadow-indigo-900/10">
-        <View className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-4">
+      <View className="overflow-hidden rounded-3xl border border-primary-100 bg-white shadow-xl shadow-primary-900/10">
+        <View className="bg-primary-700 px-6 py-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <View className="rounded-full bg-white/20 p-1.5">
@@ -58,8 +58,8 @@ export function ReligiousDaysCard() {
             <View className="flex-1">
               <Text className="mb-1 text-xl font-bold text-slate-900">{nextDay.name}</Text>
               <View className="flex-row items-center gap-2">
-                <Ionicons name="calendar-outline" size={14} color="#6366f1" />
-                <Text className="text-sm font-medium text-indigo-600">
+                <Ionicons name="calendar-outline" size={14} color="#64748b" />
+                <Text className="text-sm font-medium text-primary-700">
                   {nextDay.date.toLocaleDateString('tr-TR', {
                     day: 'numeric',
                     month: 'long',
@@ -69,17 +69,17 @@ export function ReligiousDaysCard() {
               </View>
             </View>
             <View className="items-end">
-              <Text className="text-3xl font-black text-indigo-600">{daysRemaining}</Text>
-              <Text className="text-[10px] font-bold uppercase tracking-tighter text-indigo-400">
+              <Text className="text-3xl font-black text-primary-600">{daysRemaining}</Text>
+              <Text className="text-[10px] font-bold uppercase tracking-tighter text-primary-400">
                 GÜN KALDI
               </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
-            className="mt-6 flex-row items-center justify-center gap-2 rounded-2xl bg-indigo-50 py-3 active:opacity-70">
-            <Text className="text-sm font-bold text-indigo-700">Tüm Dini Günleri Gör</Text>
-            <Ionicons name="arrow-forward" size={16} color="#4338ca" />
+            className="mt-6 flex-row items-center justify-center gap-2 rounded-2xl bg-primary-50 py-3 active:opacity-70">
+            <Text className="text-sm font-bold text-primary-700">Tüm Dini Günleri Gör</Text>
+            <Ionicons name="arrow-forward" size={16} color="#64748b" />
           </TouchableOpacity>
         </View>
       </View>
@@ -90,10 +90,10 @@ export function ReligiousDaysCard() {
         onRequestClose={() => setModalVisible(false)}>
         <BlurView intensity={30} tint="dark" className="flex-1 items-center justify-center px-4">
           <View className="max-h-[80%] w-full overflow-hidden rounded-[40px] bg-white shadow-2xl">
-            <View className="flex-row items-center justify-between bg-indigo-600 px-6 py-6">
+            <View className="flex-row items-center justify-between bg-primary-700 px-6 py-6">
               <View>
                 <Text className="text-2xl font-bold text-white">2026 Dini Günler</Text>
-                <Text className="mt-1 text-xs text-indigo-100">Önemli tarihler ve kandiller</Text>
+                <Text className="mt-1 text-xs text-primary-100">Önemli tarihler ve kandiller</Text>
               </View>
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
@@ -108,15 +108,15 @@ export function ReligiousDaysCard() {
                 return (
                   <View
                     key={day.id}
-                    className={`mb-3 flex-row items-center rounded-2xl border p-4 ${isPast ? 'border-slate-100 bg-slate-50 opacity-60' : 'border-indigo-50 bg-white shadow-sm'}`}>
+                    className={`mb-3 flex-row items-center rounded-2xl border p-4 ${isPast ? 'border-slate-100 bg-slate-50 opacity-60' : 'border-primary-100 bg-white shadow-sm'}`}>
                     <View
-                      className={`h-12 w-12 items-center justify-center rounded-2xl ${isPast ? 'bg-slate-200' : 'bg-indigo-100'}`}>
+                      className={`h-12 w-12 items-center justify-center rounded-2xl ${isPast ? 'bg-slate-200' : 'bg-primary-100'}`}>
                       <Text
-                        className={`text-base font-bold ${isPast ? 'text-slate-500' : 'text-indigo-700'}`}>
+                        className={`text-base font-bold ${isPast ? 'text-slate-500' : 'text-primary-700'}`}>
                         {day.date.getDate()}
                       </Text>
                       <Text
-                        className={`text-[10px] font-bold uppercase ${isPast ? 'text-slate-400' : 'text-indigo-500'}`}>
+                        className={`text-[10px] font-bold uppercase ${isPast ? 'text-slate-400' : 'text-primary-500'}`}>
                         {day.date.toLocaleDateString('tr-TR', { month: 'short' })}
                       </Text>
                     </View>
@@ -129,7 +129,7 @@ export function ReligiousDaysCard() {
                     </View>
 
                     {!isPast && index === allDays.indexOf(nextDay) && (
-                      <View className="rounded-lg bg-indigo-600 px-2 py-1">
+                      <View className="rounded-lg bg-primary-700 px-2 py-1">
                         <Text className="text-[10px] font-bold text-white">YAKLAŞAN</Text>
                       </View>
                     )}

@@ -9,6 +9,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from '@/services/token.service';
+import { setLogoutCallback } from '@/services/api';
 import type { AuthUser } from './auth.types';
 
 type AuthState = {

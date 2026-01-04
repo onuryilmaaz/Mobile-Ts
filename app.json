@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "name": "Salah",
+    "slug": "salah",
     "version": "1.0.0",
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,15 +28,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f766e"
       },
-      "package": "com.onur6541.myexpoapp",
+      "package": "com.onur6541.salah",
       "navigationBar": {
         "backgroundColor": "#ffffff",
         "barStyle": "dark-content"
-      }
-    },
-    "extra": {
-      "eas": {
-        "projectId": "417ef321-caec-4ef1-a6a2-0c4986a9ec37"
       }
     },
     "owner": "onur6541",
@@ -44,6 +39,12 @@
       "expo-asset",
       "expo-font",
       "expo-navigation-bar"
-    ]
+    ],
+    "extra": {
+      "expo-navigation-bar": {},
+      "eas": {
+        "projectId": "25385d71-03c1-4862-aeda-a8899b6d35d8"
+      }
+    }
   }
 }

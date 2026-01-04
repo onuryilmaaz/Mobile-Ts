@@ -1,0 +1,372 @@
+{
+    "success": true,
+    "code": 200,
+    "message": "Namaz vakitleri başarıyla getirildi.",
+    "data": [
+        {
+            "_id": "69590f07d76132ea03177bc5",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-04T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 15,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "15 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:46",
+                "gunes": "08:18",
+                "ogle": "13:10",
+                "ikindi": "15:31",
+                "aksam": "17:52",
+                "yatsi": "19:18"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bd0",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-05T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 16,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "16 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:47",
+                "gunes": "08:18",
+                "ogle": "13:10",
+                "ikindi": "15:32",
+                "aksam": "17:53",
+                "yatsi": "19:19"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bdb",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-06T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 17,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "17 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:47",
+                "gunes": "08:18",
+                "ogle": "13:11",
+                "ikindi": "15:33",
+                "aksam": "17:54",
+                "yatsi": "19:20"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bdc",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-07T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 18,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "18 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:47",
+                "gunes": "08:18",
+                "ogle": "13:11",
+                "ikindi": "15:34",
+                "aksam": "17:55",
+                "yatsi": "19:21"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bdd",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-08T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 19,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "19 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:47",
+                "gunes": "08:17",
+                "ogle": "13:12",
+                "ikindi": "15:35",
+                "aksam": "17:56",
+                "yatsi": "19:22"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bde",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-09T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 20,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "20 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:47",
+                "gunes": "08:17",
+                "ogle": "13:12",
+                "ikindi": "15:36",
+                "aksam": "17:57",
+                "yatsi": "19:22"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bdf",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-10T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 21,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "21 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:47",
+                "gunes": "08:17",
+                "ogle": "13:13",
+                "ikindi": "15:37",
+                "aksam": "17:58",
+                "yatsi": "19:23"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        },
+        {
+            "_id": "69590f07d76132ea03177bb0",
+            "district_id": {
+                "_id": "9654",
+                "name": "KOCAELİ",
+                "name_en": "KOCAELI",
+                "url": "/tr-TR/9654/kocaeli-icin-namaz-vakti",
+                "state_id": {
+                    "_id": "551",
+                    "name": "KOCAELİ",
+                    "name_en": "KOCAELİ",
+                    "country_id": "2"
+                },
+                "country_id": {
+                    "_id": "2",
+                    "name": "TÜRKİYE",
+                    "name_en": "TÜRKİYE"
+                },
+                "createdAt": "2025-03-14T01:01:06.368Z",
+                "updatedAt": "2025-03-14T01:01:06.368Z",
+                "updated_at": "2026-01-03T10:49:30.681Z"
+            },
+            "date": "2026-01-11T00:00:00.000Z",
+            "created_at": "2026-01-03T12:43:51.168Z",
+            "hijri_date": {
+                "day": 22,
+                "month": 7,
+                "month_name": "Recep",
+                "month_name_en": "Rajab",
+                "year": 1447,
+                "full_date": "22 Recep 1447"
+            },
+            "meta": {
+                "source": "Diyanet İşleri Başkanlığı"
+            },
+            "times": {
+                "imsak": "06:46",
+                "gunes": "08:17",
+                "ogle": "13:13",
+                "ikindi": "15:38",
+                "aksam": "17:59",
+                "yatsi": "19:24"
+            },
+            "updated_at": "2026-01-03T12:43:51.168Z"
+        }
+    ],
+    "meta": {
+        "totalCount": 8
+    },
+    "requestId": "3f6eed6e-9115-41e3-9861-56047afcb9e3",
+    "timestamp": 1767549441772
+}

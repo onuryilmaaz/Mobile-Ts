@@ -51,7 +51,7 @@ export function DailyHadithCard() {
   return (
     <View className="mx-4 mb-6">
       <View className="overflow-hidden rounded-3xl border border-amber-100 bg-white shadow-xl shadow-amber-900/10">
-        <View className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+        <View className="bg-amber-600 px-6 py-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <Ionicons name="book" size={20} color="#fff" />
@@ -77,7 +77,7 @@ export function DailyHadithCard() {
               <Text className="text-sm font-bold text-slate-700">{bookName}</Text>
             </View>
             <View className="rounded-full bg-amber-50 px-3 py-1.5">
-              <Text className="text-xs font-semibold text-amber-700">#{hadith.hadithnumber}</Text>
+              <Text className="text-xs font-semibold text-amber-600">#{hadith.hadithnumber}</Text>
             </View>
           </View>
         </View>

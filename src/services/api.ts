@@ -8,6 +8,13 @@ import {
   setRefreshToken,
 } from './token.service';
 
+// Logout callback - will be set by auth store to avoid circular dependency
+let logoutCallback: (() => Promise<void>) | null = null;
+
+export function setLogoutCallback(callback: () => Promise<void>) {
+  logoutCallback = callback;
+}
+
 //const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
 
@@ -70,13 +77,54 @@ api.interceptors.response.use(
     const originalRequest = error.config as any;
     const status = error?.response?.status;
     const requestUrl = originalRequest?.url || '';
+    const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
 
+    // Handle timeout errors
+    if (isTimeout && !requestUrl.includes('/auth/refresh')) {
+      console.log('Timeout detected on:', requestUrl, '- attempting token refresh...');
+
+      // Don't retry if already retried
+      if (originalRequest?._retry) {
+        console.log('Timeout retry already attempted, logging out...');
+        if (logoutCallback) {
+          await logoutCallback();
+        } else {
+          await clearTokens();
+        }
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+      const newToken = await refreshAccessToken();
+
+      if (newToken) {
+        console.log('Token refreshed successfully after timeout, retrying request...');
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } else {
+        console.log('Token refresh failed after timeout, logging out...');
+        if (logoutCallback) {
+          await logoutCallback();
+        } else {
+          await clearTokens();
+        }
+        return Promise.reject(error);
+      }
+    }
+
+    // Handle 401 errors
     if (status === 401) {
       if (requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh')) {
         return Promise.reject(error);
       }
 
       if (originalRequest?._retry) {
+        console.log('401 retry already attempted, logging out...');
+        if (logoutCallback) {
+          await logoutCallback();
+        } else {
+          await clearTokens();
+        }
         return Promise.reject(error);
       }
 
@@ -90,7 +138,12 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } else {
-        console.log('Token refresh failed, user needs to re-login');
+        console.log('Token refresh failed, logging out...');
+        if (logoutCallback) {
+          await logoutCallback();
+        } else {
+          await clearTokens();
+        }
       }
     }
 

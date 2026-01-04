@@ -47,8 +47,8 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard />
-        <ReligiousDaysCard />
         <DailyHadithCard />
+        <ReligiousDaysCard />
       </ScrollView>
     </Screen>
   );
