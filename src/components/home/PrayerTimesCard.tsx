@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { prayerService } from '@/services/prayer.service';
+import { notificationService } from '@/services/notification.service';
 import { useThemeStore } from '@/store/theme.store';
+import { BlurView } from 'expo-blur';
 
 const STORAGE_KEY = 'SELECTED_CITY';
 
@@ -16,14 +18,15 @@ const PRAYER_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   Yatsı: 'star-outline',
 };
 
+// Colors matching Tailwind classes
 const THEME_COLORS = {
-  İmsak: '#1e293b',
-  Güneş: '#fb923c',
-  Öğle: '#0ea5e9',
-  İkindi: '#f59e0b',
-  Akşam: '#4f46e5',
-  Yatsı: '#0f172a',
-  Default: '#0f766e',
+  İmsak: '#1e293b', // bg-slate-800
+  Güneş: '#fb923c', // bg-orange-400
+  Öğle: '#0ea5e9', // bg-sky-500
+  İkindi: '#f59e0b', // bg-amber-500
+  Akşam: '#4f46e5', // bg-indigo-600
+  Yatsı: '#0f172a', // bg-slate-900
+  Default: '#0f766e', // Default Teal
 };
 
 const NEXT_TO_CURRENT: Record<string, string> = {
@@ -42,6 +45,7 @@ export function PrayerTimesCard() {
   const [remainingTime, setRemainingTime] = useState<string>('');
   const [nextPrayerName, setNextPrayerName] = useState<string>('');
   const [isCityLoaded, setIsCityLoaded] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const targetTimeRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,11 +54,32 @@ export function PrayerTimesCard() {
 
   useEffect(() => {
     loadCity();
+    initNotifications();
     const interval = setInterval(() => {
       loadCity();
     }, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  const initNotifications = async () => {
+    const hasPermission = await notificationService.requestPermissions();
+    if (hasPermission) {
+      const enabled = await notificationService.isEnabled();
+      setNotificationsEnabled(enabled);
+    }
+  };
+
+  const handleNotificationToggle = async (value: boolean) => {
+    setNotificationsEnabled(value);
+    if (value) {
+      await notificationService.enableNotifications();
+      if (data) {
+        await notificationService.schedulePrayerNotifications(data);
+      }
+    } else {
+      await notificationService.disableNotifications();
+    }
+  };
 
   const loadCity = async () => {
     try {
@@ -123,6 +148,7 @@ export function PrayerTimesCard() {
     updateCountdown();
   };
 
+  // Effect to update Header Color when nextPrayerName changes
   useEffect(() => {
     if (!nextPrayerName) {
       setHeaderColor(THEME_COLORS['Default']);
@@ -151,8 +177,14 @@ export function PrayerTimesCard() {
         };
         setData(corrected);
         calculateNextPrayer(corrected);
+
+        // Schedule notifications if enabled
+        if (notificationsEnabled) {
+          await notificationService.schedulePrayerNotifications(corrected);
+        }
       }
     } catch (error: any) {
+      // console.error('Failed to fetch prayer times for city:', city);
     } finally {
       setLoading(false);
     }
@@ -220,7 +252,7 @@ export function PrayerTimesCard() {
     : [];
 
   return (
-    <View className="mx-4 mb-6">
+    <View className="mx-4 my-8">
       <View className="overflow-hidden rounded-[32px] border border-slate-100/50 bg-white shadow-xl shadow-teal-900/10">
         <View
           style={{ backgroundColor: themeColor }}
@@ -279,6 +311,24 @@ export function PrayerTimesCard() {
               })}
             </View>
           )}
+
+          {/* Notification Toggle */}
+          <View className="mt-4 border-t border-slate-100 pt-4">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-1">
+                <Text className="text-sm font-semibold text-slate-900">Bildirimler</Text>
+                <Text className="mt-0.5 text-xs text-slate-500">
+                  Vakit girişinde ve 30dk önce bildirim al
+                </Text>
+              </View>
+              <Switch
+                value={notificationsEnabled}
+                onValueChange={handleNotificationToggle}
+                trackColor={{ false: '#cbd5e1', true: '#0d9488' }}
+                thumbColor={notificationsEnabled ? '#fff' : '#f1f5f9'}
+              />
+            </View>
+          </View>
         </View>
       </View>
     </View>

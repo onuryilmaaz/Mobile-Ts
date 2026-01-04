@@ -7,6 +7,7 @@ import { Screen } from '@/components/layout/Screen';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useFocusEffect } from '@react-navigation/native';
 import { PrayerTimesCard } from '@/components/home/PrayerTimesCard';
+import { DailyHadithCard } from '@/components/home/DailyHadithCard';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
@@ -38,13 +39,14 @@ export default function HomeScreen({ navigation }: Props) {
   );
 
   return (
-    <Screen className="bg-slate-50">
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <ScrollView
         className="flex-1"
         refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 16 }}>
+        contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard />
+        <DailyHadithCard />
       </ScrollView>
     </Screen>
   );

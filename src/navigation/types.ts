@@ -25,6 +25,7 @@ export type ProfileStackParamList = {
 
 export type HomeStackParamList = {
   HomeMain: undefined;
+  QiblaFinder: undefined;
 };
 
 export type UserTabParamList = {

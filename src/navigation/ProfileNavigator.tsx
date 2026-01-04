@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator<ProfileStackParamList>();
 export default function ProfileNavigator() {
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor={HEADER_CONFIG.backgroundColor} translucent={false} />
+      <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,

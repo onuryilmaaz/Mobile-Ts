@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { notificationService } from '@/services/notification.service';
 import {
   View,
   Text,
@@ -120,6 +121,15 @@ export default function ProfileScreen({ navigation }: Props) {
       alertStore.success('Başarılı', `Konum ${city} olarak güncellendi`);
     } catch (e) {
       console.error('Failed to save city', e);
+    }
+  };
+
+  const handleTestNotification = async () => {
+    const success = await notificationService.sendTestNotification();
+    if (success) {
+      alertStore.success('Test Bildirimi', 'Bildirim 1 saniye içinde gelecek!');
+    } else {
+      alertStore.error('Hata', 'Bildirim gönderilemedi');
     }
   };
 
@@ -374,6 +384,26 @@ export default function ProfileScreen({ navigation }: Props) {
               </View>
             </View>
           )}
+        </Card>
+
+        {/* Test Notification Card */}
+        <Card className="mb-4">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1">
+              <Text className="mb-1 text-lg font-bold text-slate-900">Bildirim Testi</Text>
+              <Text className="text-xs text-slate-500">
+                Bildirimlerin çalışıp çalışmadığını test edin
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={handleTestNotification}
+              className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80">
+              <View className="flex-row items-center gap-2">
+                <Ionicons name="notifications" size={16} color="#fff" />
+                <Text className="text-sm font-semibold text-white">Test Et</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </Card>
 
         <Card>

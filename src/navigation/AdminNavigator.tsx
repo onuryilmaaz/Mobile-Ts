@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator<AdminStackParamList>();
 export default function AdminNavigator() {
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor={HEADER_CONFIG.backgroundColor} translucent={false} />
+      <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,

@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useState, useEffect } from 'react';
-import { HomeScreen } from '@/screens/user';
+import { HomeScreen, QiblaFinderScreen } from '@/screens/user';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
@@ -25,8 +25,7 @@ type HomeHeaderNavigationProp = CompositeNavigationProp<
 >;
 
 import { useThemeStore } from '@/store/theme.store';
-
-// ... imports
+import { Ionicons } from '@expo/vector-icons';
 
 function HomeHeader() {
   const headerColor = useThemeStore((s) => s.headerColor);
@@ -60,8 +59,13 @@ function HomeHeader() {
       }}>
       <View className="flex-row items-center justify-between">
         <View className="flex-1">
-          <Text className="text-sm font-medium text-white">Hoş geldin, 👋</Text>
-          <Text className="text-xl font-bold text-white">{user?.firstName || 'Kullanıcı'}</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('QiblaFinder')}
+            className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+              <Ionicons name="compass" size={20} color="#059669" />
+            </View>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -70,7 +74,7 @@ function HomeHeader() {
               (parent as any).navigate('Profile', { screen: 'ProfileMain' });
             }
           }}
-          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white bg-white/20 ring-4 ">
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20">
           {avatarUrl ? (
             <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
           ) : (
@@ -87,14 +91,32 @@ export default function HomeNavigator() {
 
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor={headerColor} translucent={false} />
+      <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
           header: () => <HomeHeader />,
           headerShadowVisible: false,
         }}>
-        <Stack.Screen name="HomeMain" component={HomeScreen} />
+        <Stack.Screen
+          name="HomeMain"
+          component={HomeScreen}
+          options={{
+            title: 'Ana Sayfa',
+          }}
+        />
+        <Stack.Screen
+          name="QiblaFinder"
+          component={QiblaFinderScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Kıble Bulucu',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: '#fff',
+            headerBackTitle: '',
+          }}
+        />
       </Stack.Navigator>
     </>
   );
