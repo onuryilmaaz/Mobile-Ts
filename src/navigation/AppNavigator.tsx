@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthNavigator from './AuthNavigator';
 import UserNavigator from './UserNavigator';
 import type { RootStackParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { SplashScreen } from '@/components/SplashScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -18,11 +18,7 @@ export default function AppNavigator() {
   }, [hydrate, hydrated]);
 
   if (!hydrated) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   return (

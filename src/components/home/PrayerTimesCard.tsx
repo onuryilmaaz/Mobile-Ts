@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -70,7 +69,6 @@ export function PrayerTimesCard() {
     initNotifications();
   }, []);
 
-  // Reload when screen is focused (user might have changed location)
   useFocusEffect(
     useCallback(() => {
       loadDistrict();
@@ -78,16 +76,20 @@ export function PrayerTimesCard() {
   );
 
   const initNotifications = async () => {
-    const hasPermission = await notificationService.requestPermissions();
-    if (hasPermission) {
-      const enabled = await notificationService.isEnabled();
-      setNotificationsEnabled(enabled);
-    }
+    // Switch durumunu HER ZAMAN AsyncStorage'dan oku (izin durumundan bağımsız)
+    const enabled = await notificationService.isEnabled();
+    setNotificationsEnabled(enabled);
   };
 
   const handleNotificationToggle = async (value: boolean) => {
-    setNotificationsEnabled(value);
     if (value) {
+      // Açmaya çalışıyorsa önce izin iste
+      const hasPermission = await notificationService.requestPermissions();
+      if (!hasPermission) {
+        // İzin alınamadı, switch'i açma
+        return;
+      }
+      setNotificationsEnabled(true);
       await notificationService.enableNotifications();
       if (data) {
         await notificationService.schedulePrayerNotifications(
@@ -95,6 +97,7 @@ export function PrayerTimesCard() {
         );
       }
     } else {
+      setNotificationsEnabled(false);
       await notificationService.disableNotifications();
     }
   };
@@ -111,8 +114,6 @@ export function PrayerTimesCard() {
       if (savedDistrictId) {
         setSelectedDistrictId(savedDistrictId);
       } else if (savedStateId) {
-        // If state is selected but district is not, use default district for that state
-        // This shouldn't happen normally, but handle it gracefully
         setSelectedDistrictId(DEFAULT_DISTRICT_ID);
       }
 
@@ -188,7 +189,6 @@ export function PrayerTimesCard() {
         calculateNextPrayer(prayerData);
 
         if (notificationsEnabled) {
-          // Convert to old format for notification service compatibility
           const notificationData = {
             imsak: prayerData.times.imsak,
             gunes: prayerData.times.gunes,
