@@ -26,11 +26,11 @@ export default function AppNavigator() {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
-        <Stack.Screen name="Auth" component={AuthNavigator} />
-      ) : (
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
+      {isAuthenticated ? (
         <Stack.Screen name="UserTabs" component={UserNavigator} />
+      ) : (
+        <Stack.Screen name="Auth" component={AuthNavigator} />
       )}
     </Stack.Navigator>
   );

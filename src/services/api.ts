@@ -15,8 +15,8 @@ export function setLogoutCallback(callback: () => Promise<void>) {
   logoutCallback = callback;
 }
 
-//const BASE_URL = 'http://localhost:3000';
-const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
+const BASE_URL = 'http://localhost:3000';
+//const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -30,6 +30,7 @@ const refreshClient = axios.create({
 
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
+let isLoggingOut = false;
 
 async function refreshAccessToken(): Promise<string | null> {
   if (isRefreshing && refreshPromise) {
@@ -118,13 +119,20 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
+      // Zaten logout yapılıyorsa döngüye girme
+      if (isLoggingOut) {
+        return Promise.reject(error);
+      }
+
       if (originalRequest?._retry) {
         console.log('401 retry already attempted, logging out...');
+        isLoggingOut = true;
         if (logoutCallback) {
           await logoutCallback();
         } else {
           await clearTokens();
         }
+        isLoggingOut = false;
         return Promise.reject(error);
       }
 
@@ -139,10 +147,14 @@ api.interceptors.response.use(
         return api(originalRequest);
       } else {
         console.log('Token refresh failed, logging out...');
-        if (logoutCallback) {
-          await logoutCallback();
-        } else {
-          await clearTokens();
+        if (!isLoggingOut) {
+          isLoggingOut = true;
+          if (logoutCallback) {
+            await logoutCallback();
+          } else {
+            await clearTokens();
+          }
+          isLoggingOut = false;
         }
       }
     }

@@ -12,7 +12,7 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
-  const user = useAuthStore((s) => s.user);
+  const { user, isAuthenticated } = useAuthStore();
   const insets = useSafeAreaInsets();
 
   const isAdmin =

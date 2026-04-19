@@ -90,7 +90,9 @@ export function PrayerTimesCard() {
     if (value) {
       await notificationService.enableNotifications();
       if (data) {
-        await notificationService.schedulePrayerNotifications(data);
+        await notificationService.schedulePrayerNotifications(
+          data.times as unknown as Record<string, string>
+        );
       }
     } else {
       await notificationService.disableNotifications();
@@ -101,11 +103,11 @@ export function PrayerTimesCard() {
     try {
       const savedStateId = await AsyncStorage.getItem(STORAGE_STATE_ID_KEY);
       const savedDistrictId = await AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY);
-      
+
       if (savedStateId) {
         setSelectedStateId(savedStateId);
       }
-      
+
       if (savedDistrictId) {
         setSelectedDistrictId(savedDistrictId);
       } else if (savedStateId) {
@@ -113,7 +115,7 @@ export function PrayerTimesCard() {
         // This shouldn't happen normally, but handle it gracefully
         setSelectedDistrictId(DEFAULT_DISTRICT_ID);
       }
-      
+
       setIsDistrictLoaded(true);
     } catch (e) {
       console.error('Failed to load district', e);
@@ -326,7 +328,7 @@ export function PrayerTimesCard() {
               })}
             </View>
           )}
-          
+
           {/* Location Selection */}
           <View className="mt-4 border-t border-slate-100 pt-4">
             <TouchableOpacity

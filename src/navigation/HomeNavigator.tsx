@@ -8,7 +8,6 @@ import {
   Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useState, useEffect } from 'react';
@@ -26,12 +25,15 @@ type HomeHeaderNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<UserTabParamList>
 >;
 
-function HomeHeader() {
+type HomeHeaderProps = {
+  navigation: HomeHeaderNavigationProp;
+};
+
+function HomeHeader({ navigation }: HomeHeaderProps) {
   const headerColor = useThemeStore((s) => s.headerColor);
-  const user = useAuthStore((s) => s.user);
+  const { user, isAuthenticated } = useAuthStore();
   const avatarUrl = user?.avatarUrl;
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<HomeHeaderNavigationProp>();
   const [statusBarHeight, setStatusBarHeight] = useState(0);
 
   useEffect(() => {
@@ -68,16 +70,23 @@ function HomeHeader() {
         </View>
         <TouchableOpacity
           onPress={() => {
-            const parent = navigation.getParent();
-            if (parent) {
-              (parent as any).navigate('Profile', { screen: 'ProfileMain' });
+            if (isAuthenticated) {
+              const parent = navigation.getParent();
+              if (parent) {
+                (parent as any).navigate('Profile', { screen: 'ProfileMain' });
+              }
             }
+            // isAuthenticated false ise AppNavigator zaten Auth ekranını gösterir
           }}
-          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20">
-          {avatarUrl ? (
+          className={`h-12 ${
+            !isAuthenticated ? 'px-4' : 'w-12'
+          } items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20`}>
+          {!isAuthenticated ? (
+            <Text className="font-semibold text-white">Giriş Yap</Text>
+          ) : avatarUrl ? (
             <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
           ) : (
-            <Text className="text-xl">👤</Text>
+            <Ionicons name="person" size={24} color="white" />
           )}
         </TouchableOpacity>
       </View>
@@ -94,7 +103,7 @@ export default function HomeNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
-          header: () => <HomeHeader />,
+          header: ({ navigation }) => <HomeHeader navigation={navigation as any} />,
           headerShadowVisible: false,
         }}>
         <Stack.Screen

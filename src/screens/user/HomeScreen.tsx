@@ -31,12 +31,14 @@ export default function HomeScreen({ navigation }: Props) {
     }
   }, [setUser]);
 
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
   useFocusEffect(
     useCallback(() => {
-      if (!user?.firstName) {
+      if (isAuthenticated && !user?.firstName) {
         fetchData();
       }
-    }, [user?.firstName, fetchData])
+    }, [isAuthenticated, user?.firstName, fetchData])
   );
 
   return (

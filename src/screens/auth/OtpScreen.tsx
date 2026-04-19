@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@/navigation/types';
@@ -19,9 +19,11 @@ export default function OtpScreen({ navigation, route }: Props) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const submitting = useRef(false);
 
   const handleOtpComplete = async (code: string) => {
     setOtp(code);
+    if (submitting.current) return;
     await handleVerify(code);
   };
 
@@ -31,28 +33,41 @@ export default function OtpScreen({ navigation, route }: Props) {
       setError('6 haneli kodu girin');
       return;
     }
+    if (submitting.current) return;
 
+    submitting.current = true;
     try {
       setLoading(true);
       setError(null);
       setMessage(null);
 
+      // 1. OTP doğrula
       await authApi.verifyEmail({ email, code: verifyCode });
 
+      // 2. OTP başarılı → otomatik giriş dene
       if (password) {
-        const { data } = await authApi.login({ email, password });
-        await login(data.user, data.accessToken, data.refreshToken);
+        try {
+          const { data } = await authApi.login({ email, password });
+          await login(data.user, data.accessToken, data.refreshToken);
+        } catch {
+          // Login hata verse bile OTP doğrulandı — Login ekranına yönlendir
+          navigation.replace('Login');
+        }
         return;
       }
 
-      setMessage('Doğrulama başarılı, giriş yapabilirsiniz');
       navigation.replace('Login');
-    } catch (err) {
-      console.log(err);
-      setError('Doğrulama başarısız');
+    } catch (err: any) {
+      const serverMsg = err?.response?.data?.message;
+      if (serverMsg === 'Invalid or expired code') {
+        setError('Kod geçersiz veya süresi dolmuş');
+      } else {
+        setError('Doğrulama başarısız');
+      }
       setOtp('');
     } finally {
       setLoading(false);
+      submitting.current = false;
     }
   }
 
