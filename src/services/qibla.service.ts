@@ -5,7 +5,7 @@ export const KAABA_COORDS = {
 
 export const qiblaService = {
   calculateBearing(startLat: number, startLng: number) {
-    const lat1 = (startLat * Math.PI) / 180; // to radians
+    const lat1 = (startLat * Math.PI) / 180;
     const lng1 = (startLng * Math.PI) / 180;
     const lat2 = (KAABA_COORDS.latitude * Math.PI) / 180;
     const lng2 = (KAABA_COORDS.longitude * Math.PI) / 180;

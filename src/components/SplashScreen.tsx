@@ -12,34 +12,26 @@ import {
 const { width, height } = Dimensions.get('window');
 
 export function SplashScreen() {
-  // Logo animasyonları
   const logoScale = useRef(new Animated.Value(0)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoY = useRef(new Animated.Value(40)).current;
 
-  // Başlık animasyonları
   const titleOpacity = useRef(new Animated.Value(0)).current;
   const titleY = useRef(new Animated.Value(20)).current;
 
-  // Alt yazı animasyonu
   const subtitleOpacity = useRef(new Animated.Value(0)).current;
 
-  // Yükleme çubuğu
   const progressWidth = useRef(new Animated.Value(0)).current;
 
-  // Parlama efekti
   const shimmerX = useRef(new Animated.Value(-width)).current;
 
-  // Dekoratif halkalar
   const ring1Scale = useRef(new Animated.Value(0.8)).current;
   const ring1Opacity = useRef(new Animated.Value(0)).current;
   const ring2Scale = useRef(new Animated.Value(0.5)).current;
   const ring2Opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Sıralı animasyonlar
     Animated.sequence([
-      // 1. Halkalar belir
       Animated.parallel([
         Animated.timing(ring1Opacity, {
           toValue: 0.15,
@@ -65,7 +57,6 @@ export function SplashScreen() {
         }),
       ]),
 
-      // 2. Logo fırlama animasyonu
       Animated.parallel([
         Animated.spring(logoScale, {
           toValue: 1,
@@ -86,7 +77,6 @@ export function SplashScreen() {
         }),
       ]),
 
-      // 3. Başlık kayma
       Animated.parallel([
         Animated.timing(titleOpacity, {
           toValue: 1,
@@ -101,18 +91,15 @@ export function SplashScreen() {
         }),
       ]),
 
-      // 4. Alt yazı
       Animated.timing(subtitleOpacity, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
       }),
 
-      // 5. Kısa bekleme
       Animated.delay(100),
     ]).start();
 
-    // İlerleme çubuğu (bağımsız - ayrı timing)
     Animated.timing(progressWidth, {
       toValue: width - 80,
       duration: 2200,
@@ -121,7 +108,6 @@ export function SplashScreen() {
       useNativeDriver: false,
     }).start();
 
-    // Parlama loop'u
     const shimmerLoop = () => {
       shimmerX.setValue(-width);
       Animated.timing(shimmerX, {
@@ -134,7 +120,6 @@ export function SplashScreen() {
     };
     shimmerLoop();
 
-    // Halka nefes animasyonu (loop)
     const ringBreath = () => {
       Animated.sequence([
         Animated.timing(ring1Scale, {
@@ -156,11 +141,9 @@ export function SplashScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Gradient benzeri arka plan katmanları */}
       <View style={styles.bgTop} />
       <View style={styles.bgBottom} />
 
-      {/* Dekoratif büyük halkalar */}
       <Animated.View
         style={[
           styles.ring,
@@ -176,9 +159,7 @@ export function SplashScreen() {
         ]}
       />
 
-      {/* Merkez içerik */}
       <View style={styles.content}>
-        {/* Logo kartı */}
         <Animated.View
           style={[
             styles.logoContainer,
@@ -187,7 +168,6 @@ export function SplashScreen() {
               transform: [{ scale: logoScale }, { translateY: logoY }],
             },
           ]}>
-          {/* Parlama efekti */}
           <Animated.View
             style={[
               styles.shimmer,
@@ -203,7 +183,6 @@ export function SplashScreen() {
           />
         </Animated.View>
 
-        {/* Uygulama adı */}
         <Animated.View
           style={{
             opacity: titleOpacity,
@@ -213,13 +192,11 @@ export function SplashScreen() {
           <Text style={styles.arabicName}>الصلاة</Text>
         </Animated.View>
 
-        {/* Alt slogan */}
         <Animated.Text style={[styles.subtitle, { opacity: subtitleOpacity }]}>
           Namaz vakitleri & dini rehber
         </Animated.Text>
       </View>
 
-      {/* Alt yükleme çubuğu */}
       <View style={styles.progressContainer}>
         <View style={styles.progressTrack}>
           <Animated.View style={[styles.progressBar, { width: progressWidth }]} />

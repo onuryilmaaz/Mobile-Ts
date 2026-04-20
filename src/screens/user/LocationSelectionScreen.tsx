@@ -66,8 +66,7 @@ export default function LocationSelectionScreen({ navigation }: Props) {
       setSelectedDistrictId(districtId);
       await AsyncStorage.setItem(STORAGE_STATE_ID_KEY, selectedStateId!);
       await AsyncStorage.setItem(STORAGE_DISTRICT_ID_KEY, districtId);
-      
-      // Navigate back
+
       navigation.goBack();
     } catch (error) {
       console.error('Error saving location:', error);
@@ -125,7 +124,8 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                     isSelected ? 'border-teal-500 bg-teal-50' : 'border-slate-200'
                   }`}>
                   <View className="flex-1">
-                    <Text className={`text-base font-semibold ${isSelected ? 'text-teal-700' : 'text-slate-900'}`}>
+                    <Text
+                      className={`text-base font-semibold ${isSelected ? 'text-teal-700' : 'text-slate-900'}`}>
                       {state.name}
                     </Text>
                   </View>
@@ -156,13 +156,12 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                       isSelected ? 'border-teal-500 bg-teal-50' : 'border-slate-200'
                     }`}>
                     <View className="flex-1">
-                      <Text className={`text-base font-semibold ${isSelected ? 'text-teal-700' : 'text-slate-900'}`}>
+                      <Text
+                        className={`text-base font-semibold ${isSelected ? 'text-teal-700' : 'text-slate-900'}`}>
                         {district.name}
                       </Text>
                     </View>
-                    {isSelected && (
-                      <Ionicons name="checkmark-circle" size={24} color="#0f766e" />
-                    )}
+                    {isSelected && <Ionicons name="checkmark-circle" size={24} color="#0f766e" />}
                   </TouchableOpacity>
                 );
               })
@@ -173,4 +172,3 @@ export default function LocationSelectionScreen({ navigation }: Props) {
     </Screen>
   );
 }
-

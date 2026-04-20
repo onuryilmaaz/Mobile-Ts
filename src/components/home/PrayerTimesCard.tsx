@@ -13,7 +13,7 @@ import type { PrayerTimeData } from '@/types/prayer';
 
 const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
-const DEFAULT_DISTRICT_ID = '9654'; // Kocaeli - Kocaeli (default)
+const DEFAULT_DISTRICT_ID = '9654';
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
@@ -76,17 +76,14 @@ export function PrayerTimesCard() {
   );
 
   const initNotifications = async () => {
-    // Switch durumunu HER ZAMAN AsyncStorage'dan oku (izin durumundan bağımsız)
     const enabled = await notificationService.isEnabled();
     setNotificationsEnabled(enabled);
   };
 
   const handleNotificationToggle = async (value: boolean) => {
     if (value) {
-      // Açmaya çalışıyorsa önce izin iste
       const hasPermission = await notificationService.requestPermissions();
       if (!hasPermission) {
-        // İzin alınamadı, switch'i açma
         return;
       }
       setNotificationsEnabled(true);

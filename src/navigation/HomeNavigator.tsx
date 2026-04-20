@@ -76,7 +76,6 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
                 (parent as any).navigate('Profile', { screen: 'ProfileMain' });
               }
             }
-            // isAuthenticated false ise AppNavigator zaten Auth ekranını gösterir
           }}
           className={`h-12 ${
             !isAuthenticated ? 'px-4' : 'w-12'

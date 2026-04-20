@@ -8,7 +8,6 @@ const OUTPUT_FILE = path.join(__dirname, '../src/constants/all-districts.json');
 
 async function fetchDistrictsForAllStates() {
   try {
-    // Read states from JSON file
     const statesData = JSON.parse(fs.readFileSync(STATES_FILE, 'utf8'));
     const states = statesData.data;
 
@@ -44,7 +43,6 @@ async function fetchDistrictsForAllStates() {
         processed++;
         console.log(`Progress: ${processed}/${states.length}`);
 
-        // Add a small delay to avoid overwhelming the API
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (error) {
         console.error(`  ✗ Error fetching districts for ${state.name}:`, error.message);
@@ -52,7 +50,6 @@ async function fetchDistrictsForAllStates() {
       }
     }
 
-    // Group districts by state
     const districtsByState = {};
     allDistricts.forEach((district) => {
       const stateId = district.state._id;
@@ -65,19 +62,19 @@ async function fetchDistrictsForAllStates() {
       districtsByState[stateId].districts.push(district);
     });
 
-    // Create final structure
     const output = {
       success: true,
       totalStates: Object.keys(districtsByState).length,
       totalDistricts: allDistricts.length,
       data: districtsByState,
-      districts: allDistricts, // Flat list for easy searching
+      districts: allDistricts,
       updatedAt: new Date().toISOString(),
     };
 
-    // Write to file
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), 'utf8');
-    console.log(`\n✓ Successfully saved ${allDistricts.length} districts from ${Object.keys(districtsByState).length} states to ${OUTPUT_FILE}`);
+    console.log(
+      `\n✓ Successfully saved ${allDistricts.length} districts from ${Object.keys(districtsByState).length} states to ${OUTPUT_FILE}`
+    );
   } catch (error) {
     console.error('Error:', error);
     process.exit(1);
@@ -85,4 +82,3 @@ async function fetchDistrictsForAllStates() {
 }
 
 fetchDistrictsForAllStates();
-

@@ -22,7 +22,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Set logout callback for API interceptor
     setLogoutCallback(logout);
   }, [logout]);
 

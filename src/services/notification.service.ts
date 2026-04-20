@@ -19,7 +19,7 @@ export const notificationService = {
   async requestPermissions() {
     if (!Device.isDevice) {
       console.log('Notifications only work on physical devices');
-      return true; // Simülatörde de switch'in çalışması için true dönüyoruz
+      return true;
     }
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();

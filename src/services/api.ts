@@ -8,7 +8,6 @@ import {
   setRefreshToken,
 } from './token.service';
 
-// Logout callback - will be set by auth store to avoid circular dependency
 let logoutCallback: (() => Promise<void>) | null = null;
 
 export function setLogoutCallback(callback: () => Promise<void>) {
@@ -16,7 +15,6 @@ export function setLogoutCallback(callback: () => Promise<void>) {
 }
 
 const BASE_URL = 'http://localhost:3000';
-//const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -80,11 +78,9 @@ api.interceptors.response.use(
     const requestUrl = originalRequest?.url || '';
     const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
 
-    // Handle timeout errors
     if (isTimeout && !requestUrl.includes('/auth/refresh')) {
       console.log('Timeout detected on:', requestUrl, '- attempting token refresh...');
 
-      // Don't retry if already retried
       if (originalRequest?._retry) {
         console.log('Timeout retry already attempted, logging out...');
         if (logoutCallback) {
@@ -113,13 +109,11 @@ api.interceptors.response.use(
       }
     }
 
-    // Handle 401 errors
     if (status === 401) {
       if (requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh')) {
         return Promise.reject(error);
       }
 
-      // Zaten logout yapılıyorsa döngüye girme
       if (isLoggingOut) {
         return Promise.reject(error);
       }

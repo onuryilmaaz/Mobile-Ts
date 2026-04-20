@@ -41,16 +41,13 @@ export default function OtpScreen({ navigation, route }: Props) {
       setError(null);
       setMessage(null);
 
-      // 1. OTP doğrula
       await authApi.verifyEmail({ email, code: verifyCode });
 
-      // 2. OTP başarılı → otomatik giriş dene
       if (password) {
         try {
           const { data } = await authApi.login({ email, password });
           await login(data.user, data.accessToken, data.refreshToken);
         } catch {
-          // Login hata verse bile OTP doğrulandı — Login ekranına yönlendir
           navigation.replace('Login');
         }
         return;
