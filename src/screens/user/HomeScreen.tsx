@@ -7,6 +7,7 @@ import { Screen } from '@/components/layout/Screen';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useFocusEffect } from '@react-navigation/native';
 import { PrayerTimesCard } from '@/components/home/PrayerTimesCard';
+import { PrayerTrackerCard } from '@/components/home/PrayerTrackerCard';
 import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
 import { DailyHadithCard } from '@/components/home/DailyHadithCard';
 
@@ -49,6 +50,7 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard />
+        <PrayerTrackerCard />
         <DailyHadithCard />
         <ReligiousDaysCard />
       </ScrollView>

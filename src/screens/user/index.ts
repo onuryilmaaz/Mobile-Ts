@@ -7,3 +7,4 @@ export { default as AccountScreen } from './AccountScreen';
 export { default as QiblaFinderScreen } from './QiblaFinderScreen';
 export { default as PrayerSurahsScreen } from './PrayerSurahsScreen';
 export { default as LocationSelectionScreen } from './LocationSelectionScreen';
+export * from './GamificationScreen';
