@@ -9,7 +9,9 @@ type GamificationState = {
   isLoading: boolean;
   fetchStats: () => Promise<void>;
   fetchLeaderboard: () => Promise<void>;
-  trackPrayer: (prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha') => Promise<any>;
+  trackPrayer: (
+    prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
+  ) => Promise<any>;
 };
 
 export const useGamificationStore = create<GamificationState>((set, get) => ({
@@ -56,9 +58,8 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
       set({ isLoading: true });
       const { data } = await gamificationApi.trackPrayer(prayerTime);
       if (data.success) {
-        // Update local stats and return new badges if any
         set({ stats: data.data.stats });
-        await get().fetchStats(); // refresh to get updated badges
+        await get().fetchStats();
         return data.data;
       }
       return null;

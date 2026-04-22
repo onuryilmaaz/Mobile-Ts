@@ -11,12 +11,12 @@ export const adminApi = {
   deactivateUser: (userId: string) => api.post(`/admin/users/${userId}/deactivate`),
 
   listUserSessions: (userId: string) => api.get(`/admin/users/${userId}/sessions`),
-  revokeAllSessions: (userId: string) =>
-    api.post(`/admin/users/${userId}/sessions/revoke-all`),
+  revokeAllSessions: (userId: string) => api.post(`/admin/users/${userId}/sessions/revoke-all`),
 
   listRoles: () => api.get<AdminRole[] | { roles: AdminRole[] }>('/admin/roles'),
   createRole: (name: string) => api.post('/admin/roles', { name: name.toLowerCase().trim() }),
-  updateRole: (roleId: string, name: string) => api.patch(`/admin/roles/${roleId}`, { name: name.toLowerCase().trim() }),
+  updateRole: (roleId: string, name: string) =>
+    api.patch(`/admin/roles/${roleId}`, { name: name.toLowerCase().trim() }),
   deleteRole: (roleId: string) => api.delete(`/admin/roles/${roleId}`),
 
   assignRole: (userId: string, roleId: string) =>

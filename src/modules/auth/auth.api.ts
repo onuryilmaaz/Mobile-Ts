@@ -15,7 +15,7 @@ import {
 } from './auth.types';
 import { getRefreshToken } from '@/services/token.service';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://192.168.1.34:3000';
 //const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
 
 const refreshClient = axios.create({

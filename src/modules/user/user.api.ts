@@ -7,8 +7,7 @@ export const userApi = {
   updateProfile: (payload: UpdateProfilePayload) =>
     api.patch<UserProfile>('/user/update-profile', payload),
 
-  changePassword: (payload: ChangePasswordPayload) =>
-    api.post('/user/change-password', payload),
+  changePassword: (payload: ChangePasswordPayload) => api.post('/user/change-password', payload),
 
   uploadAvatar: (formData: FormData) =>
     api.post('/user/avatar', formData, {
