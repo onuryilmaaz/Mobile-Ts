@@ -40,8 +40,8 @@ function PodiumItem({ user, rank, isCurrent }: { user: any; rank: number; isCurr
       <Text className="text-slate-800 font-bold text-[11px] text-center mb-0.5" numberOfLines={1}>
         {user.first_name}
       </Text>
-      <View className="bg-emerald-100 px-2 py-0.5 rounded-full">
-        <Text className="text-emerald-700 font-black text-[10px]">{user.total_points} Puan</Text>
+      <View className="bg-primary-100 px-2 py-0.5 rounded-full">
+        <Text className="text-primary-700 font-black text-[10px]">{user.total_points} Puan</Text>
       </View>
     </View>
   );
@@ -65,7 +65,7 @@ export function GamificationScreen() {
   const rest = leaderboard?.slice(3) || [];
 
   return (
-    <Screen className="bg-emerald-700 p-0 px-0" safeAreaEdges={['left', 'right']}>
+    <Screen className="bg-slate-50 p-0 px-0">
       <StatusBar barStyle="light-content" />
       <ScrollView
         className="flex-1 bg-slate-50"
@@ -73,20 +73,15 @@ export function GamificationScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}>
         
-        {/* Modern Header Section */}
-        <View className="bg-emerald-700 px-6 pt-14 pb-24">
-          <View className="mb-6">
-            <Text className="text-emerald-200 text-xs font-bold uppercase tracking-[2px] mb-1">Hesabım</Text>
-            <Text className="text-white text-3xl font-black">Manevi Karne</Text>
-          </View>
-
-          <View className="flex-row justify-between bg-white/10 p-5 rounded-[32px] border border-white/20">
+        {/* Stats Section */}
+        <View className="px-6 pt-6 pb-4">
+          <View className="flex-row justify-between bg-primary-700 p-5 rounded-[32px] shadow-lg shadow-primary-900/20">
             <View className="items-center flex-1">
               <View className="h-10 w-10 bg-white/20 rounded-2xl items-center justify-center mb-2">
                 <Ionicons name="star" size={20} color="#fbbf24" />
               </View>
               <Text className="text-white text-lg font-black">{stats?.total_points || 0}</Text>
-              <Text className="text-emerald-100 text-[9px] font-bold uppercase">Puan</Text>
+              <Text className="text-primary-100 text-[9px] font-bold uppercase">Puan</Text>
             </View>
             <View className="w-[1px] h-10 bg-white/10 self-center" />
             <View className="items-center flex-1">
@@ -94,7 +89,7 @@ export function GamificationScreen() {
                 <Ionicons name="flame" size={20} color="#fb7185" />
               </View>
               <Text className="text-white text-lg font-black">{stats?.current_streak || 0}</Text>
-              <Text className="text-emerald-100 text-[9px] font-bold uppercase">Seri</Text>
+              <Text className="text-primary-100 text-[9px] font-bold uppercase">Seri</Text>
             </View>
             <View className="w-[1px] h-10 bg-white/10 self-center" />
             <View className="items-center flex-1">
@@ -102,13 +97,13 @@ export function GamificationScreen() {
                 <Ionicons name="medal" size={20} color="#38bdf8" />
               </View>
               <Text className="text-white text-lg font-black">{badges?.length || 0}</Text>
-              <Text className="text-emerald-100 text-[9px] font-bold uppercase">Rozet</Text>
+              <Text className="text-primary-100 text-[9px] font-bold uppercase">Rozet</Text>
             </View>
           </View>
         </View>
 
-        {/* Content Section (Rounded Top Overlay) */}
-        <View className="-mt-12 bg-slate-50 rounded-t-[48px] px-6 pt-10">
+        {/* Content Section */}
+        <View className="bg-slate-50 px-6 pt-4">
           
           {/* Badges Section */}
           <View className="mb-10">
@@ -125,7 +120,7 @@ export function GamificationScreen() {
                     <View
                       className={`h-20 w-20 rounded-[28px] items-center justify-center mb-2 shadow-sm ${
                         isEarned
-                          ? 'bg-white border border-emerald-100'
+                          ? 'bg-white border border-primary-100'
                           : 'bg-slate-100 border border-slate-200 opacity-40'
                       }`}>
                       <Ionicons
@@ -172,7 +167,7 @@ export function GamificationScreen() {
                 <View
                   key={item.id}
                   className={`flex-row items-center p-4 mb-2 rounded-[24px] ${
-                    user?.id === item.id ? 'bg-emerald-600 shadow-md' : 'bg-slate-50'
+                    user?.id === item.id ? 'bg-primary-600 shadow-md' : 'bg-slate-50'
                   }`}>
                   <Text
                     className={`w-8 font-black text-xs ${user?.id === item.id ? 'text-white' : 'text-slate-400'}`}>
@@ -194,7 +189,7 @@ export function GamificationScreen() {
                     </Text>
                     <Text
                       className={`text-[9px] font-medium ${
-                        user?.id === item.id ? 'text-emerald-100' : 'text-slate-500'
+                        user?.id === item.id ? 'text-primary-100' : 'text-slate-500'
                       }`}>
                       {item.current_streak} Günlük Seri
                     </Text>
@@ -203,7 +198,7 @@ export function GamificationScreen() {
                   <View className="items-end bg-white/20 px-3 py-1 rounded-full">
                     <Text
                       className={`font-black text-xs ${
-                        user?.id === item.id ? 'text-white' : 'text-emerald-600'
+                        user?.id === item.id ? 'text-white' : 'text-primary-600'
                       }`}>
                       {item.total_points}
                     </Text>

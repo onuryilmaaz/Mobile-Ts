@@ -9,6 +9,7 @@ import { GamificationScreen } from '@/screens/user';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { StandardHeader } from '@/components/layout/StandardHeader';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
@@ -80,7 +81,8 @@ export default function UserNavigator() {
         component={GamificationScreen}
         options={{
           tabBarLabel: 'İlerleme',
-          headerShown: false,
+          headerShown: true,
+          header: () => <StandardHeader title="Manevi Karne" showBackButton={false} />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="trophy-outline" size={size} color={color} />
           ),
