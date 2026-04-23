@@ -16,6 +16,7 @@ export interface Verse {
   id: number;
   surah_id: number;
   verse_number: number;
+  verse_simplified: string;
   page_number: number;
   juz_number: number;
   transcription: string;
@@ -25,7 +26,7 @@ export interface Verse {
     author: {
       id: number;
       name: string;
-    }
+    };
   };
 }
 
@@ -71,13 +72,13 @@ export const quranService = {
 
       // Step 2: Pick a random surah
       const randomSurah = surahs[Math.floor(Math.random() * surahs.length)];
-      
+
       // Step 3: Pick a random verse number
       const randomVerseNumber = Math.floor(Math.random() * randomSurah.verse_count) + 1;
 
       // Step 4: Get the verse data
       const verse = await this.getVerse(randomSurah.id, randomVerseNumber);
-      
+
       if (verse) {
         return { verse, surah: randomSurah };
       }
@@ -86,5 +87,5 @@ export const quranService = {
       console.error('Error fetching random verse:', error);
       return null;
     }
-  }
+  },
 };

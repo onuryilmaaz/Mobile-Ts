@@ -41,7 +41,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   const filteredSurahs = useMemo(() => {
     return surahs.filter(
       (s) =>
-        (s.name_turkish?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+        (s.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
         s.id.toString().includes(searchQuery)
     );
   }, [surahs, searchQuery]);

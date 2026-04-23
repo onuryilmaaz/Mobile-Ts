@@ -15,17 +15,28 @@ export default function SurahsNavigator() {
       <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
           headerShadowVisible: false,
           animation: 'slide_from_right'
         }}>
         <Stack.Screen
           name="SurahsMain"
           component={SurahBrowserScreen}
+          options={{
+            header: () => <StandardHeader title="Sureler" showBackButton={false} />,
+          }}
         />
         <Stack.Screen
           name="SurahDetail"
           component={SurahDetailScreen}
+          options={({ route }) => ({
+            header: () => (
+              <StandardHeader 
+                title={route.params?.surahName ? `${route.params.surahName} Suresi` : 'Sure Detayı'} 
+                showBackButton={true} 
+              />
+            ),
+          })}
         />
       </Stack.Navigator>
     </>

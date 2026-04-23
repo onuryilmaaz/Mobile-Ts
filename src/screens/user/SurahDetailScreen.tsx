@@ -3,7 +3,6 @@ import { View, Text, ScrollView, ActivityIndicator, Platform, Share } from 'reac
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SurahsStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
-import { StandardHeader } from '@/components/layout/StandardHeader';
 import { quranService, Verse } from '@/services/quran.service';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -62,7 +61,7 @@ export default function SurahDetailScreen({ route }: Props) {
               entering={FadeInUp.delay(index * 50).duration(400)}
               className="mb-6 overflow-hidden rounded-[24px] border border-slate-100 bg-white shadow-sm">
               <View className="flex-row items-center justify-between border-b border-slate-50 bg-slate-50/50 px-6 py-3">
-                <View className="h-8 w-8 items-center justify-center rounded-full bg-primary-600">
+                <View className="h-6 w-6 items-center justify-center rounded-full bg-primary-600">
                   <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
                 </View>
                 <Ionicons
@@ -73,21 +72,22 @@ export default function SurahDetailScreen({ route }: Props) {
                 />
               </View>
 
-              <View className="p-6">
+              <View className="p-4">
                 <Text
-                  className="mb-6 text-right text-2xl leading-[50px] text-slate-900"
+                  className="mb-1 text-2xl leading-[50px] text-slate-900"
                   style={{ fontFamily: Platform.OS === 'ios' ? 'System' : 'serif' }}>
                   {verse.transcription}
+                </Text>
+                <Text
+                  className="mb-1 text-right text-xl leading-[50px] text-slate-900"
+                  style={{ fontFamily: Platform.OS === 'ios' ? 'System' : 'serif' }}>
+                  {verse.verse_simplified}
                 </Text>
 
                 <View className="mb-6 h-[1px] w-full bg-slate-100" />
 
                 <Text className="text-base font-medium italic leading-7 text-slate-700">
                   "{verse.translation.text}"
-                </Text>
-
-                <Text className="mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  {verse.translation.author.name} Meali
                 </Text>
               </View>
             </Animated.View>

@@ -28,8 +28,8 @@ export function DailyInspirationCard() {
           setCurrent({
             type: 'Ayet',
             text: result.verse.translation.text,
-            source: `${result.surah.name_turkish} Suresi, ${result.verse.verse_number}. Ayet`,
-            icon: 'sunny'
+            source: `${result.surah.name} Suresi, ${result.verse.verse_number}. Ayet`,
+            icon: 'sunny',
           });
         }
       } else {
@@ -39,7 +39,7 @@ export function DailyInspirationCard() {
             type: 'Hadis',
             text: result.hadith.text,
             source: result.bookName,
-            icon: 'heart'
+            icon: 'heart',
           });
         }
       }
@@ -83,10 +83,9 @@ export function DailyInspirationCard() {
 
   return (
     <View className="mx-4 mb-6">
-      <Animated.View 
+      <Animated.View
         layout={Layout.springify()}
-        className="overflow-hidden rounded-[32px] bg-white border border-slate-100 shadow-xl shadow-slate-200"
-      >
+        className="overflow-hidden rounded-[32px] border border-slate-100 bg-white shadow-xl shadow-slate-200">
         <View className="flex-row items-center justify-between px-6 pt-6">
           <View className="flex-row items-center gap-2">
             <View className="h-8 w-8 items-center justify-center rounded-xl bg-primary-50">
@@ -97,16 +96,14 @@ export function DailyInspirationCard() {
             </Text>
           </View>
           <View className="flex-row gap-2">
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={shareInspiration}
-              className="h-8 w-8 items-center justify-center rounded-full bg-slate-50"
-            >
+              className="h-8 w-8 items-center justify-center rounded-full bg-slate-50">
               <Ionicons name="share-outline" size={16} color="#64748b" />
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handleRefresh}
-              className="h-8 w-8 items-center justify-center rounded-full bg-slate-50"
-            >
+              className="h-8 w-8 items-center justify-center rounded-full bg-slate-50">
               {loading ? (
                 <ActivityIndicator size="small" color="#64748b" />
               ) : (
@@ -116,28 +113,26 @@ export function DailyInspirationCard() {
           </View>
         </View>
 
-        <Animated.View 
+        <Animated.View
           key={current.text}
           entering={FadeIn.duration(600)}
-          className="p-8 items-center"
-        >
-          <Text 
-            className="text-center text-lg font-bold leading-8 text-slate-800 italic"
-            numberOfLines={6}
-          >
+          className="items-center p-8">
+          <Text
+            className="text-center text-lg font-bold italic leading-8 text-slate-800"
+            numberOfLines={6}>
             "{current.text}"
           </Text>
           <View className="mt-6 flex-row items-center gap-2">
             <View className="h-[1px] w-8 bg-slate-200" />
-            <Text className="text-[10px] font-black text-primary-600 uppercase tracking-tighter">
+            <Text className="text-[10px] font-black uppercase tracking-tighter text-primary-600">
               {current.source}
             </Text>
             <View className="h-[1px] w-8 bg-slate-200" />
           </View>
         </Animated.View>
 
-        <View className="bg-slate-50 px-6 py-4 items-center">
-          <Text className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <View className="items-center bg-slate-50 px-6 py-4">
+          <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Manevi Huzur İçin Küçük Bir Hatırlatma
           </Text>
         </View>

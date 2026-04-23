@@ -69,8 +69,7 @@ export default function UserNavigator() {
         component={SurahsNavigator}
         options={{
           tabBarLabel: 'Sureler',
-          headerShown: true,
-          header: () => <StandardHeader title="Sureler" showBackButton={false} />,
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
           ),
