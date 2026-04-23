@@ -5,17 +5,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { prayerService } from '@/services/prayer.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Animated, { 
+  FadeIn, 
+  useAnimatedStyle, 
+  withSpring, 
+  useSharedValue, 
+  Layout, 
+  withTiming 
+} from 'react-native-reanimated';
 
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 const DEFAULT_DISTRICT_ID = '9654';
 
 const PRAYERS = [
-  { id: 'fajr', name: 'Sabah', icon: 'sunny-outline', timeKey: 'imsak' },
-  { id: 'dhuhr', name: 'Öğle', icon: 'sunny', timeKey: 'ogle' },
-  { id: 'asr', name: 'İkindi', icon: 'partly-sunny', timeKey: 'ikindi' },
-  { id: 'maghrib', name: 'Akşam', icon: 'moon', timeKey: 'aksam' },
-  { id: 'isha', name: 'Yatsı', icon: 'star-outline', timeKey: 'yatsi' },
+  { id: 'fajr', name: 'Sabah', icon: 'sunny-outline', timeKey: 'imsak', nextTimeKey: 'gunes' },
+  { id: 'dhuhr', name: 'Öğle', icon: 'sunny', timeKey: 'ogle', nextTimeKey: 'ikindi' },
+  { id: 'asr', name: 'İkindi', icon: 'partly-sunny', timeKey: 'ikindi', nextTimeKey: 'aksam' },
+  { id: 'maghrib', name: 'Akşam', icon: 'moon', timeKey: 'aksam', nextTimeKey: 'yatsi' },
+  { id: 'isha', name: 'Yatsı', icon: 'star-outline', timeKey: 'yatsi', nextTimeKey: 'imsak_next' },
 ] as const;
+
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 export function PrayerTrackerCard() {
   const { stats, fetchStats, trackPrayer, isLoading } = useGamificationStore();
@@ -46,11 +56,53 @@ export function PrayerTrackerCard() {
 
   const completedCount = stats?.today_prayers?.length || 0;
   const totalCount = PRAYERS.length;
-  const progress = completedCount / totalCount;
+  const progressWidth = useSharedValue(0);
 
-  const handleTrack = async (prayerTime: any) => {
-    if (stats?.today_prayers?.includes(prayerTime) || isLoading) return;
-    await trackPrayer(prayerTime);
+  useEffect(() => {
+    progressWidth.value = withSpring(completedCount / totalCount);
+  }, [completedCount]);
+
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${progressWidth.value * 100}%`,
+  }));
+
+  const getPrayerState = (prayer: any) => {
+    if (!prayerTimes) return 'loading';
+
+    const now = new Date();
+    const [nowH, nowM] = [now.getHours(), now.getMinutes()];
+    const nowInMins = nowH * 60 + nowM;
+
+    const parseTime = (t: string) => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    const startTime = parseTime(prayerTimes[prayer.timeKey]);
+    let endTime = prayerTimes[prayer.nextTimeKey] 
+      ? parseTime(prayerTimes[prayer.nextTimeKey]) 
+      : startTime + 240; // Fallback if no next time
+
+    if (prayer.id === 'isha' && prayerTimes['imsak']) {
+       // Isha ends at next day's Fajr
+       // For simple logic, if now is past yatsi, it's Isha time
+       if (nowInMins >= startTime || nowInMins < parseTime(prayerTimes['imsak'])) {
+         return 'current';
+       }
+       return nowInMins < startTime ? 'upcoming' : 'expired';
+    }
+
+    if (nowInMins < startTime) return 'upcoming';
+    if (nowInMins >= startTime && nowInMins < endTime) return 'current';
+    return 'expired';
+  };
+
+  const handleTrack = async (prayer: any) => {
+    const state = getPrayerState(prayer);
+    if (state === 'upcoming' || stats?.today_prayers?.includes(prayer.id) || isLoading) return;
+    
+    const isKaza = state === 'expired';
+    await trackPrayer(prayer.id as any, isKaza);
   };
 
   return (
@@ -71,7 +123,7 @@ export function PrayerTrackerCard() {
         </View>
 
         <View className="h-2 w-full overflow-hidden rounded-full bg-white/20">
-          <View className="h-full rounded-full bg-white" style={{ width: `${progress * 100}%` }} />
+          <Animated.View className="h-full rounded-full bg-white" style={progressStyle} />
         </View>
       </View>
 
@@ -79,29 +131,49 @@ export function PrayerTrackerCard() {
         <View className="flex-row flex-wrap justify-between">
           {PRAYERS.map((prayer) => {
             const isTracked = stats?.today_prayers?.includes(prayer.id);
+            const isKazaLog = stats?.kaza_prayers?.includes(prayer.id);
             const time = prayerTimes ? prayerTimes[prayer.timeKey] : '--:--';
+            const state = getPrayerState(prayer);
+            const isUpcoming = state === 'upcoming';
+            const isExpired = state === 'expired';
 
             return (
-              <TouchableOpacity
+              <AnimatedTouchableOpacity
                 key={prayer.id}
-                disabled={isTracked || isLoading}
-                onPress={() => handleTrack(prayer.id)}
+                layout={Layout.springify()}
+                disabled={isTracked || isUpcoming || isLoading}
+                onPress={() => handleTrack(prayer)}
                 activeOpacity={0.7}
-                className="mb-3 w-[48%]">
+                className={`mb-3 w-[48%] ${isUpcoming ? 'opacity-40' : 'opacity-100'}`}>
                 <View
-                  className={`flex-row items-center justify-between rounded-2xl border p-4 ${
-                    isTracked ? 'border-emerald-200 bg-emerald-50' : 'border-slate-100 bg-slate-50'
+                  className={`relative flex-row items-center justify-between rounded-2xl border p-4 ${
+                    isTracked 
+                      ? isKazaLog ? 'border-orange-200 bg-orange-50' : 'border-emerald-200 bg-emerald-50' 
+                      : 'border-slate-100 bg-slate-50'
                   }`}>
+                  
+                  {isKazaLog && (
+                    <View className="absolute -top-2 -right-1 bg-orange-500 px-1.5 py-0.5 rounded-full z-10">
+                      <Text className="text-[7px] font-black text-white uppercase">Kaza</Text>
+                    </View>
+                  )}
+
+                  {!isTracked && isExpired && (
+                    <View className="absolute -top-2 -right-1 bg-slate-400 px-1.5 py-0.5 rounded-full z-10">
+                      <Text className="text-[7px] font-black text-white uppercase">Kaza</Text>
+                    </View>
+                  )}
+
                   <View className="flex-1">
                     <Text
                       className={`mb-1 text-[10px] font-bold uppercase tracking-tighter ${
-                        isTracked ? 'text-emerald-600' : 'text-slate-400'
+                        isTracked ? (isKazaLog ? 'text-orange-600' : 'text-emerald-600') : 'text-slate-400'
                       }`}>
                       {prayer.name}
                     </Text>
                     <Text
                       className={`text-sm font-bold ${
-                        isTracked ? 'text-emerald-900' : 'text-slate-700'
+                        isTracked ? (isKazaLog ? 'text-orange-900' : 'text-emerald-900') : 'text-slate-700'
                       }`}>
                       {time}
                     </Text>
@@ -109,20 +181,24 @@ export function PrayerTrackerCard() {
 
                   <View
                     className={`h-10 w-10 items-center justify-center rounded-full ${
-                      isTracked ? 'bg-emerald-200' : 'border border-slate-200 bg-white'
+                      isTracked 
+                        ? (isKazaLog ? 'bg-orange-200' : 'bg-emerald-200') 
+                        : 'border border-slate-200 bg-white'
                     }`}>
                     {isLoading && !isTracked ? (
                       <ActivityIndicator size="small" color="#059669" />
                     ) : (
-                      <Ionicons
-                        name={isTracked ? 'checkmark' : (prayer.icon as any)}
-                        size={20}
-                        color={isTracked ? '#059669' : '#94a3b8'}
-                      />
+                      <Animated.View entering={isTracked ? FadeIn : undefined}>
+                        <Ionicons
+                          name={isTracked ? 'checkmark' : (prayer.icon as any)}
+                          size={20}
+                          color={isTracked ? (isKazaLog ? '#ea580c' : '#059669') : '#94a3b8'}
+                        />
+                      </Animated.View>
                     )}
                   </View>
                 </View>
-              </TouchableOpacity>
+              </AnimatedTouchableOpacity>
             );
           })}
 

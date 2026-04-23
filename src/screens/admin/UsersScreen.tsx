@@ -74,7 +74,7 @@ export default function UsersScreen({ navigation }: Props) {
   );
 
   return (
-    <Screen className="bg-slate-50">
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
       <View className="mb-3 flex-row items-center justify-between pt-3">
         <Text className="text-sm font-medium text-slate-700">
           Toplam <Text className="font-bold text-slate-900">{users.length}</Text> kullanıcı

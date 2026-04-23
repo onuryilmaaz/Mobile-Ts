@@ -77,7 +77,7 @@ export default function ChangeEmailScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50">
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}

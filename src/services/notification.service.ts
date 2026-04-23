@@ -2,23 +2,28 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 
 const NOTIFICATION_ENABLED_KEY = 'PRAYER_NOTIFICATIONS_ENABLED';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+if (!isExpoGo || Platform.OS === 'ios') {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+}
 
 export const notificationService = {
   async requestPermissions() {
-    if (!Device.isDevice) {
-      console.log('Notifications only work on physical devices');
+    if (!Device.isDevice || (Platform.OS === 'android' && isExpoGo)) {
+      console.log('Notifications are not supported in this environment');
       return true;
     }
 
@@ -49,6 +54,8 @@ export const notificationService = {
 
   async schedulePrayerNotifications(prayerTimes: Record<string, string>) {
     try {
+      if (Platform.OS === 'android' && isExpoGo) return;
+      
       await Notifications.cancelAllScheduledNotificationsAsync();
 
       const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
@@ -132,6 +139,10 @@ export const notificationService = {
 
   async sendTestNotification() {
     try {
+      if (Platform.OS === 'android' && isExpoGo) {
+        console.warn('Android notifications are not supported in Expo Go SDK 53+');
+        return false;
+      }
       await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Test Bildirimi 🔔',

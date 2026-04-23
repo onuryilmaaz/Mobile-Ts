@@ -10,7 +10,8 @@ type GamificationState = {
   fetchStats: () => Promise<void>;
   fetchLeaderboard: () => Promise<void>;
   trackPrayer: (
-    prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
+    prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha',
+    isKaza?: boolean
   ) => Promise<any>;
 };
 
@@ -53,10 +54,10 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
     }
   },
 
-  trackPrayer: async (prayerTime) => {
+  trackPrayer: async (prayerTime, isKaza = false) => {
     try {
       set({ isLoading: true });
-      const { data } = await gamificationApi.trackPrayer(prayerTime);
+      const { data } = await gamificationApi.trackPrayer(prayerTime, isKaza);
       if (data.success) {
         set({ stats: data.data.stats });
         await get().fetchStats();

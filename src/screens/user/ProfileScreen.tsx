@@ -205,7 +205,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const avatarUrl = localAvatarUri || profile?.avatarUrl || user?.avatarUrl;
 
   return (
-    <Screen className="bg-slate-50">
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
       <UploadOverlay visible={avatarLoading} message="Fotoğraf yükleniyor" />
 
       <ScrollView
