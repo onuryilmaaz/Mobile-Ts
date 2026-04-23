@@ -32,11 +32,13 @@ export type HomeStackParamList = {
 
 export type SurahsStackParamList = {
   SurahsMain: undefined;
+  SurahDetail: { surahId: number; surahName: string };
 };
 
 export type UserTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
   Surahs: NavigatorScreenParams<SurahsStackParamList>;
+  Dhikr: undefined;
   Gamification: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;

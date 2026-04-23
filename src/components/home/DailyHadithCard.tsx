@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { hadithService, type Hadith } from '@/services/hadith.service';
 
 export function DailyHadithCard() {
@@ -57,7 +58,12 @@ export function DailyHadithCard() {
               <Ionicons name="book" size={20} color="#fff" />
               <Text className="text-base font-bold text-white">Saatlik Hadis</Text>
             </View>
-            <TouchableOpacity onPress={loadRandomHadith} className="rounded-full bg-white/20 p-2">
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                loadRandomHadith();
+              }}
+              className="rounded-full bg-white/20 p-2">
               <Ionicons name="refresh" size={18} color="#fff" />
             </TouchableOpacity>
           </View>

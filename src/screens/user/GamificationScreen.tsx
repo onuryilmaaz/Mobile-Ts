@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { View, Text, ScrollView, RefreshControl, Image, Dimensions, StatusBar } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, Image, Dimensions, StatusBar, TouchableOpacity, Share } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '@/modules/auth/auth.store';
 
 const { width } = Dimensions.get('window');
@@ -53,6 +54,7 @@ export function GamificationScreen() {
   const { user } = useAuthStore();
 
   const loadData = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await fetchStats();
     await fetchLeaderboard();
   };
@@ -111,7 +113,21 @@ export function GamificationScreen() {
               {Object.values(allBadges || {}).map((badgeDesc: any) => {
                 const isEarned = badges?.some((b) => b.badge_id === badgeDesc.id);
                 return (
-                  <View key={badgeDesc.id} className="mx-2 items-center" style={{ width: 90 }}>
+                  <TouchableOpacity 
+                    key={badgeDesc.id} 
+                    onPress={() => {
+                      if (isEarned) {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                        Share.share({
+                          message: `Salah uygulamasında "${badgeDesc.name}" rozetini kazandım! 🏅 #SalahApp`
+                        });
+                      } else {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      }
+                    }}
+                    className="mx-2 items-center" 
+                    style={{ width: 90 }}
+                  >
                     <View
                       className={`mb-2 h-20 w-20 items-center justify-center rounded-[28px] shadow-sm ${
                         isEarned
@@ -129,10 +145,39 @@ export function GamificationScreen() {
                       numberOfLines={2}>
                       {badgeDesc.name}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 );
               })}
             </ScrollView>
+          </View>
+
+          <View className="mb-10">
+            <View className="mb-5 flex-row items-center justify-between">
+              <Text className="text-xl font-black text-slate-800">Haftalık Aktivite</Text>
+              <Text className="text-xs font-bold text-primary-600">Son 7 Gün</Text>
+            </View>
+            <View className="flex-row items-end justify-between rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
+              {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day, i) => {
+                const height = [40, 70, 45, 90, 65, 30, 80][i]; // Mock data
+                const isToday = i === (new Date().getDay() + 6) % 7;
+                return (
+                  <View key={day} className="items-center">
+                    <View 
+                      className={`w-3 rounded-full ${isToday ? 'bg-primary-600' : 'bg-slate-100'}`}
+                      style={{ height: 100, justifyContent: 'flex-end' }}
+                    >
+                      <View 
+                        className={`w-full rounded-full ${isToday ? 'bg-primary-400' : 'bg-primary-200'}`}
+                        style={{ height: `${height}%` }}
+                      />
+                    </View>
+                    <Text className={`mt-2 text-[9px] font-bold ${isToday ? 'text-primary-700' : 'text-slate-400'}`}>
+                      {day}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
           </View>
 
           <View className="mb-6">

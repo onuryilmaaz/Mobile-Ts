@@ -5,7 +5,7 @@ import AdminNavigator from './AdminNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
-import { GamificationScreen } from '@/screens/user';
+import { DhikrScreen, GamificationScreen } from '@/screens/user';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -69,9 +69,23 @@ export default function UserNavigator() {
         component={SurahsNavigator}
         options={{
           tabBarLabel: 'Sureler',
-          headerShown: false,
+          headerShown: true,
+          header: () => <StandardHeader title="Sureler" showBackButton={false} />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Dhikr"
+        component={DhikrScreen}
+        options={{
+          tabBarLabel: 'Zikir',
+          headerShown: true,
+          header: () => <StandardHeader title="Zikir" showBackButton={false} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="apps-outline" size={size} color={color} />
           ),
         }}
       />

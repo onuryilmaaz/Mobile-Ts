@@ -1,4 +1,5 @@
 import { Platform, View, Text, TouchableOpacity, StatusBar as RNStatusBar } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
@@ -45,7 +46,10 @@ export function StandardHeader({
       <View className="flex-row items-center">
         {showBackButton && (
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.goBack();
+            }}
             className="-ml-1 flex-row items-center py-2 pr-3"
             activeOpacity={0.7}>
             <Ionicons name="chevron-back" size={24} color={HEADER_CONFIG.tintColor} />

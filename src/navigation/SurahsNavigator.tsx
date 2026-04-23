@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar as RNStatusBar } from 'react-native';
-import { PrayerSurahsScreen } from '@/screens/user';
+import { SurahBrowserScreen, SurahDetailScreen } from '@/screens/user';
 import type { SurahsStackParamList } from './types';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { useThemeStore } from '@/store/theme.store';
@@ -15,15 +15,17 @@ export default function SurahsNavigator() {
       <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
-          headerShown: true,
+          headerShown: false,
           headerShadowVisible: false,
+          animation: 'slide_from_right'
         }}>
         <Stack.Screen
           name="SurahsMain"
-          component={PrayerSurahsScreen}
-          options={{
-            header: () => <StandardHeader title="Namaz Sureleri" showBackButton={false} />,
-          }}
+          component={SurahBrowserScreen}
+        />
+        <Stack.Screen
+          name="SurahDetail"
+          component={SurahDetailScreen}
         />
       </Stack.Navigator>
     </>

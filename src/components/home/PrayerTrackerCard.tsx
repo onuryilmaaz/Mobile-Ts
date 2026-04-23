@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -99,9 +100,17 @@ export function PrayerTrackerCard() {
 
   const handleTrack = async (prayer: any) => {
     const state = getPrayerState(prayer);
-    if (state === 'upcoming' || stats?.today_prayers?.includes(prayer.id) || isLoading) return;
+    if (state === 'upcoming' || stats?.today_prayers?.includes(prayer.id) || isLoading) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
     
     const isKaza = state === 'expired';
+    if (isKaza) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
     await trackPrayer(prayer.id as any, isKaza);
   };
 

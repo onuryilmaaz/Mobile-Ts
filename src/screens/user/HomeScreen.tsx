@@ -9,7 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { PrayerTimesCard } from '@/components/home/PrayerTimesCard';
 import { PrayerTrackerCard } from '@/components/home/PrayerTrackerCard';
 import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
-import { DailyHadithCard } from '@/components/home/DailyHadithCard';
+import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
@@ -51,7 +51,7 @@ export default function HomeScreen({ navigation }: Props) {
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard />
         <PrayerTrackerCard />
-        <DailyHadithCard />
+        <DailyInspirationCard />
         <ReligiousDaysCard />
       </ScrollView>
     </Screen>

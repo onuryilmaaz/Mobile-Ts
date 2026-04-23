@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -53,6 +55,7 @@ export function PrayerTimesCard() {
   const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
   const [remainingTime, setRemainingTime] = useState<string>('');
   const [nextPrayerName, setNextPrayerName] = useState<string>('');
+  const [currentPrayerStartTime, setCurrentPrayerStartTime] = useState<number | null>(null);
   const [isDistrictLoaded, setIsDistrictLoaded] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -81,6 +84,7 @@ export function PrayerTimesCard() {
   };
 
   const handleNotificationToggle = async (value: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (value) {
       const hasPermission = await notificationService.requestPermissions();
       if (!hasPermission) {
@@ -140,7 +144,8 @@ export function PrayerTimesCard() {
 
     let foundNext = false;
 
-    for (const point of checkpoints) {
+    for (let i = 0; i < checkpoints.length; i++) {
+      const point = checkpoints[i];
       if (!point.val) continue;
       const [ph, pm] = point.val.split(':').map(Number);
       const pointMinutes = ph * 60 + pm;
@@ -150,6 +155,18 @@ export function PrayerTimesCard() {
         const targetTime = now.getTime() + diffMinutes * 60 * 1000 - currentSeconds * 1000;
         targetTimeRef.current = targetTime;
         setNextPrayerName(point.key);
+        
+        // Current prayer start time is the previous checkpoint
+        const prevIdx = i === 0 ? checkpoints.length - 1 : i - 1;
+        const prevPoint = checkpoints[prevIdx];
+        if (prevPoint.val) {
+          const [sph, spm] = prevPoint.val.split(':').map(Number);
+          const startObj = new Date(now);
+          if (i === 0) startObj.setDate(startObj.getDate() - 1); // Previous day's Yatsi
+          startObj.setHours(sph, spm, 0, 0);
+          setCurrentPrayerStartTime(startObj.getTime());
+        }
+        
         foundNext = true;
         break;
       }
@@ -162,6 +179,13 @@ export function PrayerTimesCard() {
       const targetTime = now.getTime() + diffMinutes * 60 * 1000 - currentSeconds * 1000;
       targetTimeRef.current = targetTime;
       setNextPrayerName('İmsak');
+
+      // Current prayer is Yatsi
+      const [sph, spm] = times.yatsi.split(':').map(Number);
+      const startObj = new Date(now);
+      if (now.getHours() < ph) startObj.setDate(startObj.getDate() - 1); // If past midnight
+      startObj.setHours(sph, spm, 0, 0);
+      setCurrentPrayerStartTime(startObj.getTime());
     }
     updateCountdown();
   };
@@ -281,6 +305,19 @@ export function PrayerTimesCard() {
             <Text className="font-mono text-5xl font-bold tracking-tight text-white">
               {targetTimeRef.current ? remainingTime : '--:--:--'}
             </Text>
+            
+            {/* Progress Bar */}
+            {targetTimeRef.current && currentPrayerStartTime && (
+              <View className="mt-6 h-1.5 w-full max-w-[200px] overflow-hidden rounded-full bg-white/20">
+                <View 
+                  className="h-full bg-white" 
+                  style={{ 
+                    width: `${Math.min(100, Math.max(0, ((Date.now() - currentPrayerStartTime) / (targetTimeRef.current - currentPrayerStartTime)) * 100))}%` 
+                  }} 
+                />
+              </View>
+            )}
+
             <View className="mt-3 rounded-full border border-white/20 bg-white/20 px-4 py-1.5">
               <Text className="text-xs font-medium text-white">Gününüz bereketli geçsin</Text>
             </View>
@@ -297,6 +334,7 @@ export function PrayerTimesCard() {
             <View className="flex-row flex-wrap justify-between gap-y-4">
               {prayers.map((item) => {
                 const isNext = item.label === nextPrayerName;
+
                 return (
                   <View key={item.key} className="w-[31%]">
                     <View
@@ -304,6 +342,12 @@ export function PrayerTimesCard() {
                         items-center justify-center rounded-2xl border px-1 py-3
                         ${isNext ? 'border-teal-200 bg-teal-50 shadow-sm' : 'border-slate-100 bg-slate-50'}
                       `}>
+                      {isNext && (
+                        <Animated.View
+                          entering={FadeIn}
+                          className="absolute inset-0 rounded-2xl border-2 border-teal-400 opacity-20"
+                        />
+                      )}
                       <Ionicons
                         name={PRAYER_ICONS[item.label]}
                         size={20}
@@ -329,7 +373,10 @@ export function PrayerTimesCard() {
           {/* Location Selection */}
           <View className="mt-4 border-t border-slate-100 pt-4">
             <TouchableOpacity
-              onPress={() => navigation.navigate('LocationSelection')}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate('LocationSelection');
+              }}
               className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4">
               <View className="flex-1">
                 <View className="flex-row items-center gap-2">
