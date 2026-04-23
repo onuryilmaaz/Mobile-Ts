@@ -97,19 +97,15 @@ export function StandardHeader({
           ) : showProfile ? (
             <TouchableOpacity
               onPress={handleProfilePress}
-              className={`h-12 ${
-                !isAuthenticated ? 'px-4' : 'w-12'
-              } items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20`}>
-              {!isAuthenticated ? (
-                <Text className="font-semibold text-white">Giriş Yap</Text>
-              ) : avatarUrl ? (
+              className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20">
+              {isAuthenticated && avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
                 <Ionicons name="person" size={24} color="white" />
               )}
             </TouchableOpacity>
           ) : (
-            <View className="w-10" />
+            <View className="w-12" />
           )}
         </View>
       </View>

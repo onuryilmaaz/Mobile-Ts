@@ -73,14 +73,12 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
           onPress={() => {
             if (isAuthenticated) {
               navigation.navigate('Profile' as any, { screen: 'ProfileMain' });
+            } else {
+              navigation.navigate('Auth' as any);
             }
           }}
-          className={`h-12 ${
-            !isAuthenticated ? 'px-4' : 'w-12'
-          } items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20`}>
-          {!isAuthenticated ? (
-            <Text className="font-semibold text-white">Giriş Yap</Text>
-          ) : avatarUrl ? (
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-white/20">
+          {isAuthenticated && avatarUrl ? (
             <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
           ) : (
             <Ionicons name="person" size={24} color="white" />
