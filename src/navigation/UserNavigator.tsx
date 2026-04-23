@@ -13,7 +13,7 @@ import { StandardHeader } from '@/components/layout/StandardHeader';
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
   const insets = useSafeAreaInsets();
 
   const isAdmin =
@@ -114,7 +114,6 @@ export default function UserNavigator() {
           }}
         />
       )}
-
     </Tab.Navigator>
   );
 }

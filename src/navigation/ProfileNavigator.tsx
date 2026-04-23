@@ -25,7 +25,9 @@ export default function ProfileNavigator() {
           name="ProfileMain"
           component={ProfileScreen}
           options={{
-            header: () => <StandardHeader title="Profil" showBackButton={false} />,
+            header: () => (
+              <StandardHeader title="Profil" showBackButton={false} showProfile={false} />
+            ),
           }}
         />
         <Stack.Screen

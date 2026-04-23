@@ -60,7 +60,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
         <View className="flex-row items-center rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm shadow-slate-200">
           <Ionicons name="search" size={20} color="#94a3b8" />
           <TextInput
-            placeholder="Sure ara (ör: Bakara veya 2)"
+            placeholder="Sure arayın"
             value={searchQuery}
             onChangeText={setSearchQuery}
             className="ml-3 flex-1 font-medium text-slate-800"

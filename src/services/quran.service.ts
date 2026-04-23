@@ -1,4 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const BASE_URL = 'https://api.acikkuran.com';
+const SURAHS_CACHE_KEY = '@salah_surahs_cache';
+
+let cachedSurahs: Surah[] | null = null;
 
 export interface Surah {
   id: number;
@@ -33,9 +38,28 @@ export interface Verse {
 export const quranService = {
   async getSurahs(): Promise<Surah[]> {
     try {
+      // 1. Check memory cache
+      if (cachedSurahs) return cachedSurahs;
+
+      // 2. Check persistent storage
+      const stored = await AsyncStorage.getItem(SURAHS_CACHE_KEY);
+      if (stored) {
+        cachedSurahs = JSON.parse(stored);
+        return cachedSurahs || [];
+      }
+
+      // 3. Fetch from API if not cached
       const response = await fetch(`${BASE_URL}/surahs`);
       const result = await response.json();
-      return result.data;
+      const surahs = result.data;
+
+      // 4. Save to cache
+      if (surahs && surahs.length > 0) {
+        cachedSurahs = surahs;
+        await AsyncStorage.setItem(SURAHS_CACHE_KEY, JSON.stringify(surahs));
+      }
+
+      return surahs || [];
     } catch (error) {
       console.error('Error fetching surahs:', error);
       return [];
@@ -44,11 +68,10 @@ export const quranService = {
 
   async getSurah(id: number): Promise<Surah | null> {
     try {
-      const response = await fetch(`${BASE_URL}/surah/${id}`);
-      const result = await response.json();
-      return result.data;
+      const surahs = await this.getSurahs();
+      return surahs.find((s) => s.id === id) || null;
     } catch (error) {
-      console.error(`Error fetching surah ${id}:`, error);
+      console.error(`Error finding surah ${id}:`, error);
       return null;
     }
   },

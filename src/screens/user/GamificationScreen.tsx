@@ -6,7 +6,6 @@ import {
   RefreshControl,
   Image,
   Dimensions,
-  StatusBar,
   TouchableOpacity,
   Share,
 } from 'react-native';
@@ -78,7 +77,6 @@ export function GamificationScreen() {
 
   return (
     <Screen className="bg-slate-50 p-0 px-0" safeAreaEdges={['left', 'right']}>
-      <StatusBar barStyle="light-content" />
       <ScrollView
         className="flex-1 bg-slate-50"
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={loadData} />}
@@ -158,35 +156,6 @@ export function GamificationScreen() {
                 );
               })}
             </ScrollView>
-          </View>
-
-          <View className="mb-10">
-            <View className="mb-5 flex-row items-center justify-between">
-              <Text className="text-xl font-black text-slate-800">Haftalık Aktivite</Text>
-              <Text className="text-xs font-bold text-primary-600">Son 7 Gün</Text>
-            </View>
-            <View className="flex-row items-end justify-between rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
-              {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day, i) => {
-                const height = [40, 70, 45, 90, 65, 30, 80][i]; // Mock data
-                const isToday = i === (new Date().getDay() + 6) % 7;
-                return (
-                  <View key={day} className="items-center">
-                    <View
-                      className={`w-3 rounded-full ${isToday ? 'bg-primary-600' : 'bg-slate-100'}`}
-                      style={{ height: 100, justifyContent: 'flex-end' }}>
-                      <View
-                        className={`w-full rounded-full ${isToday ? 'bg-primary-400' : 'bg-primary-200'}`}
-                        style={{ height: `${height}%` }}
-                      />
-                    </View>
-                    <Text
-                      className={`mt-2 text-[9px] font-bold ${isToday ? 'text-primary-700' : 'text-slate-400'}`}>
-                      {day}
-                    </Text>
-                  </View>
-                );
-              })}
-            </View>
           </View>
 
           <View className="mb-6">
