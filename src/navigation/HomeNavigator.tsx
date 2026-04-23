@@ -12,6 +12,7 @@ import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useState, useEffect } from 'react';
 import { HomeScreen, QiblaFinderScreen, LocationSelectionScreen } from '@/screens/user';
+import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
@@ -71,10 +72,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
         <TouchableOpacity
           onPress={() => {
             if (isAuthenticated) {
-              const parent = navigation.getParent();
-              if (parent) {
-                (parent as any).navigate('Profile', { screen: 'ProfileMain' });
-              }
+              navigation.navigate('Profile' as any, { screen: 'ProfileMain' });
             }
           }}
           className={`h-12 ${
@@ -134,6 +132,13 @@ export default function HomeNavigator() {
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: '#fff',
             headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileNavigator}
+          options={{
+            headerShown: false,
           }}
         />
       </Stack.Navigator>

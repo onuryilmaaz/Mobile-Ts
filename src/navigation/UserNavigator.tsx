@@ -2,7 +2,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
-import ProfileNavigator from './ProfileNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
 import { DhikrScreen, GamificationScreen } from '@/screens/user';
@@ -116,16 +115,6 @@ export default function UserNavigator() {
         />
       )}
 
-      <Tab.Screen
-        name="Profile"
-        component={ProfileNavigator}
-        options={{
-          tabBarLabel: 'Profil',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 }

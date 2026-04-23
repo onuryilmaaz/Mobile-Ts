@@ -28,6 +28,7 @@ export type HomeStackParamList = {
   HomeMain: undefined;
   QiblaFinder: undefined;
   LocationSelection: undefined;
+  Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 export type SurahsStackParamList = {
@@ -40,7 +41,6 @@ export type UserTabParamList = {
   Surahs: NavigatorScreenParams<SurahsStackParamList>;
   Dhikr: undefined;
   Gamification: undefined;
-  Profile: NavigatorScreenParams<ProfileStackParamList>;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };
 
