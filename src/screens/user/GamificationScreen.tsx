@@ -1,5 +1,15 @@
 import { useEffect } from 'react';
-import { View, Text, ScrollView, RefreshControl, Image, Dimensions, StatusBar, TouchableOpacity, Share } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  Image,
+  Dimensions,
+  StatusBar,
+  TouchableOpacity,
+  Share,
+} from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { Ionicons } from '@expo/vector-icons';
@@ -67,7 +77,7 @@ export function GamificationScreen() {
   const rest = leaderboard?.slice(3) || [];
 
   return (
-    <Screen className="bg-slate-50 p-0 px-0" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50 p-0 px-0" safeAreaEdges={['left', 'right']}>
       <StatusBar barStyle="light-content" />
       <ScrollView
         className="flex-1 bg-slate-50"
@@ -113,21 +123,20 @@ export function GamificationScreen() {
               {Object.values(allBadges || {}).map((badgeDesc: any) => {
                 const isEarned = badges?.some((b) => b.badge_id === badgeDesc.id);
                 return (
-                  <TouchableOpacity 
-                    key={badgeDesc.id} 
+                  <TouchableOpacity
+                    key={badgeDesc.id}
                     onPress={() => {
                       if (isEarned) {
                         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                         Share.share({
-                          message: `Salah uygulamasında "${badgeDesc.name}" rozetini kazandım! 🏅 #SalahApp`
+                          message: `Salah uygulamasında "${badgeDesc.name}" rozetini kazandım! 🏅 #SalahApp`,
                         });
                       } else {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       }
                     }}
-                    className="mx-2 items-center" 
-                    style={{ width: 90 }}
-                  >
+                    className="mx-2 items-center"
+                    style={{ width: 90 }}>
                     <View
                       className={`mb-2 h-20 w-20 items-center justify-center rounded-[28px] shadow-sm ${
                         isEarned
@@ -162,16 +171,16 @@ export function GamificationScreen() {
                 const isToday = i === (new Date().getDay() + 6) % 7;
                 return (
                   <View key={day} className="items-center">
-                    <View 
+                    <View
                       className={`w-3 rounded-full ${isToday ? 'bg-primary-600' : 'bg-slate-100'}`}
-                      style={{ height: 100, justifyContent: 'flex-end' }}
-                    >
-                      <View 
+                      style={{ height: 100, justifyContent: 'flex-end' }}>
+                      <View
                         className={`w-full rounded-full ${isToday ? 'bg-primary-400' : 'bg-primary-200'}`}
                         style={{ height: `${height}%` }}
                       />
                     </View>
-                    <Text className={`mt-2 text-[9px] font-bold ${isToday ? 'text-primary-700' : 'text-slate-400'}`}>
+                    <Text
+                      className={`mt-2 text-[9px] font-bold ${isToday ? 'text-primary-700' : 'text-slate-400'}`}>
                       {day}
                     </Text>
                   </View>

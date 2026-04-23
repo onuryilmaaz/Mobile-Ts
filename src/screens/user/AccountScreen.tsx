@@ -59,7 +59,7 @@ export default function AccountScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}

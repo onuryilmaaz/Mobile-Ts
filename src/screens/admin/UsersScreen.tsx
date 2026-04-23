@@ -23,11 +23,7 @@ export default function UsersScreen({ navigation }: Props) {
       setError(null);
       const { data } = await adminApi.listUsers();
       console.log('Users API Response:', data);
-      const usersArray = Array.isArray(data) 
-        ? data 
-        : Array.isArray(data?.users) 
-          ? data.users 
-          : [];
+      const usersArray = Array.isArray(data) ? data : Array.isArray(data?.users) ? data.users : [];
       setUsers(usersArray);
     } catch (err) {
       console.log('Users API Error:', err);
@@ -53,7 +49,11 @@ export default function UsersScreen({ navigation }: Props) {
                 ? `${item.firstName} ${item.lastName}`
                 : 'İsimsiz Kullanıcı'}
             </Text>
-            {!item.isActive && <Badge variant="danger" size="sm">PASİF</Badge>}
+            {!item.isActive && (
+              <Badge variant="danger" size="sm">
+                PASİF
+              </Badge>
+            )}
           </View>
           <Text className="mb-2 text-sm text-slate-500" numberOfLines={1}>
             {item.email}
@@ -74,7 +74,7 @@ export default function UsersScreen({ navigation }: Props) {
   );
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <View className="mb-3 flex-row items-center justify-between pt-3">
         <Text className="text-sm font-medium text-slate-700">
           Toplam <Text className="font-bold text-slate-900">{users.length}</Text> kullanıcı

@@ -209,7 +209,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
   const userRoles = user.roles || [];
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}

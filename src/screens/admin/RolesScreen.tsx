@@ -23,22 +23,29 @@ export default function RolesScreen() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const loadRoles = useCallback(async (isInitial = false) => {
-    try {
-      if (isInitial) setInitialLoading(true);
-      setLoading(true);
-      const { data } = await adminApi.listRoles();
-      console.log('Roles API Response:', data);
-      const rolesArray = Array.isArray(data) ? data : Array.isArray(data?.roles) ? data.roles : [];
-      setRoles(rolesArray);
-    } catch (err) {
-      console.log(err);
-      alert.error('Hata', 'Roller alınamadı');
-    } finally {
-      setLoading(false);
-      setInitialLoading(false);
-    }
-  }, [alert]);
+  const loadRoles = useCallback(
+    async (isInitial = false) => {
+      try {
+        if (isInitial) setInitialLoading(true);
+        setLoading(true);
+        const { data } = await adminApi.listRoles();
+        console.log('Roles API Response:', data);
+        const rolesArray = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.roles)
+            ? data.roles
+            : [];
+        setRoles(rolesArray);
+      } catch (err) {
+        console.log(err);
+        alert.error('Hata', 'Roller alınamadı');
+      } finally {
+        setLoading(false);
+        setInitialLoading(false);
+      }
+    },
+    [alert]
+  );
 
   useEffect(() => {
     loadRoles(true);
@@ -117,7 +124,7 @@ export default function RolesScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}

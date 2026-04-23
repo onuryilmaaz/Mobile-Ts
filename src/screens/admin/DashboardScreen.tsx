@@ -92,7 +92,7 @@ export default function DashboardScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => loadData()} />}
@@ -141,7 +141,9 @@ export default function DashboardScreen({ navigation }: Props) {
                   <Ionicons name="person-outline" size={16} color="#64748b" />
                   <Text className="text-xs text-slate-500">Pasif</Text>
                 </View>
-                <Text className="text-xl font-bold text-slate-600">{stats.users.inactive || 0}</Text>
+                <Text className="text-xl font-bold text-slate-600">
+                  {stats.users.inactive || 0}
+                </Text>
               </View>
               {stats.sessions && (
                 <View className="min-w-[45%] flex-1 rounded-xl bg-purple-50 p-3">
@@ -168,7 +170,8 @@ export default function DashboardScreen({ navigation }: Props) {
                 activeOpacity={0.7}
                 onPress={() => navigation.navigate(item.screen as any)}>
                 <View className="flex-1 flex-row items-center gap-3">
-                  <View className={`h-10 w-10 items-center justify-center rounded-full ${item.color}`}>
+                  <View
+                    className={`h-10 w-10 items-center justify-center rounded-full ${item.color}`}>
                     <Ionicons name={item.icon} size={20} color={item.iconColor} />
                   </View>
                   <View className="flex-1">

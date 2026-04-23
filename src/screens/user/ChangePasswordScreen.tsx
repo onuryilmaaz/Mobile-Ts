@@ -54,7 +54,7 @@ export default function ChangePasswordScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}

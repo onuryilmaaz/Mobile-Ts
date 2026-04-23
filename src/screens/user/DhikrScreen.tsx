@@ -107,7 +107,7 @@ export default function DhikrScreen() {
   };
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right', 'bottom']}>
+    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
       <View className="flex-1 items-center justify-center px-6 py-8">
         <View className="mb-10 mt-4 w-full">
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-6 px-6">
