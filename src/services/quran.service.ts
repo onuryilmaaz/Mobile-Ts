@@ -38,22 +38,18 @@ export interface Verse {
 export const quranService = {
   async getSurahs(): Promise<Surah[]> {
     try {
-      // 1. Check memory cache
       if (cachedSurahs) return cachedSurahs;
 
-      // 2. Check persistent storage
       const stored = await AsyncStorage.getItem(SURAHS_CACHE_KEY);
       if (stored) {
         cachedSurahs = JSON.parse(stored);
         return cachedSurahs || [];
       }
 
-      // 3. Fetch from API if not cached
       const response = await fetch(`${BASE_URL}/surahs`);
       const result = await response.json();
       const surahs = result.data;
 
-      // 4. Save to cache
       if (surahs && surahs.length > 0) {
         cachedSurahs = surahs;
         await AsyncStorage.setItem(SURAHS_CACHE_KEY, JSON.stringify(surahs));
@@ -89,17 +85,13 @@ export const quranService = {
 
   async getRandomVerse(): Promise<{ verse: Verse; surah: Surah } | null> {
     try {
-      // Step 1: Get all surahs to know the verse counts
       const surahs = await this.getSurahs();
       if (!surahs || surahs.length === 0) return null;
 
-      // Step 2: Pick a random surah
       const randomSurah = surahs[Math.floor(Math.random() * surahs.length)];
 
-      // Step 3: Pick a random verse number
       const randomVerseNumber = Math.floor(Math.random() * randomSurah.verse_count) + 1;
 
-      // Step 4: Get the verse data
       const verse = await this.getVerse(randomSurah.id, randomVerseNumber);
 
       if (verse) {

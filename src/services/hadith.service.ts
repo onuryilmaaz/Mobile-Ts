@@ -1,91 +1,139 @@
-/* eslint-disable @typescript-eslint/array-type */
-const BASE_URL = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
+import * as SQLite from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system/legacy';
+import { Asset } from 'expo-asset';
 
 export interface Hadith {
-  hadithnumber: number;
-  arabicnumber: number;
+  id: number;
+  book: string;
+  hadith_number: number;
   text: string;
-  grades: Array<{
-    grade: string;
-    name: string;
-  }>;
-  reference?: {
-    book: number;
-    hadith: number;
-  };
 }
 
-export interface HadithBook {
-  metadata: {
-    name: string;
-    section: {
-      [key: string]: number;
-    };
-  };
-  hadiths: Hadith[];
-}
+let db: SQLite.SQLiteDatabase | null = null;
+
+const DB_NAME = 'hadiths.db';
 
 export const hadithService = {
-  async getRandomHadith(book: 'bukhari' | 'muslim' | 'abudawud' | 'tirmidhi' = 'bukhari') {
-    try {
-      const response = await fetch(`${BASE_URL}/editions/tur-${book}.json`);
-      const data: HadithBook = await response.json();
+  async initDatabase() {
+    if (db) return db;
 
-      if (data.hadiths && data.hadiths.length > 0) {
-        const randomIndex = Math.floor(Math.random() * data.hadiths.length);
-        return {
-          hadith: data.hadiths[randomIndex],
-          bookName: data.metadata.name,
-        };
+    try {
+      const docDir = FileSystem.documentDirectory;
+
+      if (!docDir) {
+        console.error('FileSystem.documentDirectory is still null in legacy mode.');
+        return null;
       }
-      return null;
+
+      const dbDir = `${docDir}SQLite/`;
+      const dbPath = `${dbDir}${DB_NAME}`;
+
+      const dirInfo = await FileSystem.getInfoAsync(dbDir);
+      if (!dirInfo.exists) {
+        await FileSystem.makeDirectoryAsync(dbDir, { intermediates: true });
+      }
+
+      const fileInfo = await FileSystem.getInfoAsync(dbPath);
+
+      if (!fileInfo.exists) {
+        console.log('Copying database from assets...');
+        const asset = Asset.fromModule(require('../../assets/data/hadiths.db'));
+        await asset.downloadAsync();
+
+        if (asset.localUri) {
+          await FileSystem.copyAsync({
+            from: asset.localUri,
+            to: dbPath,
+          });
+          console.log('Database copied successfully.');
+        } else {
+          throw new Error('Asset localUri is null');
+        }
+      }
+
+      db = await SQLite.openDatabaseAsync(DB_NAME);
+      return db;
     } catch (error) {
-      console.error('Error fetching hadith:', error);
+      console.error('Error initializing hadith database:', error);
       return null;
     }
   },
 
-  async getHadithByNumber(book: 'bukhari' | 'muslim' | 'abudawud' | 'tirmidhi', number: number) {
+  async getRandomHadith(book?: 'bukhari' | 'muslim' | 'abudawud' | 'tirmidhi') {
     try {
-      const response = await fetch(`${BASE_URL}/editions/tur-${book}.json`);
-      const data: HadithBook = await response.json();
+      const database = await this.initDatabase();
+      if (!database) return null;
 
-      const hadith = data.hadiths.find((h) => h.hadithnumber === number);
-      if (hadith) {
+      let query = 'SELECT * FROM hadiths ';
+      let params: any[] = [];
+
+      if (book) {
+        query += 'WHERE book = ? ';
+        params.push(book);
+      }
+
+      query += 'ORDER BY RANDOM() LIMIT 1';
+
+      const result = await database.getFirstAsync<Hadith>(query, params);
+
+      if (result) {
         return {
-          hadith,
-          bookName: data.metadata.name,
+          hadith: {
+            hadithnumber: result.hadith_number,
+            text: result.text,
+          },
+          bookName: this.getBookDisplayName(result.book),
         };
       }
       return null;
     } catch (error) {
-      console.error('Error fetching hadith:', error);
+      console.error('Error getting random hadith:', error);
       return null;
     }
   },
 
   async getHourlyHadith() {
     try {
-      const response = await fetch(`${BASE_URL}/editions/tur-bukhari.json`);
-      const data: HadithBook = await response.json();
+      const database = await this.initDatabase();
+      if (!database) return null;
 
-      if (data.hadiths && data.hadiths.length > 0) {
-        const now = new Date();
-        const dayOfYear = Math.floor(
-          (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000
-        );
-        const hour = now.getHours();
-        const index = (dayOfYear * 24 + hour) % data.hadiths.length;
+      const now = new Date();
+      const seed = Math.floor(now.getTime() / (1000 * 60 * 60));
 
+      const totalCountResult = await database.getFirstAsync<{ count: number }>(
+        'SELECT COUNT(*) as count FROM hadiths'
+      );
+      const totalCount = totalCountResult?.count || 1;
+      const offset = seed % totalCount;
+
+      const result = await database.getFirstAsync<Hadith>(
+        'SELECT * FROM hadiths LIMIT 1 OFFSET ?',
+        [offset]
+      );
+
+      if (result) {
         return {
-          hadith: data.hadiths[index],
-          bookName: data.metadata.name,
+          hadith: {
+            hadithnumber: result.hadith_number,
+            text: result.text,
+          },
+          bookName: this.getBookDisplayName(result.book),
         };
       }
       return null;
     } catch (error) {
-      console.error('Error fetching hourly hadith:', error);
+      console.error('Error getting hourly hadith:', error);
       return null;
     }
+  },
+
+  getBookDisplayName(book: string) {
+    const names: Record<string, string> = {
+      bukhari: 'Sahihi Buhari',
+      muslim: 'Sahihi Müslim',
+      abudawud: 'Sünen-i Ebu Davud',
+      tirmidhi: 'Sünen-i Tirmizi',
+    };
+    return names[book] || book;
   },
 };
