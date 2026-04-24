@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
-import { DhikrScreen, GamificationScreen } from '@/screens/user';
+import { DhikrScreen, GamificationScreen, MosqueFinderScreen } from '@/screens/user';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -100,14 +100,14 @@ export default function UserNavigator() {
         />
 
         <Tab.Screen
-          name="Dhikr"
-          component={DhikrScreen}
+          name="MosqueFinder"
+          component={MosqueFinderScreen}
           options={{
-            tabBarLabel: 'Zikir',
+            tabBarLabel: 'Camiler',
             headerShown: true,
-            header: () => <StandardHeader title="Zikir" showBackButton={false} />,
+            header: () => <StandardHeader title="Cami Bulucu" showBackButton={false} />,
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="apps-outline" size={size} color={color} />
+              <Ionicons name="map-outline" size={size} color={color} />
             ),
           }}
         />

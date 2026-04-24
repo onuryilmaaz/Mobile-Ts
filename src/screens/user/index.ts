@@ -10,3 +10,4 @@ export { default as LocationSelectionScreen } from './LocationSelectionScreen';
 export { default as DhikrScreen } from './DhikrScreen';
 export { default as SurahDetailScreen } from './SurahDetailScreen';
 export * from './GamificationScreen';
+export { default as MosqueFinderScreen } from './MosqueFinderScreen';

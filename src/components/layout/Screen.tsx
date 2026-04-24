@@ -19,7 +19,7 @@ export function Screen({
   const edges = safeAreaEdges ?? defaultEdges;
 
   const content = (
-    <View className={`flex-1 px-4 ${className}`} style={style} {...props}>
+    <View className={`flex-1 ${className}`} style={style} {...props}>
       {children}
     </View>
   );

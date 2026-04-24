@@ -39,6 +39,7 @@ export type SurahsStackParamList = {
 export type UserTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
   Surahs: NavigatorScreenParams<SurahsStackParamList>;
+  MosqueFinder: undefined;
   Dhikr: undefined;
   Gamification: undefined;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
