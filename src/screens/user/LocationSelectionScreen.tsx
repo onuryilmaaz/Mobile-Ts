@@ -94,26 +94,23 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="bg-slate-50">
-      {/* Header */}
-      <View className="mb-4 flex-row items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm">
-        <TouchableOpacity onPress={handleBack} className="flex-row items-center">
-          <Ionicons name="chevron-back" size={24} color="#0f766e" />
-          <Text className="ml-1 text-base font-semibold text-slate-900">
-            {step === 'district' ? selectedState?.name : 'İl Seçin'}
-          </Text>
-        </TouchableOpacity>
-        {step === 'district' && selectedDistrict && (
-          <View className="rounded-full bg-teal-50 px-3 py-1">
-            <Text className="text-xs font-semibold text-teal-700">{selectedDistrict.name}</Text>
-          </View>
-        )}
-      </View>
-
-      {/* Content */}
+    <Screen className="bg-slate-50" safeAreaEdges={['right', 'left']}>
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+        <View className="mx-4 my-4 flex-row items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm">
+          <TouchableOpacity onPress={handleBack} className="flex-row items-center">
+            <Ionicons name="chevron-back" size={24} color="#0f766e" />
+            <Text className="ml-1 text-base font-semibold text-slate-900">
+              {step === 'district' ? selectedState?.name : 'İl Seçin'}
+            </Text>
+          </TouchableOpacity>
+          {step === 'district' && selectedDistrict && (
+            <View className="rounded-full bg-teal-50 px-3 py-1">
+              <Text className="text-xs font-semibold text-teal-700">{selectedDistrict.name}</Text>
+            </View>
+          )}
+        </View>
         {step === 'state' ? (
-          <View className="gap-2">
+          <View className="gap-2 mx-4">
             {states.map((state) => {
               const isSelected = selectedStateId === state._id;
               return (
@@ -139,7 +136,7 @@ export default function LocationSelectionScreen({ navigation }: Props) {
             })}
           </View>
         ) : (
-          <View className="gap-2">
+          <View className="gap-2 mx-4">
             {districts.length === 0 ? (
               <View className="items-center justify-center rounded-xl border border-slate-200 bg-white p-8">
                 <Ionicons name="alert-circle-outline" size={48} color="#94a3b8" />
