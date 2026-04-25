@@ -56,7 +56,7 @@ export const notificationService = {
   async schedulePrayerNotifications(prayerTimes: Record<string, string>) {
     try {
       if (Platform.OS === 'android' && isExpoGo) return;
-
+      
       await Notifications.cancelAllScheduledNotificationsAsync();
 
       const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
@@ -85,7 +85,7 @@ export const notificationService = {
         if (exactTime > now) {
           const title = `${prayer.name} Vakti Girdi 🕌`;
           const body = `${prayer.name} namazı vakti girmiştir. Hayırlı namazlar dileriz.`;
-
+          
           await Notifications.scheduleNotificationAsync({
             content: {
               title,
@@ -153,13 +153,13 @@ export const notificationService = {
       if (enabled !== 'true') return;
 
       const now = new Date();
-
+      
       for (let i = 1; i <= 12; i++) {
         const scheduleTime = new Date(now.getTime() + i * 60 * 60 * 1000);
         scheduleTime.setMinutes(0, 0, 0);
 
         const isAyet = i % 2 === 0;
-
+        
         let title = '';
         let subtitle = '';
         let body = '';
@@ -205,7 +205,7 @@ export const notificationService = {
           });
         }
       }
-
+      
       console.log('Hourly spiritual reminders scheduled successfully');
     } catch (error) {
       console.error('Error scheduling hourly reminders:', error);
