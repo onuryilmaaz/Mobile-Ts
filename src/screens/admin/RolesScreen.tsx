@@ -131,7 +131,7 @@ export default function RolesScreen() {
         refreshControl={
           <RefreshControl refreshing={loading && !initialLoading} onRefresh={() => loadRoles()} />
         }>
-        <Card className="mb-4">
+        <Card className="mx-4 mb-4">
           <View className="mb-3 flex-row items-center gap-2">
             <Ionicons
               name={editingRole ? 'create-outline' : 'add-circle-outline'}
@@ -172,7 +172,7 @@ export default function RolesScreen() {
           </View>
         </Card>
 
-        <Text className="mb-3 ml-1 text-lg font-bold text-slate-900">Mevcut Roller</Text>
+        <Text className="mb-3 ml-1 px-4 text-lg font-bold text-slate-900">Mevcut Roller</Text>
 
         {initialLoading ? (
           <InlineLoading message="Roller yükleniyor..." />
@@ -184,7 +184,7 @@ export default function RolesScreen() {
           />
         ) : (
           (roles || []).map((role) => (
-            <Card key={role.id} className="mb-3 flex-row items-center justify-between p-4">
+            <Card key={role.id} className="mx-4 mb-3 flex-row items-center justify-between p-4">
               <View className="flex-1">
                 <View className="mb-1 flex-row items-center gap-2">
                   <Badge variant="primary" size="md">

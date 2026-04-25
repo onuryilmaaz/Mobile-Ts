@@ -242,7 +242,7 @@ export default function ProfileScreen({ navigation }: Props) {
           </View>
         </View>
 
-        <Card className="mb-4">
+        <Card className="mx-4 mb-4">
           <View className="mb-4 flex-row items-center justify-between">
             <Text className="text-lg font-bold text-slate-900">Kişisel Bilgiler</Text>
             {!isEditing && (
@@ -324,26 +324,27 @@ export default function ProfileScreen({ navigation }: Props) {
         </Card>
 
         {/* Test Notification Card */}
-        <Card className="mb-4">
-          <View className="flex-row items-center justify-between">
-            <View className="flex-1">
-              <Text className="mb-1 text-lg font-bold text-slate-900">Bildirim Testi</Text>
-              <Text className="text-xs text-slate-500">
-                Bildirimlerin çalışıp çalışmadığını test edin
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={handleTestNotification}
-              className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80">
-              <View className="flex-row items-center gap-2">
-                <Ionicons name="notifications" size={16} color="#fff" />
-                <Text className="text-sm font-semibold text-white">Test Et</Text>
+        {user?.roles.includes('admin') && (
+          <Card className="mx-4 mb-4">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-1">
+                <Text className="mb-1 text-lg font-bold text-slate-900">Bildirim Testi</Text>
+                <Text className="text-xs text-slate-500">
+                  Bildirimlerin çalışıp çalışmadığını test edin
+                </Text>
               </View>
-            </TouchableOpacity>
-          </View>
-        </Card>
-
-        <Card>
+              <TouchableOpacity
+                onPress={handleTestNotification}
+                className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80">
+                <View className="flex-row items-center gap-2">
+                  <Ionicons name="notifications" size={16} color="#fff" />
+                  <Text className="text-sm font-semibold text-white">Test Et</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Card>
+        )}
+        <Card className="mx-4">
           <Text className="mb-4 text-lg font-bold text-slate-900">Ayarlar</Text>
 
           <View className="gap-2">

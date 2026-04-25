@@ -95,7 +95,7 @@ export default function SessionsScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => loadSessions()} />
         }>
-        <Card className="mb-4 mt-4">
+        <Card className="mx-4 my-4">
           <View className="mb-2 flex-row items-center gap-2">
             <Ionicons name="information-circle-outline" size={20} color="#64748b" />
             <Text className="text-sm font-medium text-slate-700">Bilgi</Text>
@@ -114,7 +114,7 @@ export default function SessionsScreen() {
             message="Hesabınıza bağlı aktif oturum yok"
           />
         ) : (
-          <View className="gap-3">
+          <View className="gap-3 mx-4">
             {sessions.map((session) => (
               <Card
                 key={session.id}

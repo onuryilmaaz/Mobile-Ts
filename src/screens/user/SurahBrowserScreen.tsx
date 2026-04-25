@@ -56,7 +56,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
 
   return (
     <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
-      <View className="px-1 pb-2 pt-4">
+      <View className="px-4 pb-2 pt-4">
         <View className="flex-row items-center rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm shadow-slate-200">
           <Ionicons name="search" size={20} color="#94a3b8" />
           <TextInput

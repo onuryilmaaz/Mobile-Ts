@@ -62,7 +62,7 @@ export default function ChangePasswordScreen() {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
-        <Card className="mt-4">
+        <Card className="mx-4 mt-4">
           <View className="mb-4 flex-row items-center gap-2">
             <Ionicons name="lock-closed-outline" size={20} color="#0f766e" />
             <Text className="text-base font-semibold text-slate-900">Şifre Değiştir</Text>

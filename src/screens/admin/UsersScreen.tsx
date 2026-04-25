@@ -41,7 +41,7 @@ export default function UsersScreen({ navigation }: Props) {
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => navigation.navigate('UserDetail', { userId: item.id })}>
-      <Card className="mb-3 flex-row items-center justify-between p-4">
+      <Card className="mx-4 mt-4 mb-2 flex-row items-center justify-between p-4">
         <View className="flex-1">
           <View className="mb-2 flex-row items-center gap-2">
             <Text className="text-base font-bold text-slate-900" numberOfLines={1}>
@@ -75,14 +75,8 @@ export default function UsersScreen({ navigation }: Props) {
 
   return (
     <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
-      <View className="mb-3 flex-row items-center justify-between pt-3">
-        <Text className="text-sm font-medium text-slate-700">
-          Toplam <Text className="font-bold text-slate-900">{users.length}</Text> kullanıcı
-        </Text>
-      </View>
-
       {error && (
-        <Card className="mb-4 border-red-200 bg-red-50">
+        <Card className="mx-4 my-4 border-red-200 bg-red-50">
           <View className="flex-row items-center gap-2">
             <Ionicons name="alert-circle" size={20} color="#dc2626" />
             <Text className="flex-1 text-sm text-red-700">{error}</Text>

@@ -216,7 +216,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} />
         }>
-        <Card className="mb-4">
+        <Card className="mx-4 mb-4">
           <View className="mb-4 flex-row items-center justify-between">
             <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-100">
               <Ionicons name="person" size={32} color="#0f766e" />
@@ -239,7 +239,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
           />
         </Card>
 
-        <Card className="mb-4">
+        <Card className="mx-4 mb-4">
           <Text className="mb-3 text-lg font-bold text-slate-900">Roller</Text>
 
           <View className="mb-4 flex-row flex-wrap gap-2">
@@ -294,7 +294,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
           </View>
         </Card>
 
-        <Card>
+        <Card className='mx-4'>
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="text-lg font-bold text-slate-900">Aktif Oturumlar</Text>
             {sessions.length > 0 && (

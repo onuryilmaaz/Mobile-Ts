@@ -3,6 +3,8 @@ import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
+import { hadithService } from './hadith.service';
+import { quranService } from './quran.service';
 
 const NOTIFICATION_ENABLED_KEY = 'PRAYER_NOTIFICATIONS_ENABLED';
 
@@ -11,7 +13,6 @@ const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreCl
 if (!isExpoGo || Platform.OS === 'ios') {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
-      shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: false,
       shouldShowBanner: true,
@@ -55,7 +56,7 @@ export const notificationService = {
   async schedulePrayerNotifications(prayerTimes: Record<string, string>) {
     try {
       if (Platform.OS === 'android' && isExpoGo) return;
-      
+
       await Notifications.cancelAllScheduledNotificationsAsync();
 
       const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
@@ -82,12 +83,24 @@ export const notificationService = {
         exactTime.setHours(hours, minutes, 0, 0);
 
         if (exactTime > now) {
+          const title = `${prayer.name} Vakti Girdi 🕌`;
+          const body = `${prayer.name} namazı vakti girmiştir. Hayırlı namazlar dileriz.`;
+
           await Notifications.scheduleNotificationAsync({
             content: {
-              title: `${prayer.name} Vakti Girdi 🕌`,
-              body: `${prayer.name} namazı vakti girmiştir. Hayırlı namaz olsun.`,
+              title,
+              subtitle: 'Namaz Vakti Hatırlatıcısı',
+              body,
               sound: 'default',
-            },
+              android: {
+                priority: 'high',
+                style: {
+                  type: 'bigtext',
+                  text: body,
+                  title: title,
+                },
+              },
+            } as any,
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.DATE,
               date: exactTime,
@@ -99,12 +112,24 @@ export const notificationService = {
         thirtyMinBefore.setHours(hours, minutes - 30, 0, 0);
 
         if (thirtyMinBefore > now) {
+          const title = `${prayer.name} Vaktine 30 Dakika Kaldı ⏰`;
+          const body = `${prayer.name} namazı vaktine 30 dakika kaldı. Abdest ve hazırlık için vakit daralıyor.`;
+
           await Notifications.scheduleNotificationAsync({
             content: {
-              title: `${prayer.name} Vaktine 30 Dakika Kaldı ⏰`,
-              body: `${prayer.name} namazı vaktine 30 dakika kaldı.`,
+              title,
+              subtitle: 'Vakit Yaklaşıyor',
+              body,
               sound: 'default',
-            },
+              android: {
+                priority: 'high',
+                style: {
+                  type: 'bigtext',
+                  text: body,
+                  title: title,
+                },
+              },
+            } as any,
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.DATE,
               date: thirtyMinBefore,
@@ -114,8 +139,76 @@ export const notificationService = {
       }
 
       console.log('Prayer notifications scheduled successfully');
+      await this.scheduleHourlyReminders();
     } catch (error) {
       console.error('Error scheduling notifications:', error);
+    }
+  },
+
+  async scheduleHourlyReminders() {
+    try {
+      if (Platform.OS === 'android' && isExpoGo) return;
+
+      const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
+      if (enabled !== 'true') return;
+
+      const now = new Date();
+
+      for (let i = 1; i <= 12; i++) {
+        const scheduleTime = new Date(now.getTime() + i * 60 * 60 * 1000);
+        scheduleTime.setMinutes(0, 0, 0);
+
+        const isAyet = i % 2 === 0;
+
+        let title = '';
+        let subtitle = '';
+        let body = '';
+
+        if (isAyet) {
+          const result = await quranService.getRandomVerse();
+          if (result) {
+            title = '📖 İlahi Kelam';
+            subtitle = `${result.surah.name}, ${result.verse.verse_number}. Ayet`;
+            body = result.verse.translation.text;
+          }
+        } else {
+          const result = await hadithService.getRandomHadith();
+          if (result) {
+            title = '✨ Nurdan Damlalar';
+            subtitle = result.bookName;
+            body = result.hadith.text;
+          }
+        }
+
+        if (body) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title,
+              subtitle,
+              body,
+              sound: 'default',
+              data: { type: 'spiritual_reminder' },
+              android: {
+                priority: 'high',
+                style: {
+                  type: 'bigtext',
+                  text: body,
+                  title: title,
+                  summary: subtitle,
+                },
+              },
+            } as any,
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: scheduleTime,
+            },
+          });
+        }
+      }
+
+      console.log('Hourly spiritual reminders scheduled successfully');
+    } catch (error) {
+      console.error('Error scheduling hourly reminders:', error);
     }
   },
 
@@ -146,9 +239,19 @@ export const notificationService = {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Test Bildirimi 🔔',
-          body: 'Bildirimler başarıyla çalışıyor! Namaz vakitleri için bildirim alacaksınız.',
+          subtitle: 'Günün İlhamı buradan görünecek',
+          body: 'Bildirimler başarıyla çalışıyor!\n\nNamaz vakitleri için bildirim alacaksınız. Bu uzun bir test metnidir ve bildirim paneline basılı tuttuğunuzda veya aşağı kaydırdığınızda tamamının görünmesi gerekir. \n\nDenemek için şimdi bu bildirime basılı tutun!',
           sound: 'default',
-        },
+          android: {
+            priority: 'high',
+            style: {
+              type: 'bigtext',
+              text: 'Bildirimler başarıyla çalışıyor!\n\nNamaz vakitleri için bildirim alacaksınız. Bu uzun bir test metnidir ve bildirim paneline basılı tuttuğunuzda veya aşağı kaydırdığınızda tamamının görünmesi gerekir. \n\nDenemek için şimdi bu bildirime basılı tutun!',
+              title: 'Test Bildirimi 🔔',
+              summary: 'Günün İlhamı',
+            },
+          },
+        } as any,
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
           seconds: 1,

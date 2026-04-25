@@ -64,7 +64,7 @@ export default function AccountScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
-        <Card className="mb-4 mt-4">
+        <Card className="mx-4 my-4">
           <View className="mb-4 flex-row items-center gap-3">
             <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-100">
               <Ionicons name="log-out-outline" size={24} color="#0f766e" />
@@ -79,7 +79,7 @@ export default function AccountScreen() {
           <Button title="Çıkış Yap" onPress={handleLogout} variant="outline" />
         </Card>
 
-        <Card className="border-red-200 bg-red-50">
+        <Card className="mx-4 mb-4 border-red-200 bg-red-50">
           <View className="mb-4 flex-row items-center gap-3">
             <View className="h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <Ionicons name="warning-outline" size={24} color="#dc2626" />

@@ -97,29 +97,8 @@ export default function DashboardScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => loadData()} />}
         contentContainerStyle={{ paddingBottom: 40 }}>
-        <Card
-          className={`mb-4 mt-4 ${healthy ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-          <View className="flex-row items-center gap-3">
-            <View className={`rounded-full p-2.5 ${healthy ? 'bg-green-100' : 'bg-red-100'}`}>
-              <Ionicons
-                name={healthy ? 'checkmark-circle' : 'alert-circle'}
-                size={24}
-                color={healthy ? '#16a34a' : '#dc2626'}
-              />
-            </View>
-            <View className="flex-1">
-              <Text className={`font-semibold ${healthy ? 'text-green-800' : 'text-red-800'}`}>
-                Sistem Durumu
-              </Text>
-              <Text className={`text-sm ${healthy ? 'text-green-600' : 'text-red-600'}`}>
-                {healthy ? 'Tüm sistemler çalışıyor' : 'Sistem hatası tespit edildi'}
-              </Text>
-            </View>
-          </View>
-        </Card>
-
         {stats?.users && (
-          <Card className="mb-4">
+          <Card className="mx-4 my-4">
             <Text className="mb-3 text-base font-bold text-slate-900">Özet İstatistikler</Text>
             <View className="flex-row flex-wrap gap-3">
               <View className="min-w-[45%] flex-1 rounded-xl bg-slate-50 p-3">
@@ -160,8 +139,8 @@ export default function DashboardScreen({ navigation }: Props) {
           </Card>
         )}
 
-        <Card>
-          <Text className="mb-3 text-base font-bold text-slate-900">Yönetim</Text>
+        <Card className="mx-4 mb-4">
+          <Text className="mb- text-base font-bold text-slate-900">Yönetim</Text>
           <View className="gap-2">
             {menuItems.map((item) => (
               <TouchableOpacity
