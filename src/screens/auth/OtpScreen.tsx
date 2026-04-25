@@ -47,6 +47,9 @@ export default function OtpScreen({ navigation, route }: Props) {
         try {
           const { data } = await authApi.login({ email, password });
           await login(data.user, data.accessToken, data.refreshToken);
+          
+          // Redirect to home page after successful login
+          navigation.getParent()?.navigate('UserTabs', { screen: 'Home' });
         } catch {
           navigation.replace('Login');
         }

@@ -39,8 +39,8 @@ export default function UserNavigator() {
 
   return (
     <View className="flex-1">
-      <AuthWallModal 
-        visible={showAuthModal} 
+      <AuthWallModal
+        visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         title={modalConfig.title}
         description={modalConfig.description}
@@ -84,11 +84,12 @@ export default function UserNavigator() {
           name="Surahs"
           component={SurahsNavigator}
           listeners={{
-            tabPress: (e) => handleTabPress(
-              e, 
-              'Kur\'an-ı Kerim İçin Giriş Yapın', 
-              'Sureleri okumak, mealleri incelemek ve kaldığınız yeri kaydetmek için lütfen oturum açın.'
-            ),
+            tabPress: (e) =>
+              handleTabPress(
+                e,
+                "Kur'an-ı Kerim İçin Giriş Yapın",
+                'Sureleri okumak, mealleri incelemek ve kaldığınız yeri kaydetmek için lütfen oturum açın.'
+              ),
           }}
           options={{
             tabBarLabel: 'Sureler',
@@ -100,34 +101,14 @@ export default function UserNavigator() {
         />
 
         <Tab.Screen
-          name="MosqueFinder"
-          component={MosqueFinderScreen}
+          name="Dhikr"
+          component={DhikrScreen}
           options={{
-            tabBarLabel: 'Camiler',
+            tabBarLabel: 'Zikir',
             headerShown: true,
-            header: () => <StandardHeader title="Cami Bulucu" showBackButton={false} />,
+            header: () => <StandardHeader title="Zikir" showBackButton={false} />,
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="map-outline" size={size} color={color} />
-            ),
-          }}
-        />
-
-        <Tab.Screen
-          name="Gamification"
-          component={GamificationScreen}
-          listeners={{
-            tabPress: (e) => handleTabPress(
-              e, 
-              'Manevi Karne İçin Giriş Yapın', 
-              'İlerlemenizi takip etmek, rozetler kazanmak ve manevi gelişiminizi görmek için lütfen oturum açın.'
-            ),
-          }}
-          options={{
-            tabBarLabel: 'İlerleme',
-            headerShown: true,
-            header: () => <StandardHeader title="Manevi Karne" showBackButton={false} />,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="trophy-outline" size={size} color={color} />
+              <Ionicons name="apps-outline" size={size} color={color} />
             ),
           }}
         />

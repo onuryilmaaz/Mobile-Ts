@@ -45,6 +45,9 @@ export default function LoginScreen() {
       console.log('Calling login with user:', data.user);
       await login(data.user, data.accessToken, data.refreshToken);
       console.log('Login completed successfully');
+      
+      // Redirect to home page after successful login
+      navigation.getParent()?.navigate('UserTabs', { screen: 'Home' });
     } catch (err: any) {
       console.log('Login error:', err);
       console.log('Login error response:', err?.response?.data);
