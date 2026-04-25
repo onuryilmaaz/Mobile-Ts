@@ -119,7 +119,7 @@ export function DailyInspirationCard() {
           className="items-center p-8">
           <Text
             className="text-center text-lg font-bold italic leading-8 text-slate-800"
-            numberOfLines={6}>
+            numberOfLines={0}>
             "{current.text}"
           </Text>
           <View className="mt-6 flex-row items-center gap-2">
