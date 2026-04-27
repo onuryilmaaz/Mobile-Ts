@@ -9,4 +9,7 @@ export { default as SurahBrowserScreen } from './SurahBrowserScreen';
 export { default as LocationSelectionScreen } from './LocationSelectionScreen';
 export { default as DhikrScreen } from './DhikrScreen';
 export { default as SurahDetailScreen } from './SurahDetailScreen';
+export { default as KazaTrackerScreen } from './KazaTrackerScreen';
+export { default as StatsScreen } from './StatsScreen';
+export { default as ChallengeScreen } from './ChallengeScreen';
 export * from './GamificationScreen';

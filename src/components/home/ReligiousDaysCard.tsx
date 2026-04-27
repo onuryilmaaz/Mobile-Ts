@@ -3,12 +3,14 @@ import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { calendarService, type ReligiousDay } from '@/services/calendar.service';
+import { useAppTheme } from '@/constants/theme';
 
 export function ReligiousDaysCard() {
   const [nextDay, setNextDay] = useState<ReligiousDay | null>(null);
   const [todayHijri, setTodayHijri] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
   const allDays = calendarService.getReligiousDays();
+  const { colors, isDark } = useAppTheme();
 
   useEffect(() => {
     setNextDay(calendarService.getNextReligiousDay());
@@ -26,40 +28,46 @@ export function ReligiousDaysCard() {
   const daysRemaining = getDaysRemaining(nextDay.date);
 
   return (
-    <View className="mx-4 mb-6">
-      <View className="overflow-hidden rounded-3xl border border-primary-100 bg-white shadow-xl shadow-primary-900/10">
-        <View className="bg-primary-700 px-6 py-4">
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-2">
-              <View className="rounded-full bg-white/20 p-1.5">
-                <Ionicons name="moon" size={16} color="#fff" />
+    <View style={{ marginHorizontal: 16, marginBottom: 24 }}>
+      <View style={{
+        overflow: 'hidden', borderRadius: 24,
+        borderWidth: 1, borderColor: colors.cardBorder,
+        backgroundColor: colors.card,
+        shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05,
+        shadowRadius: 16, shadowOffset: { width: 0, height: 6 },
+      }}>
+        <View style={{ backgroundColor: isDark ? 'rgba(20,184,166,0.12)' : colors.teal, paddingHorizontal: 24, paddingVertical: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(20,184,166,0.2)' : 'rgba(255,255,255,0.2)', padding: 6 }}>
+                <Ionicons name="moon" size={16} color={isDark ? colors.teal : '#fff'} />
               </View>
-              <Text className="text-base font-bold text-white">Hicri Takvim</Text>
+              <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? '#fff' : '#fff' }}>Hicri Takvim</Text>
             </View>
-            <View className="rounded-full bg-white/20 px-3 py-1">
-              <Text className="text-xs font-bold uppercase tracking-wider text-white">
+            <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)', paddingHorizontal: 12, paddingVertical: 4 }}>
+              <Text style={{ fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: '#fff' }}>
                 {todayHijri}
               </Text>
             </View>
           </View>
         </View>
-        <View className="p-6">
-          <View className="mb-2 flex-row items-center justify-between">
-            <Text className="text-sm font-semibold uppercase tracking-widest text-slate-500">
+        <View style={{ padding: 24 }}>
+          <View style={{ marginBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 2, color: colors.textMuted }}>
               Sıradaki Önemli Gün
             </Text>
             {daysRemaining === 0 && (
-              <View className="rounded-full bg-red-100 px-2 py-0.5">
-                <Text className="text-xs font-bold text-red-600">BUGÜN</Text>
+              <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(239,68,68,0.2)' : '#fee2e2', paddingHorizontal: 8, paddingVertical: 2 }}>
+                <Text style={{ fontSize: 12, fontWeight: 'bold', color: isDark ? '#fca5a5' : '#dc2626' }}>BUGÜN</Text>
               </View>
             )}
           </View>
-          <View className="flex-row items-center justify-between">
-            <View className="flex-1">
-              <Text className="mb-1 text-xl font-bold text-slate-900">{nextDay.name}</Text>
-              <View className="flex-row items-center gap-2">
-                <Ionicons name="calendar-outline" size={14} color="#64748b" />
-                <Text className="text-sm font-medium text-primary-700">
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ marginBottom: 4, fontSize: 20, fontWeight: 'bold', color: colors.textPrimary }}>{nextDay.name}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
+                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.teal }}>
                   {nextDay.date.toLocaleDateString('tr-TR', {
                     day: 'numeric',
                     month: 'long',
@@ -68,18 +76,19 @@ export function ReligiousDaysCard() {
                 </Text>
               </View>
             </View>
-            <View className="items-end">
-              <Text className="text-3xl font-black text-primary-600">{daysRemaining}</Text>
-              <Text className="text-[10px] font-bold uppercase tracking-tighter text-primary-400">
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={{ fontSize: 30, fontWeight: '900', color: colors.teal }}>{daysRemaining}</Text>
+              <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: -0.5, color: colors.textMuted }}>
                 GÜN KALDI
               </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
-            className="mt-6 flex-row items-center justify-center gap-2 rounded-2xl bg-primary-50 py-3 active:opacity-70">
-            <Text className="text-sm font-bold text-primary-700">Tüm Dini Günleri Gör</Text>
-            <Ionicons name="arrow-forward" size={16} color="#64748b" />
+            activeOpacity={0.7}
+            style={{ marginTop: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 16, backgroundColor: isDark ? 'rgba(20,184,166,0.1)' : colors.tealDim, paddingVertical: 12 }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.teal }}>Tüm Dini Günleri Gör</Text>
+            <Ionicons name="arrow-forward" size={16} color={colors.teal} />
           </TouchableOpacity>
         </View>
       </View>

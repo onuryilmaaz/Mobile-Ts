@@ -5,18 +5,21 @@ import AdminNavigator from './AdminNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
 import { DhikrScreen } from '@/screens/user';
+import { GamificationScreen } from '@/screens/user';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useState } from 'react';
+import { useAppTheme } from '@/constants/theme';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
   const { user, isAuthenticated } = useAuthStore();
   const insets = useSafeAreaInsets();
+  const { colors, isDark } = useAppTheme();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', description: '' });
 
@@ -48,24 +51,25 @@ export default function UserNavigator() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#0f766e',
-          tabBarInactiveTintColor: '#94a3b8',
+          tabBarActiveTintColor:   colors.tabActive,
+          tabBarInactiveTintColor: colors.tabInactive,
           tabBarStyle: {
-            backgroundColor: '#ffffff',
+            backgroundColor: colors.tabBar,
             borderTopWidth: 1,
-            borderTopColor: '#f1f5f9',
+            borderTopColor: colors.tabBarBorder,
             height: tabBarHeight,
             paddingTop: 8,
             paddingBottom: bottomPadding,
-            elevation: 8,
+            elevation: 20,
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
+            shadowOffset: { width: 0, height: -4 },
+            shadowOpacity: isDark ? 0.40 : 0.08,
+            shadowRadius: 12,
           },
           tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: '500',
+            fontSize: 11,
+            fontWeight: '700',
+            letterSpacing: 0.3,
           },
         }}>
         <Tab.Screen
@@ -109,6 +113,27 @@ export default function UserNavigator() {
             header: () => <StandardHeader title="Zikir" showBackButton={false} />,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="apps-outline" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Gamification"
+          component={GamificationScreen}
+          listeners={{
+            tabPress: (e) =>
+              handleTabPress(
+                e,
+                'Başarılar İçin Giriş Yapın',
+                'Puan, rozet ve sıralama özelliklerini kullanmak için lütfen oturum açın.'
+              ),
+          }}
+          options={{
+            tabBarLabel: 'Başarılar',
+            headerShown: true,
+            header: () => <StandardHeader title="Başarılar" showBackButton={false} />,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="trophy-outline" size={size} color={color} />
             ),
           }}
         />

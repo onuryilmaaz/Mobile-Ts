@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { hadithService, type Hadith } from '@/services/hadith.service';
+import { hadithService } from '@/services/hadith.service';
+
+// Shape returned by hadithService (different from the raw DB Hadith type)
+type HadithResult = { hadithnumber: number; text: string };
 
 export function DailyHadithCard() {
-  const [hadith, setHadith] = useState<Hadith | null>(null);
+  const [hadith, setHadith] = useState<HadithResult | null>(null);
   const [bookName, setBookName] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);

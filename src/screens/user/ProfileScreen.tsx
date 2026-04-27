@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { notificationService } from '@/services/notification.service';
-import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl, Switch } from 'react-native';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -15,8 +15,10 @@ import { UploadOverlay } from '@/components/feedback/UploadOverlay';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useAlertStore } from '@/store/alert.store';
+import { useThemeStore } from '@/store/theme.store';
 import type { UserProfile } from '@/modules/user/user.types';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
 type Props = CompositeScreenProps<
   NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>,
@@ -65,11 +67,12 @@ const settingsItems: SettingsItem[] = [
 ];
 
 export default function ProfileScreen({ navigation }: Props) {
-  const setUser = useAuthStore((s) => s.setUser);
-  const refreshUser = useAuthStore((s) => s.refreshUser);
-  const user = useAuthStore((s) => s.user);
-  const alertStore = useAlertStore();
+  const setUser      = useAuthStore((s) => s.setUser);
+  const refreshUser  = useAuthStore((s) => s.refreshUser);
+  const user         = useAuthStore((s) => s.user);
+  const alertStore   = useAlertStore();
   const scrollViewRef = useRef<ScrollView>(null);
+  const { isDark, toggleTheme } = useThemeStore();
 
   const [profile, setProfile] = useState<UserProfile | null>(user as UserProfile | null);
   const [firstName, setFirstName] = useState(user?.firstName ?? '');
@@ -344,6 +347,83 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
           </Card>
         )}
+        {/* ── TEMA SEÇİCİ ── */}
+        <View style={{
+          marginHorizontal: 16, marginBottom: 16,
+          borderRadius: 20,
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+          backgroundColor: isDark ? '#111827' : '#ffffff',
+          overflow: 'hidden',
+        }}>
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              toggleTheme();
+            }}
+            activeOpacity={0.85}
+            style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+
+            {/* Icon container */}
+            <View style={{
+              height: 44, width: 44, borderRadius: 14,
+              alignItems: 'center', justifyContent: 'center',
+              backgroundColor: isDark ? 'rgba(246,195,88,0.15)' : '#fef3c7',
+              marginRight: 14,
+            }}>
+              <Text style={{ fontSize: 22 }}>{isDark ? '🌙' : '☀️'}</Text>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontSize: 15, fontWeight: '700',
+                color: isDark ? '#F0F4FF' : '#0f172a',
+              }}>
+                Tema
+              </Text>
+              <Text style={{
+                fontSize: 12, marginTop: 2,
+                color: isDark ? 'rgba(240,244,255,0.45)' : '#64748b',
+              }}>
+                {isDark ? 'Karanlık tema aktif' : 'Aydınlık tema aktif'}
+              </Text>
+            </View>
+
+            {/* Custom theme toggle */}
+            <View style={{
+              flexDirection: 'row', alignItems: 'center',
+              borderRadius: 99, padding: 3,
+              backgroundColor: isDark ? 'rgba(20,184,166,0.20)' : '#f1f5f9',
+              borderWidth: 1,
+              borderColor: isDark ? 'rgba(20,184,166,0.35)' : '#e2e8f0',
+              gap: 2,
+            }}>
+              {/* ☀️ light */}
+              <View style={{
+                width: 32, height: 32, borderRadius: 99,
+                alignItems: 'center', justifyContent: 'center',
+                backgroundColor: !isDark ? '#ffffff' : 'transparent',
+                shadowColor: '#000', shadowOpacity: !isDark ? 0.12 : 0,
+                shadowRadius: 4,
+              }}>
+                <Ionicons name="sunny" size={16}
+                  color={!isDark ? '#d97706' : 'rgba(240,244,255,0.30)'} />
+              </View>
+              {/* 🌙 dark */}
+              <View style={{
+                width: 32, height: 32, borderRadius: 99,
+                alignItems: 'center', justifyContent: 'center',
+                backgroundColor: isDark ? '#14b8a6' : 'transparent',
+                shadowColor: '#14b8a6', shadowOpacity: isDark ? 0.4 : 0,
+                shadowRadius: 6,
+              }}>
+                <Ionicons name="moon" size={16}
+                  color={isDark ? '#ffffff' : 'rgba(0,0,0,0.25)'} />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+
         <Card className="mx-4">
           <Text className="mb-4 text-lg font-bold text-slate-900">Ayarlar</Text>
 

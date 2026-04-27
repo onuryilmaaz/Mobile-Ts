@@ -28,6 +28,9 @@ export type HomeStackParamList = {
   HomeMain: undefined;
   QiblaFinder: undefined;
   LocationSelection: undefined;
+  KazaTracker: undefined;
+  Stats: undefined;
+  Challenges: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 

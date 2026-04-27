@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 import { hadithService } from '@/services/hadith.service';
 import { quranService } from '@/services/quran.service';
+import { useAppTheme } from '@/constants/theme';
 
 interface Inspiration {
   type: 'Ayet' | 'Hadis';
@@ -16,6 +17,7 @@ interface Inspiration {
 export function DailyInspirationCard() {
   const [current, setCurrent] = useState<Inspiration | null>(null);
   const [loading, setLoading] = useState(true);
+  const { colors, isDark } = useAppTheme();
 
   const fetchInspiration = useCallback(async () => {
     try {
@@ -73,8 +75,12 @@ export function DailyInspirationCard() {
 
   if (!current && loading) {
     return (
-      <View className="mx-4 mb-6 items-center justify-center rounded-[32px] bg-white p-12 shadow-xl shadow-slate-200">
-        <ActivityIndicator color="#0f766e" />
+      <View style={{
+        marginHorizontal: 16, marginBottom: 24, alignItems: 'center', justifyContent: 'center',
+        borderRadius: 32, padding: 48, backgroundColor: colors.card,
+        borderWidth: 1, borderColor: colors.cardBorder,
+      }}>
+        <ActivityIndicator color={colors.teal} />
       </View>
     );
   }
@@ -82,32 +88,50 @@ export function DailyInspirationCard() {
   if (!current) return null;
 
   return (
-    <View className="mx-4 mb-6">
+    <View style={{ marginHorizontal: 16, marginBottom: 24 }}>
       <Animated.View
         layout={Layout.springify()}
-        className="overflow-hidden rounded-[32px] border border-slate-100 bg-white shadow-xl shadow-slate-200">
-        <View className="flex-row items-center justify-between px-6 pt-6">
-          <View className="flex-row items-center gap-2">
-            <View className="h-8 w-8 items-center justify-center rounded-xl bg-primary-50">
-              <Ionicons name={current.icon as any} size={16} color="#0f766e" />
+        style={{
+          overflow: 'hidden', borderRadius: 32,
+          borderWidth: 1, borderColor: colors.cardBorder,
+          backgroundColor: colors.card,
+          shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05,
+          shadowRadius: 16, shadowOffset: { width: 0, height: 6 },
+        }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 24 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={{
+              height: 32, width: 32, alignItems: 'center', justifyContent: 'center',
+              borderRadius: 12, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim,
+            }}>
+              <Ionicons name={current.icon as any} size={16} color={colors.teal} />
             </View>
-            <Text className="text-sm font-black uppercase tracking-widest text-slate-400">
+            <Text style={{
+              fontSize: 12, fontWeight: '900', textTransform: 'uppercase',
+              letterSpacing: 2, color: colors.textMuted,
+            }}>
               {current.type}
             </Text>
           </View>
-          <View className="flex-row gap-2">
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             <TouchableOpacity
               onPress={shareInspiration}
-              className="h-8 w-8 items-center justify-center rounded-full bg-slate-50">
-              <Ionicons name="share-outline" size={16} color="#64748b" />
+              style={{
+                height: 32, width: 32, alignItems: 'center', justifyContent: 'center',
+                borderRadius: 16, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.settingsBg,
+              }}>
+              <Ionicons name="share-outline" size={16} color={colors.textSecondary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleRefresh}
-              className="h-8 w-8 items-center justify-center rounded-full bg-slate-50">
+              style={{
+                height: 32, width: 32, alignItems: 'center', justifyContent: 'center',
+                borderRadius: 16, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.settingsBg,
+              }}>
               {loading ? (
-                <ActivityIndicator size="small" color="#64748b" />
+                <ActivityIndicator size="small" color={colors.textSecondary} />
               ) : (
-                <Ionicons name="refresh-outline" size={16} color="#64748b" />
+                <Ionicons name="refresh-outline" size={16} color={colors.textSecondary} />
               )}
             </TouchableOpacity>
           </View>
@@ -116,23 +140,35 @@ export function DailyInspirationCard() {
         <Animated.View
           key={current.text}
           entering={FadeIn.duration(600)}
-          className="items-center p-8">
+          style={{ alignItems: 'center', padding: 32 }}>
           <Text
-            className="text-center text-lg font-bold italic leading-8 text-slate-800"
+            style={{
+              textAlign: 'center', fontSize: 18, fontWeight: 'bold', fontStyle: 'italic',
+              lineHeight: 32, color: colors.textPrimary,
+            }}
             numberOfLines={0}>
             "{current.text}"
           </Text>
-          <View className="mt-6 flex-row items-center gap-2">
-            <View className="h-[1px] w-8 bg-slate-200" />
-            <Text className="text-[10px] font-black uppercase tracking-tighter text-primary-600">
+          <View style={{ marginTop: 24, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={{ height: 1, width: 32, backgroundColor: colors.cardBorder }} />
+            <Text style={{
+              fontSize: 10, fontWeight: '900', textTransform: 'uppercase',
+              letterSpacing: -0.5, color: colors.teal,
+            }}>
               {current.source}
             </Text>
-            <View className="h-[1px] w-8 bg-slate-200" />
+            <View style={{ height: 1, width: 32, backgroundColor: colors.cardBorder }} />
           </View>
         </Animated.View>
 
-        <View className="items-center bg-slate-50 px-6 py-4">
-          <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        <View style={{
+          alignItems: 'center', backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : colors.settingsBg,
+          paddingHorizontal: 24, paddingVertical: 16,
+        }}>
+          <Text style={{
+            fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase',
+            letterSpacing: 2, color: colors.textMuted,
+          }}>
             Manevi Huzur İçin Küçük Bir Hatırlatma
           </Text>
         </View>
