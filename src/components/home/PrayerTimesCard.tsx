@@ -257,7 +257,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       {/* ╔══════════════════════════════╗
           ║   COUNTDOWN GLASS CARD       ║
           ╚══════════════════════════════╝ */}
-      <View className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-white/10 dark:bg-[#0d1f2d]">
+      <View className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-slate-800 dark:bg-teal-900">
         {/* Ambient glow orbs */}
         <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
         <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
@@ -303,7 +303,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       {/* ╔══════════════════════════════╗
           ║   PRAYER TIMES GRID          ║
           ╚══════════════════════════════╝ */}
-      <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-white/5 dark:bg-[#111827]">
+      <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
         {loading && !data ? (
           <View className="items-center py-7">
             <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
@@ -347,7 +347,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       {/* ╔══════════════════════════════╗
           ║   LOCATION & NOTIFICATIONS   ║
           ╚══════════════════════════════╝ */}
-      <View className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#111827]">
+      <View className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         {/* Location Row */}
         <TouchableOpacity
           onPress={() => {

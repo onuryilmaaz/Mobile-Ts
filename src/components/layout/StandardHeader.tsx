@@ -57,7 +57,7 @@ export function StandardHeader({
 
   return (
     <View
-      className="w-full justify-center border-b border-slate-200 bg-white dark:border-white/5 dark:bg-[#111827]"
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
       style={{
         paddingTop: finalStatusBarHeight,
         paddingBottom: 0,
@@ -80,7 +80,7 @@ export function StandardHeader({
               className="flex-row items-center self-start rounded-full bg-black/5 py-2 pl-1.5 pr-3 dark:bg-white/5"
               activeOpacity={0.7}>
               <Ionicons name="chevron-back" size={20} color={isDark ? '#F0F4FF' : '#0f172a'} />
-              <Text className="ml-0.5 text-sm font-semibold text-slate-900 dark:text-[#F0F4FF]">Ana Sayfa</Text>
+              <Text className="ml-0.5 text-sm font-bold text-slate-900 dark:text-slate-100">Ana Sayfa</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -88,7 +88,7 @@ export function StandardHeader({
         <View className="flex-1 items-center">
           <Text
             numberOfLines={1}
-            className="text-base font-bold tracking-wide text-slate-900 dark:text-[#F0F4FF]">
+            className="text-base font-black tracking-wide text-slate-900 dark:text-slate-100">
             {title}
           </Text>
         </View>

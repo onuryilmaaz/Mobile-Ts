@@ -41,7 +41,7 @@ export default function UserNavigator() {
   const bottomPadding = Platform.OS === 'ios' ? insets.bottom : Math.max(insets.bottom, 16);
   const tabBarHeight = 56 + bottomPadding;
 
-  const tabBarBg = isDark ? '#111827' : '#ffffff';
+  const tabBarBg = isDark ? '#0f172a' : '#ffffff';
   const tabBarBorder = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
   const tabActive = isDark ? '#14b8a6' : '#0f766e';
   const tabInactive = isDark ? '#64748b' : '#94a3b8';

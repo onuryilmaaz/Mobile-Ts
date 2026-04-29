@@ -59,7 +59,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       <View className="px-4 pb-2 pt-4">
-        <View className="flex-row items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-white/5 dark:bg-[#111827] shadow-black/5 dark:shadow-black/30">
+        <View className="flex-row items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 shadow-black/5">
           <Ionicons name="search" size={20} color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'} />
           <TextInput
             placeholder="Sure arayın"
@@ -95,7 +95,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
               layout={Layout.springify()}>
               <TouchableOpacity
                 onPress={() => handleSurahPress(surah)}
-                className="mb-3 flex-row items-center rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/5 dark:bg-[#111827] shadow-black/5 dark:shadow-black/30">
+                className="mb-3 flex-row items-center rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 shadow-black/5">
                 
                 <View className="h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/15">
                   <Text className="text-lg font-black text-teal-700 dark:text-teal-400">

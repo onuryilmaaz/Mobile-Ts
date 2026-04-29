@@ -29,7 +29,7 @@ export function ReligiousDaysCard() {
 
   return (
     <View className="mx-4 mb-6">
-      <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-white/5 dark:bg-[#111827] dark:shadow-black/30">
+      <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
         
         <View className="bg-teal-700 px-6 py-4 dark:bg-teal-500/15">
           <View className="flex-row items-center justify-between">
@@ -97,7 +97,7 @@ export function ReligiousDaysCard() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
         <BlurView intensity={30} tint="dark" className="flex-1 items-center justify-center px-4">
-          <View className="max-h-[80%] w-full overflow-hidden rounded-[40px] bg-white shadow-2xl dark:bg-[#111827]">
+          <View className="max-h-[80%] w-full overflow-hidden rounded-[40px] bg-white shadow-2xl dark:bg-slate-900">
             <View className="flex-row items-center justify-between bg-teal-700 px-6 py-6 dark:bg-[#0c4a3e]">
               <View>
                 <Text className="text-2xl font-bold text-white">2026 Dini Günler</Text>
@@ -118,8 +118,8 @@ export function ReligiousDaysCard() {
                     key={day.id}
                     className={`mb-3 flex-row items-center rounded-2xl border p-4 ${
                       isPast 
-                        ? 'border-slate-100 bg-slate-50 opacity-60 dark:border-white/5 dark:bg-white/5' 
-                        : 'border-teal-100 bg-white shadow-sm dark:border-teal-500/30 dark:bg-[#111827]'
+                        ? 'border-slate-100 bg-slate-50 opacity-60 dark:border-slate-800 dark:bg-slate-800/50' 
+                        : 'border-teal-100 bg-white shadow-sm dark:border-teal-500/30 dark:bg-slate-900'
                     }`}>
                     <View
                       className={`h-12 w-12 items-center justify-center rounded-2xl ${

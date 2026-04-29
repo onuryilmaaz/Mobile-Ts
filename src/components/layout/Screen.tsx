@@ -25,7 +25,7 @@ export function Screen({
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50 dark:bg-black" edges={edges}>
+    <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900" edges={edges}>
       {keyboardAvoiding ? (
         <KeyboardAvoidingView
           className="flex-1"

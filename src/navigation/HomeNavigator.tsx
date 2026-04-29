@@ -57,7 +57,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
   return (
     <View
-      className="w-full justify-center border-b border-slate-200 bg-white dark:border-white/5 dark:bg-[#111827]"
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
       style={{
         paddingTop: finalStatusBarHeight,
         paddingHorizontal: 16,
@@ -114,7 +114,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
 export default function HomeNavigator() {
   const { isDark } = useThemeStore();
-  const headerColor = isDark ? '#111827' : '#ffffff';
+  const headerColor = isDark ? '#0f172a' : '#ffffff';
   const headerTintColor = isDark ? '#ffffff' : '#0f172a';
 
   return (

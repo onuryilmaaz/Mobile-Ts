@@ -1,6 +1,6 @@
 import './global.css';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -16,16 +16,22 @@ import { rootNavigationRef } from '@/navigation/rootNavigation';
 
 function AppContent() {
   const isDark = useThemeStore((s) => s.isDark);
-  const { setColorScheme } = useColorScheme();
+  const { setColorScheme, colorScheme } = useColorScheme();
 
   // Sync NativeWind, Android nav bar with theme store
   useEffect(() => {
-    setColorScheme(isDark ? 'dark' : 'light');
+    // Force sync NativeWind's colorScheme with our store
+    if (isDark && colorScheme !== 'dark') {
+      setColorScheme('dark');
+    } else if (!isDark && colorScheme !== 'light') {
+      setColorScheme('light');
+    }
+
     if (Platform.OS === 'android') {
       NavigationBar.setBackgroundColorAsync(isDark ? '#0f172a' : '#ffffff');
       NavigationBar.setButtonStyleAsync(isDark ? 'light' : 'dark');
     }
-  }, [isDark, setColorScheme]);
+  }, [isDark, setColorScheme, colorScheme]);
 
   // Capture hidden stack traces for "missing navigation context" errors.
   useEffect(() => {
@@ -33,12 +39,7 @@ function AppContent() {
     console.error = (...args: any[]) => {
       try {
         const first = args?.[0];
-        const msg =
-          typeof first === 'string'
-            ? first
-            : first instanceof Error
-              ? first.message
-              : '';
+        const msg = typeof first === 'string' ? first : first instanceof Error ? first.message : '';
         if (msg?.includes("Couldn't find a navigation context")) {
           const err = first instanceof Error ? first : new Error(msg || 'missing nav context');
           original('NAV_DIAG:missing_context_stack', err.stack);
@@ -52,18 +53,13 @@ function AppContent() {
   }, []);
 
   return (
-    <NavigationContainer
-      ref={rootNavigationRef}
-      theme={isDark ? DarkTheme : DefaultTheme}
-      onReady={() => {
-        // Runtime stamp to ensure the latest bundle is running.
-        console.log('NAV_DIAG:container_ready:v3');
-      }}
-    >
-      <AppNavigator />
-      <ToastContainer />
-      <AlertDialog />
-    </NavigationContainer>
+    <View className={`flex-1 ${isDark ? 'dark' : ''}`}>
+      <NavigationContainer ref={rootNavigationRef} theme={isDark ? DarkTheme : DefaultTheme}>
+        <AppNavigator />
+        <ToastContainer />
+        <AlertDialog />
+      </NavigationContainer>
+    </View>
   );
 }
 
