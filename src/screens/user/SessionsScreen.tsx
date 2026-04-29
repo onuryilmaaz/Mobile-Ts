@@ -9,9 +9,11 @@ import { Badge } from '@/components/ui/Badge';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { authApi } from '@/modules/auth/auth.api';
 import { useAlertStore } from '@/store/alert.store';
+import { useThemeStore } from '@/store/theme.store';
 import type { SessionInfo } from '@/modules/auth/auth.types';
 
 export default function SessionsScreen() {
+  const { isDark } = useThemeStore();
   const alert = useAlertStore();
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -88,7 +90,7 @@ export default function SessionsScreen() {
   }
 
   return (
-    <Screen style={{ backgroundColor: '#f8fafc' }} safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -97,10 +99,10 @@ export default function SessionsScreen() {
         }>
         <Card className="mx-4 my-4">
           <View className="mb-2 flex-row items-center gap-2">
-            <Ionicons name="information-circle-outline" size={20} color="#64748b" />
-            <Text className="text-sm font-medium text-slate-700">Bilgi</Text>
+            <Ionicons name="information-circle-outline" size={20} color={isDark ? '#94a3b8' : '#64748b'} />
+            <Text className="text-sm font-medium text-slate-700 dark:text-slate-300">Bilgi</Text>
           </View>
-          <Text className="text-sm text-slate-600">
+          <Text className="text-sm text-slate-600 dark:text-slate-400">
             Hesabınıza bağlı tüm aktif oturumları görüntüleyin ve yönetin.
           </Text>
         </Card>
@@ -118,17 +120,17 @@ export default function SessionsScreen() {
             {sessions.map((session) => (
               <Card
                 key={session.id}
-                className={session.isCurrent ? 'border-primary-200 bg-primary-50' : ''}>
+                className={session.isCurrent ? 'border-teal-200 bg-teal-50 dark:border-teal-500/20 dark:bg-teal-500/5' : ''}>
                 <View className="flex-row items-start justify-between">
                   <View className="flex-1">
                     <View className="mb-2 flex-row items-center gap-2">
                       <Ionicons
                         name={session.isCurrent ? 'phone-portrait' : 'phone-portrait-outline'}
                         size={20}
-                        color={session.isCurrent ? '#0f766e' : '#64748b'}
+                        color={session.isCurrent ? (isDark ? '#14b8a6' : '#0f766e') : (isDark ? '#94a3b8' : '#64748b')}
                       />
                       <Text
-                        className={`font-semibold ${session.isCurrent ? 'text-primary-700' : 'text-slate-900'}`}>
+                        className={`font-semibold ${session.isCurrent ? (isDark ? 'text-teal-400' : 'text-teal-800') : 'text-slate-900 dark:text-white'}`}>
                         {session.isCurrent ? 'Bu Cihaz' : 'Diğer Cihaz'}
                       </Text>
                       {session.isCurrent && (
@@ -138,13 +140,13 @@ export default function SessionsScreen() {
                       )}
                     </View>
 
-                    <Text className="mb-2 text-xs text-slate-500" numberOfLines={2}>
+                    <Text className="mb-2 text-xs text-slate-500 dark:text-slate-400" numberOfLines={2}>
                       {session.userAgent?.slice(0, 60) ?? 'Bilinmeyen cihaz'}
                     </Text>
 
                     <View className="flex-row items-center gap-1">
                       <Ionicons name="location-outline" size={14} color="#94a3b8" />
-                      <Text className="text-xs text-slate-400">
+                      <Text className="text-xs text-slate-400 dark:text-slate-500">
                         IP: {session.ip ?? 'Bilinmiyor'}
                       </Text>
                     </View>
@@ -153,7 +155,7 @@ export default function SessionsScreen() {
                   {!session.isCurrent && (
                     <TouchableOpacity
                       onPress={() => handleRevokeSession(session.id)}
-                      className="ml-3 rounded-full bg-red-50 p-2"
+                      className="ml-3 rounded-full bg-red-50 p-2 dark:bg-red-500/10"
                       activeOpacity={0.7}>
                       <Ionicons name="close" size={20} color="#ef4444" />
                     </TouchableOpacity>
@@ -165,7 +167,7 @@ export default function SessionsScreen() {
         )}
 
         {sessions.length > 0 && (
-          <Card className="mt-4">
+          <Card className="mx-4 mt-4">
             <View className="gap-3">
               <Button
                 title="Oturumları Yenile"

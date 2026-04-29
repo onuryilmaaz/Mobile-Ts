@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, TextInput, Pressable } from 'react-native';
+import { useThemeStore } from '@/store/theme.store';
 
 type OtpInputProps = {
   length?: number;
@@ -9,6 +10,7 @@ type OtpInputProps = {
 };
 
 export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputProps) {
+  const { isDark } = useThemeStore();
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
@@ -59,8 +61,8 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
             key={index}
             onPress={() => handlePress(index)}
             className={`
-              h-14 flex-1 items-center justify-center rounded-xl border-2 bg-white
-              ${isFocused ? 'border-primary-500' : hasValue ? 'border-primary-300' : 'border-slate-200'}
+              h-14 flex-1 items-center justify-center rounded-xl border-2 bg-white dark:bg-slate-900
+              ${isFocused ? 'border-teal-500' : hasValue ? 'border-teal-300 dark:border-teal-500/50' : 'border-slate-200 dark:border-slate-800'}
             `}>
             <TextInput
               ref={(ref) => {
@@ -74,7 +76,8 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
               keyboardType="number-pad"
               maxLength={1}
               selectTextOnFocus
-              className="h-full w-full text-center text-2xl font-bold text-slate-900"
+              className="h-full w-full text-center text-2xl font-bold text-slate-900 dark:text-white"
+              selectionColor={isDark ? "#2dd4bf" : "#0d9488"}
               style={{ padding: 0 }}
             />
           </Pressable>

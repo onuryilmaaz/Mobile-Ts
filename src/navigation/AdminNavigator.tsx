@@ -3,13 +3,16 @@ import { StatusBar as RNStatusBar } from 'react-native';
 import { DashboardScreen, UsersScreen, UserDetailScreen, RolesScreen } from '@/screens/admin';
 import type { AdminStackParamList } from './types';
 import { StandardHeader } from '@/components/layout/StandardHeader';
+import { useThemeStore } from '@/store/theme.store';
 
 const Stack = createNativeStackNavigator<AdminStackParamList>();
 
 export default function AdminNavigator() {
+  const { isDark } = useThemeStore();
+
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+      <RNStatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,

@@ -21,11 +21,8 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
-// ─────────────────────────────────────────────
-// CONSTANTS
-// ─────────────────────────────────────────────
 const PRAYERS = [
   { key: 'fajr',    label: 'Sabah',  icon: 'moon-outline'   as const, color: '#1e293b' },
   { key: 'sunrise', label: 'Güneş',  icon: 'sunny-outline'  as const, color: '#fb923c' },
@@ -48,9 +45,6 @@ function getPrayerColor(key: string) {
   return PRAYERS.find((p) => p.key === key)?.color || '#0f766e';
 }
 
-// ─────────────────────────────────────────────
-// ADD KAZA MODAL
-// ─────────────────────────────────────────────
 function AddKazaModal({
   visible,
   onClose,
@@ -60,9 +54,8 @@ function AddKazaModal({
   onClose: () => void;
   onAdd: (prayer: string, date: string) => void;
 }) {
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const [selectedPrayer, setSelectedPrayer] = useState('fajr');
-  // Last 30 days
   const dates = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i - 1);
@@ -72,21 +65,21 @@ function AddKazaModal({
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' }}>
-        <View style={{ borderTopLeftRadius: 32, borderTopRightRadius: 32, backgroundColor: colors.card, padding: 24, paddingBottom: 40, borderWidth: 1, borderColor: colors.cardBorder }}>
-          <View style={{ marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 20, fontWeight: '900', color: colors.textPrimary }}>Kaza Namaz Ekle</Text>
+      <View className="flex-1 justify-end bg-black/60">
+        <View className="rounded-t-[32px] border-t border-slate-200 bg-white dark:bg-slate-900 p-6 pb-10 dark:border-slate-800">
+          <View className="mb-6 flex-row items-center justify-between">
+            <Text className="text-xl font-black text-slate-900 dark:text-white">Kaza Namaz Ekle</Text>
             <TouchableOpacity
               onPress={onClose}
-              style={{ height: 36, width: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 18, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.settingsBg }}>
-              <Ionicons name="close" size={20} color={colors.textSecondary} />
+              className="h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              <Ionicons name="close" size={20} color={isDark ? '#94a3b8' : '#475569'} />
             </TouchableOpacity>
           </View>
 
-          <Text style={{ marginBottom: 12, fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>
+          <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Namaz Vakti
           </Text>
-          <View style={{ marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <View className="mb-5 flex-row flex-wrap gap-2">
             {PRAYERS.map((p) => (
               <TouchableOpacity
                 key={p.key}
@@ -94,26 +87,25 @@ function AddKazaModal({
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   setSelectedPrayer(p.key);
                 }}
-                style={{
-                  borderRadius: 16, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 10,
-                  backgroundColor: selectedPrayer === p.key ? (isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim) : (isDark ? 'rgba(255,255,255,0.03)' : colors.settingsBg),
-                  borderColor: selectedPrayer === p.key ? colors.teal : colors.cardBorder,
-                }}>
+                className={`rounded-2xl border px-4 py-2.5 ${
+                  selectedPrayer === p.key
+                    ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
+                    : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50'
+                }`}>
                 <Text
-                  style={{
-                    fontSize: 14, fontWeight: 'bold',
-                    color: selectedPrayer === p.key ? colors.teal : colors.textSecondary,
-                  }}>
+                  className={`text-sm font-bold ${
+                    selectedPrayer === p.key ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'
+                  }`}>
                   {p.label}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <Text style={{ marginBottom: 12, fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>
+          <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Hangi Gün?
           </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4, marginBottom: 24 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-1 mb-6">
             {dates.map((d) => {
               const dateObj = new Date(d);
               const day = dateObj.toLocaleDateString('tr-TR', { weekday: 'short' });
@@ -125,23 +117,21 @@ function AddKazaModal({
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     setSelectedDate(d);
                   }}
-                  style={{
-                    marginHorizontal: 4, width: 56, alignItems: 'center', borderRadius: 16, borderWidth: 1, paddingVertical: 12,
-                    backgroundColor: selectedDate === d ? (isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim) : (isDark ? 'rgba(255,255,255,0.03)' : colors.settingsBg),
-                    borderColor: selectedDate === d ? colors.teal : colors.cardBorder,
-                  }}>
+                  className={`mx-1 w-14 items-center rounded-2xl border py-3 ${
+                    selectedDate === d
+                      ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
+                      : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50'
+                  }`}>
                   <Text
-                    style={{
-                      fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase',
-                      color: selectedDate === d ? colors.teal : colors.textMuted,
-                    }}>
+                    className={`text-[10px] font-bold uppercase ${
+                      selectedDate === d ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'
+                    }`}>
                     {day}
                   </Text>
                   <Text
-                    style={{
-                      fontSize: 18, fontWeight: '900',
-                      color: selectedDate === d ? colors.teal : colors.textPrimary,
-                    }}>
+                    className={`text-lg font-black ${
+                      selectedDate === d ? 'text-teal-700 dark:text-teal-400' : 'text-slate-900 dark:text-white'
+                    }`}>
                     {num}
                   </Text>
                 </TouchableOpacity>
@@ -155,8 +145,8 @@ function AddKazaModal({
               onAdd(selectedPrayer, selectedDate);
               onClose();
             }}
-            style={{ alignItems: 'center', borderRadius: 16, backgroundColor: colors.teal, paddingVertical: 16 }}>
-            <Text style={{ fontSize: 16, fontWeight: '900', color: '#fff' }}>Listeye Ekle</Text>
+            className="items-center rounded-2xl bg-teal-600 py-4 dark:bg-teal-500">
+            <Text className="text-base font-black text-white">Listeye Ekle</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -164,9 +154,6 @@ function AddKazaModal({
   );
 }
 
-// ─────────────────────────────────────────────
-// KAZA ITEM
-// ─────────────────────────────────────────────
 function KazaItem({
   item,
   onComplete,
@@ -176,7 +163,7 @@ function KazaItem({
   onComplete: () => void;
   onDelete: () => void;
 }) {
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const scale = useSharedValue(1);
   const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
@@ -190,27 +177,22 @@ function KazaItem({
   return (
     <Animated.View entering={FadeInDown} exiting={FadeOutUp} layout={Layout.springify()}>
       <Animated.View
-        style={[animStyle, {
-          marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderRadius: 20,
-          borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card,
-          padding: 16, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }
-        }]}>
-        {/* Color dot */}
+        style={[animStyle]}
+        className="mb-3 flex-row items-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4 shadow-sm dark:border-slate-800">
         <View
-          style={{
-            marginRight: 16, height: 44, width: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 16,
-            backgroundColor: `${getPrayerColor(item.prayer_time)}18`
-          }}>
+          className="mr-4 h-11 w-11 items-center justify-center rounded-2xl"
+          style={{ backgroundColor: `${getPrayerColor(item.prayer_time)}18` }}>
           <View
-            style={{ height: 16, width: 16, borderRadius: 8, backgroundColor: getPrayerColor(item.prayer_time) }}
+            className="h-4 w-4 rounded-full"
+            style={{ backgroundColor: getPrayerColor(item.prayer_time) }}
           />
         </View>
 
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '900', color: colors.textPrimary }}>
+        <View className="flex-1">
+          <Text className="text-sm font-black text-slate-900 dark:text-white">
             {getPrayerLabel(item.prayer_time)} Namazı
           </Text>
-          <Text style={{ marginTop: 2, fontSize: 12, color: colors.textSecondary }}>
+          <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
             {formatMissedDate(item.missed_date)}
           </Text>
         </View>
@@ -222,16 +204,13 @@ function KazaItem({
               { text: 'Sil', style: 'destructive', onPress: onDelete },
             ]);
           }}
-          style={{
-            marginRight: 8, height: 36, width: 36, alignItems: 'center', justifyContent: 'center',
-            borderRadius: 12, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.settingsBg
-          }}>
-          <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
+          className="mr-2 h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
+          <Ionicons name="trash-outline" size={16} color={isDark ? '#4b5563' : '#94a3b8'} />
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleComplete}
-          style={{ height: 36, width: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: colors.teal }}>
+          className="h-9 w-9 items-center justify-center rounded-xl bg-teal-600 dark:bg-teal-500">
           <Ionicons name="checkmark" size={18} color="white" />
         </TouchableOpacity>
       </Animated.View>
@@ -239,15 +218,12 @@ function KazaItem({
   );
 }
 
-// ─────────────────────────────────────────────
-// MAIN SCREEN
-// ─────────────────────────────────────────────
 export default function KazaTrackerScreen() {
   const { kazaList, kazaCompleted, fetchKazaList, addKaza, completeKaza, deleteKaza } =
     useGamificationStore();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -290,70 +266,75 @@ export default function KazaTrackerScreen() {
       : 0;
 
   return (
-    <Screen  safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
-        style={{ flex: 1 }}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        refreshControl={
+          <RefreshControl 
+            refreshing={loading} 
+            onRefresh={load} 
+            tintColor={isDark ? '#14b8a6' : '#0f766e'}
+            colors={[isDark ? '#14b8a6' : '#0f766e']}
+          />
+        }
         contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}>
-        {/* Stats Banner */}
-        <View style={{ marginHorizontal: 16, marginBottom: 24, overflow: 'hidden', borderRadius: 28, backgroundColor: colors.trackerHeader, padding: 20 }}>
-          <View style={{ position: 'absolute', right: -32, top: -32, height: 144, width: 144, borderRadius: 72, backgroundColor: 'rgba(20,184,166,0.2)' }} />
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View className="mx-4 mb-6 overflow-hidden rounded-[28px] bg-teal-700 p-5 dark:bg-teal-900">
+          <View className="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-teal-500/20" />
+          <View className="flex-row items-center justify-between">
             <View>
-              <Text style={{ fontSize: 24, fontWeight: '900', color: '#fff' }}>{totalPending}</Text>
-              <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: isDark ? 'rgba(20,184,166,0.80)' : '#f0fdf4' }}>
+              <Text className="text-2xl font-black text-white">{totalPending}</Text>
+              <Text className="text-[10px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">
                 Bekleyen Kaza
               </Text>
             </View>
-            <View style={{ height: 40, width: 1, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <View className="h-10 w-[1px] bg-white/10" />
             <View>
-              <Text style={{ fontSize: 24, fontWeight: '900', color: '#fff' }}>{kazaCompleted}</Text>
-              <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: isDark ? 'rgba(20,184,166,0.80)' : '#f0fdf4' }}>
+              <Text className="text-2xl font-black text-white">{kazaCompleted}</Text>
+              <Text className="text-[10px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">
                 Tamamlanan
               </Text>
             </View>
-            <View style={{ height: 40, width: 1, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <View className="h-10 w-[1px] bg-white/10" />
             <View>
-              <Text style={{ fontSize: 24, fontWeight: '900', color: '#fff' }}>%{progressPercent}</Text>
-              <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: isDark ? 'rgba(20,184,166,0.80)' : '#f0fdf4' }}>
+              <Text className="text-2xl font-black text-white">%{progressPercent}</Text>
+              <Text className="text-[10px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">
                 İlerleme
               </Text>
             </View>
           </View>
 
-          {/* Progress Bar */}
           {kazaCompleted + totalPending > 0 && (
-            <View style={{ marginTop: 16, height: 8, overflow: 'hidden', borderRadius: 99, backgroundColor: 'rgba(255,255,255,0.2)' }}>
+            <View className="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
               <View
-                style={{ height: '100%', borderRadius: 99, backgroundColor: '#fff', width: `${progressPercent}%` }}
+                className="h-full rounded-full bg-white"
+                style={{ width: `${progressPercent}%` }}
               />
             </View>
           )}
         </View>
 
-        {/* List */}
-        <View style={{ paddingHorizontal: 16 }}>
-          <View style={{ marginBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 18, fontWeight: '900', color: colors.textPrimary }}>Kaza Listesi</Text>
+        <View className="px-4">
+          <View className="mb-4 flex-row items-center justify-between">
+            <Text className="text-lg font-black text-slate-900 dark:text-white">Kaza Listesi</Text>
             <TouchableOpacity
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setShowModal(true);
               }}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 16, backgroundColor: colors.teal, paddingHorizontal: 16, paddingVertical: 10 }}>
+              className="flex-row items-center gap-2 rounded-2xl bg-teal-600 px-4 py-2.5 dark:bg-teal-500">
               <Ionicons name="add" size={18} color="#fff" />
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Ekle</Text>
+              <Text className="text-sm font-bold text-white">Ekle</Text>
             </TouchableOpacity>
           </View>
 
           {kazaList.length === 0 && !loading ? (
-            <View style={{ alignItems: 'center', borderRadius: 28, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingVertical: 64 }}>
-              <View style={{ marginBottom: 16, height: 80, width: 80, alignItems: 'center', justifyContent: 'center', borderRadius: 40, backgroundColor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5' }}>
+            <View className="items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-800 dark:bg-slate-900">
+              <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-500/15">
                 <Ionicons name="checkmark-circle-outline" size={40} color={isDark ? '#34d399' : '#10b981'} />
               </View>
-              <Text style={{ fontSize: 18, fontWeight: '900', color: colors.textPrimary }}>Tebrikler!</Text>
-              <Text style={{ marginTop: 4, textAlign: 'center', fontSize: 14, color: colors.textSecondary }}>
+              <Text className="text-lg font-black text-slate-900 dark:text-white">Tebrikler!</Text>
+              <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-400">
                 Hiç bekleyen kaza namazın yok.{'\n'}Elhamdülillah!
               </Text>
             </View>

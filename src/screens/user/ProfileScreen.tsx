@@ -1,6 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { notificationService } from '@/services/notification.service';
-import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl, Switch } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  RefreshControl,
+  Switch,
+} from 'react-native';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -67,9 +75,9 @@ const settingsItems: SettingsItem[] = [
 ];
 
 export default function ProfileScreen({ navigation }: Props) {
-  const setUser      = useAuthStore((s) => s.setUser);
-  const refreshUser  = useAuthStore((s) => s.refreshUser);
-  const user         = useAuthStore((s) => s.user);
+  const setUser = useAuthStore((s) => s.setUser);
+  const refreshUser = useAuthStore((s) => s.refreshUser);
+  const user = useAuthStore((s) => s.user);
   const scrollViewRef = useRef<ScrollView>(null);
   const { isDark, toggleTheme } = useThemeStore();
 
@@ -98,7 +106,6 @@ export default function ProfileScreen({ navigation }: Props) {
       if (isRefresh) setRefreshing(true);
       try {
         const { data } = await userApi.profile();
-
         const profileData = (data as any).user ? (data as any).user : data;
 
         setProfile(profileData);
@@ -123,13 +130,9 @@ export default function ProfileScreen({ navigation }: Props) {
     try {
       setUpdateLoading(true);
       const { data } = await userApi.updateProfile({ firstName, lastName, phone });
-
       const profileData = (data as any).user ? (data as any).user : data;
-
       setProfile(profileData);
-
       await refreshUser();
-
       setIsEditing(false);
       alert.success('Başarılı', 'Profil bilgileriniz güncellendi');
     } catch (err) {
@@ -143,7 +146,6 @@ export default function ProfileScreen({ navigation }: Props) {
   async function handlePickImage() {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
       if (!permissionResult.granted) {
         alert.warning('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
         return;
@@ -170,7 +172,6 @@ export default function ProfileScreen({ navigation }: Props) {
   async function uploadAvatar(uri: string) {
     try {
       setAvatarLoading(true);
-
       const formData = new FormData();
       formData.append('avatar', {
         uri: uri,
@@ -180,7 +181,6 @@ export default function ProfileScreen({ navigation }: Props) {
 
       await userApi.uploadAvatar(formData);
       alert.success('Başarılı', 'Avatar yüklendi');
-
       await loadProfile();
       await refreshUser();
       setLocalAvatarUri(null);
@@ -210,11 +210,16 @@ export default function ProfileScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => loadProfile(true)} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={() => loadProfile(true)}
+            tintColor={isDark ? '#14b8a6' : '#0f766e'}
+            colors={[isDark ? '#14b8a6' : '#0f766e']}
+          />
         }>
         <View className="mb-6 items-center">
           <View className="relative">
-            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-slate-100 bg-teal-50 dark:border-white/5 dark:bg-teal-500/10">
+            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-slate-100 dark:border-slate-800 bg-teal-50 dark:bg-teal-500/10">
               {avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
@@ -233,7 +238,9 @@ export default function ProfileScreen({ navigation }: Props) {
           <Text className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
             {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
           </Text>
-          <Text className="text-slate-500 dark:text-slate-400">{profile?.email ?? user?.email}</Text>
+          <Text className="text-slate-500 dark:text-slate-400">
+            {profile?.email ?? user?.email}
+          </Text>
 
           <View className="mt-4 flex-row flex-wrap gap-2">
             {roles.map((role) => (
@@ -246,10 +253,12 @@ export default function ProfileScreen({ navigation }: Props) {
 
         <Card className="mx-4 mb-4">
           <View className="mb-4 flex-row items-center justify-between">
-            <Text className="text-lg font-bold text-slate-900 dark:text-white">Kişisel Bilgiler</Text>
+            <Text className="text-lg font-bold text-slate-900 dark:text-white">
+              Kişisel Bilgiler
+            </Text>
             {!isEditing && (
               <TouchableOpacity onPress={() => setIsEditing(true)}>
-                <Ionicons name="pencil" size={20} color="#0f766e" />
+                <Ionicons name="pencil" size={20} color={isDark ? '#2dd4bf' : '#0f766e'} />
               </TouchableOpacity>
             )}
           </View>
@@ -296,8 +305,8 @@ export default function ProfileScreen({ navigation }: Props) {
             </>
           ) : (
             <View className="gap-3">
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
-                <Ionicons name="person-outline" size={20} color={isDark ? "#94a3b8" : "#64748b"} />
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+                <Ionicons name="person-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Ad Soyad</Text>
                   <Text className="text-sm font-medium text-slate-900 dark:text-white">
@@ -305,15 +314,17 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
-                <Ionicons name="call-outline" size={20} color={isDark ? "#94a3b8" : "#64748b"} />
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+                <Ionicons name="call-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Telefon</Text>
-                  <Text className="text-sm font-medium text-slate-900 dark:text-white">{profile?.phone || '—'}</Text>
+                  <Text className="text-sm font-medium text-slate-900 dark:text-white">
+                    {profile?.phone || '—'}
+                  </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
-                <Ionicons name="mail-outline" size={20} color={isDark ? "#94a3b8" : "#64748b"} />
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+                <Ionicons name="mail-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">E-posta</Text>
                   <Text className="text-sm font-medium text-slate-900 dark:text-white">
@@ -329,14 +340,16 @@ export default function ProfileScreen({ navigation }: Props) {
           <Card className="mx-4 mb-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1 pr-2">
-                <Text className="mb-1 text-base font-bold text-slate-900 dark:text-white">Bildirim Testi</Text>
+                <Text className="mb-1 text-base font-bold text-slate-900 dark:text-white">
+                  Bildirim Testi
+                </Text>
                 <Text className="text-xs text-slate-500 dark:text-slate-400">
                   Bildirimlerin çalışıp çalışmadığını test edin
                 </Text>
               </View>
               <TouchableOpacity
                 onPress={handleTestNotification}
-                className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80"
+                className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80 dark:bg-teal-500"
                 activeOpacity={0.8}>
                 <View className="flex-row items-center gap-2">
                   <Ionicons name="notifications" size={16} color="#fff" />
@@ -346,8 +359,8 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
           </Card>
         )}
-        {/* ── TEMA SEÇİCİ ── */}
-        <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/5 dark:bg-[#111827]">
+
+        <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm dark:shadow-none">
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -355,29 +368,28 @@ export default function ProfileScreen({ navigation }: Props) {
             }}
             activeOpacity={0.85}
             className="flex-row items-center p-4">
-
-            {/* Icon container */}
             <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-500/10">
               <Text className="text-xl">{isDark ? '🌙' : '☀️'}</Text>
             </View>
 
             <View className="flex-1">
-              <Text className="text-[15px] font-bold text-slate-900 dark:text-white">
-                Tema
-              </Text>
+              <Text className="text-[15px] font-bold text-slate-900 dark:text-white">Tema</Text>
               <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                 {isDark ? 'Karanlık tema aktif' : 'Aydınlık tema aktif'}
               </Text>
             </View>
 
-            {/* Custom theme toggle */}
             <View className="flex-row items-center gap-0.5 rounded-full border border-slate-200 bg-slate-100 p-1 dark:border-teal-500/30 dark:bg-teal-500/20">
-              {/* ☀️ light */}
-              <View className={`h-8 w-8 items-center justify-center rounded-full ${!isDark ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
-                <Ionicons name="sunny" size={16} color={!isDark ? '#d97706' : 'rgba(255,255,255,0.30)'} />
+              <View
+                className={`h-8 w-8 items-center justify-center rounded-full ${!isDark ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
+                <Ionicons
+                  name="sunny"
+                  size={16}
+                  color={!isDark ? '#d97706' : 'rgba(255,255,255,0.30)'}
+                />
               </View>
-              {/* 🌙 dark */}
-              <View className={`h-8 w-8 items-center justify-center rounded-full ${isDark ? 'bg-teal-500 shadow-sm shadow-teal-500/40' : 'bg-transparent'}`}>
+              <View
+                className={`h-8 w-8 items-center justify-center rounded-full ${isDark ? 'bg-teal-500 shadow-sm shadow-teal-500/40' : 'bg-transparent'}`}>
                 <Ionicons name="moon" size={16} color={isDark ? '#ffffff' : 'rgba(0,0,0,0.25)'} />
               </View>
             </View>
@@ -391,22 +403,24 @@ export default function ProfileScreen({ navigation }: Props) {
             {settingsItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                className={`flex-row items-center justify-between rounded-xl p-4 ${item.danger ? 'bg-red-50 dark:bg-red-500/10' : 'bg-slate-50 dark:bg-white/5'}`}
+                className={`flex-row items-center justify-between rounded-xl p-4 ${item.danger ? 'bg-red-50 dark:bg-red-500/10' : 'bg-slate-50 dark:bg-slate-800/50'}`}
                 onPress={() => navigation.navigate(item.screen)}>
                 <View className="flex-1 flex-row items-center gap-3">
                   <View
-                    className={`h-10 w-10 items-center justify-center rounded-full ${item.danger ? 'bg-red-100 dark:bg-red-500/20' : 'bg-white dark:bg-white/5'}`}>
+                    className={`h-10 w-10 items-center justify-center rounded-full ${item.danger ? 'bg-red-100 dark:bg-red-500/20' : 'bg-white dark:bg-slate-800'}`}>
                     <Ionicons
                       name={item.icon}
                       size={20}
-                      color={item.danger ? '#dc2626' : (isDark ? '#94a3b8' : '#64748b')}
+                      color={item.danger ? '#dc2626' : isDark ? '#4b5563' : '#64748b'}
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className={`font-medium ${item.danger ? 'text-red-600 dark:text-red-400' : 'text-slate-900 dark:text-white'}`}>
+                    <Text
+                      className={`font-bold ${item.danger ? 'text-red-600 dark:text-red-400' : 'text-slate-900 dark:text-white'}`}>
                       {item.title}
                     </Text>
-                    <Text className={`text-xs ${item.danger ? 'text-red-500 dark:text-red-400/70' : 'text-slate-500 dark:text-slate-400'}`}>
+                    <Text
+                      className={`text-xs ${item.danger ? 'text-red-500 dark:text-red-400/70' : 'text-slate-500 dark:text-slate-400'}`}>
                       {item.subtitle}
                     </Text>
                   </View>
@@ -414,7 +428,7 @@ export default function ProfileScreen({ navigation }: Props) {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color={item.danger ? '#fca5a5' : (isDark ? 'rgba(255,255,255,0.3)' : '#94a3b8')}
+                  color={item.danger ? '#fca5a5' : isDark ? '#1e293b' : '#94a3b8'}
                 />
               </TouchableOpacity>
             ))}

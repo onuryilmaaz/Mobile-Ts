@@ -24,7 +24,6 @@ import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
 import { useThemeStore } from '@/store/theme.store';
-import { useAppTheme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
@@ -39,12 +38,11 @@ type HomeHeaderProps = {
 };
 
 function HomeHeader({ navigation }: HomeHeaderProps) {
-  const headerColor = useThemeStore((s) => s.headerColor);
   const { user, isAuthenticated } = useAuthStore();
   const avatarUrl = user?.avatarUrl;
   const insets = useSafeAreaInsets();
   const [statusBarHeight, setStatusBarHeight] = useState(0);
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -59,73 +57,39 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
   return (
     <View
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-white/5 dark:bg-[#111827]"
       style={{
-        backgroundColor: colors.headerBg,
         paddingTop: finalStatusBarHeight,
         paddingHorizontal: 16,
         height: totalHeight,
-        justifyContent: 'center',
-        width: '100%',
-        borderBottomWidth: 1,
-        borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : colors.cardBorder,
       }}>
       {/* Subtle gradient glow at top */}
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: totalHeight,
-          backgroundColor: 'rgba(20,184,166,0.04)',
-          pointerEvents: 'none',
-        }}
-      />
+      {isDark && (
+        <View
+          className="pointer-events-none absolute inset-0 bg-teal-500/5"
+          style={{ height: totalHeight }}
+        />
+      )}
 
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View className="flex-row items-center">
         {/* Compass Button */}
         <TouchableOpacity
           onPress={() => navigation.navigate('QiblaFinder')}
-          style={{
-            height: 42,
-            width: 42,
-            borderRadius: 14,
-            borderWidth: 1,
-            borderColor: 'rgba(20,184,166,0.35)',
-            backgroundColor: 'rgba(20,184,166,0.12)',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Ionicons name="compass" size={20} color="#14b8a6" />
+          className="h-[42px] w-[42px] items-center justify-center rounded-[14px] border border-teal-600/20 bg-teal-600/5 dark:border-teal-500/35 dark:bg-teal-500/10">
+          <Ionicons name="compass" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
         </TouchableOpacity>
 
         {/* Title */}
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        <View className="flex-1 items-center">
           <Text
-            style={{
-              fontSize: 22,
-              fontWeight: '900',
-              letterSpacing: 1.5,
-              color: '#f6c358',
-              textShadowColor: 'rgba(246,195,88,0.4)',
-              textShadowRadius: 8,
-            }}>
+            className="text-[22px] font-black tracking-widest text-amber-500"
+            style={{ textShadowColor: 'rgba(246,195,88,0.4)', textShadowRadius: 8 }}>
             Salah
           </Text>
         </View>
 
         <TouchableOpacity
-          style={{
-            height: 48,
-            width: 48,
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
-            borderRadius: 24,
-            borderWidth: 2,
-            borderColor: '#ffffff',
-            backgroundColor: 'rgba(255,255,255,0.2)',
-          }}
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-slate-100 bg-slate-50 dark:border-white/10 dark:bg-white/5"
           onPress={() => {
             if (isAuthenticated) {
               navigation.navigate('Profile' as any, { screen: 'ProfileMain' });
@@ -136,11 +100,11 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
           {isAuthenticated && avatarUrl ? (
             <Image
               source={{ uri: avatarUrl }}
-              style={{ height: '100%', width: '100%' }}
+              className="h-full w-full"
               resizeMode="cover"
             />
           ) : (
-            <Ionicons name="person" size={20} color="#14b8a6" />
+            <Ionicons name="person" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
           )}
         </TouchableOpacity>
       </View>
@@ -149,11 +113,13 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 }
 
 export default function HomeNavigator() {
-  const headerColor = useThemeStore((s) => s.headerColor);
+  const { isDark } = useThemeStore();
+  const headerColor = isDark ? '#111827' : '#ffffff';
+  const headerTintColor = isDark ? '#ffffff' : '#0f172a';
 
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+      <RNStatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
@@ -175,7 +141,7 @@ export default function HomeNavigator() {
             header: undefined,
             title: 'Kıble Bulucu',
             headerStyle: { backgroundColor: headerColor },
-            headerTintColor: '#fff',
+            headerTintColor: headerTintColor,
             headerBackTitle: '',
           }}
         />
@@ -187,7 +153,7 @@ export default function HomeNavigator() {
             header: undefined,
             title: 'Konum Seç',
             headerStyle: { backgroundColor: headerColor },
-            headerTintColor: '#fff',
+            headerTintColor: headerTintColor,
             headerBackTitle: '',
           }}
         />
@@ -199,7 +165,7 @@ export default function HomeNavigator() {
             header: undefined,
             title: 'Kaza Namazlar',
             headerStyle: { backgroundColor: headerColor },
-            headerTintColor: '#fff',
+            headerTintColor: headerTintColor,
             headerBackTitle: '',
           }}
         />
@@ -211,7 +177,7 @@ export default function HomeNavigator() {
             header: undefined,
             title: 'İstatistikler',
             headerStyle: { backgroundColor: headerColor },
-            headerTintColor: '#fff',
+            headerTintColor: headerTintColor,
             headerBackTitle: '',
           }}
         />
@@ -223,7 +189,7 @@ export default function HomeNavigator() {
             header: undefined,
             title: "Challenge'lar",
             headerStyle: { backgroundColor: headerColor },
-            headerTintColor: '#fff',
+            headerTintColor: headerTintColor,
             headerBackTitle: '',
           }}
         />

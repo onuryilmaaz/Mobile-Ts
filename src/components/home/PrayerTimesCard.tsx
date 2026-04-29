@@ -10,7 +10,6 @@ import { notificationService } from '@/services/notification.service';
 import { useThemeStore } from '@/store/theme.store';
 import { getDistrictById, getStateById } from '@/constants/locations';
 import type { PrayerTimeData } from '@/types/prayer';
-import { useAppTheme } from '@/constants/theme';
 import { rootNavigate } from '@/navigation/rootNavigation';
 
 const STORAGE_STATE_ID_KEY    = 'SELECTED_STATE_ID';
@@ -52,7 +51,7 @@ type PrayerTimesCardProps = {
 };
 
 export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const [loading, setLoading]                       = useState(false);
   const [data, setData]                             = useState<PrayerTimeData | null>(null);
   const [selectedDistrictId, setSelectedDistrictId] = useState<string>(DEFAULT_DISTRICT_ID);
@@ -253,61 +252,35 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
   // ── PREMIUM DYNAMIC UI ─────────────────────────────────────────────────────────
   return (
-    <View style={{ marginHorizontal: 16, marginTop: 12, marginBottom: 16 }}>
+    <View className="mx-4 mb-4 mt-3">
 
       {/* ╔══════════════════════════════╗
           ║   COUNTDOWN GLASS CARD       ║
           ╚══════════════════════════════╝ */}
-      <View style={{
-        borderRadius: 28, overflow: 'hidden',
-        borderWidth: 1, borderColor: isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.05)',
-        backgroundColor: colors.countdownBg,
-        shadowColor: colors.teal, shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: isDark ? 0.20 : 0.35, shadowRadius: 24, elevation: 14,
-        marginBottom: 12,
-      }}>
+      <View className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-white/10 dark:bg-[#0d1f2d]">
         {/* Ambient glow orbs */}
-        <View style={{ position:'absolute', top:-50, right:-50, width:180, height:180,
-          borderRadius:90, backgroundColor: colors.countdownGlow }} />
-        <View style={{ position:'absolute', bottom:-40, left:-40, width:130, height:130,
-          borderRadius:65, backgroundColor: isDark ? 'rgba(129,140,248,0.11)' : 'rgba(255,255,255,0.15)' }} />
+        <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
+        <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
 
-        <View style={{ padding: 28, alignItems: 'center' }}>
+        <View className="items-center p-7">
           {/* Mosque emoji watermark */}
-          <Text style={{
-            position:'absolute', bottom: 4, fontSize: 72,
-            opacity: isDark ? 0.07 : 0.15, color: isDark ? '#14b8a6' : '#ffffff',
-          }}>🕌</Text>
+          <Text className="absolute bottom-1 text-[72px] text-white opacity-15 dark:text-teal-500 dark:opacity-10">🕌</Text>
 
           {/* Gold label pill */}
-          <View style={{
-            borderRadius: 99, paddingHorizontal: 16, paddingVertical: 5,
-            backgroundColor: 'rgba(246,195,88,0.14)',
-            borderWidth: 1, borderColor: 'rgba(246,195,88,0.32)',
-            marginBottom: 18,
-          }}>
-            <Text style={{
-              fontSize: 10, fontWeight: '800', letterSpacing: 2.5,
-              textTransform: 'uppercase', color: '#f6c358',
-            }}>
+          <View className="mb-4 rounded-full border border-[#f6c358]/30 bg-[#f6c358]/15 px-4 py-1.5">
+            <Text className="text-[10px] font-black uppercase tracking-[2.5px] text-[#f6c358]">
               {nextPrayerName ? `${nextPrayerName} Vaktine Kalan` : 'Bir Sonraki Namaz'}
             </Text>
           </View>
 
           {/* Big countdown */}
-          <Text style={{
-            fontSize: 54, fontWeight: '900', letterSpacing: -1,
-            color: '#ffffff', textAlign: 'center',
-          }}>
+          <Text className="text-center text-[54px] font-black tracking-tight text-white">
             {targetTimeRef.current ? remainingTime : '--:--:--'}
           </Text>
 
           {/* Sub label */}
           {nextPrayerName && data?.times && (
-            <Text style={{
-              color: 'rgba(255,255,255,0.8)', fontSize: 13,
-              marginTop: 8, fontWeight: '600', letterSpacing: 0.5,
-            }}>
+            <Text className="mt-2 text-[13px] font-semibold tracking-wide text-white/80">
               {nextPrayerName} ·{' '}
               {nextPrayerName === 'İmsak' ? data.times.imsak
                 : nextPrayerName === 'Güneş'  ? data.times.gunes
@@ -320,15 +293,8 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
           {/* Progress bar */}
           {progressPct > 0 && (
-            <View style={{
-              marginTop: 22, height: 3, width: '78%',
-              borderRadius: 99, backgroundColor: 'rgba(255,255,255,0.2)',
-              overflow: 'hidden',
-            }}>
-              <View style={{
-                height: '100%', width: `${progressPct}%`,
-                backgroundColor: '#ffffff', borderRadius: 99,
-              }} />
+            <View className="mt-5 h-[3px] w-[78%] overflow-hidden rounded-full bg-white/20">
+              <View style={{ width: `${progressPct}%` }} className="h-full rounded-full bg-white" />
             </View>
           )}
         </View>
@@ -337,53 +303,38 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       {/* ╔══════════════════════════════╗
           ║   PRAYER TIMES GRID          ║
           ╚══════════════════════════════╝ */}
-      <View style={{
-        borderRadius: 24, borderWidth: 1,
-        borderColor: colors.gridBorder,
-        backgroundColor: colors.gridBg,
-        padding: 14, marginBottom: 12,
-      }}>
+      <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-white/5 dark:bg-[#111827]">
         {loading && !data ? (
-          <View style={{ alignItems: 'center', paddingVertical: 28 }}>
-            <ActivityIndicator size="large" color={colors.teal} />
-            <Text style={{ color: colors.textMuted, marginTop: 10, fontSize: 13 }}>
+          <View className="items-center py-7">
+            <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
+            <Text className="mt-2.5 text-[13px] text-slate-400 dark:text-slate-500">
               Vakitler yükleniyor...
             </Text>
           </View>
         ) : (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8 }}>
+          <View className="flex-row flex-wrap justify-between gap-y-2">
             {prayers.map((item) => {
               const isNext = item.label === nextPrayerName;
               return (
-                <View key={item.key} style={{
-                  width: '31%', alignItems: 'center',
-                  borderRadius: 16, paddingVertical: 12,
-                  backgroundColor: isNext ? colors.gridItemActive : colors.gridItemBg,
-                  borderWidth: 1,
-                  borderColor: isNext ? colors.gridActiveBorder : isDark ? 'rgba(255,255,255,0.06)' : colors.cardBorder,
-                  ...(isNext && {
-                    shadowColor: colors.teal, shadowOpacity: isDark ? 0.45 : 0.15,
-                    shadowRadius: 12, shadowOffset: { width: 0, height: 2 },
-                  }),
-                }}>
+                <View key={item.key} className={`w-[31%] items-center rounded-2xl border py-3 ${
+                  isNext
+                    ? 'border-teal-600/40 bg-teal-50 shadow-sm shadow-teal-600/15 dark:border-teal-500/40 dark:bg-teal-500/15 dark:shadow-teal-500/40'
+                    : 'border-slate-200 bg-slate-50 dark:border-white/5 dark:bg-white/5'
+                }`}>
                   <Ionicons
                     name={PRAYER_ICONS[item.label]}
                     size={17}
-                    color={isNext ? colors.teal : colors.textMuted}
+                    color={isNext ? (isDark ? '#2dd4bf' : '#0f766e') : (isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8')}
                     style={{ marginBottom: 5 }}
                   />
-                  <Text style={{
-                    fontSize: 9, fontWeight: '700', letterSpacing: 1,
-                    textTransform: 'uppercase',
-                    color: isNext ? colors.teal : colors.textMuted,
-                    marginBottom: 3,
-                  }}>
+                  <Text className={`mb-1 text-[9px] font-bold uppercase tracking-widest ${
+                    isNext ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-slate-500'
+                  }`}>
                     {item.label}
                   </Text>
-                  <Text style={{
-                    fontSize: 15, fontWeight: '800',
-                    color: isNext ? colors.textPrimary : colors.textSecondary,
-                  }}>
+                  <Text className={`text-[15px] font-black ${
+                    isNext ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'
+                  }`}>
                     {item.time}
                   </Text>
                 </View>
@@ -396,64 +347,49 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       {/* ╔══════════════════════════════╗
           ║   LOCATION & NOTIFICATIONS   ║
           ╚══════════════════════════════╝ */}
-      <View style={{
-        borderRadius: 20, borderWidth: 1,
-        borderColor: colors.cardBorder,
-        backgroundColor: colors.card, overflow: 'hidden',
-      }}>
+      <View className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#111827]">
         {/* Location Row */}
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             openLocationSelection();
           }}
-          style={{
-            flexDirection: 'row', alignItems: 'center', padding: 14,
-            borderBottomWidth: 1, borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : colors.cardBorder,
-          }}>
-          <View style={{
-            height: 34, width: 34, borderRadius: 10,
-            backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim,
-            alignItems: 'center', justifyContent: 'center', marginRight: 12,
-          }}>
-            <Ionicons name="location-outline" size={17} color={colors.teal} />
+          className="flex-row items-center border-b border-slate-200 p-3.5 dark:border-white/5">
+          <View className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/15">
+            <Ionicons name="location-outline" size={17} color={isDark ? '#2dd4bf' : '#0f766e'} />
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 13, fontWeight: '700' }}>
+          <View className="flex-1">
+            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">
               Konum
             </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 11, marginTop: 1 }}>
+            <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
               {selectedState && selectedDistrict
                 ? `${selectedState.name} — ${selectedDistrict.name}`
                 : selectedDistrict ? selectedDistrict.name : 'Konum seçin'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={15} color={colors.textMuted} />
+          <Ionicons name="chevron-forward" size={15} color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'} />
         </TouchableOpacity>
 
         {/* Notifications Row */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14 }}>
-          <View style={{
-            height: 34, width: 34, borderRadius: 10,
-            backgroundColor: isDark ? 'rgba(246,195,88,0.14)' : colors.goldDim,
-            alignItems: 'center', justifyContent: 'center', marginRight: 12,
-          }}>
-            <Ionicons name="notifications-outline" size={17} color={colors.gold} />
+        <View className="flex-row items-center p-3.5">
+          <View className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/15">
+            <Ionicons name="notifications-outline" size={17} color={isDark ? '#fcd34d' : '#d97706'} />
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 13, fontWeight: '700' }}>
+          <View className="flex-1">
+            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">
               Bildirimler
             </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 11, marginTop: 1 }}>
+            <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
               Vakit girişinde ve 30dk önce bildirim al
             </Text>
           </View>
           <Switch
             value={notificationsEnabled}
             onValueChange={handleNotificationToggle}
-            trackColor={{ false: isDark ? 'rgba(255,255,255,0.10)' : colors.cardBorder, true: colors.teal }}
-            thumbColor={notificationsEnabled ? '#fff' : isDark ? colors.textMuted : '#fff'}
-            ios_backgroundColor={isDark ? 'rgba(255,255,255,0.10)' : colors.cardBorder}
+            trackColor={{ false: isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0', true: isDark ? '#14b8a6' : '#0f766e' }}
+            thumbColor={notificationsEnabled ? '#fff' : isDark ? 'rgba(240,244,255,0.30)' : '#fff'}
+            ios_backgroundColor={isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0'}
           />
         </View>
       </View>

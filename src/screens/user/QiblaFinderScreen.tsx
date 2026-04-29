@@ -7,7 +7,7 @@ import * as Location from 'expo-location';
 import { Screen } from '@/components/layout/Screen';
 import { qiblaService } from '@/services/qibla.service';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 const { width } = Dimensions.get('window');
 
@@ -25,7 +25,7 @@ export default function QiblaFinderScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   useEffect(() => {
     (async () => {
@@ -80,29 +80,32 @@ export default function QiblaFinderScreen() {
 
   if (loading) {
     return (
-      <Screen  className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.teal} />
-        <Text style={{ color: colors.textSecondary, marginTop: 16 }}>Konum alınıyor...</Text>
+      <Screen className="items-center justify-center">
+        <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
+        <Text className="mt-4 text-slate-600 dark:text-slate-400">Konum alınıyor...</Text>
       </Screen>
     );
   }
 
   if (errorMsg) {
     return (
-      <Screen  className="items-center justify-center p-6">
+      <Screen className="items-center justify-center p-6">
         <Ionicons name="warning-outline" size={48} color={isDark ? "#fca5a5" : "#ef4444"} />
-        <Text style={{ color: colors.textPrimary, marginTop: 16, textAlign: 'center' }}>{errorMsg}</Text>
+        <Text className="mt-4 text-center text-slate-900 dark:text-white">{errorMsg}</Text>
       </Screen>
     );
   }
 
   return (
-    <Screen >
+    <Screen>
       <View className="flex-1 items-center justify-center px-6">
-        {/* Qibla Angle Display */}
         <View className="mb-12 items-center">
-          <Text style={{ color: colors.textMuted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Kıble Açısı</Text>
-          <Text style={{ color: colors.teal, fontSize: 48, fontWeight: 'bold' }}>{qiblaBearing.toFixed(0)}°</Text>
+          <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Kıble Açısı
+          </Text>
+          <Text className="text-5xl font-black text-teal-700 dark:text-teal-400">
+            {qiblaBearing.toFixed(0)}°
+          </Text>
         </View>
 
         <View className="mb-12 items-center justify-center">
@@ -111,28 +114,25 @@ export default function QiblaFinderScreen() {
               width: width * 0.75,
               height: width * 0.75,
               borderRadius: (width * 0.75) / 2,
-              backgroundColor: colors.card,
-              borderWidth: 4,
-              borderColor: colors.cardBorder,
-              shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 16, elevation: 10,
             }}
-            className="relative items-center justify-center">
+            className="relative items-center justify-center rounded-full border-4 border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+            
             <View className="absolute top-4 items-center">
-              <Text style={{ color: isDark ? '#fca5a5' : '#ef4444', fontSize: 20, fontWeight: 'bold', marginBottom: 4 }}>N</Text>
-              <View style={{ height: 16, width: 4, borderRadius: 99, backgroundColor: isDark ? '#fca5a5' : '#ef4444' }} />
+              <Text className="mb-1 text-xl font-bold text-red-500 dark:text-red-400">N</Text>
+              <View className="h-4 w-1 rounded-full bg-red-500 dark:bg-red-400" />
             </View>
 
             <View className="absolute bottom-4 items-center">
-              <View style={{ height: 16, width: 4, borderRadius: 99, backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#cbd5e1', marginBottom: 4 }} />
-              <Text style={{ color: colors.textMuted, fontSize: 20, fontWeight: 'bold' }}>S</Text>
+              <View className="mb-1 h-4 w-1 rounded-full bg-slate-300 dark:bg-slate-800" />
+              <Text className="text-xl font-bold text-slate-400 dark:text-slate-500">S</Text>
             </View>
 
             <View className="absolute right-6 items-center" style={{ top: '45%' }}>
-              <Text style={{ color: colors.textMuted, fontSize: 20, fontWeight: 'bold' }}>E</Text>
+              <Text className="text-xl font-bold text-slate-400 dark:text-slate-500">E</Text>
             </View>
 
             <View className="absolute left-6 items-center" style={{ top: '45%' }}>
-              <Text style={{ color: colors.textMuted, fontSize: 20, fontWeight: 'bold' }}>W</Text>
+              <Text className="text-xl font-bold text-slate-400 dark:text-slate-500">W</Text>
             </View>
 
             {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
@@ -155,8 +155,7 @@ export default function QiblaFinderScreen() {
               />
             ))}
 
-            <View
-              style={{ width: 120, height: 120, alignItems: 'center', justifyContent: 'center', borderRadius: 60, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9' }}>
+            <View className="h-[120px] w-[120px] items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
               <Ionicons
                 name="arrow-up"
                 size={70}
@@ -171,11 +170,15 @@ export default function QiblaFinderScreen() {
 
         <View className="items-center">
           {isAligned ? (
-            <View style={{ borderRadius: 16, borderWidth: 2, borderColor: isDark ? 'rgba(52,211,153,0.3)' : '#a7f3d0', backgroundColor: isDark ? 'rgba(52,211,153,0.1)' : '#ecfdf5', paddingHorizontal: 32, paddingVertical: 16 }}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold', letterSpacing: 1, color: isDark ? '#34d399' : '#059669' }}>✓ Kıble Yönü</Text>
+            <View className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 px-8 py-4 dark:border-emerald-400/30 dark:bg-emerald-400/10">
+              <Text className="text-lg font-bold tracking-wide text-emerald-600 dark:text-emerald-400">
+                ✓ Kıble Yönü
+              </Text>
             </View>
           ) : (
-            <Text style={{ fontSize: 14, color: colors.textSecondary }}>Cihazı yatay tutun ve döndürün</Text>
+            <Text className="text-sm text-slate-500 dark:text-slate-400">
+              Cihazı yatay tutun ve döndürün
+            </Text>
           )}
         </View>
       </View>

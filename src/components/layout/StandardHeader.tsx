@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { HEADER_CONFIG } from '@/navigation/header.config';
 import { useAuthStore } from '@/modules/auth/auth.store';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 type StandardHeaderProps = {
   title: string;
@@ -33,7 +33,7 @@ export function StandardHeader({
   const { user, isAuthenticated } = useAuthStore();
   const avatarUrl = user?.avatarUrl;
   const [statusBarHeight, setStatusBarHeight] = useState(0);
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -57,76 +57,57 @@ export function StandardHeader({
 
   return (
     <View
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-white/5 dark:bg-[#111827]"
       style={{
-        backgroundColor: colors.headerBg,
         paddingTop: finalStatusBarHeight,
         paddingBottom: 0,
         paddingHorizontal: 16,
         height: totalHeight,
-        justifyContent: 'center',
-        width: '100%',
-        borderBottomWidth: 1,
-        borderBottomColor: isDark ? 'rgba(255,255,255,0.06)' : colors.cardBorder,
       }}>
       {/* Subtle glow for dark mode */}
       {isDark && (
-        <View style={{
-          position: 'absolute', top: 0, left: 0, right: 0,
-          height: totalHeight, backgroundColor: 'rgba(20,184,166,0.04)', pointerEvents: 'none',
-        }} />
+        <View className="pointer-events-none absolute inset-0 bg-teal-500/5" style={{ height: totalHeight }} />
       )}
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View style={{ width: 80 }}>
+      <View className="flex-row items-center justify-between">
+        <View className="w-20">
           {showBackButton && (
             <TouchableOpacity
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 navigation.goBack();
               }}
-              style={{
-                flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingRight: 12,
-                borderRadius: 20, backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                paddingLeft: 6, alignSelf: 'flex-start'
-              }}
+              className="flex-row items-center self-start rounded-full bg-black/5 py-2 pl-1.5 pr-3 dark:bg-white/5"
               activeOpacity={0.7}>
               <Ionicons name="chevron-back" size={20} color={isDark ? '#F0F4FF' : '#0f172a'} />
-              <Text style={{ fontSize: 14, fontWeight: '600', color: isDark ? '#F0F4FF' : '#0f172a', marginLeft: 2 }}>Ana Sayfa</Text>
+              <Text className="ml-0.5 text-sm font-semibold text-slate-900 dark:text-[#F0F4FF]">Ana Sayfa</Text>
             </TouchableOpacity>
           )}
         </View>
 
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        <View className="flex-1 items-center">
           <Text
             numberOfLines={1}
-            style={{
-              fontSize: 16, fontWeight: '700', letterSpacing: 0.5,
-              color: isDark ? '#F0F4FF' : '#0f172a',
-            }}>
+            className="text-base font-bold tracking-wide text-slate-900 dark:text-[#F0F4FF]">
             {title}
           </Text>
         </View>
 
-        <View style={{ width: 80, alignItems: 'flex-end' }}>
+        <View className="w-20 items-end">
           {rightComponent ? (
             rightComponent
           ) : showProfile ? (
             <TouchableOpacity
               onPress={handleProfilePress}
-              style={{
-                height: 42, width: 42, alignItems: 'center', justifyContent: 'center',
-                overflow: 'hidden', borderRadius: 14,
-                borderWidth: 1, borderColor: isDark ? 'rgba(20,184,166,0.35)' : 'rgba(20,184,166,0.2)',
-                backgroundColor: isDark ? 'rgba(20,184,166,0.12)' : 'rgba(20,184,166,0.05)',
-              }}>
+              className="h-[42px] w-[42px] items-center justify-center overflow-hidden rounded-[14px] border border-teal-600/20 bg-teal-600/5 dark:border-teal-500/35 dark:bg-teal-500/10">
               {isAuthenticated && avatarUrl ? (
-                <Image source={{ uri: avatarUrl }} style={{ height: '100%', width: '100%' }} resizeMode="cover" />
+                <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
-                <Ionicons name="person" size={20} color={colors.teal} />
+                <Ionicons name="person" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
               )}
             </TouchableOpacity>
           ) : (
-            <View style={{ width: 42 }} />
+            <View className="w-[42px]" />
           )}
         </View>
       </View>

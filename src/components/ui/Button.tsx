@@ -1,4 +1,5 @@
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { useThemeStore } from '@/store/theme.store';
 
 type ButtonProps = {
   title: string;
@@ -17,24 +18,25 @@ export function Button({
   variant = 'primary',
   className = '',
 }: ButtonProps) {
+  const { isDark } = useThemeStore();
   const isDisabled = loading || disabled;
 
   const baseButtonClasses = 'h-12 rounded-2xl border-2 items-center justify-center';
 
   const variantClasses = {
-    primary: 'bg-teal-600 border-teal-600',
-    secondary: 'bg-slate-200 border-slate-200',
-    danger: 'bg-red-600 border-red-600',
-    outline: 'bg-transparent border-teal-600',
+    primary: 'bg-teal-600 border-teal-600 dark:bg-teal-500 dark:border-teal-500',
+    secondary: 'bg-slate-200 border-slate-200 dark:bg-slate-800 dark:border-slate-800',
+    danger: 'bg-red-600 border-red-600 dark:bg-red-500 dark:border-red-500',
+    outline: 'bg-transparent border-teal-600 dark:border-teal-400',
   };
 
   const textBaseClasses = 'text-base font-bold';
 
   const textVariantClasses = {
     primary: 'text-white',
-    secondary: 'text-slate-600',
+    secondary: 'text-slate-600 dark:text-slate-300',
     danger: 'text-white',
-    outline: 'text-teal-600',
+    outline: 'text-teal-600 dark:text-teal-400',
   };
 
   const buttonClass = [
@@ -49,8 +51,8 @@ export function Button({
   const textClass = [textBaseClasses, textVariantClasses[variant]].filter(Boolean).join(' ');
 
   const getLoaderColor = () => {
-    if (variant === 'outline') return '#0d9488';
-    if (variant === 'secondary') return '#475569';
+    if (variant === 'outline') return isDark ? '#2dd4bf' : '#0d9488';
+    if (variant === 'secondary') return isDark ? '#94a3b8' : '#475569';
     return '#ffffff';
   };
 

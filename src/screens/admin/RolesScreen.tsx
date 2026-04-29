@@ -11,10 +11,10 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 export default function RolesScreen() {
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const alert = useAlertStore();
   const [roles, setRoles] = useState<AdminRole[]>([]);
   const [newRole, setNewRole] = useState('');
@@ -138,7 +138,7 @@ export default function RolesScreen() {
             <Ionicons
               name={editingRole ? 'create-outline' : 'add-circle-outline'}
               size={20}
-              color="#0f766e"
+              color={isDark ? '#14b8a6' : '#0f766e'}
             />
             <Text className="text-lg font-bold text-slate-900 dark:text-white">
               {editingRole ? 'Rolü Düzenle' : 'Yeni Rol Oluştur'}

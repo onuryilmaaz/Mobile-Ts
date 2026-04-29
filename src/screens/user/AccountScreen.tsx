@@ -7,8 +7,10 @@ import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useAlertStore } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/store/theme.store';
 
 export default function AccountScreen() {
+  const { isDark } = useThemeStore();
   const logout = useAuthStore((s) => s.logout);
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
@@ -59,19 +61,19 @@ export default function AccountScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
         <Card className="mx-4 my-4">
           <View className="mb-4 flex-row items-center gap-3">
-            <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-100">
-              <Ionicons name="log-out-outline" size={24} color="#0f766e" />
+            <View className="h-12 w-12 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-500/10">
+              <Ionicons name="log-out-outline" size={24} color={isDark ? '#14b8a6' : '#0f766e'} />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-slate-900">Çıkış Yap</Text>
-              <Text className="text-sm text-slate-500">
+              <Text className="text-lg font-semibold text-slate-900 dark:text-white">Çıkış Yap</Text>
+              <Text className="text-sm text-slate-500 dark:text-slate-400">
                 Hesabınızdan güvenli bir şekilde çıkış yapın
               </Text>
             </View>
@@ -79,14 +81,14 @@ export default function AccountScreen() {
           <Button title="Çıkış Yap" onPress={handleLogout} variant="outline" />
         </Card>
 
-        <Card className="mx-4 mb-4 border-red-200 bg-red-50">
+        <Card className="mx-4 mb-4 border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/5">
           <View className="mb-4 flex-row items-center gap-3">
-            <View className="h-12 w-12 items-center justify-center rounded-full bg-red-100">
+            <View className="h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/20">
               <Ionicons name="warning-outline" size={24} color="#dc2626" />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-red-700">Tehlikeli Bölge</Text>
-              <Text className="text-sm text-red-600">
+              <Text className="text-lg font-semibold text-red-700 dark:text-red-400">Tehlikeli Bölge</Text>
+              <Text className="text-sm text-red-600 dark:text-red-400/80">
                 Hesabınızı devre dışı bırakmak geri alınabilir ancak dikkatli olun
               </Text>
             </View>

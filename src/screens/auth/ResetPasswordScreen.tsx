@@ -9,10 +9,12 @@ import { Card } from '@/components/ui/Card';
 import { OtpInput } from '@/components/ui/OtpInput';
 import { authApi } from '@/modules/auth/auth.api';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/store/theme.store';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
 export default function ResetPasswordScreen({ navigation, route }: Props) {
+  const { isDark } = useThemeStore();
   const email = route.params?.email ?? '';
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -78,7 +80,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
   }
 
   return (
-    <Screen className="justify-center bg-slate-50">
+    <Screen className="justify-center bg-slate-50 dark:bg-black">
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
@@ -87,20 +89,20 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         keyboardDismissMode="interactive"
         bounces={false}>
         <View className="mb-8 items-center">
-          <Text className="text-3xl font-bold text-slate-900">
+          <Text className="text-3xl font-bold text-slate-900 dark:text-white">
             {step === 'otp' ? 'Kodu Gir' : 'Yeni Şifre'}
           </Text>
-          <Text className="mt-2 text-center text-slate-500">
+          <Text className="mt-2 text-center text-slate-500 dark:text-slate-400">
             {step === 'otp'
               ? `${email} adresine gönderilen 6 haneli kodu girin`
               : 'Yeni şifrenizi belirleyin'}
           </Text>
         </View>
 
-        <Card className="shadow-lg shadow-primary-500/10">
+        <Card className="mx-4 shadow-lg shadow-teal-500/10 dark:border-teal-500/20 dark:shadow-none">
           {error && (
-            <View className="mb-4 rounded-xl bg-red-50 p-3">
-              <Text className="text-center text-sm font-medium text-red-600">{error}</Text>
+            <View className="mb-4 rounded-xl bg-red-50 p-3 dark:bg-red-500/10">
+              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
             </View>
           )}
 
@@ -113,7 +115,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
               <Button title="Devam Et" onPress={handleOtpContinue} disabled={otp.length !== 6} />
 
               <TouchableOpacity onPress={() => navigation.goBack()} className="mt-4">
-                <Text className="text-center text-slate-500">Geri dön</Text>
+                <Text className="text-center text-slate-500 dark:text-slate-400">Geri dön</Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -149,8 +151,8 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
                   setError(null);
                 }}
                 className="mt-4 flex-row items-center justify-center gap-1">
-                <Ionicons name="arrow-back" size={16} color="#64748b" />
-                <Text className="text-slate-500">Kodu değiştir</Text>
+                <Ionicons name="arrow-back" size={16} color={isDark ? '#94a3b8' : '#64748b'} />
+                <Text className="text-slate-500 dark:text-slate-400">Kodu değiştir</Text>
               </TouchableOpacity>
             </>
           )}

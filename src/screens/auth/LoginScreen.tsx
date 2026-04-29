@@ -2,20 +2,20 @@ import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@/navigation/types';
-
 import { authApi } from '@/modules/auth/auth.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
-
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
+import { useThemeStore } from '@/store/theme.store';
 
 type Props = {
   navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
 export default function LoginScreen({ navigation }: Props) {
+  const { isDark } = useThemeStore();
   const login = useAuthStore((s) => s.login);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -34,27 +34,16 @@ export default function LoginScreen({ navigation }: Props) {
       setLoading(true);
       setError(null);
 
-      console.log('Login attempt for:', email);
       const { data } = await authApi.login({ email, password });
-      console.log('Login response:', JSON.stringify(data, null, 2));
 
       if (!data.user.emailVerified) {
-        console.log('Email not verified, redirecting to OTP');
         navigation.replace('Otp', { email, password });
         return;
       }
 
-      console.log('Calling login with user:', data.user);
       await login(data.user, data.accessToken, data.refreshToken);
-      console.log('Login completed successfully');
-      
-      // Redirect to home page after successful login
       navigation.getParent()?.navigate('UserTabs', { screen: 'Home' });
     } catch (err: any) {
-      console.log('Login error:', err);
-      console.log('Login error response:', err?.response?.data);
-      console.log('Login error status:', err?.response?.status);
-
       const status = err?.response?.status;
       const serverMessage = err?.response?.data?.message;
 
@@ -83,7 +72,7 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <Screen className="justify-center bg-slate-50">
+    <Screen className="justify-center bg-slate-50 dark:bg-black">
       <ScrollView
         ref={scrollViewRef}
         className="m-0"
@@ -92,14 +81,14 @@ export default function LoginScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         bounces={false}>
-        <Card className="border-primary-500 shadow-xl shadow-primary-500/10">
+        <Card className="mx-4 border-teal-500 shadow-xl shadow-teal-500/10 dark:border-teal-500/20 dark:shadow-none">
           <View className="mb-8 items-center">
-            <Text className="text-3xl font-bold text-slate-900">Hoş Geldin!</Text>
-            <Text className="mt-2 text-slate-500">Hesabına giriş yap ve devam et</Text>
+            <Text className="text-3xl font-bold text-slate-900 dark:text-white">Hoş Geldin!</Text>
+            <Text className="mt-2 text-slate-500 dark:text-slate-400">Hesabına giriş yap ve devam et</Text>
           </View>
           {error && (
-            <View className="mb-4 rounded-xl bg-red-50 p-3">
-              <Text className="text-center text-sm font-medium text-red-600">{error}</Text>
+            <View className="mb-4 rounded-xl bg-red-50 p-3 dark:bg-red-500/10">
+              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
             </View>
           )}
 
@@ -125,7 +114,7 @@ export default function LoginScreen({ navigation }: Props) {
 
           <View className="mb-6 items-end">
             <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-              <Text className="text-sm font-medium text-primary-600">Şifremi unuttum?</Text>
+              <Text className="text-sm font-medium text-teal-600 dark:text-teal-400">Şifremi unuttum?</Text>
             </TouchableOpacity>
           </View>
 
@@ -136,9 +125,9 @@ export default function LoginScreen({ navigation }: Props) {
           />
 
           <View className="mt-6 flex-row justify-center">
-            <Text className="text-slate-600">Hesabın yok mu? </Text>
+            <Text className="text-slate-600 dark:text-slate-400">Hesabın yok mu? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text className="font-bold text-primary-600">Kayıt Ol</Text>
+              <Text className="font-bold text-teal-600 dark:text-teal-400">Kayıt Ol</Text>
             </TouchableOpacity>
           </View>
         </Card>

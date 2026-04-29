@@ -8,11 +8,11 @@ import { useThemeStore } from '@/store/theme.store';
 const Stack = createNativeStackNavigator<SurahsStackParamList>();
 
 export default function SurahsNavigator() {
-  const headerColor = useThemeStore((s) => s.headerColor);
+  const { isDark } = useThemeStore();
 
   return (
     <>
-      <RNStatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+      <RNStatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
@@ -45,4 +45,3 @@ export default function SurahsNavigator() {
     </>
   );
 }
-

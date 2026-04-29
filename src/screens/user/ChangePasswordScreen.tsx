@@ -8,8 +8,10 @@ import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useAlertStore } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/store/theme.store';
 
 export default function ChangePasswordScreen() {
+  const { isDark } = useThemeStore();
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -54,7 +56,7 @@ export default function ChangePasswordScreen() {
   }
 
   return (
-    <Screen style={{ backgroundColor: '#f8fafc' }} safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
@@ -64,10 +66,10 @@ export default function ChangePasswordScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
         <Card className="mx-4 mt-4">
           <View className="mb-4 flex-row items-center gap-2">
-            <Ionicons name="lock-closed-outline" size={20} color="#0f766e" />
-            <Text className="text-base font-semibold text-slate-900">Şifre Değiştir</Text>
+            <Ionicons name="lock-closed-outline" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
+            <Text className="text-base font-semibold text-slate-900 dark:text-white">Şifre Değiştir</Text>
           </View>
-          <Text className="mb-6 text-sm text-slate-600">
+          <Text className="mb-6 text-sm text-slate-600 dark:text-slate-400">
             Güvenliğiniz için mevcut şifrenizi girin ve yeni şifrenizi belirleyin.
           </Text>
 

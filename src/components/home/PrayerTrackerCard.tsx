@@ -6,10 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { prayerService } from '@/services/prayer.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
-import type { RootStackParamList } from '@/navigation/types';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -31,17 +29,12 @@ const PRAYERS = [
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-// Glow colors per prayer state
-const KAZA_COLOR    = '#f97316';
-const DONE_COLOR    = '#14b8a6';
-const DEFAULT_COLOR = 'rgba(255,255,255,0.25)';
-
 export function PrayerTrackerCard() {
   const { stats, fetchStats, trackPrayer, isLoading } = useGamificationStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [prayerTimes, setPrayerTimes]   = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   useEffect(() => {
     loadPrayerTimes();
@@ -100,14 +93,7 @@ export function PrayerTrackerCard() {
   };
 
   return (
-    <View style={{
-      marginHorizontal: 16, marginBottom: 16,
-      borderRadius: 28, overflow: 'hidden',
-      borderWidth: 1, borderColor: colors.trackerCardBorder,
-      backgroundColor: colors.trackerCard,
-      shadowColor: '#000', shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 16, elevation: 10,
-    }}>
+    <View className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-white/5 dark:bg-[#111827] dark:shadow-black/30">
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -119,45 +105,28 @@ export function PrayerTrackerCard() {
       <TouchableOpacity
         activeOpacity={isAuthenticated ? 1 : 0.85}
         onPress={() => !isAuthenticated && setShowAuthModal(true)}>
-        <View style={{
-          backgroundColor: colors.trackerHeader,
-          paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20,
-        }}>
+        <View className="bg-teal-700 px-5 pb-5 pt-5 dark:bg-[#0c4a3e]">
           {/* Glow orb */}
-          <View style={{
-            position: 'absolute', top: -30, right: -30,
-            width: 100, height: 100, borderRadius: 50,
-            backgroundColor: 'rgba(20,184,166,0.20)',
-          }} />
+          <View className="absolute -right-[30px] -top-[30px] h-[100px] w-[100px] rounded-full bg-teal-500/20" />
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <View className="mb-3.5 flex-row items-center justify-between">
             <View>
-              <Text style={{
-                fontSize: 9, fontWeight: '800', letterSpacing: 2,
-                textTransform: 'uppercase', color: isDark ? 'rgba(20,184,166,0.80)' : '#f0fdf4',
-              }}>
+              <Text className="text-[9px] font-black uppercase tracking-widest text-teal-100 dark:text-teal-500/80">
                 Günlük İlerleme
               </Text>
-              <Text style={{ fontSize: 22, fontWeight: '900', color: '#ffffff', marginTop: 2 }}>
+              <Text className="mt-0.5 text-[22px] font-black text-white">
                 Namaz Takibi
               </Text>
             </View>
-            <View style={{
-              borderRadius: 99, paddingHorizontal: 14, paddingVertical: 6,
-              backgroundColor: 'rgba(255,255,255,0.10)',
-              borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
-            }}>
-              <Text style={{ fontSize: 15, fontWeight: '900', color: '#ffffff' }}>
+            <View className="rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5">
+              <Text className="text-[15px] font-black text-white">
                 {isAuthenticated ? completedCount : 0} / {totalCount}
               </Text>
             </View>
           </View>
 
           {/* Progress bar */}
-          <View style={{
-            height: 4, width: '100%', borderRadius: 99,
-            backgroundColor: 'rgba(255,255,255,0.10)', overflow: 'hidden',
-          }}>
+          <View className="h-1 w-full overflow-hidden rounded-full bg-white/10">
             <Animated.View style={[{
               height: '100%', borderRadius: 99,
               backgroundColor: '#14b8a6',
@@ -167,8 +136,8 @@ export function PrayerTrackerCard() {
         </View>
 
         {/* ── Prayer grid ── */}
-        <View style={{ padding: 14 }}>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        <View className="p-3.5">
+          <View className="flex-row flex-wrap justify-between">
             {PRAYERS.map((prayer) => {
               const isTracked  = isAuthenticated && stats?.today_prayers?.includes(prayer.id);
               const isKazaLog  = isAuthenticated && stats?.kaza_prayers?.includes(prayer.id);
@@ -177,22 +146,6 @@ export function PrayerTrackerCard() {
               const isUpcoming = state === 'upcoming';
               const isExpired  = state === 'expired';
 
-              const borderColor  = isTracked
-                ? isKazaLog ? 'rgba(249,115,22,0.50)' : 'rgba(20,184,166,0.50)'
-                : isDark ? 'rgba(255,255,255,0.06)' : colors.cardBorder;
-              const bgColor      = isTracked
-                ? isKazaLog ? 'rgba(249,115,22,0.12)' : 'rgba(20,184,166,0.12)'
-                : isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc';
-              const nameColor    = isTracked
-                ? isKazaLog ? '#f97316' : '#14b8a6'
-                : colors.textMuted;
-              const timeColor    = isTracked
-                ? isKazaLog ? (isDark ? '#fed7aa' : '#c2410c') : (isDark ? '#ccfbf1' : '#0f766e')
-                : colors.textSecondary;
-              const iconColor    = isTracked
-                ? isKazaLog ? '#f97316' : '#14b8a6'
-                : isDark ? 'rgba(240,244,255,0.22)' : 'rgba(0,0,0,0.15)';
-
               return (
                 <AnimatedTouchableOpacity
                   key={prayer.id}
@@ -200,30 +153,18 @@ export function PrayerTrackerCard() {
                   disabled={isTracked || (isAuthenticated && isUpcoming) || isLoading}
                   onPress={() => handleTrack(prayer)}
                   activeOpacity={0.70}
-                  style={{
-                    width: '48%', marginBottom: 10,
-                    opacity: isAuthenticated && isUpcoming ? 0.38 : 1,
-                  }}>
-                  <View style={{
-                    position: 'relative',
-                    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                    borderRadius: 18, borderWidth: 1,
-                    borderColor, backgroundColor: bgColor,
-                    padding: 14,
-                    ...(isTracked && {
-                      shadowColor: isKazaLog ? '#f97316' : '#14b8a6',
-                      shadowOpacity: 0.30, shadowRadius: 8,
-                      shadowOffset: { width: 0, height: 2 },
-                    }),
-                  }}>
+                  className={`mb-2.5 w-[48%] ${isAuthenticated && isUpcoming ? 'opacity-40' : 'opacity-100'}`}>
+                  <View className={`relative flex-row items-center justify-between rounded-[18px] border p-3.5 ${
+                    isTracked
+                      ? isKazaLog
+                        ? 'border-orange-500/50 bg-orange-500/10 shadow-sm shadow-orange-500/30'
+                        : 'border-teal-500/50 bg-teal-500/10 shadow-sm shadow-teal-500/30'
+                      : 'border-slate-200 bg-slate-50 dark:border-white/5 dark:bg-white/5'
+                  }`}>
                     {/* KAZA badge */}
                     {(isKazaLog || (isAuthenticated && !isTracked && isExpired)) && (
-                      <View style={{
-                        position: 'absolute', top: -6, right: -6, zIndex: 10,
-                        borderRadius: 99, paddingHorizontal: 6, paddingVertical: 2,
-                        backgroundColor: isKazaLog ? '#f97316' : 'rgba(255,255,255,0.25)',
-                      }}>
-                        <Text style={{ fontSize: 7, fontWeight: '900', color: '#fff', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                      <View className={`absolute -right-1.5 -top-1.5 z-10 rounded-full px-1.5 py-0.5 ${isKazaLog ? 'bg-orange-500' : 'bg-white/25'}`}>
+                        <Text className="text-[7px] font-black uppercase tracking-wider text-white">
                           Kaza
                         </Text>
                       </View>
@@ -231,35 +172,34 @@ export function PrayerTrackerCard() {
 
                     {/* Lock for non-auth */}
                     {!isAuthenticated && (
-                      <View style={{ position: 'absolute', right: 8, top: 8, zIndex: 10 }}>
+                      <View className="absolute right-2 top-2 z-10">
                         <Ionicons name="lock-closed" size={10} color={isDark ? "rgba(240,244,255,0.25)" : "rgba(0,0,0,0.20)"} />
                       </View>
                     )}
 
-                    <View style={{ flex: 1 }}>
-                      <Text style={{
-                        fontSize: 9, fontWeight: '800', letterSpacing: 1,
-                        textTransform: 'uppercase', color: nameColor, marginBottom: 3,
-                      }}>
+                    <View className="flex-1">
+                      <Text className={`mb-1 text-[9px] font-black uppercase tracking-widest ${
+                        isTracked
+                          ? isKazaLog ? 'text-orange-500' : 'text-teal-500'
+                          : 'text-slate-400 dark:text-slate-500'
+                      }`}>
                         {prayer.name}
                       </Text>
-                      <Text style={{ fontSize: 15, fontWeight: '800', color: timeColor }}>
+                      <Text className={`text-[15px] font-black ${
+                        isTracked
+                          ? isKazaLog ? 'text-orange-700 dark:text-orange-200' : 'text-teal-700 dark:text-teal-100'
+                          : 'text-slate-500 dark:text-slate-400'
+                      }`}>
                         {time}
                       </Text>
                     </View>
 
                     {/* Check circle */}
-                    <View style={{
-                      height: 38, width: 38,
-                      borderRadius: 99, alignItems: 'center', justifyContent: 'center',
-                      backgroundColor: isTracked
-                        ? isKazaLog ? 'rgba(249,115,22,0.25)' : 'rgba(20,184,166,0.22)'
-                        : isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
-                      borderWidth: 1,
-                      borderColor: isTracked
-                        ? isKazaLog ? 'rgba(249,115,22,0.40)' : 'rgba(20,184,166,0.35)'
-                        : isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
-                    }}>
+                    <View className={`h-[38px] w-[38px] items-center justify-center rounded-full border ${
+                      isTracked
+                        ? isKazaLog ? 'border-orange-500/40 bg-orange-500/25' : 'border-teal-500/35 bg-teal-500/20'
+                        : 'border-slate-200 bg-white dark:border-white/5 dark:bg-white/5'
+                    }`}>
                       {isLoading && !isTracked ? (
                         <ActivityIndicator size="small" color="#14b8a6" />
                       ) : (
@@ -267,7 +207,11 @@ export function PrayerTrackerCard() {
                           <Ionicons
                             name={isTracked ? 'checkmark' : (prayer.icon as any)}
                             size={18}
-                            color={iconColor}
+                            color={
+                              isTracked
+                                ? isKazaLog ? '#f97316' : '#14b8a6'
+                                : isDark ? 'rgba(240,244,255,0.22)' : 'rgba(0,0,0,0.15)'
+                            }
                           />
                         </Animated.View>
                       )}

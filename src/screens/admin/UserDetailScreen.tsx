@@ -16,12 +16,12 @@ import { PageLoading } from '@/components/feedback/Loading';
 import { ErrorView } from '@/components/feedback/ErrorView';
 import { EmptyState } from '@/components/layout/EmptyState';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'UserDetail'>;
 
 export default function UserDetailScreen({ route, navigation }: Props) {
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const { userId } = route.params;
   const currentUser = useAuthStore((s) => s.user);
   const alert = useAlertStore();

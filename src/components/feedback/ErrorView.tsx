@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/store/theme.store';
 
 interface ErrorViewProps {
   title?: string;
@@ -18,20 +19,22 @@ export function ErrorView({
   fullScreen = false,
   icon = 'alert-circle-outline',
 }: ErrorViewProps) {
+  const { isDark } = useThemeStore();
+
   const content = (
     <View className="items-center px-6 py-8">
-      <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-red-100">
-        <Ionicons name={icon} size={32} color="#dc2626" />
+      <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/10">
+        <Ionicons name={icon} size={32} color={isDark ? "#ef4444" : "#dc2626"} />
       </View>
 
-      <Text className="mb-2 text-center text-lg font-bold text-slate-900">{title}</Text>
+      <Text className="mb-2 text-center text-lg font-bold text-slate-900 dark:text-white">{title}</Text>
 
-      <Text className="mb-6 text-center text-sm text-slate-500">{message}</Text>
+      <Text className="mb-6 text-center text-sm text-slate-500 dark:text-slate-400">{message}</Text>
 
       {onRetry && (
         <TouchableOpacity
           onPress={onRetry}
-          className="flex-row items-center gap-2 rounded-xl bg-primary-600 px-6 py-3"
+          className="flex-row items-center gap-2 rounded-xl bg-teal-600 dark:bg-teal-500 px-6 py-3"
           activeOpacity={0.8}>
           <Ionicons name="refresh" size={18} color="white" />
           <Text className="font-semibold text-white">{retryText}</Text>
@@ -41,7 +44,7 @@ export function ErrorView({
   );
 
   if (fullScreen) {
-    return <View className="flex-1 items-center justify-center bg-slate-50">{content}</View>;
+    return <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-black">{content}</View>;
   }
 
   return content;

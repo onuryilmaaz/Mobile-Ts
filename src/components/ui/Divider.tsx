@@ -18,8 +18,8 @@ export function Divider({
   ...props
 }: DividerProps) {
   if (orientation === 'vertical') {
-    return <View className={`w-px bg-slate-200 ${className}`} {...props} />;
+    return <View className={`w-px bg-slate-200 dark:bg-slate-800 ${className}`} {...props} />;
   }
 
-  return <View className={`h-px bg-slate-200 ${spacingStyles[spacing]} ${className}`} {...props} />;
+  return <View className={`h-px bg-slate-200 dark:bg-slate-800 ${spacingStyles[spacing]} ${className}`} {...props} />;
 }

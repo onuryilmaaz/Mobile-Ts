@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { authApi } from '@/modules/auth/auth.api';
+import { useThemeStore } from '@/store/theme.store';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 export default function RegisterScreen({ navigation }: Props) {
+  const { isDark } = useThemeStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,8 +44,6 @@ export default function RegisterScreen({ navigation }: Props) {
         lastName,
       });
 
-      console.log('Register response:', JSON.stringify(data, null, 2));
-
       if (!data?.user?.emailVerified) {
         navigation.navigate('Otp', { email, password });
         return;
@@ -60,7 +60,7 @@ export default function RegisterScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="justify-center bg-slate-50">
+    <Screen className="justify-center bg-slate-50 dark:bg-black">
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
@@ -68,14 +68,14 @@ export default function RegisterScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         bounces={false}>
-        <Card className="shadow-lg shadow-primary-500/10">
+        <Card className="mx-4 shadow-lg shadow-teal-500/10 dark:border-teal-500/20 dark:shadow-none">
           <View className="mb-8 items-center">
-            <Text className="text-3xl font-bold text-slate-900">Hesap Oluştur</Text>
-            <Text className="mt-2 text-slate-500">Hemen aramıza katıl ve başla</Text>
+            <Text className="text-3xl font-bold text-slate-900 dark:text-white">Hesap Oluştur</Text>
+            <Text className="mt-2 text-slate-500 dark:text-slate-400">Hemen aramıza katıl ve başla</Text>
           </View>
           {error && (
-            <View className="mb-4 rounded-xl bg-red-50 p-3">
-              <Text className="text-center text-sm font-medium text-red-600">{error}</Text>
+            <View className="mb-4 rounded-xl bg-red-50 p-3 dark:bg-red-500/10">
+              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
             </View>
           )}
 
@@ -127,9 +127,9 @@ export default function RegisterScreen({ navigation }: Props) {
           />
 
           <View className="mt-6 flex-row justify-center">
-            <Text className="text-slate-600">Zaten hesabın var mı? </Text>
+            <Text className="text-slate-600 dark:text-slate-400">Zaten hesabın var mı? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text className="font-bold text-primary-600">Giriş Yap</Text>
+              <Text className="font-bold text-teal-600 dark:text-teal-400">Giriş Yap</Text>
             </TouchableOpacity>
           </View>
         </Card>

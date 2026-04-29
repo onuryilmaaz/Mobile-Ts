@@ -4,7 +4,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { BarChart } from 'react-native-chart-kit';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 const { width } = Dimensions.get('window');
 const CHART_WIDTH = width - 48;
@@ -29,15 +29,14 @@ const PRAYER_COLORS: Record<string, string> = {
 
 const DAY_LABELS: Record<number, string> = { 0: 'Paz', 1: 'Pts', 2: 'Sal', 3: 'Çar', 4: 'Per', 5: 'Cum', 6: 'Cts' };
 
-function StatCard({ icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) {
-  const { colors, isDark } = useAppTheme();
+function StatCard({ icon, label, value, color, twBg }: { icon: any; label: string; value: string | number; color: string; twBg: string }) {
   return (
-    <View style={{ flex: 1, marginHorizontal: 6, borderRadius: 20, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, padding: 16, alignItems: 'center', shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
-      <View style={{ marginBottom: 8, height: 40, width: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: `${color}18` }}>
+    <View className="mx-1.5 flex-1 items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${twBg}`}>
         <Ionicons name={icon} size={20} color={color} />
       </View>
-      <Text style={{ fontSize: 20, fontWeight: '900', color: colors.textPrimary }}>{value}</Text>
-      <Text style={{ marginTop: 2, textAlign: 'center', fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textSecondary }}>{label}</Text>
+      <Text className="text-xl font-black text-slate-900 dark:text-white">{value}</Text>
+      <Text className="mt-0.5 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">{label}</Text>
     </View>
   );
 }
@@ -46,7 +45,7 @@ export default function StatsScreen() {
   const { stats, weeklyStats, monthlyStats, fetchWeeklyStats, fetchMonthlyStats, fetchStats } =
     useGamificationStore();
   const [loading, setLoading] = useState(false);
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   const load = async () => {
     setLoading(true);
@@ -56,7 +55,6 @@ export default function StatsScreen() {
 
   useEffect(() => { load(); }, []);
 
-  // Build weekly bar chart data (last 7 days)
   const buildWeeklyChartData = () => {
     if (!weeklyStats?.daily) return null;
 
@@ -79,7 +77,6 @@ export default function StatsScreen() {
     return { labels, prayerCounts, kazaCounts };
   };
 
-  // Build prayer time breakdown
   const buildPrayerBreakdown = () => {
     if (!weeklyStats?.byPrayerTime) return [];
     return weeklyStats.byPrayerTime.map((r: any) => ({
@@ -99,27 +96,32 @@ export default function StatsScreen() {
   const completionRate = activeDays > 0 ? Math.round((totalMonthPrayers / (activeDays * 5)) * 100) : 0;
 
   return (
-    <Screen  safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
-        style={{ flex: 1 }}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        refreshControl={
+          <RefreshControl 
+            refreshing={loading} 
+            onRefresh={load}
+            tintColor={isDark ? '#14b8a6' : '#0f766e'}
+            colors={[isDark ? '#14b8a6' : '#0f766e']}
+          />
+        }
         contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}>
 
-        {/* Monthly Overview Cards */}
-        <View style={{ paddingHorizontal: 16, marginBottom: 24 }}>
-          <Text style={{ marginBottom: 12, fontSize: 18, fontWeight: '900', color: colors.textPrimary }}>30 Günlük Özet</Text>
-          <View style={{ flexDirection: 'row' }}>
-            <StatCard icon="sunny" label="Toplam Namaz" value={totalMonthPrayers} color={isDark ? '#34d399' : '#0f766e'} />
-            <StatCard icon="flame" label="Aktif Gün" value={activeDays} color="#f59e0b" />
-            <StatCard icon="checkmark-circle" label="Tamamlama" value={`%${completionRate}`} color={isDark ? '#818cf8' : '#6366f1'} />
+        <View className="mb-6 px-4">
+          <Text className="mb-3 text-lg font-black text-slate-900 dark:text-white">30 Günlük Özet</Text>
+          <View className="flex-row">
+            <StatCard icon="sunny" label="Toplam Namaz" value={totalMonthPrayers} color={isDark ? '#34d399' : '#0f766e'} twBg="bg-teal-50 dark:bg-teal-500/10" />
+            <StatCard icon="flame" label="Aktif Gün" value={activeDays} color="#f59e0b" twBg="bg-amber-50 dark:bg-amber-500/10" />
+            <StatCard icon="checkmark-circle" label="Tamamlama" value={`%${completionRate}`} color={isDark ? '#818cf8' : '#6366f1'} twBg="bg-indigo-50 dark:bg-indigo-500/10" />
           </View>
         </View>
 
-        {/* Weekly Bar Chart */}
         {weeklyData && (
-          <View style={{ marginHorizontal: 16, marginBottom: 24, overflow: 'hidden', borderRadius: 24, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, padding: 16, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
-            <Text style={{ marginBottom: 16, fontSize: 16, fontWeight: '900', color: colors.textPrimary }}>Haftalık Namaz Grafiği</Text>
+          <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Haftalık Namaz Grafiği</Text>
             <BarChart
               data={{
                 labels: weeklyData.labels,
@@ -133,56 +135,55 @@ export default function StatsScreen() {
               showValuesOnTopOfBars
               withInnerLines={false}
               chartConfig={{
-                backgroundGradientFrom: colors.card,
-                backgroundGradientTo: colors.card,
+                backgroundGradientFrom: isDark ? '#0f172a' : '#ffffff',
+                backgroundGradientTo: isDark ? '#0f172a' : '#ffffff',
                 decimalPlaces: 0,
-                color: (opacity = 1) => isDark ? `rgba(20, 184, 166, ${opacity})` : `rgba(15, 118, 110, ${opacity})`,
-                labelColor: () => colors.textMuted,
+                color: (opacity = 1) => isDark ? `rgba(45, 212, 191, ${opacity})` : `rgba(15, 118, 110, ${opacity})`,
+                labelColor: () => isDark ? '#94a3b8' : '#64748b',
                 barPercentage: 0.6,
                 propsForLabels: { fontSize: 11, fontWeight: '600' },
               }}
               style={{ borderRadius: 12, marginLeft: -16 }}
             />
-            <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <View style={{ height: 12, width: 12, borderRadius: 6, backgroundColor: colors.teal }} />
-              <Text style={{ fontSize: 12, color: colors.textSecondary }}>Kılınan namaz sayısı (max 5)</Text>
+            <View className="mt-2 flex-row items-center gap-2">
+              <View className="h-3 w-3 rounded-full bg-teal-600 dark:bg-teal-500" />
+              <Text className="text-xs text-slate-500 dark:text-slate-400">Kılınan namaz sayısı (max 5)</Text>
             </View>
           </View>
         )}
 
-        {/* Prayer Time Breakdown */}
-        <View style={{ marginHorizontal: 16, marginBottom: 24, overflow: 'hidden', borderRadius: 24, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, padding: 16, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
-          <Text style={{ marginBottom: 16, fontSize: 16, fontWeight: '900', color: colors.textPrimary }}>Vakit Bazlı Analiz</Text>
-          <Text style={{ marginBottom: 16, fontSize: 12, color: colors.textMuted }}>Son 7 gün — Hangi vakitte daha başarılısın?</Text>
+        <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">Vakit Bazlı Analiz</Text>
+          <Text className="mb-4 text-xs text-slate-500 dark:text-slate-400">Son 7 gün — Hangi vakitte daha başarılısın?</Text>
 
           {breakdown.length === 0 ? (
-            <View style={{ alignItems: 'center', paddingVertical: 32 }}>
-              <Ionicons name="bar-chart-outline" size={36} color={colors.textMuted} />
-              <Text style={{ marginTop: 8, fontSize: 14, color: colors.textSecondary }}>Henüz yeterli veri yok</Text>
+            <View className="items-center py-8">
+              <Ionicons name="bar-chart-outline" size={36} color={isDark ? 'rgba(240,244,255,0.1)' : '#94a3b8'} />
+              <Text className="mt-2 text-sm text-slate-500 dark:text-slate-400">Henüz yeterli veri yok</Text>
             </View>
           ) : (
             breakdown.map((item: any) => (
-              <View key={item.prayer} style={{ marginBottom: 16 }}>
-                <View style={{ marginBottom: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <View style={{ height: 12, width: 12, borderRadius: 6, backgroundColor: PRAYER_COLORS[item.prayer] || colors.teal }} />
-                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.textPrimary }}>{PRAYER_LABELS[item.prayer] || item.prayer}</Text>
+              <View key={item.prayer} className="mb-4">
+                <View className="mb-1.5 flex-row items-center justify-between">
+                  <View className="flex-row items-center gap-2">
+                    <View className="h-3 w-3 rounded-full" style={{ backgroundColor: PRAYER_COLORS[item.prayer] || '#0f766e' }} />
+                    <Text className="text-sm font-bold text-slate-900 dark:text-white">{PRAYER_LABELS[item.prayer] || item.prayer}</Text>
                   </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View className="flex-row items-center gap-2">
                     {item.kaza > 0 && (
-                      <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(249,115,22,0.15)' : '#ffedd5', paddingHorizontal: 8, paddingVertical: 2 }}>
-                        <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? '#fdba74' : '#ea580c' }}>{item.kaza} Kaza</Text>
+                      <View className="rounded-full bg-orange-50 px-2 py-0.5 dark:bg-orange-500/15">
+                        <Text className="text-[10px] font-bold text-orange-600 dark:text-orange-400">{item.kaza} Kaza</Text>
                       </View>
                     )}
-                    <Text style={{ fontSize: 14, fontWeight: '900', color: colors.textPrimary }}>{item.total}/7</Text>
+                    <Text className="text-sm font-black text-slate-900 dark:text-white">{item.total}/7</Text>
                   </View>
                 </View>
-                <View style={{ height: 10, overflow: 'hidden', borderRadius: 99, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9' }}>
+                <View className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                   <View
+                    className="h-full rounded-full"
                     style={{
-                      height: '100%', borderRadius: 99,
                       width: `${item.percentage}%`,
-                      backgroundColor: PRAYER_COLORS[item.prayer] || colors.teal,
+                      backgroundColor: PRAYER_COLORS[item.prayer] || '#0f766e',
                     }}
                   />
                 </View>
@@ -191,22 +192,21 @@ export default function StatsScreen() {
           )}
         </View>
 
-        {/* Streak & Points */}
-        <View style={{ marginHorizontal: 16, marginBottom: 24, overflow: 'hidden', borderRadius: 24, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, padding: 16, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
-          <Text style={{ marginBottom: 16, fontSize: 16, fontWeight: '900', color: colors.textPrimary }}>Genel Bilgiler</Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+        <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Genel Bilgiler</Text>
+          <View className="flex-row flex-wrap gap-3">
             {[
               { label: 'Toplam Puan', value: stats?.total_points || 0, icon: 'star', color: '#fbbf24' },
               { label: 'Mevcut Seri', value: `${stats?.current_streak || 0} gün`, icon: 'flame', color: '#ef4444' },
               { label: 'En Yüksek Seri', value: `${stats?.highest_streak || 0} gün`, icon: 'trophy', color: '#f59e0b' },
               { label: 'Seviye', value: stats?.level?.name || 'Başlangıç', icon: 'shield', color: '#6366f1' },
             ].map((item) => (
-              <View key={item.label} style={{ width: '47%', borderRadius: 16, borderWidth: 1, borderColor: isDark ? 'rgba(255,255,255,0.05)' : colors.cardBorder, backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : colors.settingsBg, padding: 12 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <View key={item.label} className="w-[47%] rounded-2xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-800/50">
+                <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name={item.icon as any} size={14} color={item.color} />
-                  <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>{item.label}</Text>
+                  <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">{item.label}</Text>
                 </View>
-                <Text style={{ fontSize: 16, fontWeight: '900', color: colors.textPrimary }}>{item.value}</Text>
+                <Text className="text-base font-black text-slate-900 dark:text-white">{item.value}</Text>
               </View>
             ))}
           </View>

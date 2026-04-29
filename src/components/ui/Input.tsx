@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, Pressable, TextInputProps } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/store/theme.store';
 
 type InputProps = {
   label?: string;
@@ -9,6 +10,7 @@ type InputProps = {
 } & Omit<TextInputProps, 'className'>;
 
 export function Input({ label, isPassword = false, error, onFocus, onBlur, ...props }: InputProps) {
+  const { isDark } = useThemeStore();
   const [focused, setFocused] = useState(false);
   const [secure, setSecure] = useState(isPassword);
 
@@ -24,12 +26,12 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
 
   return (
     <View className="mb-4 w-full">
-      {label && <Text className="mb-1.5 ml-1 text-sm font-medium text-slate-700">{label}</Text>}
+      {label && <Text className="mb-1.5 ml-1 text-sm font-medium text-slate-700 dark:text-slate-300">{label}</Text>}
 
       <View
         className={`
-          h-12 flex-row items-center rounded-2xl border bg-white px-4
-          ${focused ? 'border-primary-500' : 'border-slate-200'}
+          h-12 flex-row items-center rounded-2xl border bg-white dark:bg-slate-900 px-4
+          ${focused ? 'border-teal-500' : 'border-slate-200 dark:border-slate-800'}
           ${error ? 'border-red-500' : ''}
         `}>
         <TextInput
@@ -37,8 +39,9 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
           secureTextEntry={secure}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="h-full flex-1 text-xl text-slate-900"
-          placeholderTextColor="#94a3b8"
+          className="h-full flex-1 text-lg text-slate-900 dark:text-white"
+          placeholderTextColor={isDark ? "#4b5563" : "#94a3b8"}
+          selectionColor={isDark ? "#2dd4bf" : "#0d9488"}
           style={{
             paddingTop: 0,
             paddingBottom: 0,
@@ -49,12 +52,16 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
 
         {isPassword && (
           <Pressable onPress={() => setSecure(!secure)} hitSlop={10}>
-            <Ionicons name={secure ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+            <Ionicons 
+              name={secure ? 'eye-off-outline' : 'eye-outline'} 
+              size={20} 
+              color={isDark ? "#4b5563" : "#94a3b8"} 
+            />
           </Pressable>
         )}
       </View>
 
-      {error && <Text className="ml-1 mt-1 text-xs font-medium text-red-500">{error}</Text>}
+      {error && <Text className="ml-1 mt-1 text-xs font-medium text-red-500 dark:text-red-400">{error}</Text>}
     </View>
   );
 }

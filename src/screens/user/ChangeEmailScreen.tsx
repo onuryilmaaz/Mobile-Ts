@@ -10,8 +10,10 @@ import { authApi } from '@/modules/auth/auth.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useAlertStore } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/store/theme.store';
 
 export default function ChangeEmailScreen() {
+  const { isDark } = useThemeStore();
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -77,7 +79,7 @@ export default function ChangeEmailScreen() {
   }
 
   return (
-    <Screen style={{ backgroundColor: '#f8fafc' }} safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
@@ -87,10 +89,10 @@ export default function ChangeEmailScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
         <Card className="mx-4 mt-4">
           <View className="mb-4 flex-row items-center gap-2">
-            <Ionicons name="mail-outline" size={20} color="#0f766e" />
-            <Text className="text-base font-semibold text-slate-900">E-posta Değiştir</Text>
+            <Ionicons name="mail-outline" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
+            <Text className="text-base font-semibold text-slate-900 dark:text-white">E-posta Değiştir</Text>
           </View>
-          <Text className="mb-6 text-sm text-slate-600">
+          <Text className="mb-6 text-sm text-slate-600 dark:text-slate-400">
             E-posta adresinizi değiştirmek için yeni adresinizi girin. Size bir doğrulama kodu
             göndereceğiz.
           </Text>
@@ -112,7 +114,7 @@ export default function ChangeEmailScreen() {
               <>
                 <Divider />
                 <View>
-                  <Text className="mb-3 text-sm font-medium text-slate-700">Doğrulama Kodu</Text>
+                  <Text className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">Doğrulama Kodu</Text>
                   <OtpInput
                     value={emailOtp}
                     onChange={setEmailOtp}

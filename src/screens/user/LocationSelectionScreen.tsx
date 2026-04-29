@@ -12,7 +12,7 @@ import {
   getDistrictById,
   isDistrictsDataLoaded,
 } from '@/constants/locations';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'LocationSelection'>;
 
@@ -24,7 +24,7 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState<'state' | 'district'>('state');
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
 
   const states = getStates();
   const districts = selectedStateId ? getDistrictsByStateId(selectedStateId) : [];
@@ -86,8 +86,8 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   if (loading || !isDistrictsDataLoaded()) {
     return (
       <Screen style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={colors.teal} />
-        <Text style={{ color: colors.textSecondary, marginTop: 16 }}>
+        <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
+        <Text className="mt-4 text-slate-500 dark:text-slate-400">
           {!isDistrictsDataLoaded() ? 'İlçe verileri yükleniyor...' : 'Yükleniyor...'}
         </Text>
       </Screen>
@@ -95,56 +95,58 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen  safeAreaEdges={['right', 'left']}>
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <View style={{ marginHorizontal: 16, marginVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 16, backgroundColor: colors.card, paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: colors.cardBorder }}>
+    <Screen safeAreaEdges={['right', 'left']}>
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
+        <View className="mx-4 my-4 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 shadow-sm dark:shadow-none">
           <TouchableOpacity onPress={handleBack} className="flex-row items-center">
-            <Ionicons name="chevron-back" size={24} color={colors.teal} />
-            <Text style={{ marginLeft: 4, fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>
+            <Ionicons name="chevron-back" size={24} color={isDark ? '#14b8a6' : '#0f766e'} />
+            <Text className="ml-1 text-base font-bold text-slate-900 dark:text-white">
               {step === 'district' ? selectedState?.name : 'İl Seçin'}
             </Text>
           </TouchableOpacity>
           {step === 'district' && selectedDistrict && (
-            <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim, paddingHorizontal: 12, paddingVertical: 4 }}>
-              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.teal }}>{selectedDistrict.name}</Text>
+            <View className="rounded-full bg-teal-50 px-3 py-1 dark:bg-teal-500/15">
+              <Text className="text-xs font-bold text-teal-700 dark:text-teal-400">{selectedDistrict.name}</Text>
             </View>
           )}
         </View>
+
         {step === 'state' ? (
-          <View className="gap-2 mx-4">
+          <View className="mx-4 gap-2">
             {states.map((state) => {
               const isSelected = selectedStateId === state._id;
               return (
                 <TouchableOpacity
                   key={state._id}
                   onPress={() => handleStateSelect(state._id)}
-                  style={{
-                    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                    borderRadius: 12, borderWidth: 1, padding: 16,
-                    backgroundColor: isSelected ? (isDark ? 'rgba(20,184,166,0.1)' : colors.tealDim) : colors.card,
-                    borderColor: isSelected ? colors.teal : colors.cardBorder,
-                  }}>
+                  className={`flex-row items-center justify-between rounded-xl border p-4 ${
+                    isSelected
+                      ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/10'
+                      : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                  }`}>
                   <View className="flex-1">
                     <Text
-                      style={{ fontSize: 16, fontWeight: '600', color: isSelected ? colors.teal : colors.textPrimary }}>
+                      className={`text-base font-bold ${
+                        isSelected ? 'text-teal-700 dark:text-teal-400' : 'text-slate-900 dark:text-white'
+                      }`}>
                       {state.name}
                     </Text>
                   </View>
                   <Ionicons
                     name={isSelected ? 'checkmark-circle' : 'chevron-forward'}
                     size={24}
-                    color={isSelected ? colors.teal : colors.textMuted}
+                    color={isSelected ? (isDark ? '#14b8a6' : '#0f766e') : (isDark ? '#4b5563' : '#94a3b8')}
                   />
                 </TouchableOpacity>
               );
             })}
           </View>
         ) : (
-          <View className="gap-2 mx-4">
+          <View className="mx-4 gap-2">
             {districts.length === 0 ? (
-              <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: 12, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, padding: 32 }}>
-                <Ionicons name="alert-circle-outline" size={48} color={colors.textMuted} />
-                <Text style={{ marginTop: 16, textAlign: 'center', color: colors.textSecondary }}>Bu il için ilçe bulunamadı</Text>
+              <View className="items-center justify-center rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
+                <Ionicons name="alert-circle-outline" size={48} color={isDark ? '#4b5563' : '#94a3b8'} />
+                <Text className="mt-4 text-center text-slate-500 dark:text-slate-400">Bu il için ilçe bulunamadı</Text>
               </View>
             ) : (
               districts.map((district) => {
@@ -153,19 +155,20 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                   <TouchableOpacity
                     key={district._id}
                     onPress={() => handleDistrictSelect(district._id)}
-                    style={{
-                      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                      borderRadius: 12, borderWidth: 1, padding: 16,
-                      backgroundColor: isSelected ? (isDark ? 'rgba(20,184,166,0.1)' : colors.tealDim) : colors.card,
-                      borderColor: isSelected ? colors.teal : colors.cardBorder,
-                    }}>
+                    className={`flex-row items-center justify-between rounded-xl border p-4 ${
+                      isSelected
+                        ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/10'
+                        : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                    }`}>
                     <View className="flex-1">
                       <Text
-                        style={{ fontSize: 16, fontWeight: '600', color: isSelected ? colors.teal : colors.textPrimary }}>
+                        className={`text-base font-bold ${
+                          isSelected ? 'text-teal-700 dark:text-teal-400' : 'text-slate-900 dark:text-white'
+                        }`}>
                         {district.name}
                       </Text>
                     </View>
-                    {isSelected && <Ionicons name="checkmark-circle" size={24} color={colors.teal} />}
+                    {isSelected && <Ionicons name="checkmark-circle" size={24} color={isDark ? '#14b8a6' : '#0f766e'} />}
                   </TouchableOpacity>
                 );
               })

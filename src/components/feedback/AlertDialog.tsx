@@ -6,27 +6,50 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAlertStore, AlertType, AlertButton } from '@/store/alert.store';
 import { BlurView } from 'expo-blur';
+import { useThemeStore } from '@/store/theme.store';
 
-const getIconConfig = (type: AlertType) => {
+const getIconConfig = (type: AlertType, isDark: boolean) => {
   switch (type) {
     case 'success':
-      return { name: 'checkmark-circle' as const, color: '#10b981', bgColor: '#d1fae5' };
+      return { 
+        name: 'checkmark-circle' as const, 
+        color: isDark ? '#34d399' : '#10b981', 
+        bgColor: isDark ? 'rgba(52, 211, 153, 0.1)' : '#d1fae5' 
+      };
     case 'error':
-      return { name: 'close-circle' as const, color: '#ef4444', bgColor: '#fee2e2' };
+      return { 
+        name: 'close-circle' as const, 
+        color: isDark ? '#f87171' : '#ef4444', 
+        bgColor: isDark ? 'rgba(248, 113, 113, 0.1)' : '#fee2e2' 
+      };
     case 'warning':
-      return { name: 'warning' as const, color: '#f59e0b', bgColor: '#fef3c7' };
+      return { 
+        name: 'warning' as const, 
+        color: isDark ? '#fbbf24' : '#f59e0b', 
+        bgColor: isDark ? 'rgba(251, 191, 36, 0.1)' : '#fef3c7' 
+      };
     case 'confirm':
-      return { name: 'help-circle' as const, color: '#0d9488', bgColor: '#ccfbf1' };
+      return { 
+        name: 'help-circle' as const, 
+        color: isDark ? '#2dd4bf' : '#0d9488', 
+        bgColor: isDark ? 'rgba(45, 212, 191, 0.1)' : '#ccfbf1' 
+      };
     default:
-      return { name: 'information-circle' as const, color: '#3b82f6', bgColor: '#dbeafe' };
+      return { 
+        name: 'information-circle' as const, 
+        color: isDark ? '#60a5fa' : '#3b82f6', 
+        bgColor: isDark ? 'rgba(96, 165, 250, 0.1)' : '#dbeafe' 
+      };
   }
 };
 
 export function AlertDialog() {
+  const { isDark } = useThemeStore();
   const { visible, type, title, message, buttons, hide } = useAlertStore();
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -59,31 +82,25 @@ export function AlertDialog() {
     hide();
   };
 
-  const iconConfig = getIconConfig(type);
+  const iconConfig = getIconConfig(type, isDark);
 
-  const getButtonStyle = (
-    style?: 'default' | 'cancel' | 'destructive',
-    index?: number,
-    total?: number
+  const getButtonStyles = (
+    style?: 'default' | 'cancel' | 'destructive'
   ) => {
     const isCancel = style === 'cancel';
     const isDestructive = style === 'destructive';
 
     return {
-      container: {
-        flex: 1,
-        height: 48,
-        borderRadius: 14,
-        justifyContent: 'center' as const,
-        alignItems: 'center' as const,
-        minWidth: 100,
-        backgroundColor: isCancel ? '#f1f5f9' : isDestructive ? '#ef4444' : '#0d9488',
-      },
-      text: {
-        fontSize: 16,
-        fontWeight: '600' as const,
-        color: isCancel ? '#64748b' : '#ffffff',
-      },
+      container: `flex-1 h-12 rounded-2xl items-center justify-center min-w-[100px] ${
+        isCancel 
+          ? 'bg-slate-100 dark:bg-slate-800' 
+          : isDestructive 
+            ? 'bg-red-500 dark:bg-red-600' 
+            : 'bg-teal-600 dark:bg-teal-500'
+      }`,
+      text: `text-base font-semibold ${
+        isCancel ? 'text-slate-600 dark:text-slate-400' : 'text-white'
+      }`,
     };
   };
 
@@ -91,63 +108,52 @@ export function AlertDialog() {
 
   return (
     <Modal transparent visible={visible} animationType="none" statusBarTranslucent>
-      <BlurView intensity={20} tint="dark" style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View className="flex-1 items-center justify-center bg-black/40 px-6">
+        {Platform.OS === 'ios' && (
+          <BlurView intensity={20} tint={isDark ? "dark" : "light"} className="absolute inset-0" />
+        )}
+        
         <TouchableWithoutFeedback onPress={hide}>
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)' }} />
+          <View className="absolute inset-0" />
         </TouchableWithoutFeedback>
 
         <Animated.View
           style={{
-            width: '85%',
+            width: '100%',
             maxWidth: 340,
-            alignItems: 'center',
-            borderRadius: 24,
-            backgroundColor: '#ffffff',
-            padding: 24,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.25,
-            shadowRadius: 20,
-            elevation: 10,
             transform: [{ scale: scaleAnim }],
             opacity: opacityAnim,
-          }}>
+          }}
+          className="items-center rounded-[32px] bg-white dark:bg-slate-900 p-8 shadow-2xl">
           <View
-            style={{
-              marginBottom: 16,
-              height: 64,
-              width: 64,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 32,
-              backgroundColor: iconConfig.bgColor 
-            }}>
+            style={{ backgroundColor: iconConfig.bgColor }}
+            className="mb-4 h-16 w-16 items-center justify-center rounded-full">
             <Ionicons name={iconConfig.name} size={32} color={iconConfig.color} />
           </View>
 
-          <Text style={{ marginBottom: 8, textAlign: 'center', fontSize: 20, fontWeight: 'bold', color: '#1e293b' }}>{title}</Text>
+          <Text className="mb-2 text-center text-xl font-bold text-slate-900 dark:text-white">{title}</Text>
           {message && (
-            <Text style={{ marginBottom: 8, textAlign: 'center', fontSize: 15, lineHeight: 22, color: '#64748b' }}>
+            <Text className="mb-6 text-center text-base leading-6 text-slate-600 dark:text-slate-400">
               {message}
             </Text>
           )}
 
-          <View style={{ marginTop: 16, width: '100%', flexDirection: buttons.length > 2 ? 'column' : 'row', gap: 12 }}>
+          <View className={`w-full gap-3 ${buttons.length > 2 ? 'flex-col' : 'flex-row'}`}>
             {buttons.map((button, index) => {
-              const buttonStyle = getButtonStyle(button.style, index, buttons.length);
+              const styles = getButtonStyles(button.style);
               return (
                 <TouchableOpacity
                   key={index}
-                  style={buttonStyle.container}
+                  className={styles.container}
                   onPress={() => handleButtonPress(button)}
                   activeOpacity={0.8}>
-                  <Text style={buttonStyle.text}>{button.text}</Text>
+                  <Text className={styles.text}>{button.text}</Text>
                 </TouchableOpacity>
               );
             })}
           </View>
         </Animated.View>
-      </BlurView>
+      </View>
     </Modal>
   );
 }

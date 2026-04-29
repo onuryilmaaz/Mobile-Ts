@@ -13,14 +13,14 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useState } from 'react';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
   const { user, isAuthenticated } = useAuthStore();
   const insets = useSafeAreaInsets();
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', description: '' });
 
@@ -41,6 +41,11 @@ export default function UserNavigator() {
   const bottomPadding = Platform.OS === 'ios' ? insets.bottom : Math.max(insets.bottom, 16);
   const tabBarHeight = 56 + bottomPadding;
 
+  const tabBarBg = isDark ? '#111827' : '#ffffff';
+  const tabBarBorder = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
+  const tabActive = isDark ? '#14b8a6' : '#0f766e';
+  const tabInactive = isDark ? '#64748b' : '#94a3b8';
+
   return (
     <View style={{ flex: 1 }}>
       <AuthWallModal
@@ -52,12 +57,12 @@ export default function UserNavigator() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor:   colors.tabActive,
-          tabBarInactiveTintColor: colors.tabInactive,
+          tabBarActiveTintColor:   tabActive,
+          tabBarInactiveTintColor: tabInactive,
           tabBarStyle: {
-            backgroundColor: colors.tabBar,
+            backgroundColor: tabBarBg,
             borderTopWidth: 1,
-            borderTopColor: colors.tabBarBorder,
+            borderTopColor: tabBarBorder,
             height: tabBarHeight,
             paddingTop: 8,
             paddingBottom: bottomPadding,

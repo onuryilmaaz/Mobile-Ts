@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { PageLoading } from '@/components/feedback/Loading';
 import { ErrorView } from '@/components/feedback/ErrorView';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppTheme } from '@/constants/theme';
+import { useThemeStore } from '@/store/theme.store';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'Dashboard'>;
 
@@ -47,7 +47,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function DashboardScreen({ navigation }: Props) {
-  const { colors, isDark } = useAppTheme();
+  const { isDark } = useThemeStore();
   const [stats, setStats] = useState<any>(null);
   const [healthy, setHealthy] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -108,7 +108,7 @@ export default function DashboardScreen({ navigation }: Props) {
             <View className="flex-row flex-wrap gap-3">
               <View className="min-w-[45%] flex-1 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
                 <View className="mb-1 flex-row items-center gap-2">
-                  <Ionicons name="people" size={16} color="#0f766e" />
+                  <Ionicons name="people" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Toplam Kullanıcı</Text>
                 </View>
                 <Text className="text-xl font-bold text-slate-900 dark:text-white">{stats.users.total || 0}</Text>
