@@ -11,8 +11,10 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '@/constants/theme';
 
 export default function RolesScreen() {
+  const { colors, isDark } = useAppTheme();
   const alert = useAlertStore();
   const [roles, setRoles] = useState<AdminRole[]>([]);
   const [newRole, setNewRole] = useState('');
@@ -124,7 +126,7 @@ export default function RolesScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}
@@ -138,7 +140,7 @@ export default function RolesScreen() {
               size={20}
               color="#0f766e"
             />
-            <Text className="text-lg font-bold text-slate-900">
+            <Text className="text-lg font-bold text-slate-900 dark:text-white">
               {editingRole ? 'Rolü Düzenle' : 'Yeni Rol Oluştur'}
             </Text>
           </View>
@@ -172,7 +174,7 @@ export default function RolesScreen() {
           </View>
         </Card>
 
-        <Text className="mb-3 ml-1 px-4 text-lg font-bold text-slate-900">Mevcut Roller</Text>
+        <Text className="mb-3 ml-1 px-4 text-lg font-bold text-slate-900 dark:text-white">Mevcut Roller</Text>
 
         {initialLoading ? (
           <InlineLoading message="Roller yükleniyor..." />
@@ -191,7 +193,7 @@ export default function RolesScreen() {
                     {role.name}
                   </Badge>
                 </View>
-                <Text className="text-xs text-slate-400">ID: {role.id}</Text>
+                <Text className="text-xs text-slate-400 dark:text-slate-500">ID: {role.id}</Text>
               </View>
 
               <View className="flex-row gap-2">
@@ -200,14 +202,14 @@ export default function RolesScreen() {
                     setEditingRole(role);
                     setEditName(role.name);
                   }}
-                  className="rounded-full bg-slate-100 p-2"
+                  className="rounded-full bg-slate-100 p-2 dark:bg-white/10"
                   activeOpacity={0.7}>
-                  <Ionicons name="pencil" size={18} color="#475569" />
+                  <Ionicons name="pencil" size={18} color={isDark ? '#cbd5e1' : '#475569'} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={() => handleDelete(role.id)}
-                  className="rounded-full bg-red-50 p-2"
+                  className="rounded-full bg-red-50 p-2 dark:bg-red-500/10"
                   activeOpacity={0.7}>
                   <Ionicons name="trash-outline" size={18} color="#dc2626" />
                 </TouchableOpacity>

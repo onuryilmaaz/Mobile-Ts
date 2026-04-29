@@ -12,7 +12,7 @@ import {
   getDistrictById,
   isDistrictsDataLoaded,
 } from '@/constants/locations';
-import { useNavigation } from '@react-navigation/native';
+import { useAppTheme } from '@/constants/theme';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'LocationSelection'>;
 
@@ -24,6 +24,7 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState<'state' | 'district'>('state');
+  const { colors, isDark } = useAppTheme();
 
   const states = getStates();
   const districts = selectedStateId ? getDistrictsByStateId(selectedStateId) : [];
@@ -84,9 +85,9 @@ export default function LocationSelectionScreen({ navigation }: Props) {
 
   if (loading || !isDistrictsDataLoaded()) {
     return (
-      <Screen className="items-center justify-center bg-slate-50">
-        <ActivityIndicator size="large" color="#0f766e" />
-        <Text className="mt-4 text-slate-600">
+      <Screen style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={colors.teal} />
+        <Text style={{ color: colors.textSecondary, marginTop: 16 }}>
           {!isDistrictsDataLoaded() ? 'İlçe verileri yükleniyor...' : 'Yükleniyor...'}
         </Text>
       </Screen>
@@ -94,18 +95,18 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['right', 'left']}>
+    <Screen  safeAreaEdges={['right', 'left']}>
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <View className="mx-4 my-4 flex-row items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm">
+        <View style={{ marginHorizontal: 16, marginVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 16, backgroundColor: colors.card, paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: colors.cardBorder }}>
           <TouchableOpacity onPress={handleBack} className="flex-row items-center">
-            <Ionicons name="chevron-back" size={24} color="#0f766e" />
-            <Text className="ml-1 text-base font-semibold text-slate-900">
+            <Ionicons name="chevron-back" size={24} color={colors.teal} />
+            <Text style={{ marginLeft: 4, fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>
               {step === 'district' ? selectedState?.name : 'İl Seçin'}
             </Text>
           </TouchableOpacity>
           {step === 'district' && selectedDistrict && (
-            <View className="rounded-full bg-teal-50 px-3 py-1">
-              <Text className="text-xs font-semibold text-teal-700">{selectedDistrict.name}</Text>
+            <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim, paddingHorizontal: 12, paddingVertical: 4 }}>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.teal }}>{selectedDistrict.name}</Text>
             </View>
           )}
         </View>
@@ -117,19 +118,22 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                 <TouchableOpacity
                   key={state._id}
                   onPress={() => handleStateSelect(state._id)}
-                  className={`flex-row items-center justify-between rounded-xl border bg-white p-4 ${
-                    isSelected ? 'border-teal-500 bg-teal-50' : 'border-slate-200'
-                  }`}>
+                  style={{
+                    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                    borderRadius: 12, borderWidth: 1, padding: 16,
+                    backgroundColor: isSelected ? (isDark ? 'rgba(20,184,166,0.1)' : colors.tealDim) : colors.card,
+                    borderColor: isSelected ? colors.teal : colors.cardBorder,
+                  }}>
                   <View className="flex-1">
                     <Text
-                      className={`text-base font-semibold ${isSelected ? 'text-teal-700' : 'text-slate-900'}`}>
+                      style={{ fontSize: 16, fontWeight: '600', color: isSelected ? colors.teal : colors.textPrimary }}>
                       {state.name}
                     </Text>
                   </View>
                   <Ionicons
                     name={isSelected ? 'checkmark-circle' : 'chevron-forward'}
                     size={24}
-                    color={isSelected ? '#0f766e' : '#94a3b8'}
+                    color={isSelected ? colors.teal : colors.textMuted}
                   />
                 </TouchableOpacity>
               );
@@ -138,9 +142,9 @@ export default function LocationSelectionScreen({ navigation }: Props) {
         ) : (
           <View className="gap-2 mx-4">
             {districts.length === 0 ? (
-              <View className="items-center justify-center rounded-xl border border-slate-200 bg-white p-8">
-                <Ionicons name="alert-circle-outline" size={48} color="#94a3b8" />
-                <Text className="mt-4 text-center text-slate-600">Bu il için ilçe bulunamadı</Text>
+              <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: 12, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, padding: 32 }}>
+                <Ionicons name="alert-circle-outline" size={48} color={colors.textMuted} />
+                <Text style={{ marginTop: 16, textAlign: 'center', color: colors.textSecondary }}>Bu il için ilçe bulunamadı</Text>
               </View>
             ) : (
               districts.map((district) => {
@@ -149,16 +153,19 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                   <TouchableOpacity
                     key={district._id}
                     onPress={() => handleDistrictSelect(district._id)}
-                    className={`flex-row items-center justify-between rounded-xl border bg-white p-4 ${
-                      isSelected ? 'border-teal-500 bg-teal-50' : 'border-slate-200'
-                    }`}>
+                    style={{
+                      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                      borderRadius: 12, borderWidth: 1, padding: 16,
+                      backgroundColor: isSelected ? (isDark ? 'rgba(20,184,166,0.1)' : colors.tealDim) : colors.card,
+                      borderColor: isSelected ? colors.teal : colors.cardBorder,
+                    }}>
                     <View className="flex-1">
                       <Text
-                        className={`text-base font-semibold ${isSelected ? 'text-teal-700' : 'text-slate-900'}`}>
+                        style={{ fontSize: 16, fontWeight: '600', color: isSelected ? colors.teal : colors.textPrimary }}>
                         {district.name}
                       </Text>
                     </View>
-                    {isSelected && <Ionicons name="checkmark-circle" size={24} color="#0f766e" />}
+                    {isSelected && <Ionicons name="checkmark-circle" size={24} color={colors.teal} />}
                   </TouchableOpacity>
                 );
               })

@@ -28,11 +28,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f766e"
       },
-      "package": "com.onur6541.salah",
-      "navigationBar": {
-        "backgroundColor": "#ffffff",
-        "barStyle": "dark-content"
-      }
+      "package": "com.onur6541.salah"
     },
     "owner": "onur6541",
     "plugins": [

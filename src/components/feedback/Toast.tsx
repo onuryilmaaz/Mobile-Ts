@@ -63,32 +63,32 @@ const toastConfig: Record<
   }
 > = {
   success: {
-    bg: 'bg-green-50',
-    border: 'border-green-200',
+    bg: '#f0fdf4',
+    border: '#bbf7d0',
     icon: 'checkmark-circle',
     iconColor: '#16a34a',
-    textColor: 'text-green-800',
+    textColor: '#166534',
   },
   error: {
-    bg: 'bg-red-50',
-    border: 'border-red-200',
+    bg: '#fef2f2',
+    border: '#fecaca',
     icon: 'close-circle',
     iconColor: '#dc2626',
-    textColor: 'text-red-800',
+    textColor: '#991b1b',
   },
   warning: {
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
+    bg: '#fffbeb',
+    border: '#fde68a',
     icon: 'warning',
     iconColor: '#d97706',
-    textColor: 'text-amber-800',
+    textColor: '#92400e',
   },
   info: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
+    bg: '#eff6ff',
+    border: '#bfdbfe',
     icon: 'information-circle',
     iconColor: '#2563eb',
-    textColor: 'text-blue-800',
+    textColor: '#1e40af',
   },
 };
 
@@ -117,18 +117,31 @@ function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismis
       style={{
         opacity: fadeAnim,
         transform: [{ translateY }],
-      }}
-      className={`mx-4 mb-2 flex-row items-center rounded-xl border ${config.bg} ${config.border} p-4 shadow-sm`}>
+        marginHorizontal: 16,
+        marginBottom: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 12,
+        borderWidth: 1,
+        backgroundColor: config.bg,
+        borderColor: config.border,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 2,
+      }}>
       <Ionicons name={config.icon} size={24} color={config.iconColor} />
 
-      <View className="ml-3 flex-1">
-        <Text className={`font-semibold ${config.textColor}`}>{toastData.title}</Text>
+      <View style={{ marginLeft: 12, flex: 1 }}>
+        <Text style={{ fontWeight: '600', color: config.textColor }}>{toastData.title}</Text>
         {toastData.message && (
-          <Text className={`text-sm ${config.textColor} opacity-80`}>{toastData.message}</Text>
+          <Text style={{ fontSize: 14, color: config.textColor, opacity: 0.8 }}>{toastData.message}</Text>
         )}
       </View>
 
-      <TouchableOpacity onPress={onDismiss} className="ml-2 p-1">
+      <TouchableOpacity onPress={onDismiss} style={{ marginLeft: 8, padding: 4 }}>
         <Ionicons name="close" size={18} color="#64748b" />
       </TouchableOpacity>
     </Animated.View>
@@ -141,7 +154,7 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <View className="absolute left-0 right-0 top-14 z-50">
+    <View style={{ position: 'absolute', left: 0, right: 0, top: 56, zIndex: 50 }}>
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} onDismiss={() => removeToast(t.id)} />
       ))}

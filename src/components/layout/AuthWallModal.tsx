@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Modal, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { rootNavigate } from '@/navigation/rootNavigation';
 import * as Haptics from 'expo-haptics';
 
 interface AuthWallModalProps {
@@ -10,26 +10,30 @@ interface AuthWallModalProps {
   onClose: () => void;
   title?: string;
   description?: string;
+  onLoginPress?: () => void;
+  onRegisterPress?: () => void;
 }
 
-export function AuthWallModal({ 
-  visible, 
-  onClose, 
+export function AuthWallModal({
+  visible,
+  onClose,
   title = 'Oturum Açmanız Gerekiyor',
-  description = 'Bu özelliği kullanabilmek ve ilerlemenizi kaydetmek için lütfen giriş yapın veya kayıt olun.'
+  description = 'Bu özelliği kullanabilmek ve ilerlemenizi kaydetmek için lütfen giriş yapın veya kayıt olun.',
+  onLoginPress,
+  onRegisterPress,
 }: AuthWallModalProps) {
-  const navigation = useNavigation<any>();
-
   const handleLogin = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onClose();
-    navigation.navigate('Auth', { screen: 'Login' });
+    if (onLoginPress) return onLoginPress();
+    rootNavigate('Auth', { screen: 'Login' });
   };
 
   const handleRegister = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onClose();
-    navigation.navigate('Auth', { screen: 'Register' });
+    if (onRegisterPress) return onRegisterPress();
+    rootNavigate('Auth', { screen: 'Register' });
   };
 
   return (

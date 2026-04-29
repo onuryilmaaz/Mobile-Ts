@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@/navigation/types';
 
@@ -12,8 +11,11 @@ import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 
-export default function LoginScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+type Props = {
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
+};
+
+export default function LoginScreen({ navigation }: Props) {
   const login = useAuthStore((s) => s.login);
   const scrollViewRef = useRef<ScrollView>(null);
 

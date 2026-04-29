@@ -88,7 +88,7 @@ export default function SessionsScreen() {
   }
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen style={{ backgroundColor: '#f8fafc' }} safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}

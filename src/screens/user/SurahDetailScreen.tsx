@@ -7,6 +7,7 @@ import { quranService, Verse } from '@/services/quran.service';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useAppTheme } from '@/constants/theme';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahDetail'>;
 
@@ -14,6 +15,7 @@ export default function SurahDetailScreen({ route }: Props) {
   const { surahId, surahName } = route.params;
   const [verses, setVerses] = useState<Verse[]>([]);
   const [loading, setLoading] = useState(true);
+  const { colors, isDark } = useAppTheme();
 
   useEffect(() => {
     fetchVerses();
@@ -44,11 +46,11 @@ export default function SurahDetailScreen({ route }: Props) {
   };
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen  safeAreaEdges={['left', 'right']}>
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#0f766e" />
-          <Text className="mt-4 font-medium text-slate-500">Ayetler yükleniyor...</Text>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color={colors.teal} />
+          <Text style={{ marginTop: 16, fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>Ayetler yükleniyor...</Text>
         </View>
       ) : (
         <ScrollView
@@ -59,34 +61,36 @@ export default function SurahDetailScreen({ route }: Props) {
             <Animated.View
               key={verse.id}
               entering={FadeInUp.delay(index * 50).duration(400)}
-              className="mb-6 overflow-hidden rounded-[24px] border border-slate-100 bg-white shadow-sm">
-              <View className="flex-row items-center justify-between border-b border-slate-50 bg-slate-50/50 px-6 py-3">
-                <View className="h-6 w-6 items-center justify-center rounded-full bg-primary-600">
-                  <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
+              style={{
+                marginBottom: 24, overflow: 'hidden', borderRadius: 24, borderWidth: 1,
+                borderColor: colors.cardBorder, backgroundColor: colors.card,
+                shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', paddingHorizontal: 24, paddingVertical: 12 }}>
+                <View style={{ height: 24, width: 24, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: colors.teal }}>
+                  <Text style={{ fontSize: 12, fontWeight: '900', color: '#fff' }}>{verse.verse_number}</Text>
                 </View>
                 <Ionicons
                   name="share-outline"
                   size={18}
-                  color="#64748b"
+                  color={colors.textSecondary}
                   onPress={() => shareVerse(verse)}
                 />
               </View>
 
-              <View className="p-4">
+              <View style={{ padding: 16 }}>
                 <Text
-                  className="mb-1 text-2xl leading-[50px] text-slate-900"
-                  style={{ fontFamily: Platform.OS === 'ios' ? 'System' : 'serif' }}>
+                  style={{ marginBottom: 4, fontSize: 24, lineHeight: 50, color: colors.textPrimary, fontFamily: Platform.OS === 'ios' ? 'System' : 'serif' }}>
                   {verse.transcription}
                 </Text>
                 <Text
-                  className="mb-1 text-right text-xl leading-[50px] text-slate-900"
-                  style={{ fontFamily: Platform.OS === 'ios' ? 'System' : 'serif' }}>
+                  style={{ marginBottom: 4, textAlign: 'right', fontSize: 20, lineHeight: 50, color: colors.textPrimary, fontFamily: Platform.OS === 'ios' ? 'System' : 'serif' }}>
                   {verse.verse_simplified}
                 </Text>
 
-                <View className="mb-6 h-[1px] w-full bg-slate-100" />
+                <View style={{ marginBottom: 24, height: 1, width: '100%', backgroundColor: colors.cardBorder }} />
 
-                <Text className="text-base font-medium italic leading-7 text-slate-700">
+                <Text style={{ fontSize: 16, fontWeight: '500', fontStyle: 'italic', lineHeight: 28, color: colors.textSecondary }}>
                   "{verse.translation.text}"
                 </Text>
               </View>

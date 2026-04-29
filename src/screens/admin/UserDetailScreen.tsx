@@ -16,10 +16,12 @@ import { PageLoading } from '@/components/feedback/Loading';
 import { ErrorView } from '@/components/feedback/ErrorView';
 import { EmptyState } from '@/components/layout/EmptyState';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '@/constants/theme';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'UserDetail'>;
 
 export default function UserDetailScreen({ route, navigation }: Props) {
+  const { colors, isDark } = useAppTheme();
   const { userId } = route.params;
   const currentUser = useAuthStore((s) => s.user);
   const alert = useAlertStore();
@@ -209,7 +211,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
   const userRoles = user.roles || [];
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}
@@ -218,18 +220,18 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         }>
         <Card className="mx-4 mb-4">
           <View className="mb-4 flex-row items-center justify-between">
-            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-              <Ionicons name="person" size={32} color="#0f766e" />
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-500/10">
+              <Ionicons name="person" size={32} color={isDark ? "#14b8a6" : "#0f766e"} />
             </View>
             <Badge variant={user.isActive === false ? 'danger' : 'success'} size="md">
               {user.isActive === false ? 'PASİF' : 'AKTİF'}
             </Badge>
           </View>
 
-          <Text className="text-xl font-bold text-slate-900">
+          <Text className="text-xl font-bold text-slate-900 dark:text-white">
             {user.firstName} {user.lastName}
           </Text>
-          <Text className="mb-4 text-slate-500">{user.email}</Text>
+          <Text className="mb-4 text-slate-500 dark:text-slate-400">{user.email}</Text>
 
           <Button
             title={user.isActive === false ? 'Hesabı Aktifleştir' : 'Hesabı Pasife Al'}
@@ -240,11 +242,11 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         </Card>
 
         <Card className="mx-4 mb-4">
-          <Text className="mb-3 text-lg font-bold text-slate-900">Roller</Text>
+          <Text className="mb-3 text-lg font-bold text-slate-900 dark:text-white">Roller</Text>
 
           <View className="mb-4 flex-row flex-wrap gap-2">
             {userRoles.length === 0 ? (
-              <Text className="text-sm text-slate-400">Hiç rol atanmamış</Text>
+              <Text className="text-sm text-slate-400 dark:text-slate-500">Hiç rol atanmamış</Text>
             ) : (
               userRoles.map((roleName) => {
                 const roleObj = (availableRoles || []).find((r) => r.name === roleName);
@@ -259,7 +261,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                       <TouchableOpacity
                         onPress={() => handleRemoveRole(roleId)}
                         disabled={actionLoading}
-                        className="rounded-full bg-red-50 p-1">
+                        className="rounded-full bg-red-50 p-1 dark:bg-red-500/10">
                         <Ionicons name="close" size={12} color="#dc2626" />
                       </TouchableOpacity>
                     )}
@@ -271,7 +273,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
 
           <Divider />
           <View className="pt-3">
-            <Text className="mb-2 text-sm font-medium text-slate-700">Rol Ekle</Text>
+            <Text className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Rol Ekle</Text>
             <View className="flex-row flex-wrap gap-2">
               {(availableRoles || [])
                 .filter((r) => !userRoles.includes(r.name))
@@ -280,15 +282,15 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                     key={role.id}
                     onPress={() => handleAssignRole(role.id)}
                     disabled={actionLoading}
-                    className="rounded-lg border border-primary-200 bg-primary-50 px-3 py-2">
+                    className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 dark:border-teal-500/20 dark:bg-teal-500/5">
                     <View className="flex-row items-center gap-1">
-                      <Ionicons name="add" size={16} color="#0f766e" />
-                      <Text className="text-sm font-medium text-primary-700">{role.name}</Text>
+                      <Ionicons name="add" size={16} color={isDark ? "#14b8a6" : "#0f766e"} />
+                      <Text className="text-sm font-medium text-teal-700 dark:text-teal-500">{role.name}</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
               {availableRoles.length === 0 && (
-                <Text className="text-xs text-slate-400">Eklenebilecek rol bulunamadı</Text>
+                <Text className="text-xs text-slate-400 dark:text-slate-500">Eklenebilecek rol bulunamadı</Text>
               )}
             </View>
           </View>
@@ -296,7 +298,7 @@ export default function UserDetailScreen({ route, navigation }: Props) {
 
         <Card className='mx-4'>
           <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-lg font-bold text-slate-900">Aktif Oturumlar</Text>
+            <Text className="text-lg font-bold text-slate-900 dark:text-white">Aktif Oturumlar</Text>
             {sessions.length > 0 && (
               <TouchableOpacity onPress={handleRevokeAllSessions} disabled={actionLoading}>
                 <Text className="text-xs font-bold text-red-600">Hepsini Kapat</Text>
@@ -315,14 +317,14 @@ export default function UserDetailScreen({ route, navigation }: Props) {
               {sessions.map((s, index) => (
                 <View
                   key={s.id || index}
-                  className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
                   <View className="mb-1 flex-row items-center gap-2">
-                    <Ionicons name="phone-portrait-outline" size={16} color="#64748b" />
-                    <Text className="text-xs font-semibold text-slate-700">
+                    <Ionicons name="phone-portrait-outline" size={16} color={isDark ? "#94a3b8" : "#64748b"} />
+                    <Text className="text-xs font-semibold text-slate-900 dark:text-white">
                       IP: {s.ip || 'Bilinmiyor'}
                     </Text>
                   </View>
-                  <Text className="text-[10px] text-slate-500" numberOfLines={1}>
+                  <Text className="text-[10px] text-slate-500 dark:text-slate-400" numberOfLines={1}>
                     {s.userAgent || 'Bilinmeyen cihaz'}
                   </Text>
                 </View>

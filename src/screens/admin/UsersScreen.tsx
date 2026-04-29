@@ -9,10 +9,12 @@ import type { AdminUser } from '@/modules/admin/admin.types';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '@/constants/theme';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'Users'>;
 
 export default function UsersScreen({ navigation }: Props) {
+  const { colors, isDark } = useAppTheme();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function UsersScreen({ navigation }: Props) {
       <Card className="mx-4 mt-4 mb-2 flex-row items-center justify-between p-4">
         <View className="flex-1">
           <View className="mb-2 flex-row items-center gap-2">
-            <Text className="text-base font-bold text-slate-900" numberOfLines={1}>
+            <Text className="text-base font-bold text-slate-900 dark:text-white" numberOfLines={1}>
               {item.firstName && item.lastName
                 ? `${item.firstName} ${item.lastName}`
                 : 'İsimsiz Kullanıcı'}
@@ -55,7 +57,7 @@ export default function UsersScreen({ navigation }: Props) {
               </Badge>
             )}
           </View>
-          <Text className="mb-2 text-sm text-slate-500" numberOfLines={1}>
+          <Text className="mb-2 text-sm text-slate-500 dark:text-slate-400" numberOfLines={1}>
             {item.email}
           </Text>
 
@@ -68,18 +70,18 @@ export default function UsersScreen({ navigation }: Props) {
           </View>
         </View>
 
-        <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+        <Ionicons name="chevron-forward" size={20} color={isDark ? "rgba(255,255,255,0.3)" : "#94a3b8"} />
       </Card>
     </TouchableOpacity>
   );
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       {error && (
-        <Card className="mx-4 my-4 border-red-200 bg-red-50">
+        <Card className="mx-4 my-4 bg-red-50 border-red-200 dark:bg-red-500/10 dark:border-red-500/20">
           <View className="flex-row items-center gap-2">
             <Ionicons name="alert-circle" size={20} color="#dc2626" />
-            <Text className="flex-1 text-sm text-red-700">{error}</Text>
+            <Text className="flex-1 text-sm text-red-700 dark:text-red-400">{error}</Text>
           </View>
         </Card>
       )}

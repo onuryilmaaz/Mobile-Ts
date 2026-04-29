@@ -23,17 +23,20 @@ export default function SurahsNavigator() {
           name="SurahsMain"
           component={SurahBrowserScreen}
           options={{
-            header: () => <StandardHeader title="Sureler" showBackButton={false} />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Sureler" showBackButton={false} />
+            ),
           }}
         />
         <Stack.Screen
           name="SurahDetail"
           component={SurahDetailScreen}
           options={({ route }) => ({
-            header: () => (
-              <StandardHeader 
-                title={route.params?.surahName ? `${route.params.surahName} Suresi` : 'Sure Detayı'} 
-                showBackButton={true} 
+            header: ({ navigation }) => (
+              <StandardHeader
+                navigation={navigation}
+                title={route.params?.surahName ? `${route.params.surahName} Suresi` : 'Sure Detayı'}
+                showBackButton={true}
               />
             ),
           })}

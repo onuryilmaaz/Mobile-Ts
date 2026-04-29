@@ -69,27 +69,21 @@ export function AlertDialog() {
     const isCancel = style === 'cancel';
     const isDestructive = style === 'destructive';
 
-    const containerClass = [
-      'flex-1 h-12 rounded-[14px] justify-center items-center min-w-[100px]',
-      isCancel && 'bg-slate-100',
-      isDestructive && 'bg-red-500',
-      !isCancel && !isDestructive && 'bg-teal-600',
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const textClass = [
-      'text-base font-semibold',
-      isCancel && 'text-slate-500',
-      isDestructive && 'text-white',
-      !isCancel && !isDestructive && 'text-white',
-    ]
-      .filter(Boolean)
-      .join(' ');
-
     return {
-      container: containerClass,
-      text: textClass,
+      container: {
+        flex: 1,
+        height: 48,
+        borderRadius: 14,
+        justifyContent: 'center' as const,
+        alignItems: 'center' as const,
+        minWidth: 100,
+        backgroundColor: isCancel ? '#f1f5f9' : isDestructive ? '#ef4444' : '#0d9488',
+      },
+      text: {
+        fontSize: 16,
+        fontWeight: '600' as const,
+        color: isCancel ? '#64748b' : '#ffffff',
+      },
     };
   };
 
@@ -97,40 +91,57 @@ export function AlertDialog() {
 
   return (
     <Modal transparent visible={visible} animationType="none" statusBarTranslucent>
-      <BlurView intensity={20} tint="dark" className="flex-1 items-center justify-center">
+      <BlurView intensity={20} tint="dark" style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <TouchableWithoutFeedback onPress={hide}>
-          <View className="absolute inset-0 bg-black/40" />
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)' }} />
         </TouchableWithoutFeedback>
 
         <Animated.View
-          className="w-[85%] max-w-[340px] items-center rounded-3xl bg-white p-6 shadow-xl shadow-black/25"
           style={{
+            width: '85%',
+            maxWidth: 340,
+            alignItems: 'center',
+            borderRadius: 24,
+            backgroundColor: '#ffffff',
+            padding: 24,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.25,
+            shadowRadius: 20,
+            elevation: 10,
             transform: [{ scale: scaleAnim }],
             opacity: opacityAnim,
           }}>
           <View
-            className="mb-4 h-16 w-16 items-center justify-center rounded-full"
-            style={{ backgroundColor: iconConfig.bgColor }}>
+            style={{
+              marginBottom: 16,
+              height: 64,
+              width: 64,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 32,
+              backgroundColor: iconConfig.bgColor 
+            }}>
             <Ionicons name={iconConfig.name} size={32} color={iconConfig.color} />
           </View>
 
-          <Text className="mb-2 text-center text-xl font-bold text-slate-800">{title}</Text>
+          <Text style={{ marginBottom: 8, textAlign: 'center', fontSize: 20, fontWeight: 'bold', color: '#1e293b' }}>{title}</Text>
           {message && (
-            <Text className="mb-2 text-center text-[15px] leading-[22px] text-slate-500">
+            <Text style={{ marginBottom: 8, textAlign: 'center', fontSize: 15, lineHeight: 22, color: '#64748b' }}>
               {message}
             </Text>
           )}
 
-          <View className={`mt-4 w-full flex-row gap-3 ${buttons.length > 2 ? 'flex-col' : ''}`}>
+          <View style={{ marginTop: 16, width: '100%', flexDirection: buttons.length > 2 ? 'column' : 'row', gap: 12 }}>
             {buttons.map((button, index) => {
               const buttonStyle = getButtonStyle(button.style, index, buttons.length);
               return (
                 <TouchableOpacity
                   key={index}
-                  className={buttonStyle.container}
+                  style={buttonStyle.container}
                   onPress={() => handleButtonPress(button)}
                   activeOpacity={0.8}>
-                  <Text className={buttonStyle.text}>{button.text}</Text>
+                  <Text style={buttonStyle.text}>{button.text}</Text>
                 </TouchableOpacity>
               );
             })}

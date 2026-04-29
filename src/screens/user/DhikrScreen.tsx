@@ -26,6 +26,7 @@ import Animated, {
   ZoomIn,
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppTheme } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.72;
@@ -59,13 +60,14 @@ const DEFAULT_PRESETS: Preset[] = [
 // MILESTONE ANIMATION
 // ─────────────────────────────────────────────
 function MilestoneToast({ message, visible }: { message: string; visible: boolean }) {
+  const { colors, isDark } = useAppTheme();
   if (!visible) return null;
   return (
     <Animated.View
       entering={ZoomIn.duration(300)}
       exiting={FadeOut.duration(400)}
-      className="absolute inset-x-8 top-4 z-50 items-center rounded-[20px] bg-primary-600 px-6 py-4 shadow-2xl">
-      <Text className="text-base font-black text-white">{message}</Text>
+      style={{ position: 'absolute', top: 16, left: 32, right: 32, zIndex: 50, alignItems: 'center', borderRadius: 20, backgroundColor: colors.teal, paddingHorizontal: 24, paddingVertical: 16, shadowColor: colors.teal, shadowOpacity: isDark ? 0.3 : 0.2, shadowRadius: 16, shadowOffset: { width: 0, height: 8 } }}>
+      <Text style={{ fontSize: 16, fontWeight: '900', color: '#fff' }}>{message}</Text>
     </Animated.View>
   );
 }
@@ -84,6 +86,7 @@ function AddPresetModal({
 }) {
   const [name, setName]     = useState('');
   const [target, setTarget] = useState('33');
+  const { colors, isDark } = useAppTheme();
 
   const handleAdd = () => {
     const t = parseInt(target);
@@ -101,32 +104,32 @@ function AddPresetModal({
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 justify-end bg-black/40">
-        <View className="rounded-t-[32px] bg-white p-6 pb-10">
-          <View className="mb-6 flex-row items-center justify-between">
-            <Text className="text-xl font-black text-slate-800">Özel Zikir Ekle</Text>
+        style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+        <View style={{ borderTopLeftRadius: 32, borderTopRightRadius: 32, backgroundColor: colors.card, padding: 24, paddingBottom: 40 }}>
+          <View style={{ marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 20, fontWeight: '900', color: colors.textPrimary }}>Özel Zikir Ekle</Text>
             <TouchableOpacity
               onPress={onClose}
-              className="h-9 w-9 items-center justify-center rounded-full bg-slate-100">
-              <Ionicons name="close" size={20} color="#64748b" />
+              style={{ height: 36, width: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 18, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9' }}>
+              <Ionicons name="close" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
-          <Text className="mb-2 text-sm font-bold uppercase tracking-widest text-slate-400">
+          <Text style={{ marginBottom: 8, fontSize: 14, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>
             Zikir Adı
           </Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="örn. Kelime-i Tevhid"
-            placeholderTextColor="#94a3b8"
-            className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-800"
+            placeholderTextColor={colors.textMuted}
+            style={{ marginBottom: 20, borderRadius: 16, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', paddingHorizontal: 16, paddingVertical: 12, fontSize: 14, fontWeight: 'bold', color: colors.textPrimary }}
           />
 
-          <Text className="mb-2 text-sm font-bold uppercase tracking-widest text-slate-400">
+          <Text style={{ marginBottom: 8, fontSize: 14, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>
             Hedef Sayı
           </Text>
-          <View className="mb-6 flex-row flex-wrap gap-2">
+          <View style={{ marginBottom: 24, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {[33, 99, 100, 300, 1000].map((t) => (
               <TouchableOpacity
                 key={t}
@@ -134,15 +137,13 @@ function AddPresetModal({
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   setTarget(t.toString());
                 }}
-                className={`rounded-2xl border px-4 py-2 ${
-                  target === t.toString()
-                    ? 'border-primary-200 bg-primary-50'
-                    : 'border-slate-100 bg-slate-50'
-                }`}>
+                style={{
+                  borderRadius: 16, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 8,
+                  borderColor: target === t.toString() ? colors.tealDim : colors.cardBorder,
+                  backgroundColor: target === t.toString() ? (isDark ? 'rgba(20,184,166,0.1)' : '#f0fdfa') : (isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc')
+                }}>
                 <Text
-                  className={`text-sm font-bold ${
-                    target === t.toString() ? 'text-primary-700' : 'text-slate-500'
-                  }`}>
+                  style={{ fontSize: 14, fontWeight: 'bold', color: target === t.toString() ? colors.teal : colors.textSecondary }}>
                   {t}
                 </Text>
               </TouchableOpacity>
@@ -151,8 +152,8 @@ function AddPresetModal({
 
           <TouchableOpacity
             onPress={handleAdd}
-            className="items-center rounded-2xl bg-primary-600 py-4">
-            <Text className="text-base font-black text-white">Ekle</Text>
+            style={{ alignItems: 'center', borderRadius: 16, backgroundColor: colors.teal, paddingVertical: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: '900', color: '#fff' }}>Ekle</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -164,38 +165,39 @@ function AddPresetModal({
 // HISTORY MODAL
 // ─────────────────────────────────────────────
 function HistoryModal({ visible, onClose, log }: { visible: boolean; onClose: () => void; log: DailyLog }) {
+  const { colors, isDark } = useAppTheme();
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View className="flex-1 justify-end bg-black/40">
-        <View className="max-h-[70%] rounded-t-[32px] bg-white p-6 pb-10">
-          <View className="mb-6 flex-row items-center justify-between">
-            <Text className="text-xl font-black text-slate-800">Zikir Geçmişi</Text>
+      <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+        <View style={{ maxHeight: '70%', backgroundColor: colors.card, padding: 24, paddingBottom: 40, borderTopLeftRadius: 32, borderTopRightRadius: 32 }}>
+          <View style={{ marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 20, fontWeight: '900', color: colors.textPrimary }}>Zikir Geçmişi</Text>
             <TouchableOpacity
               onPress={onClose}
-              className="h-9 w-9 items-center justify-center rounded-full bg-slate-100">
-              <Ionicons name="close" size={20} color="#64748b" />
+              style={{ height: 36, width: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 18, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9' }}>
+              <Ionicons name="close" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
             {log.length === 0 ? (
-              <View className="items-center py-12">
-                <Ionicons name="time-outline" size={40} color="#cbd5e1" />
-                <Text className="mt-3 text-sm text-slate-400">Henüz zikir kaydı yok.</Text>
+              <View style={{ alignItems: 'center', paddingVertical: 48 }}>
+                <Ionicons name="time-outline" size={40} color={colors.textMuted} />
+                <Text style={{ marginTop: 12, fontSize: 14, color: colors.textSecondary }}>Henüz zikir kaydı yok.</Text>
               </View>
             ) : (
               [...log].reverse().map((entry, i) => (
                 <View
                   key={i}
-                  className="mb-3 flex-row items-center rounded-[16px] border border-slate-100 bg-slate-50 px-4 py-3">
-                  <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl bg-primary-100">
-                    <Ionicons name="radio-button-on" size={16} color="#0f766e" />
+                  style={{ marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderRadius: 16, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', paddingHorizontal: 16, paddingVertical: 12 }}>
+                  <View style={{ marginRight: 12, height: 40, width: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim }}>
+                    <Ionicons name="radio-button-on" size={16} color={colors.teal} />
                   </View>
-                  <View className="flex-1">
-                    <Text className="text-sm font-black text-slate-800">{entry.presetName}</Text>
-                    <Text className="text-xs text-slate-400">{entry.date}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '900', color: colors.textPrimary }}>{entry.presetName}</Text>
+                    <Text style={{ fontSize: 12, color: colors.textSecondary }}>{entry.date}</Text>
                   </View>
-                  <View className="rounded-full bg-primary-100 px-3 py-1">
-                    <Text className="text-sm font-black text-primary-700">{entry.count}</Text>
+                  <View style={{ borderRadius: 99, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim, paddingHorizontal: 12, paddingVertical: 4 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '900', color: colors.teal }}>{entry.count}</Text>
                   </View>
                 </View>
               ))
@@ -211,6 +213,7 @@ function HistoryModal({ visible, onClose, log }: { visible: boolean; onClose: ()
 // CIRCULAR PROGRESS (SVG-free, pure RN)
 // ─────────────────────────────────────────────
 function CircularProgressRing({ progress, color }: { progress: number; color: string }) {
+  const { isDark, colors } = useAppTheme();
   const clamped = Math.min(1, Math.max(0, progress));
   return (
     <View
@@ -220,7 +223,7 @@ function CircularProgressRing({ progress, color }: { progress: number; color: st
         height: CIRCLE_SIZE,
         borderRadius: CIRCLE_SIZE / 2,
         borderWidth: 6,
-        borderColor: '#f1f5f9',
+        borderColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9',
       }}
     >
       {/* Top half fill */}
@@ -256,6 +259,7 @@ export default function DhikrScreen() {
   const [milestoneMsg, setMilestoneMsg] = useState('');
   const [showMilestone, setShowMilestone] = useState(false);
   const milestoneTimer = useRef<NodeJS.Timeout | null>(null);
+  const { colors, isDark } = useAppTheme();
 
   const target = presets[activePreset]?.target ?? 33;
 
@@ -406,62 +410,60 @@ export default function DhikrScreen() {
   const currentPreset    = presets[activePreset];
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       {/* Milestone Toast */}
       <MilestoneToast message={milestoneMsg} visible={showMilestone} />
 
       <ScrollView
-        className="flex-1"
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}>
 
         {/* ── Stats Row ── */}
-        <View className="mx-4 mt-4 flex-row gap-3">
-          <View className="flex-1 items-center rounded-[20px] border border-slate-100 bg-white py-3 shadow-sm">
-            <Text className="text-xl font-black text-primary-700">{todayCount.toLocaleString()}</Text>
-            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Bugün</Text>
+        <View style={{ marginHorizontal: 16, marginTop: 16, flexDirection: 'row', gap: 12 }}>
+          <View style={{ flex: 1, alignItems: 'center', borderRadius: 20, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingVertical: 12, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
+            <Text style={{ fontSize: 20, fontWeight: '900', color: colors.teal }}>{todayCount.toLocaleString()}</Text>
+            <Text style={{ fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>Bugün</Text>
           </View>
-          <View className="flex-1 items-center rounded-[20px] border border-slate-100 bg-white py-3 shadow-sm">
-            <Text className="text-xl font-black text-slate-800">{totalSessions.toLocaleString()}</Text>
-            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Toplam</Text>
+          <View style={{ flex: 1, alignItems: 'center', borderRadius: 20, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingVertical: 12, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
+            <Text style={{ fontSize: 20, fontWeight: '900', color: colors.textPrimary }}>{totalSessions.toLocaleString()}</Text>
+            <Text style={{ fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>Toplam</Text>
           </View>
           <TouchableOpacity
             onPress={() => setShowHistory(true)}
-            className="flex-1 items-center justify-center rounded-[20px] border border-slate-100 bg-white py-3 shadow-sm">
-            <Ionicons name="time-outline" size={20} color="#0f766e" />
-            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Geçmiş</Text>
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 20, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingVertical: 12, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
+            <Ionicons name="time-outline" size={20} color={colors.teal} />
+            <Text style={{ fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>Geçmiş</Text>
           </TouchableOpacity>
         </View>
 
         {/* ── Preset Chips ── */}
-        <View className="mt-5 px-4">
-          <View className="mb-2 flex-row items-center justify-between">
-            <Text className="text-xs font-bold uppercase tracking-widest text-slate-400">Zikir Seç</Text>
+        <View style={{ marginTop: 20, paddingHorizontal: 16 }}>
+          <View style={{ marginBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>Zikir Seç</Text>
             <TouchableOpacity
               onPress={() => setShowAddModal(true)}
-              className="flex-row items-center gap-1 rounded-xl border border-primary-200 bg-primary-50 px-3 py-1.5">
-              <Ionicons name="add" size={14} color="#0f766e" />
-              <Text className="text-xs font-bold text-primary-700">Özel Ekle</Text>
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 12, borderWidth: 1, borderColor: isDark ? 'rgba(20,184,166,0.3)' : '#bbf7d0', backgroundColor: isDark ? 'rgba(20,184,166,0.1)' : '#f0fdfa', paddingHorizontal: 12, paddingVertical: 6 }}>
+              <Ionicons name="add" size={14} color={colors.teal} />
+              <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.teal }}>Özel Ekle</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -16, paddingHorizontal: 16 }}>
             {presets.map((preset, idx) => (
               <TouchableOpacity
                 key={`${preset.name}-${idx}`}
                 onPress={() => selectPreset(idx)}
                 onLongPress={() => preset.isCustom && deleteCustomPreset(idx)}
-                className={`mr-2 flex-row items-center gap-1 rounded-2xl border px-4 py-2.5 ${
-                  activePreset === idx
-                    ? 'border-primary-200 bg-primary-50'
-                    : 'border-slate-100 bg-white'
-                }`}>
+                style={{
+                  marginRight: 8, flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 16, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 10,
+                  borderColor: activePreset === idx ? colors.tealDim : colors.cardBorder,
+                  backgroundColor: activePreset === idx ? (isDark ? 'rgba(20,184,166,0.1)' : '#f0fdfa') : colors.card
+                }}>
                 {preset.isCustom && (
-                  <Ionicons name="star" size={10} color={activePreset === idx ? '#0f766e' : '#cbd5e1'} />
+                  <Ionicons name="star" size={10} color={activePreset === idx ? colors.teal : colors.textMuted} />
                 )}
                 <Text
-                  className={`text-sm font-bold ${
-                    activePreset === idx ? 'text-primary-700' : 'text-slate-500'
-                  }`}>
+                  style={{ fontSize: 14, fontWeight: 'bold', color: activePreset === idx ? colors.teal : colors.textSecondary }}>
                   {preset.name}
                 </Text>
               </TouchableOpacity>
@@ -470,31 +472,30 @@ export default function DhikrScreen() {
         </View>
 
         {/* ── Counter Circle ── */}
-        <View className="mt-8 items-center">
+        <View style={{ marginTop: 32, alignItems: 'center' }}>
           {/* Rounds indicator */}
           {completedRounds > 0 && (
-            <Animated.View entering={FadeIn} className="mb-4 flex-row items-center gap-2 rounded-full bg-primary-100 px-4 py-2">
-              <Ionicons name="checkmark-circle" size={16} color="#0f766e" />
-              <Text className="text-sm font-black text-primary-700">{completedRounds} tur tamamlandı</Text>
+            <Animated.View entering={FadeIn} style={{ marginBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 99, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim, paddingHorizontal: 16, paddingVertical: 8 }}>
+              <Ionicons name="checkmark-circle" size={16} color={colors.teal} />
+              <Text style={{ fontSize: 14, fontWeight: '900', color: colors.teal }}>{completedRounds} tur tamamlandı</Text>
             </Animated.View>
           )}
 
-          <TouchableOpacity activeOpacity={1} onPress={handlePress} className="items-center justify-center">
+          <TouchableOpacity activeOpacity={1} onPress={handlePress} style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Animated.View
-              style={[{ width: CIRCLE_SIZE, height: CIRCLE_SIZE, borderRadius: CIRCLE_SIZE / 2 }, animatedStyle]}
-              className="items-center justify-center border-[6px] border-slate-100 bg-white shadow-2xl shadow-primary-900/10">
+              style={[{ width: CIRCLE_SIZE, height: CIRCLE_SIZE, borderRadius: CIRCLE_SIZE / 2, alignItems: 'center', justifyContent: 'center', borderWidth: 6, borderColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', backgroundColor: colors.card, shadowColor: colors.teal, shadowOpacity: isDark ? 0.2 : 0.05, shadowRadius: 24, shadowOffset: { width: 0, height: 12 } }, animatedStyle]}>
               {/* Progress fill */}
-              <CircularProgressRing progress={progressFraction} color="#0f766e" />
+              <CircularProgressRing progress={progressFraction} color={colors.teal} />
 
-              <View className="items-center">
-                <Text className="text-8xl font-black text-slate-800" style={{ lineHeight: 96 }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 96, fontWeight: '900', color: colors.textPrimary, lineHeight: 96 }}>
                   {count % target === 0 && count > 0 ? (
-                    <Text style={{ color: '#0f766e' }}>{target}</Text>
+                    <Text style={{ color: colors.teal }}>{target}</Text>
                   ) : (
                     count % target
                   )}
                 </Text>
-                <Text className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                <Text style={{ fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>
                   {currentPreset?.name}
                 </Text>
               </View>
@@ -507,7 +508,7 @@ export default function DhikrScreen() {
                   height: CIRCLE_SIZE - 16,
                   borderRadius: (CIRCLE_SIZE - 16) / 2,
                   borderWidth: 2,
-                  borderColor: `#0f766e${Math.round(progressFraction * 255).toString(16).padStart(2, '0')}`,
+                  borderColor: `${colors.teal}${Math.round(progressFraction * 255).toString(16).padStart(2, '0')}`,
                   borderStyle: 'dashed',
                 }}
               />
@@ -515,31 +516,31 @@ export default function DhikrScreen() {
           </TouchableOpacity>
 
           {/* Target pill */}
-          <View className="mt-5 flex-row items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 shadow-sm">
-            <Ionicons name="flag" size={14} color="#0f766e" />
-            <Text className="text-sm font-black text-primary-700">Hedef: {target}</Text>
+          <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 99, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingHorizontal: 16, paddingVertical: 8, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } }}>
+            <Ionicons name="flag" size={14} color={colors.teal} />
+            <Text style={{ fontSize: 14, fontWeight: '900', color: colors.teal }}>Hedef: {target}</Text>
           </View>
         </View>
 
         {/* ── Action Buttons ── */}
-        <View className="mt-8 flex-row justify-center gap-4 px-4">
+        <View style={{ marginTop: 32, flexDirection: 'row', justifyContent: 'center', gap: 16, paddingHorizontal: 16 }}>
           <TouchableOpacity
             onPress={resetCount}
-            className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <Ionicons name="refresh-outline" size={22} color="#64748b" />
+            style={{ height: 56, width: 56, alignItems: 'center', justifyContent: 'center', borderRadius: 16, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
+            <Ionicons name="refresh-outline" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={shareProgress}
-            className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <Ionicons name="share-social-outline" size={22} color="#64748b" />
+            style={{ height: 56, width: 56, alignItems: 'center', justifyContent: 'center', borderRadius: 16, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
+            <Ionicons name="share-social-outline" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
-        <Text className="mt-5 text-center text-sm font-medium text-slate-400">
+        <Text style={{ marginTop: 20, textAlign: 'center', fontSize: 14, fontWeight: '500', color: colors.textMuted }}>
           Zikir çekmek için dairenin içine dokunun
         </Text>
-        <Text className="mt-1 text-center text-xs text-slate-300">
+        <Text style={{ marginTop: 4, textAlign: 'center', fontSize: 12, color: colors.textSecondary, opacity: 0.5 }}>
           Özel zikir eklemek için uzun basın
         </Text>
       </ScrollView>

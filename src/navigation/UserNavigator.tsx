@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
@@ -6,7 +7,7 @@ import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
 import { DhikrScreen } from '@/screens/user';
 import { GamificationScreen } from '@/screens/user';
-import type { UserTabParamList } from './types';
+import type { RootStackParamList, UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { StandardHeader } from '@/components/layout/StandardHeader';
@@ -41,7 +42,7 @@ export default function UserNavigator() {
   const tabBarHeight = 56 + bottomPadding;
 
   return (
-    <View className="flex-1">
+    <View style={{ flex: 1 }}>
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -110,7 +111,9 @@ export default function UserNavigator() {
           options={{
             tabBarLabel: 'Zikir',
             headerShown: true,
-            header: () => <StandardHeader title="Zikir" showBackButton={false} />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Zikir" showBackButton={false} />
+            ),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="apps-outline" size={size} color={color} />
             ),
@@ -131,7 +134,9 @@ export default function UserNavigator() {
           options={{
             tabBarLabel: 'Başarılar',
             headerShown: true,
-            header: () => <StandardHeader title="Başarılar" showBackButton={false} />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Başarılar" showBackButton={false} />
+            ),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="trophy-outline" size={size} color={color} />
             ),

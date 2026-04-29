@@ -12,13 +12,11 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { useThemeStore } from '@/store/theme.store';
 import { setLogoutCallback } from '@/services/api';
 import { useColorScheme } from 'nativewind';
-import { rootNavigationRef } from '@/navigation/rootNavigation';
 
 function AppContent() {
   const isDark = useThemeStore((s) => s.isDark);
   const { setColorScheme } = useColorScheme();
 
-  // Sync NativeWind, Android nav bar with theme store
   useEffect(() => {
     setColorScheme(isDark ? 'dark' : 'light');
     if (Platform.OS === 'android') {
@@ -27,39 +25,8 @@ function AppContent() {
     }
   }, [isDark, setColorScheme]);
 
-  // Capture hidden stack traces for "missing navigation context" errors.
-  useEffect(() => {
-    const original = console.error;
-    console.error = (...args: any[]) => {
-      try {
-        const first = args?.[0];
-        const msg =
-          typeof first === 'string'
-            ? first
-            : first instanceof Error
-              ? first.message
-              : '';
-        if (msg?.includes("Couldn't find a navigation context")) {
-          const err = first instanceof Error ? first : new Error(msg || 'missing nav context');
-          original('NAV_DIAG:missing_context_stack', err.stack);
-        }
-      } catch {}
-      return original(...args);
-    };
-    return () => {
-      console.error = original;
-    };
-  }, []);
-
   return (
-    <NavigationContainer
-      ref={rootNavigationRef}
-      theme={isDark ? DarkTheme : DefaultTheme}
-      onReady={() => {
-        // Runtime stamp to ensure the latest bundle is running.
-        console.log('NAV_DIAG:container_ready:v3');
-      }}
-    >
+    <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
       <AppNavigator />
       <ToastContainer />
       <AlertDialog />
@@ -68,13 +35,11 @@ function AppContent() {
 }
 
 function App() {
-  const logout = useAuthStore((s) => s.logout);
-  const hydrate = useThemeStore((s) => s.hydrate);
+  const logout   = useAuthStore((s) => s.logout);
+  const hydrate  = useThemeStore((s) => s.hydrate);
 
   // Hydrate saved theme from AsyncStorage
-  useEffect(() => {
-    hydrate();
-  }, []);
+  useEffect(() => { hydrate(); }, []);
 
   useEffect(() => {
     setLogoutCallback(logout);
@@ -87,4 +52,4 @@ function App() {
   );
 }
 
-registerRootComponent(App);
+export default App;

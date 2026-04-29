@@ -14,7 +14,7 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>((set, get) => ({
-  isDark: true, // default dark
+  isDark: true,
   headerColor: '#0f766e',
   isHydrated: false,
 

@@ -14,6 +14,7 @@ import { quranService, Surah } from '@/services/quran.service';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useAppTheme } from '@/constants/theme';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahsMain'>;
 
@@ -21,6 +22,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const { colors, isDark } = useAppTheme();
 
   useEffect(() => {
     fetchSurahs();
@@ -55,29 +57,29 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   };
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
-      <View className="px-4 pb-2 pt-4">
-        <View className="flex-row items-center rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm shadow-slate-200">
-          <Ionicons name="search" size={20} color="#94a3b8" />
+    <Screen  safeAreaEdges={['left', 'right']}>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8, paddingTop: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: 16, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingHorizontal: 16, paddingVertical: 12, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }}>
+          <Ionicons name="search" size={20} color={colors.textMuted} />
           <TextInput
             placeholder="Sure arayın"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            className="ml-3 flex-1 font-medium text-slate-800"
-            placeholderTextColor="#94a3b8"
+            style={{ marginLeft: 12, flex: 1, fontSize: 16, fontWeight: '600', color: colors.textPrimary }}
+            placeholderTextColor={colors.textMuted}
           />
           {searchQuery !== '' && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={18} color="#cbd5e1" />
+              <Ionicons name="close-circle" size={18} color={colors.textSecondary} />
             </TouchableOpacity>
           )}
         </View>
       </View>
 
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#0f766e" />
-          <Text className="mt-4 font-medium text-slate-500">Sureler yükleniyor...</Text>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color={colors.teal} />
+          <Text style={{ marginTop: 16, fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>Sureler yükleniyor...</Text>
         </View>
       ) : (
         <ScrollView
@@ -91,35 +93,38 @@ export default function SurahBrowserScreen({ navigation }: Props) {
               layout={Layout.springify()}>
               <TouchableOpacity
                 onPress={() => handleSurahPress(surah)}
-                className="mb-3 flex-row items-center rounded-[24px] border border-slate-50 bg-white p-4 shadow-sm shadow-slate-200">
-                <View className="h-12 w-12 items-center justify-center rounded-2xl bg-primary-50">
-                  <Text className="text-lg font-black text-primary-700">{surah.id}</Text>
+                style={{
+                  marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderRadius: 24,
+                  borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card,
+                  padding: 16, shadowColor: '#000', shadowOpacity: isDark ? 0.3 : 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }
+                }}>
+                <View style={{ height: 48, width: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : colors.tealDim }}>
+                  <Text style={{ fontSize: 18, fontWeight: '900', color: colors.teal }}>{surah.id}</Text>
                 </View>
 
-                <View className="ml-4 flex-1">
-                  <Text className="text-base font-bold text-slate-900">{surah.name} Suresi</Text>
-                  <Text className="mt-0.5 text-xs font-bold uppercase tracking-widest text-slate-400">
+                <View style={{ marginLeft: 16, flex: 1 }}>
+                  <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.textPrimary }}>{surah.name} Suresi</Text>
+                  <Text style={{ marginTop: 2, fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted }}>
                     {surah.verse_count} Ayet
                   </Text>
                 </View>
 
-                <View className="mr-2 items-end">
+                <View style={{ marginRight: 8, alignItems: 'flex-end' }}>
                   <Text
-                    className="text-xl font-bold text-slate-800"
-                    style={{ fontFamily: 'System' }}>
+                    style={{ fontSize: 20, fontWeight: 'bold', color: colors.textPrimary, fontFamily: 'System' }}>
                     {surah.name_arabic}
                   </Text>
                 </View>
 
-                <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+                <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
               </TouchableOpacity>
             </Animated.View>
           ))}
 
           {filteredSurahs.length === 0 && (
-            <View className="items-center justify-center py-20">
-              <Ionicons name="search-outline" size={48} color="#e2e8f0" />
-              <Text className="mt-4 font-medium text-slate-400">Aradığınız sure bulunamadı</Text>
+            <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 80 }}>
+              <Ionicons name="search-outline" size={48} color={colors.textMuted} />
+              <Text style={{ marginTop: 16, fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>Aradığınız sure bulunamadı</Text>
             </View>
           )}
         </ScrollView>

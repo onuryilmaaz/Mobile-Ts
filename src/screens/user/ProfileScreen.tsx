@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/Badge';
 import { UploadOverlay } from '@/components/feedback/UploadOverlay';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
-import { useAlertStore } from '@/store/alert.store';
+import { alert } from '@/store/alert.store';
 import { useThemeStore } from '@/store/theme.store';
 import type { UserProfile } from '@/modules/user/user.types';
 import { Ionicons } from '@expo/vector-icons';
@@ -70,7 +70,6 @@ export default function ProfileScreen({ navigation }: Props) {
   const setUser      = useAuthStore((s) => s.setUser);
   const refreshUser  = useAuthStore((s) => s.refreshUser);
   const user         = useAuthStore((s) => s.user);
-  const alertStore   = useAlertStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const { isDark, toggleTheme } = useThemeStore();
 
@@ -88,9 +87,9 @@ export default function ProfileScreen({ navigation }: Props) {
   const handleTestNotification = async () => {
     const success = await notificationService.sendTestNotification();
     if (success) {
-      alertStore.success('Test Bildirimi', 'Bildirim 1 saniye içinde gelecek!');
+      alert.success('Test Bildirimi', 'Bildirim 1 saniye içinde gelecek!');
     } else {
-      alertStore.error('Hata', 'Bildirim gönderilemedi');
+      alert.error('Hata', 'Bildirim gönderilemedi');
     }
   };
 
@@ -112,12 +111,12 @@ export default function ProfileScreen({ navigation }: Props) {
         }
       } catch (err) {
         console.log(err);
-        alertStore.error('Hata', 'Profil bilgileri alınamadı');
+        alert.error('Hata', 'Profil bilgileri alınamadı');
       } finally {
         setRefreshing(false);
       }
     },
-    [setUser, alertStore]
+    [setUser]
   );
 
   async function handleUpdateProfile() {
@@ -132,10 +131,10 @@ export default function ProfileScreen({ navigation }: Props) {
       await refreshUser();
 
       setIsEditing(false);
-      alertStore.success('Başarılı', 'Profil bilgileriniz güncellendi');
+      alert.success('Başarılı', 'Profil bilgileriniz güncellendi');
     } catch (err) {
       console.log(err);
-      alertStore.error('Hata', 'Profil güncellenemedi');
+      alert.error('Hata', 'Profil güncellenemedi');
     } finally {
       setUpdateLoading(false);
     }
@@ -146,7 +145,7 @@ export default function ProfileScreen({ navigation }: Props) {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!permissionResult.granted) {
-        alertStore.warning('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
+        alert.warning('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
         return;
       }
 
@@ -164,7 +163,7 @@ export default function ProfileScreen({ navigation }: Props) {
       }
     } catch (err) {
       console.log(err);
-      alertStore.error('Hata', 'Resim seçilemedi');
+      alert.error('Hata', 'Resim seçilemedi');
     }
   }
 
@@ -180,14 +179,14 @@ export default function ProfileScreen({ navigation }: Props) {
       } as any);
 
       await userApi.uploadAvatar(formData);
-      alertStore.success('Başarılı', 'Avatar yüklendi');
+      alert.success('Başarılı', 'Avatar yüklendi');
 
       await loadProfile();
       await refreshUser();
       setLocalAvatarUri(null);
     } catch (err) {
       console.log(err);
-      alertStore.error('Hata', 'Avatar yüklenemedi');
+      alert.error('Hata', 'Avatar yüklenemedi');
     } finally {
       setAvatarLoading(false);
     }
@@ -195,13 +194,13 @@ export default function ProfileScreen({ navigation }: Props) {
 
   useEffect(() => {
     loadProfile();
-  }, [loadProfile]);
+  }, []);
 
   const roles = profile?.roles ?? user?.roles ?? [];
   const avatarUrl = localAvatarUri || profile?.avatarUrl || user?.avatarUrl;
 
   return (
-    <Screen className="bg-slate-50" safeAreaEdges={['left', 'right']}>
+    <Screen safeAreaEdges={['left', 'right']}>
       <UploadOverlay visible={avatarLoading} message="Fotoğraf yükleniyor" />
 
       <ScrollView
@@ -215,7 +214,7 @@ export default function ProfileScreen({ navigation }: Props) {
         }>
         <View className="mb-6 items-center">
           <View className="relative">
-            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-primary-100 shadow-sm">
+            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-slate-100 bg-teal-50 dark:border-white/5 dark:bg-teal-500/10">
               {avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
@@ -226,15 +225,15 @@ export default function ProfileScreen({ navigation }: Props) {
               onPress={handlePickImage}
               disabled={avatarLoading}
               activeOpacity={0.8}
-              className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-primary-600 shadow-sm">
+              className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full border-2 border-slate-100 bg-teal-600 dark:border-slate-800 dark:bg-teal-500">
               <Ionicons name="camera" size={18} color="white" />
             </TouchableOpacity>
           </View>
 
-          <Text className="mt-4 text-2xl font-bold text-slate-900">
+          <Text className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
             {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
           </Text>
-          <Text className="text-slate-500">{profile?.email ?? user?.email}</Text>
+          <Text className="text-slate-500 dark:text-slate-400">{profile?.email ?? user?.email}</Text>
 
           <View className="mt-4 flex-row flex-wrap gap-2">
             {roles.map((role) => (
@@ -247,7 +246,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
         <Card className="mx-4 mb-4">
           <View className="mb-4 flex-row items-center justify-between">
-            <Text className="text-lg font-bold text-slate-900">Kişisel Bilgiler</Text>
+            <Text className="text-lg font-bold text-slate-900 dark:text-white">Kişisel Bilgiler</Text>
             {!isEditing && (
               <TouchableOpacity onPress={() => setIsEditing(true)}>
                 <Ionicons name="pencil" size={20} color="#0f766e" />
@@ -297,27 +296,27 @@ export default function ProfileScreen({ navigation }: Props) {
             </>
           ) : (
             <View className="gap-3">
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3">
-                <Ionicons name="person-outline" size={20} color="#64748b" />
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+                <Ionicons name="person-outline" size={20} color={isDark ? "#94a3b8" : "#64748b"} />
                 <View>
-                  <Text className="text-xs text-slate-500">Ad Soyad</Text>
-                  <Text className="font-medium text-slate-900">
+                  <Text className="text-xs text-slate-500 dark:text-slate-400">Ad Soyad</Text>
+                  <Text className="text-sm font-medium text-slate-900 dark:text-white">
                     {profile?.firstName || '—'} {profile?.lastName || ''}
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3">
-                <Ionicons name="call-outline" size={20} color="#64748b" />
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+                <Ionicons name="call-outline" size={20} color={isDark ? "#94a3b8" : "#64748b"} />
                 <View>
-                  <Text className="text-xs text-slate-500">Telefon</Text>
-                  <Text className="font-medium text-slate-900">{profile?.phone || '—'}</Text>
+                  <Text className="text-xs text-slate-500 dark:text-slate-400">Telefon</Text>
+                  <Text className="text-sm font-medium text-slate-900 dark:text-white">{profile?.phone || '—'}</Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3">
-                <Ionicons name="mail-outline" size={20} color="#64748b" />
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+                <Ionicons name="mail-outline" size={20} color={isDark ? "#94a3b8" : "#64748b"} />
                 <View>
-                  <Text className="text-xs text-slate-500">E-posta</Text>
-                  <Text className="font-medium text-slate-900">
+                  <Text className="text-xs text-slate-500 dark:text-slate-400">E-posta</Text>
+                  <Text className="text-sm font-medium text-slate-900 dark:text-white">
                     {profile?.email || user?.email || '—'}
                   </Text>
                 </View>
@@ -326,19 +325,19 @@ export default function ProfileScreen({ navigation }: Props) {
           )}
         </Card>
 
-        {/* Test Notification Card */}
         {user?.roles.includes('admin') && (
           <Card className="mx-4 mb-4">
             <View className="flex-row items-center justify-between">
-              <View className="flex-1">
-                <Text className="mb-1 text-lg font-bold text-slate-900">Bildirim Testi</Text>
-                <Text className="text-xs text-slate-500">
+              <View className="flex-1 pr-2">
+                <Text className="mb-1 text-base font-bold text-slate-900 dark:text-white">Bildirim Testi</Text>
+                <Text className="text-xs text-slate-500 dark:text-slate-400">
                   Bildirimlerin çalışıp çalışmadığını test edin
                 </Text>
               </View>
               <TouchableOpacity
                 onPress={handleTestNotification}
-                className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80">
+                className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80"
+                activeOpacity={0.8}>
                 <View className="flex-row items-center gap-2">
                   <Ionicons name="notifications" size={16} color="#fff" />
                   <Text className="text-sm font-semibold text-white">Test Et</Text>
@@ -348,110 +347,66 @@ export default function ProfileScreen({ navigation }: Props) {
           </Card>
         )}
         {/* ── TEMA SEÇİCİ ── */}
-        <View style={{
-          marginHorizontal: 16, marginBottom: 16,
-          borderRadius: 20,
-          borderWidth: 1,
-          borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
-          backgroundColor: isDark ? '#111827' : '#ffffff',
-          overflow: 'hidden',
-        }}>
+        <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/5 dark:bg-[#111827]">
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               toggleTheme();
             }}
             activeOpacity={0.85}
-            style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+            className="flex-row items-center p-4">
 
             {/* Icon container */}
-            <View style={{
-              height: 44, width: 44, borderRadius: 14,
-              alignItems: 'center', justifyContent: 'center',
-              backgroundColor: isDark ? 'rgba(246,195,88,0.15)' : '#fef3c7',
-              marginRight: 14,
-            }}>
-              <Text style={{ fontSize: 22 }}>{isDark ? '🌙' : '☀️'}</Text>
+            <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-500/10">
+              <Text className="text-xl">{isDark ? '🌙' : '☀️'}</Text>
             </View>
 
-            <View style={{ flex: 1 }}>
-              <Text style={{
-                fontSize: 15, fontWeight: '700',
-                color: isDark ? '#F0F4FF' : '#0f172a',
-              }}>
+            <View className="flex-1">
+              <Text className="text-[15px] font-bold text-slate-900 dark:text-white">
                 Tema
               </Text>
-              <Text style={{
-                fontSize: 12, marginTop: 2,
-                color: isDark ? 'rgba(240,244,255,0.45)' : '#64748b',
-              }}>
+              <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                 {isDark ? 'Karanlık tema aktif' : 'Aydınlık tema aktif'}
               </Text>
             </View>
 
             {/* Custom theme toggle */}
-            <View style={{
-              flexDirection: 'row', alignItems: 'center',
-              borderRadius: 99, padding: 3,
-              backgroundColor: isDark ? 'rgba(20,184,166,0.20)' : '#f1f5f9',
-              borderWidth: 1,
-              borderColor: isDark ? 'rgba(20,184,166,0.35)' : '#e2e8f0',
-              gap: 2,
-            }}>
+            <View className="flex-row items-center gap-0.5 rounded-full border border-slate-200 bg-slate-100 p-1 dark:border-teal-500/30 dark:bg-teal-500/20">
               {/* ☀️ light */}
-              <View style={{
-                width: 32, height: 32, borderRadius: 99,
-                alignItems: 'center', justifyContent: 'center',
-                backgroundColor: !isDark ? '#ffffff' : 'transparent',
-                shadowColor: '#000', shadowOpacity: !isDark ? 0.12 : 0,
-                shadowRadius: 4,
-              }}>
-                <Ionicons name="sunny" size={16}
-                  color={!isDark ? '#d97706' : 'rgba(240,244,255,0.30)'} />
+              <View className={`h-8 w-8 items-center justify-center rounded-full ${!isDark ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
+                <Ionicons name="sunny" size={16} color={!isDark ? '#d97706' : 'rgba(255,255,255,0.30)'} />
               </View>
               {/* 🌙 dark */}
-              <View style={{
-                width: 32, height: 32, borderRadius: 99,
-                alignItems: 'center', justifyContent: 'center',
-                backgroundColor: isDark ? '#14b8a6' : 'transparent',
-                shadowColor: '#14b8a6', shadowOpacity: isDark ? 0.4 : 0,
-                shadowRadius: 6,
-              }}>
-                <Ionicons name="moon" size={16}
-                  color={isDark ? '#ffffff' : 'rgba(0,0,0,0.25)'} />
+              <View className={`h-8 w-8 items-center justify-center rounded-full ${isDark ? 'bg-teal-500 shadow-sm shadow-teal-500/40' : 'bg-transparent'}`}>
+                <Ionicons name="moon" size={16} color={isDark ? '#ffffff' : 'rgba(0,0,0,0.25)'} />
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <Card className="mx-4">
-          <Text className="mb-4 text-lg font-bold text-slate-900">Ayarlar</Text>
+        <Card className="mx-4 mb-8">
+          <Text className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Ayarlar</Text>
 
           <View className="gap-2">
             {settingsItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                className={`flex-row items-center justify-between rounded-xl p-4 ${
-                  item.danger ? 'bg-red-50' : 'bg-slate-50'
-                }`}
+                className={`flex-row items-center justify-between rounded-xl p-4 ${item.danger ? 'bg-red-50 dark:bg-red-500/10' : 'bg-slate-50 dark:bg-white/5'}`}
                 onPress={() => navigation.navigate(item.screen)}>
                 <View className="flex-1 flex-row items-center gap-3">
                   <View
-                    className={`h-10 w-10 items-center justify-center rounded-full ${
-                      item.danger ? 'bg-red-100' : 'bg-white'
-                    }`}>
+                    className={`h-10 w-10 items-center justify-center rounded-full ${item.danger ? 'bg-red-100 dark:bg-red-500/20' : 'bg-white dark:bg-white/5'}`}>
                     <Ionicons
                       name={item.icon}
                       size={20}
-                      color={item.danger ? '#dc2626' : '#64748b'}
+                      color={item.danger ? '#dc2626' : (isDark ? '#94a3b8' : '#64748b')}
                     />
                   </View>
                   <View className="flex-1">
-                    <Text
-                      className={`font-medium ${item.danger ? 'text-red-700' : 'text-slate-900'}`}>
+                    <Text className={`font-medium ${item.danger ? 'text-red-600 dark:text-red-400' : 'text-slate-900 dark:text-white'}`}>
                       {item.title}
                     </Text>
-                    <Text className={`text-xs ${item.danger ? 'text-red-500' : 'text-slate-500'}`}>
+                    <Text className={`text-xs ${item.danger ? 'text-red-500 dark:text-red-400/70' : 'text-slate-500 dark:text-slate-400'}`}>
                       {item.subtitle}
                     </Text>
                   </View>
@@ -459,7 +414,7 @@ export default function ProfileScreen({ navigation }: Props) {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color={item.danger ? '#fca5a5' : '#94a3b8'}
+                  color={item.danger ? '#fca5a5' : (isDark ? 'rgba(255,255,255,0.3)' : '#94a3b8')}
                 />
               </TouchableOpacity>
             ))}

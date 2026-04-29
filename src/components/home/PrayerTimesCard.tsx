@@ -3,7 +3,6 @@ import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-n
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '@/navigation/types';
 import { prayerService } from '@/services/prayer.service';
@@ -12,12 +11,13 @@ import { useThemeStore } from '@/store/theme.store';
 import { getDistrictById, getStateById } from '@/constants/locations';
 import type { PrayerTimeData } from '@/types/prayer';
 import { useAppTheme } from '@/constants/theme';
+import { rootNavigate } from '@/navigation/rootNavigation';
 
 const STORAGE_STATE_ID_KEY    = 'SELECTED_STATE_ID';
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 const DEFAULT_DISTRICT_ID     = '9654';
 
-type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList, any>;
 
 const PRAYER_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   İmsak:  'moon-outline',
@@ -47,9 +47,12 @@ const NEXT_TO_CURRENT: Record<string, string> = {
   İmsak:  'Yatsı',
 };
 
-export function PrayerTimesCard() {
+type PrayerTimesCardProps = {
+  focusNonce: number;
+};
+
+export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const { colors, isDark } = useAppTheme();
-  const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading]                       = useState(false);
   const [data, setData]                             = useState<PrayerTimeData | null>(null);
   const [selectedDistrictId, setSelectedDistrictId] = useState<string>(DEFAULT_DISTRICT_ID);
@@ -72,9 +75,17 @@ export function PrayerTimesCard() {
     initNotifications();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => { loadDistrict(); }, [])
-  );
+  // Reload persisted location when parent screen regains focus.
+  useEffect(() => {
+    loadDistrict();
+  }, [focusNonce]);
+
+  const openLocationSelection = () => {
+    rootNavigate('UserTabs', {
+      screen: 'Home',
+      params: { screen: 'LocationSelection' },
+    } as any);
+  };
 
   const initNotifications = async () => {
     const enabled = await notificationService.isEnabled();
@@ -394,7 +405,7 @@ export function PrayerTimesCard() {
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.navigate('LocationSelection');
+            openLocationSelection();
           }}
           style={{
             flexDirection: 'row', alignItems: 'center', padding: 14,

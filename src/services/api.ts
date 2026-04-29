@@ -110,7 +110,7 @@ api.interceptors.response.use(
     }
 
     if (status === 401) {
-      if (requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh')) {
+      if (requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh') || requestUrl.includes('/auth/logout')) {
         return Promise.reject(error);
       }
 
@@ -150,6 +150,7 @@ api.interceptors.response.use(
           }
           isLoggingOut = false;
         }
+        return Promise.reject(error);
       }
     }
 

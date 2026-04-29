@@ -25,8 +25,13 @@ export default function ProfileNavigator() {
           name="ProfileMain"
           component={ProfileScreen}
           options={{
-            header: () => (
-              <StandardHeader title="Profil" showBackButton={false} showProfile={false} />
+            header: ({ navigation }) => (
+              <StandardHeader
+                navigation={navigation}
+                title="Profil"
+                showBackButton={false}
+                showProfile={false}
+              />
             ),
           }}
         />
@@ -34,28 +39,36 @@ export default function ProfileNavigator() {
           name="ChangePassword"
           component={ChangePasswordScreen}
           options={{
-            header: () => <StandardHeader title="Şifre Değiştir" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Şifre Değiştir" />
+            ),
           }}
         />
         <Stack.Screen
           name="ChangeEmail"
           component={ChangeEmailScreen}
           options={{
-            header: () => <StandardHeader title="E-posta Değiştir" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="E-posta Değiştir" />
+            ),
           }}
         />
         <Stack.Screen
           name="Sessions"
           component={SessionsScreen}
           options={{
-            header: () => <StandardHeader title="Oturumlar" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Oturumlar" />
+            ),
           }}
         />
         <Stack.Screen
           name="Account"
           component={AccountScreen}
           options={{
-            header: () => <StandardHeader title="Hesap" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Hesap" />
+            ),
           }}
         />
       </Stack.Navigator>

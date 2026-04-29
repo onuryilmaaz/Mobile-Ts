@@ -1,27 +1,17 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import type { CompositeNavigationProp } from '@react-navigation/native';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { HomeStackParamList, UserTabParamList } from '@/navigation/types';
-
-type NavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<HomeStackParamList>,
-  BottomTabNavigationProp<UserTabParamList>
->;
+import { rootNavigate } from '@/navigation/rootNavigation';
 
 export function PrayerSurahsCard() {
-  const navigation = useNavigation<NavigationProp>();
 
   return (
     <View className="mx-4 mb-6">
       <TouchableOpacity
         onPress={() => {
-          const parent = navigation.getParent();
-          if (parent) {
-            (parent as any).navigate('Surahs', { screen: 'SurahsMain' });
-          }
+          rootNavigate('UserTabs', {
+            screen: 'Surahs',
+            params: { screen: 'SurahsMain' },
+          } as any);
         }}
         activeOpacity={0.8}
         className="overflow-hidden rounded-3xl border border-teal-100 bg-white shadow-xl shadow-teal-900/10">

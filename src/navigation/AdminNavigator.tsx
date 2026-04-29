@@ -19,28 +19,36 @@ export default function AdminNavigator() {
           name="Dashboard"
           component={DashboardScreen}
           options={{
-            header: () => <StandardHeader title="Admin Paneli" showBackButton={false} />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Admin Paneli" showBackButton={false} />
+            ),
           }}
         />
         <Stack.Screen
           name="Users"
           component={UsersScreen}
           options={{
-            header: () => <StandardHeader title="Kullanıcılar" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Kullanıcılar" />
+            ),
           }}
         />
         <Stack.Screen
           name="UserDetail"
           component={UserDetailScreen}
           options={{
-            header: () => <StandardHeader title="Kullanıcı Detayı" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Kullanıcı Detayı" />
+            ),
           }}
         />
         <Stack.Screen
           name="Roles"
           component={RolesScreen}
           options={{
-            header: () => <StandardHeader title="Roller" />,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Roller" />
+            ),
           }}
         />
       </Stack.Navigator>

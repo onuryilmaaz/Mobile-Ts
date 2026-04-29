@@ -6,7 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { prayerService } from '@/services/prayer.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
+import type { RootStackParamList } from '@/navigation/types';
 import { useAppTheme } from '@/constants/theme';
 import Animated, {
   FadeIn,

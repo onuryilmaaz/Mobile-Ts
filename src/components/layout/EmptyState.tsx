@@ -11,11 +11,11 @@ interface EmptyStateProps {
 export function EmptyState({ icon = 'document-outline', title, message, action }: EmptyStateProps) {
   return (
     <View className="items-center justify-center px-4 py-12">
-      <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+      <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-white/5">
         <Ionicons name={icon} size={32} color="#94a3b8" />
       </View>
-      <Text className="mb-2 text-lg font-semibold text-slate-900">{title}</Text>
-      {message && <Text className="text-center text-sm text-slate-500">{message}</Text>}
+      <Text className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">{title}</Text>
+      {message && <Text className="text-center text-sm text-slate-500 dark:text-slate-400">{message}</Text>}
       {action && <View className="mt-4">{action}</View>}
     </View>
   );
