@@ -386,17 +386,31 @@ export default function DhikrScreen() {
         contentContainerStyle={{ paddingBottom: 40 }}>
 
         <View className="mx-4 mt-4 flex-row gap-3">
-          <View className="flex-1 items-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 py-3 shadow-sm dark:border-slate-800">
+          <View 
+            className={`flex-1 items-center rounded-2xl border py-3 shadow-sm ${
+              isDark 
+                ? 'border-slate-800 bg-slate-800' 
+                : 'border-slate-200 bg-white'
+            }`}>
             <Text className="text-xl font-black text-teal-700 dark:text-teal-400">{todayCount.toLocaleString()}</Text>
             <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Bugün</Text>
           </View>
-          <View className="flex-1 items-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 py-3 shadow-sm dark:border-slate-800">
+          <View 
+            className={`flex-1 items-center rounded-2xl border py-3 shadow-sm ${
+              isDark 
+                ? 'border-slate-800 bg-slate-800' 
+                : 'border-slate-200 bg-white'
+            }`}>
             <Text className="text-xl font-black text-slate-900 dark:text-white">{totalSessions.toLocaleString()}</Text>
             <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Toplam</Text>
           </View>
           <TouchableOpacity
             onPress={() => setShowHistory(true)}
-            className="flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 py-3 shadow-sm dark:border-slate-800">
+            className={`flex-1 items-center justify-center rounded-2xl border py-3 shadow-sm ${
+              isDark 
+                ? 'border-slate-800 bg-slate-800' 
+                : 'border-slate-200 bg-white'
+            }`}>
             <Ionicons name="time-outline" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
             <Text className="mt-1 text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Geçmiş</Text>
           </TouchableOpacity>
@@ -448,7 +462,11 @@ export default function DhikrScreen() {
           <TouchableOpacity activeOpacity={1} onPress={handlePress} className="items-center justify-center">
             <Animated.View
               style={[{ width: CIRCLE_SIZE, height: CIRCLE_SIZE, borderRadius: CIRCLE_SIZE / 2 }, animatedStyle]}
-              className="items-center justify-center rounded-full border-[6px] border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl dark:shadow-none shadow-teal-600/20">
+              className={`items-center justify-center rounded-full border-[6px] shadow-2xl shadow-teal-600/20 ${
+                isDark 
+                  ? 'border-slate-800 bg-slate-800 shadow-none' 
+                  : 'border-slate-100 bg-white'
+              }`}>
               <CircularProgressRing progress={progressFraction} color={isDark ? '#14b8a6' : '#0f766e'} />
 
               <View className="items-center">
@@ -478,7 +496,9 @@ export default function DhikrScreen() {
             </Animated.View>
           </TouchableOpacity>
 
-          <View className="mt-5 flex-row items-center gap-2 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 shadow-sm dark:shadow-none">
+          <View className={`mt-5 flex-row items-center gap-2 rounded-full border px-4 py-2 shadow-sm ${
+            isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
+          }`}>
             <Ionicons name="flag" size={14} color={isDark ? '#14b8a6' : '#0f766e'} />
             <Text className="text-sm font-black text-teal-700 dark:text-teal-400">Hedef: {target}</Text>
           </View>

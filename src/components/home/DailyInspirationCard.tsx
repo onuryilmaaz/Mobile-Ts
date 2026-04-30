@@ -75,7 +75,10 @@ export function DailyInspirationCard() {
 
   if (!current && loading) {
     return (
-      <View className="mx-4 mb-6 items-center justify-center rounded-[32px] border border-slate-200 bg-white p-12 dark:border-slate-800 dark:bg-slate-900">
+      <View 
+        className={`mx-4 mb-6 items-center justify-center rounded-[32px] border p-12 ${
+          isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
+        }`}>
         <ActivityIndicator color={isDark ? '#14b8a6' : '#0f766e'} />
       </View>
     );
@@ -87,7 +90,9 @@ export function DailyInspirationCard() {
     <View className="mx-4 mb-6">
       <Animated.View
         layout={Layout.springify()}
-        className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+        className={`overflow-hidden rounded-[32px] border shadow-xl ${
+          isDark ? 'border-slate-700 bg-slate-800 shadow-none' : 'border-slate-200 bg-white shadow-black/5'
+        }`}>
         
         <View className="flex-row items-center justify-between px-6 pt-6">
           <View className="flex-row items-center gap-2">

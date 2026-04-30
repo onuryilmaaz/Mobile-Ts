@@ -30,8 +30,11 @@ const PRAYER_COLORS: Record<string, string> = {
 const DAY_LABELS: Record<number, string> = { 0: 'Paz', 1: 'Pts', 2: 'Sal', 3: 'Çar', 4: 'Per', 5: 'Cum', 6: 'Cts' };
 
 function StatCard({ icon, label, value, color, twBg }: { icon: any; label: string; value: string | number; color: string; twBg: string }) {
+  const { isDark } = useThemeStore();
   return (
-    <View className="mx-1.5 flex-1 items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <View 
+      className="mx-1.5 flex-1 items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+      style={{ backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
       <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${twBg}`}>
         <Ionicons name={icon} size={20} color={color} />
       </View>
@@ -120,7 +123,12 @@ export default function StatsScreen() {
         </View>
 
         {weeklyData && (
-          <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <View 
+            className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
+              isDark 
+                ? 'border-slate-800 bg-slate-800' 
+                : 'border-slate-200 bg-white'
+            }`}>
             <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Haftalık Namaz Grafiği</Text>
             <BarChart
               data={{

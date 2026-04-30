@@ -57,16 +57,19 @@ export function StandardHeader({
 
   return (
     <View
-      className="w-full justify-center border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-slate-800"
       style={{
         paddingTop: finalStatusBarHeight,
         paddingBottom: 0,
         paddingHorizontal: 16,
         height: totalHeight,
+        backgroundColor: isDark ? '#0f172a' : '#ffffff',
       }}>
-      {/* Subtle glow for dark mode */}
       {isDark && (
-        <View className="pointer-events-none absolute inset-0 bg-teal-500/5" style={{ height: totalHeight }} />
+        <View
+          className="pointer-events-none absolute inset-0 bg-teal-500/5"
+          style={{ height: totalHeight }}
+        />
       )}
 
       <View className="flex-row items-center justify-between">
@@ -80,7 +83,9 @@ export function StandardHeader({
               className="flex-row items-center self-start rounded-full bg-black/5 py-2 pl-1.5 pr-3 dark:bg-white/5"
               activeOpacity={0.7}>
               <Ionicons name="chevron-back" size={20} color={isDark ? '#F0F4FF' : '#0f172a'} />
-              <Text className="ml-0.5 text-sm font-bold text-slate-900 dark:text-slate-100">Ana Sayfa</Text>
+              <Text className="ml-0.5 text-sm font-bold text-slate-900 dark:text-slate-100">
+                Ana Sayfa
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -99,7 +104,7 @@ export function StandardHeader({
           ) : showProfile ? (
             <TouchableOpacity
               onPress={handleProfilePress}
-              className="h-[42px] w-[42px] items-center justify-center overflow-hidden rounded-[14px] border border-teal-600/20 bg-teal-600/5 dark:border-teal-500/35 dark:bg-teal-500/10">
+              className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-teal-600 bg-teal-600/5 dark:border-white/10 dark:bg-white/5">
               {isAuthenticated && avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (

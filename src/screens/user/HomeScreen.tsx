@@ -104,7 +104,7 @@ export default function HomeScreen({ navigation }: Props) {
                 let borderClass = 'border-slate-200';
                 let darkBorderClass = 'dark:border-slate-800';
                 let bgClass = 'bg-white';
-                let darkBgClass = 'dark:bg-slate-900';
+                let darkBgClass = 'dark:bg-slate-800';
                 
                 if (action.twColor === 'indigo') {
                   darkBorderClass = 'dark:border-indigo-500/35';

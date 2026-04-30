@@ -93,7 +93,12 @@ export function PrayerTrackerCard() {
   };
 
   return (
-    <View className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+    <View 
+      className="mx-4 mb-4 overflow-hidden rounded-[28px] border shadow-xl"
+      style={{
+        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+        borderColor: isDark ? '#334155' : '#e2e8f0',
+      }}>
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -105,13 +110,15 @@ export function PrayerTrackerCard() {
       <TouchableOpacity
         activeOpacity={isAuthenticated ? 1 : 0.85}
         onPress={() => !isAuthenticated && setShowAuthModal(true)}>
-        <View className="bg-teal-700 px-5 pb-5 pt-5 dark:bg-[#0c4a3e]">
+        <View 
+          className="px-5 pb-5 pt-5"
+          style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
           {/* Glow orb */}
-          <View className="absolute -right-[30px] -top-[30px] h-[100px] w-[100px] rounded-full bg-teal-500/20" />
+          <View className="absolute -right-[30px] -top-[30px] h-[100px] w-[100px] rounded-full" style={{ backgroundColor: isDark ? 'rgba(45, 212, 191, 0.08)' : 'rgba(255, 255, 255, 0.1)' }} />
 
           <View className="mb-3.5 flex-row items-center justify-between">
             <View>
-              <Text className="text-[9px] font-black uppercase tracking-widest text-teal-100 dark:text-teal-500/80">
+              <Text className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-teal-400' : 'text-teal-100'}`}>
                 Günlük İlerleme
               </Text>
               <Text className="mt-0.5 text-[22px] font-black text-white">
@@ -159,7 +166,7 @@ export function PrayerTrackerCard() {
                       ? isKazaLog
                         ? 'border-orange-500/50 bg-orange-500/10 shadow-sm shadow-orange-500/30'
                         : 'border-teal-500/50 bg-teal-500/10 shadow-sm shadow-teal-500/30'
-                      : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50'
+                      : (isDark ? 'border-slate-700 bg-slate-700/30' : 'border-slate-200 bg-slate-50')
                   }`}>
                     {/* KAZA badge */}
                     {(isKazaLog || (isAuthenticated && !isTracked && isExpired)) && (
@@ -198,7 +205,7 @@ export function PrayerTrackerCard() {
                     <View className={`h-[38px] w-[38px] items-center justify-center rounded-full border ${
                       isTracked
                         ? isKazaLog ? 'border-orange-500/40 bg-orange-500/25' : 'border-teal-500/35 bg-teal-500/20'
-                        : 'border-slate-200 bg-white dark:border-white/5 dark:bg-white/5'
+                        : (isDark ? 'border-slate-700 bg-slate-700/30' : 'border-slate-200 bg-white')
                     }`}>
                       {isLoading && !isTracked ? (
                         <ActivityIndicator size="small" color="#14b8a6" />

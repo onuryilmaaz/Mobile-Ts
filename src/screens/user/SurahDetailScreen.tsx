@@ -63,7 +63,7 @@ export default function SurahDetailScreen({ route }: Props) {
             <Animated.View
               key={verse.id}
               entering={FadeInUp.delay(index * 50).duration(400)}
-              className="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-white/5 dark:bg-[#111827] shadow-black/5 dark:shadow-black/30">
+              className="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 shadow-black/5 dark:shadow-none">
               <View className="flex-row items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-3 dark:border-white/5 dark:bg-white/5">
                 <View className="h-6 w-6 items-center justify-center rounded-full bg-teal-600 dark:bg-teal-500">
                   <Text className="text-xs font-black text-white">{verse.verse_number}</Text>

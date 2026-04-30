@@ -29,9 +29,14 @@ export function ReligiousDaysCard() {
 
   return (
     <View className="mx-4 mb-6">
-      <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+      <View 
+        className={`overflow-hidden rounded-3xl border shadow-xl ${
+          isDark ? 'border-slate-700 bg-slate-800 shadow-none' : 'border-slate-200 bg-white shadow-black/5'
+        }`}>
         
-        <View className="bg-teal-700 px-6 py-4 dark:bg-teal-500/15">
+        <View 
+          className="px-6 py-4"
+          style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <View className="rounded-full bg-white/20 p-1.5 dark:bg-teal-500/20">
@@ -39,7 +44,7 @@ export function ReligiousDaysCard() {
               </View>
               <Text className="text-base font-bold text-white">Hicri Takvim</Text>
             </View>
-            <View className="rounded-full bg-white/20 px-3 py-1 dark:bg-white/10">
+            <View className={`rounded-full px-3 py-1 ${isDark ? 'bg-white/10' : 'bg-white/20'}`}>
               <Text className="text-xs font-bold uppercase tracking-widest text-white">
                 {todayHijri}
               </Text>
@@ -97,8 +102,13 @@ export function ReligiousDaysCard() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
         <BlurView intensity={30} tint="dark" className="flex-1 items-center justify-center px-4">
-          <View className="max-h-[80%] w-full overflow-hidden rounded-[40px] bg-white shadow-2xl dark:bg-slate-900">
-            <View className="flex-row items-center justify-between bg-teal-700 px-6 py-6 dark:bg-[#0c4a3e]">
+          <View 
+            className={`max-h-[80%] w-full overflow-hidden rounded-[40px] shadow-2xl ${
+              isDark ? 'bg-slate-900' : 'bg-white'
+            }`}>
+            <View 
+              className="flex-row items-center justify-between px-6 py-6"
+              style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
               <View>
                 <Text className="text-2xl font-bold text-white">2026 Dini Günler</Text>
                 <Text className="mt-1 text-xs text-teal-100 dark:text-teal-500/80">Önemli tarihler ve kandiller</Text>
@@ -118,8 +128,8 @@ export function ReligiousDaysCard() {
                     key={day.id}
                     className={`mb-3 flex-row items-center rounded-2xl border p-4 ${
                       isPast 
-                        ? 'border-slate-100 bg-slate-50 opacity-60 dark:border-slate-800 dark:bg-slate-800/50' 
-                        : 'border-teal-100 bg-white shadow-sm dark:border-teal-500/30 dark:bg-slate-900'
+                        ? (isDark ? 'border-slate-800 bg-slate-800/50 opacity-60' : 'border-slate-100 bg-slate-50 opacity-60')
+                        : (isDark ? 'border-teal-500/30 bg-slate-800 shadow-sm' : 'border-teal-100 bg-white shadow-sm')
                     }`}>
                     <View
                       className={`h-12 w-12 items-center justify-center rounded-2xl ${

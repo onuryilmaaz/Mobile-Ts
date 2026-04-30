@@ -103,39 +103,41 @@ export default function DashboardScreen({ navigation }: Props) {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => loadData()} />}
         contentContainerStyle={{ paddingBottom: 40 }}>
         {stats?.users && (
-          <Card className="mx-4 my-4">
+          <Card 
+            className={`mx-4 my-4`} 
+            style={{ backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
             <Text className="mb-3 text-base font-bold text-slate-900 dark:text-white">Özet İstatistikler</Text>
             <View className="flex-row flex-wrap gap-3">
-              <View className="min-w-[45%] flex-1 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+              <View className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-slate-700 bg-slate-700/30' : 'bg-slate-50 border-transparent'}`}>
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="people" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
-                  <Text className="text-xs text-slate-500 dark:text-slate-400">Toplam Kullanıcı</Text>
+                  <Text className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Toplam Kullanıcı</Text>
                 </View>
-                <Text className="text-xl font-bold text-slate-900 dark:text-white">{stats.users.total || 0}</Text>
+                <Text className={`text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{stats.users.total || 0}</Text>
               </View>
-              <View className="min-w-[45%] flex-1 rounded-xl bg-green-50 p-3 dark:bg-green-500/10">
+              <View className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-green-500/20 bg-green-500/10' : 'bg-green-50 border-transparent'}`}>
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="person" size={16} color="#16a34a" />
-                  <Text className="text-xs text-slate-500 dark:text-slate-400">Aktif</Text>
+                  <Text className={`text-xs font-bold ${isDark ? 'text-green-500/70' : 'text-slate-500'}`}>Aktif</Text>
                 </View>
-                <Text className="text-xl font-bold text-green-700 dark:text-green-500">{stats.users.active || 0}</Text>
+                <Text className={`text-xl font-black ${isDark ? 'text-green-500' : 'text-green-700'}`}>{stats.users.active || 0}</Text>
               </View>
-              <View className="min-w-[45%] flex-1 rounded-xl bg-slate-100 p-3 dark:bg-white/5">
+              <View className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-slate-700 bg-slate-700/30' : 'bg-slate-100 border-transparent'}`}>
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="person-outline" size={16} color="#64748b" />
-                  <Text className="text-xs text-slate-500 dark:text-slate-400">Pasif</Text>
+                  <Text className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Pasif</Text>
                 </View>
-                <Text className="text-xl font-bold text-slate-600 dark:text-slate-400">
+                <Text className={`text-xl font-black ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                   {stats.users.inactive || 0}
                 </Text>
               </View>
               {stats.sessions && (
-                <View className="min-w-[45%] flex-1 rounded-xl bg-purple-50 p-3 dark:bg-purple-500/10">
+                <View className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-purple-500/20 bg-purple-500/10' : 'bg-purple-50 border-transparent'}`}>
                   <View className="mb-1 flex-row items-center gap-2">
                     <Ionicons name="time" size={16} color="#9333ea" />
-                    <Text className="text-xs text-slate-500 dark:text-slate-400">Aktif Oturum</Text>
+                    <Text className={`text-xs font-bold ${isDark ? 'text-purple-400' : 'text-slate-500'}`}>Aktif Oturum</Text>
                   </View>
-                  <Text className="text-xl font-bold text-purple-700 dark:text-purple-400">
+                  <Text className={`text-xl font-black ${isDark ? 'text-purple-400' : 'text-purple-700'}`}>
                     {stats.sessions.active || 0}
                   </Text>
                 </View>
@@ -144,13 +146,17 @@ export default function DashboardScreen({ navigation }: Props) {
           </Card>
         )}
 
-        <Card className="mx-4 mb-4">
+        <Card 
+          className="mx-4 mb-4"
+          style={{ backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
           <Text className="mb-3 text-base font-bold text-slate-900 dark:text-white">Yönetim</Text>
           <View className="gap-2">
             {menuItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                className="flex-row items-center justify-between rounded-xl bg-slate-50 p-4 dark:bg-white/5"
+                className={`flex-row items-center justify-between rounded-xl border p-4 shadow-sm ${
+                  isDark ? 'border-slate-700 bg-slate-700/40' : 'border-slate-100 bg-slate-50'
+                }`}
                 activeOpacity={0.7}
                 onPress={() => navigation.navigate(item.screen as any)}>
                 <View className="flex-1 flex-row items-center gap-3">
@@ -160,8 +166,8 @@ export default function DashboardScreen({ navigation }: Props) {
                     <Ionicons name={item.icon} size={20} color={item.iconColor} />
                   </View>
                   <View className="flex-1">
-                    <Text className="font-medium text-slate-900 dark:text-white">{item.title}</Text>
-                    <Text className="text-xs text-slate-500 dark:text-slate-400">{item.subtitle}</Text>
+                    <Text className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.title}</Text>
+                    <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{item.subtitle}</Text>
                   </View>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={isDark ? "rgba(255,255,255,0.3)" : "#94a3b8"} />

@@ -105,35 +105,43 @@ export function GamificationScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}>
 
         <View className="px-6 pb-4 pt-6">
-          <View className="flex-row justify-between rounded-[32px] bg-teal-700 p-5 shadow-lg shadow-teal-900/20 dark:bg-teal-900 dark:shadow-none">
+          <View 
+            className={`flex-row justify-between rounded-[32px] p-5 shadow-lg ${
+              isDark ? 'border border-slate-700 bg-slate-800' : 'bg-teal-700 shadow-teal-900/20'
+            }`}>
             <View className="flex-1 items-center">
-              <View className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20">
+              <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${isDark ? 'bg-amber-500/10' : 'bg-white/20'}`}>
                 <Ionicons name="star" size={20} color="#fbbf24" />
               </View>
-              <Text className="text-lg font-black text-white">{stats?.total_points || 0}</Text>
-              <Text className="text-[9px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">Puan</Text>
+              <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-white'}`}>{stats?.total_points || 0}</Text>
+              <Text className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? 'text-teal-400' : 'text-teal-100'}`}>Puan</Text>
             </View>
-            <View className="h-10 w-[1px] self-center bg-white/10" />
+            <View className={`h-10 w-[1px] self-center ${isDark ? 'bg-slate-700' : 'bg-white/10'}`} />
             <View className="flex-1 items-center">
-              <View className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20">
+              <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${isDark ? 'bg-rose-500/10' : 'bg-white/20'}`}>
                 <Ionicons name="flame" size={20} color="#fb7185" />
               </View>
-              <Text className="text-lg font-black text-white">{stats?.current_streak || 0}</Text>
-              <Text className="text-[9px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">Seri</Text>
+              <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-white'}`}>{stats?.current_streak || 0}</Text>
+              <Text className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? 'text-teal-400' : 'text-teal-100'}`}>Seri</Text>
             </View>
-            <View className="h-10 w-[1px] self-center bg-white/10" />
+            <View className={`h-10 w-[1px] self-center ${isDark ? 'bg-slate-700' : 'bg-white/10'}`} />
             <View className="flex-1 items-center">
-              <View className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20">
+              <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${isDark ? 'bg-sky-500/10' : 'bg-white/20'}`}>
                 <Ionicons name="medal" size={20} color="#38bdf8" />
               </View>
-              <Text className="text-lg font-black text-white">{badges?.length || 0}</Text>
-              <Text className="text-[9px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">Rozet</Text>
+              <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-white'}`}>{badges?.length || 0}</Text>
+              <Text className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? 'text-teal-400' : 'text-teal-100'}`}>Rozet</Text>
             </View>
           </View>
         </View>
 
         {level && (
-          <View className="mx-6 mb-6 overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+          <View 
+            className={`mx-6 mb-6 overflow-hidden rounded-[28px] border p-5 shadow-sm ${
+              isDark 
+                ? 'border-slate-800 bg-slate-800 shadow-none' 
+                : 'border-slate-200 bg-white shadow-black/5'
+            }`}>
             <View className="mb-3 flex-row items-center justify-between">
               <View>
                 <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Seviye {level.level}</Text>
@@ -202,9 +210,10 @@ export function GamificationScreen() {
                       <View
                         className={`mb-2 h-20 w-20 items-center justify-center rounded-[28px] border ${
                           isEarned 
-                            ? 'border-teal-100 bg-white opacity-100 dark:border-teal-500/20 dark:bg-slate-900' 
-                            : 'border-slate-200 bg-slate-100 opacity-40 dark:border-slate-800 dark:bg-slate-800/50'
-                        }`}>
+                            ? (isDark ? 'border-teal-500/20 bg-slate-800' : 'border-teal-100 bg-white') 
+                            : (isDark ? 'border-slate-700 bg-slate-800/40' : 'border-slate-200 bg-slate-100')
+                        }`}
+                        style={{ opacity: isEarned ? 1 : 0.4 }}>
                         <Ionicons
                           name={isEarned ? (badgeDesc.icon || 'ribbon') : 'lock-closed'}
                           size={32}
@@ -232,7 +241,12 @@ export function GamificationScreen() {
               <PodiumItem user={top3[2]} rank={3} isCurrent={user?.id === top3[2]?.id} isDark={isDark} />
             </View>
 
-            <View className="rounded-[32px] border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+            <View 
+              className={`rounded-[32px] border p-2 shadow-sm ${
+                isDark 
+                  ? 'border-slate-800 bg-slate-800 shadow-none' 
+                  : 'border-slate-200 bg-white shadow-black/5'
+              }`}>
               {rest.map((item: any, idx: number) => {
                 const isMe = user?.id === item.id;
                 return (

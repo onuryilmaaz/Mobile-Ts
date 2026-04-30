@@ -12,12 +12,16 @@ export default function SurahsNavigator() {
 
   return (
     <>
-      <RNStatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent={true} />
+      <RNStatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
           headerShadowVisible: false,
-          animation: 'slide_from_right'
+          animation: 'slide_from_right',
         }}>
         <Stack.Screen
           name="SurahsMain"

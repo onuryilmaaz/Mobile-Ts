@@ -62,8 +62,8 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
         paddingTop: finalStatusBarHeight,
         paddingHorizontal: 16,
         height: totalHeight,
+        backgroundColor: isDark ? '#0f172a' : '#ffffff',
       }}>
-      {/* Subtle gradient glow at top */}
       {isDark && (
         <View
           className="pointer-events-none absolute inset-0 bg-teal-500/5"
@@ -72,14 +72,12 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
       )}
 
       <View className="flex-row items-center">
-        {/* Compass Button */}
         <TouchableOpacity
           onPress={() => navigation.navigate('QiblaFinder')}
-          className="h-[42px] w-[42px] items-center justify-center rounded-[14px] border border-teal-600/20 bg-teal-600/5 dark:border-teal-500/35 dark:bg-teal-500/10">
+          className="h-[42px] w-[42px] items-center justify-center rounded-full border border-teal-600/20 bg-teal-600/5 dark:border-teal-500/35 dark:bg-teal-500/10">
           <Ionicons name="compass" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
         </TouchableOpacity>
 
-        {/* Title */}
         <View className="flex-1 items-center">
           <Text
             className="text-[22px] font-black tracking-widest text-amber-500"
@@ -89,7 +87,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
         </View>
 
         <TouchableOpacity
-          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-slate-100 bg-slate-50 dark:border-white/10 dark:bg-white/5"
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-teal-600 bg-teal-600/5 dark:border-white/10 dark:bg-white/5"
           onPress={() => {
             if (isAuthenticated) {
               navigation.navigate('Profile' as any, { screen: 'ProfileMain' });
@@ -98,11 +96,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
             }
           }}>
           {isAuthenticated && avatarUrl ? (
-            <Image
-              source={{ uri: avatarUrl }}
-              className="h-full w-full"
-              resizeMode="cover"
-            />
+            <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
           ) : (
             <Ionicons name="person" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
           )}
@@ -119,7 +113,11 @@ export default function HomeNavigator() {
 
   return (
     <>
-      <RNStatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent={true} />
+      <RNStatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,

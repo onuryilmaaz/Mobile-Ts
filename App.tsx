@@ -14,47 +14,51 @@ import { setLogoutCallback } from '@/services/api';
 import { useColorScheme } from 'nativewind';
 import { rootNavigationRef } from '@/navigation/rootNavigation';
 
+const MyDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: '#0f172a',
+    card: '#0f172a',
+    text: '#ffffff',
+    border: 'rgba(255,255,255,0.1)',
+  },
+};
+
+const MyLightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#f8fafc',
+    card: '#ffffff',
+    text: '#0f172a',
+    border: '#f1f5f9',
+  },
+};
+
 function AppContent() {
   const isDark = useThemeStore((s) => s.isDark);
-  const { setColorScheme, colorScheme } = useColorScheme();
+  const { setColorScheme } = useColorScheme();
 
   // Sync NativeWind, Android nav bar with theme store
   useEffect(() => {
     // Force sync NativeWind's colorScheme with our store
-    if (isDark && colorScheme !== 'dark') {
-      setColorScheme('dark');
-    } else if (!isDark && colorScheme !== 'light') {
-      setColorScheme('light');
-    }
+    setColorScheme(isDark ? 'dark' : 'light');
 
     if (Platform.OS === 'android') {
       NavigationBar.setBackgroundColorAsync(isDark ? '#0f172a' : '#ffffff');
       NavigationBar.setButtonStyleAsync(isDark ? 'light' : 'dark');
     }
-  }, [isDark, setColorScheme, colorScheme]);
-
-  // Capture hidden stack traces for "missing navigation context" errors.
-  useEffect(() => {
-    const original = console.error;
-    console.error = (...args: any[]) => {
-      try {
-        const first = args?.[0];
-        const msg = typeof first === 'string' ? first : first instanceof Error ? first.message : '';
-        if (msg?.includes("Couldn't find a navigation context")) {
-          const err = first instanceof Error ? first : new Error(msg || 'missing nav context');
-          original('NAV_DIAG:missing_context_stack', err.stack);
-        }
-      } catch {}
-      return original(...args);
-    };
-    return () => {
-      console.error = original;
-    };
-  }, []);
+  }, [isDark, setColorScheme]);
 
   return (
-    <View className={`flex-1 ${isDark ? 'dark' : ''}`}>
-      <NavigationContainer ref={rootNavigationRef} theme={isDark ? DarkTheme : DefaultTheme}>
+    <View 
+      className={`flex-1 ${isDark ? 'dark' : ''}`} 
+      style={{ backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
+      <NavigationContainer 
+        ref={rootNavigationRef} 
+        key={isDark ? 'dark' : 'light'}
+        theme={isDark ? MyDarkTheme : MyLightTheme}>
         <AppNavigator />
         <ToastContainer />
         <AlertDialog />
