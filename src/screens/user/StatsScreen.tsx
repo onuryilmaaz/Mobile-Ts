@@ -116,9 +116,9 @@ export default function StatsScreen() {
         <View className="mb-6 px-4">
           <Text className="mb-3 text-lg font-black text-slate-900 dark:text-white">30 Günlük Özet</Text>
           <View className="flex-row">
-            <StatCard icon="sunny" label="Toplam Namaz" value={totalMonthPrayers} color={isDark ? '#34d399' : '#0f766e'} twBg="bg-teal-50 dark:bg-teal-500/10" />
-            <StatCard icon="flame" label="Aktif Gün" value={activeDays} color="#f59e0b" twBg="bg-amber-50 dark:bg-amber-500/10" />
-            <StatCard icon="checkmark-circle" label="Tamamlama" value={`%${completionRate}`} color={isDark ? '#818cf8' : '#6366f1'} twBg="bg-indigo-50 dark:bg-indigo-500/10" />
+            <StatCard icon="sunny" label="Toplam Namaz" value={totalMonthPrayers} color={isDark ? '#34d399' : '#0f766e'} twBg={isDark ? 'bg-teal-500/10' : 'bg-teal-50'} />
+            <StatCard icon="flame" label="Aktif Gün" value={activeDays} color="#f59e0b" twBg={isDark ? 'bg-amber-500/10' : 'bg-amber-50'} />
+            <StatCard icon="checkmark-circle" label="Tamamlama" value={`%${completionRate}`} color={isDark ? '#818cf8' : '#6366f1'} twBg={isDark ? 'bg-indigo-500/10' : 'bg-indigo-50'} />
           </View>
         </View>
 

@@ -106,12 +106,14 @@ export function DailyInspirationCard() {
           <View className="flex-row gap-2">
             <TouchableOpacity
               onPress={shareInspiration}
-              className="h-8 w-8 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/5">
+              className="h-8 w-8 items-center justify-center rounded-2xl"
+              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }}>
               <Ionicons name="share-outline" size={16} color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleRefresh}
-              className="h-8 w-8 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/5">
+              className="h-8 w-8 items-center justify-center rounded-2xl"
+              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }}>
               {loading ? (
                 <ActivityIndicator size="small" color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
               ) : (
@@ -139,8 +141,10 @@ export function DailyInspirationCard() {
           </View>
         </Animated.View>
 
-        <View className="items-center bg-slate-50 px-6 py-4 dark:bg-white/5">
-          <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+        <View 
+          className="items-center px-6 py-4"
+          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc' }}>
+          <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
             Manevi Huzur İçin Küçük Bir Hatırlatma
           </Text>
         </View>

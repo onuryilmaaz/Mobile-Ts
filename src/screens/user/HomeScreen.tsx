@@ -101,21 +101,8 @@ export default function HomeScreen({ navigation }: Props) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 12, paddingRight: 16 }}>
               {QUICK_ACTIONS.map((action) => {
-                let borderClass = 'border-slate-200';
-                let darkBorderClass = 'dark:border-slate-800';
-                let bgClass = 'bg-white';
-                let darkBgClass = 'dark:bg-slate-800';
-                
-                if (action.twColor === 'indigo') {
-                  darkBorderClass = 'dark:border-indigo-500/35';
-                  darkBgClass = 'dark:bg-indigo-500/10';
-                } else if (action.twColor === 'teal') {
-                  darkBorderClass = 'dark:border-teal-500/35';
-                  darkBgClass = 'dark:bg-teal-500/10';
-                } else if (action.twColor === 'amber') {
-                  darkBorderClass = 'dark:border-amber-500/35';
-                  darkBgClass = 'dark:bg-amber-500/10';
-                }
+                const cardBg = isDark ? '#1e293b' : '#ffffff';
+                const cardBorder = isDark ? action.border : '#e2e8f0';
 
                 return (
                   <TouchableOpacity
@@ -124,8 +111,8 @@ export default function HomeScreen({ navigation }: Props) {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       navigation.navigate(action.screen);
                     }}
-                    className={`w-[130px] items-center rounded-[22px] border p-[18px] shadow-sm shadow-black/5 ${bgClass} ${borderClass} ${darkBgClass} ${darkBorderClass} relative overflow-hidden`}
-                    >
+                    className="relative w-[130px] items-center overflow-hidden rounded-[22px] border p-[18px] shadow-sm shadow-black/5"
+                    style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
                     {/* Glow orb — dark only */}
                     {isDark && (
                       <View
