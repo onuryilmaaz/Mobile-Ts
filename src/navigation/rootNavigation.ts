@@ -17,3 +17,11 @@ export function rootNavigate<RouteName extends keyof RootStackParamList>(
   rootNavigationRef.navigate(...args);
 }
 
+export function rootReset(name: keyof RootStackParamList, params?: object) {
+  if (!rootNavigationRef.isReady()) return;
+  rootNavigationRef.reset({
+    index: 0,
+    routes: [{ name, params }],
+  });
+}
+

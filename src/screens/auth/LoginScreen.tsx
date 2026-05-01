@@ -71,7 +71,7 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <Screen className="justify-center">
+    <Screen>
       <ScrollView
         ref={scrollViewRef}
         className="m-0"
@@ -87,59 +87,63 @@ export default function LoginScreen({ navigation }: Props) {
         keyboardDismissMode="interactive"
         bounces={false}>
         <View className="w-full items-center">
-          {/* Premium ambient background */}
-          <View className="pointer-events-none absolute -top-20 left-0 right-0 h-44 rounded-[48px] bg-teal-500/10" />
-          <View className="pointer-events-none absolute -bottom-20 left-10 right-10 h-44 rounded-[48px] bg-indigo-500/10" />
-
-          <Card className="w-full max-w-[520px] border-slate-100 dark:border-white/10">
-          <View className="mb-8 items-center">
-            <Text className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Hoş Geldin</Text>
-            <Text className="mt-2 text-slate-600 dark:text-slate-300">Hesabına giriş yap ve devam et</Text>
-          </View>
-          {error && (
-            <View className="mb-4 rounded-2xl bg-red-50 p-3 dark:bg-red-500/10">
-              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
+          <Card className="w-full border-slate-100 dark:border-white/10">
+            <View className="mb-8 items-center">
+              <Text className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                Hoş Geldin
+              </Text>
+              <Text className="mt-2 text-slate-600 dark:text-slate-300">
+                Hesabına giriş yap ve devam et
+              </Text>
             </View>
-          )}
+            {error && (
+              <View className="mb-4 rounded-2xl bg-red-50 p-3 dark:bg-red-500/10">
+                <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">
+                  {error}
+                </Text>
+              </View>
+            )}
 
-          <Input
-            label="Email"
-            placeholder="ornek@email.com"
-            value={email}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            onChangeText={setEmail}
-            onFocus={handleInputFocus}
-          />
+            <Input
+              label="Email"
+              placeholder="ornek@email.com"
+              value={email}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onChangeText={setEmail}
+              onFocus={handleInputFocus}
+            />
 
-          <Input
-            label="Şifre"
-            placeholder="••••••"
-            value={password}
-            secureTextEntry
-            onChangeText={setPassword}
-            isPassword
-            onFocus={handleInputFocus}
-          />
+            <Input
+              label="Şifre"
+              placeholder="••••••"
+              value={password}
+              secureTextEntry
+              onChangeText={setPassword}
+              isPassword
+              onFocus={handleInputFocus}
+            />
 
-          <View className="mb-6 items-end">
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-              <Text className="text-sm font-medium text-teal-600 dark:text-teal-400">Şifremi unuttum?</Text>
-            </TouchableOpacity>
-          </View>
+            <View className="mb-6 items-end">
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text className="text-sm font-medium text-teal-600 dark:text-teal-400">
+                  Şifremi unuttum?
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-          <Button
-            title={loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
-            onPress={handleLogin}
-            loading={loading}
-          />
+            <Button
+              title={loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+              onPress={handleLogin}
+              loading={loading}
+            />
 
-          <View className="mt-6 flex-row justify-center">
-            <Text className="text-slate-600 dark:text-slate-300">Hesabın yok mu? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text className="font-bold text-teal-600 dark:text-teal-400">Kayıt Ol</Text>
-            </TouchableOpacity>
-          </View>
+            <View className="mt-6 flex-row justify-center">
+              <Text className="text-slate-600 dark:text-slate-300">Hesabın yok mu? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text className="font-bold text-teal-600 dark:text-teal-400">Kayıt Ol</Text>
+              </TouchableOpacity>
+            </View>
           </Card>
         </View>
       </ScrollView>

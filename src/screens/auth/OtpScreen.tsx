@@ -86,7 +86,7 @@ export default function OtpScreen({ navigation, route }: Props) {
   }
 
   return (
-    <Screen className="justify-center bg-slate-50 dark:bg-slate-900">
+    <Screen>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
@@ -103,12 +103,16 @@ export default function OtpScreen({ navigation, route }: Props) {
         <Card className="mx-4 shadow-lg shadow-teal-500/10 dark:border-teal-500/20 dark:shadow-none">
           {error && (
             <View className="mb-4 rounded-xl bg-red-50 p-3 dark:bg-red-500/10">
-              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
+              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">
+                {error}
+              </Text>
             </View>
           )}
           {message && (
             <View className="mb-4 rounded-xl bg-green-50 p-3 dark:bg-green-500/10">
-              <Text className="text-center text-sm font-medium text-green-600 dark:text-green-400">{message}</Text>
+              <Text className="text-center text-sm font-medium text-green-600 dark:text-green-400">
+                {message}
+              </Text>
             </View>
           )}
 

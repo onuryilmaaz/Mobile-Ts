@@ -59,7 +59,7 @@ export default function RegisterScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="justify-center">
+    <Screen>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{
@@ -74,74 +74,76 @@ export default function RegisterScreen({ navigation }: Props) {
         keyboardDismissMode="interactive"
         bounces={false}>
         <View className="w-full items-center">
-          {/* Premium ambient background */}
-          <View className="pointer-events-none absolute -top-20 left-0 right-0 h-44 rounded-[48px] bg-teal-500/10" />
-          <View className="pointer-events-none absolute -bottom-20 left-10 right-10 h-44 rounded-[48px] bg-indigo-500/10" />
-
-          <Card className="w-full max-w-[520px] border-slate-100 dark:border-white/10">
-          <View className="mb-8 items-center">
-            <Text className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Hesap Oluştur</Text>
-            <Text className="mt-2 text-slate-600 dark:text-slate-300">Hemen aramıza katıl ve başla</Text>
-          </View>
-          {error && (
-            <View className="mb-4 rounded-2xl bg-red-50 p-3 dark:bg-red-500/10">
-              <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
+          <Card className="w-full border-slate-100 dark:border-white/10">
+            <View className="mb-8 items-center">
+              <Text className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                Hesap Oluştur
+              </Text>
+              <Text className="mt-2 text-slate-600 dark:text-slate-300">
+                Hemen aramıza katıl ve başla
+              </Text>
             </View>
-          )}
+            {error && (
+              <View className="mb-4 rounded-2xl bg-red-50 p-3 dark:bg-red-500/10">
+                <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">
+                  {error}
+                </Text>
+              </View>
+            )}
 
-          <View className="flex-row gap-3">
-            <View className="flex-1">
-              <Input
-                label="Ad"
-                placeholder="Adın"
-                value={firstName}
-                onChangeText={setFirstName}
-                onFocus={handleInputFocus}
-              />
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <Input
+                  label="Ad"
+                  placeholder="Adın"
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  onFocus={handleInputFocus}
+                />
+              </View>
+              <View className="flex-1">
+                <Input
+                  label="Soyad"
+                  placeholder="Soyadın"
+                  value={lastName}
+                  onChangeText={setLastName}
+                  onFocus={handleInputFocus}
+                />
+              </View>
             </View>
-            <View className="flex-1">
-              <Input
-                label="Soyad"
-                placeholder="Soyadın"
-                value={lastName}
-                onChangeText={setLastName}
-                onFocus={handleInputFocus}
-              />
+
+            <Input
+              label="Email"
+              placeholder="ornek@email.com"
+              value={email}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onChangeText={setEmail}
+              onFocus={handleInputFocus}
+            />
+
+            <Input
+              label="Şifre"
+              placeholder="Güçlü bir şifre seç"
+              value={password}
+              onChangeText={setPassword}
+              isPassword
+              onFocus={handleInputFocus}
+            />
+
+            <Button
+              title={loading ? 'Kayıt Olunuyor...' : 'Kayıt Ol'}
+              onPress={handleRegister}
+              loading={loading}
+              className="mt-2"
+            />
+
+            <View className="mt-6 flex-row justify-center">
+              <Text className="text-slate-600 dark:text-slate-300">Zaten hesabın var mı? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text className="font-bold text-teal-600 dark:text-teal-400">Giriş Yap</Text>
+              </TouchableOpacity>
             </View>
-          </View>
-
-          <Input
-            label="Email"
-            placeholder="ornek@email.com"
-            value={email}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            onChangeText={setEmail}
-            onFocus={handleInputFocus}
-          />
-
-          <Input
-            label="Şifre"
-            placeholder="Güçlü bir şifre seç"
-            value={password}
-            onChangeText={setPassword}
-            isPassword
-            onFocus={handleInputFocus}
-          />
-
-          <Button
-            title={loading ? 'Kayıt Olunuyor...' : 'Kayıt Ol'}
-            onPress={handleRegister}
-            loading={loading}
-            className="mt-2"
-          />
-
-          <View className="mt-6 flex-row justify-center">
-            <Text className="text-slate-600 dark:text-slate-300">Zaten hesabın var mı? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text className="font-bold text-teal-600 dark:text-teal-400">Giriş Yap</Text>
-            </TouchableOpacity>
-          </View>
           </Card>
         </View>
       </ScrollView>
