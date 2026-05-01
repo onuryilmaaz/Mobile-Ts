@@ -84,6 +84,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const [profile, setProfile] = useState<UserProfile | null>(user as UserProfile | null);
   const [firstName, setFirstName] = useState(user?.firstName ?? '');
   const [lastName, setLastName] = useState(user?.lastName ?? '');
+  const [username, setUsername] = useState(user?.username ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [localAvatarUri, setLocalAvatarUri] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -111,6 +112,7 @@ export default function ProfileScreen({ navigation }: Props) {
         setProfile(profileData);
         setFirstName(profileData.firstName ?? '');
         setLastName(profileData.lastName ?? '');
+        setUsername(profileData.username ?? '');
         setPhone(profileData.phone ?? '');
 
         if (profileData.roles) {
@@ -129,7 +131,7 @@ export default function ProfileScreen({ navigation }: Props) {
   async function handleUpdateProfile() {
     try {
       setUpdateLoading(true);
-      const { data } = await userApi.updateProfile({ firstName, lastName, phone });
+      const { data } = await userApi.updateProfile({ firstName, lastName, phone, username });
       const profileData = (data as any).user ? (data as any).user : data;
       setProfile(profileData);
       await refreshUser();
@@ -238,6 +240,11 @@ export default function ProfileScreen({ navigation }: Props) {
           <Text className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
             {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
           </Text>
+          { (profile?.username || user?.username) && (
+            <Text className="text-sm font-medium text-teal-600 dark:text-teal-400">
+              @{profile?.username || user?.username}
+            </Text>
+          )}
           <Text className="text-slate-500 dark:text-slate-400">
             {profile?.email ?? user?.email}
           </Text>
@@ -278,6 +285,13 @@ export default function ProfileScreen({ navigation }: Props) {
                 placeholder="Soyadınız"
               />
               <Input
+                label="Kullanıcı Adı"
+                value={username}
+                onChangeText={setUsername}
+                placeholder="kullaniciadi"
+                autoCapitalize="none"
+              />
+              <Input
                 label="Telefon"
                 value={phone}
                 onChangeText={setPhone}
@@ -293,6 +307,7 @@ export default function ProfileScreen({ navigation }: Props) {
                       setIsEditing(false);
                       setFirstName(profile?.firstName ?? '');
                       setLastName(profile?.lastName ?? '');
+                      setUsername(profile?.username ?? '');
                       setPhone(profile?.phone ?? '');
                     }}
                     variant="outline"
@@ -311,6 +326,15 @@ export default function ProfileScreen({ navigation }: Props) {
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Ad Soyad</Text>
                   <Text className="text-sm font-medium text-slate-900 dark:text-white">
                     {profile?.firstName || '—'} {profile?.lastName || ''}
+                  </Text>
+                </View>
+              </View>
+              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+                <Ionicons name="at-circle-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
+                <View>
+                  <Text className="text-xs text-slate-500 dark:text-slate-400">Kullanıcı Adı</Text>
+                  <Text className="text-sm font-medium text-slate-900 dark:text-white">
+                    {profile?.username ? `@${profile.username}` : '—'}
                   </Text>
                 </View>
               </View>

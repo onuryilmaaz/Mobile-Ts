@@ -1,6 +1,7 @@
 export interface User {
   id: string;
   email: string;
+  username?: string;
   emailVerified: boolean;
   roles: string[];
   firstName?: string;
@@ -34,6 +35,7 @@ export interface VerifyEmailPayload {
 export type AuthUser = {
   id: string;
   email: string;
+  username?: string;
   emailVerified: boolean;
   roles: string[];
   firstName?: string;

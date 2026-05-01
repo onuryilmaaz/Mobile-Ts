@@ -105,8 +105,8 @@ export default function LoginScreen({ navigation }: Props) {
             )}
 
             <Input
-              label="Email"
-              placeholder="ornek@email.com"
+              label="Email veya Kullanıcı Adı"
+              placeholder="ornek@email.com veya kullanıcıadı"
               value={email}
               autoCapitalize="none"
               keyboardType="email-address"
