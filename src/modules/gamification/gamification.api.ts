@@ -20,6 +20,10 @@ export const gamificationApi = {
   getKazaList: () => api.get('/prayer/kaza'),
   addKaza: (prayerTime: string, missedDate: string) =>
     api.post('/prayer/kaza', { prayer_time: prayerTime, missed_date: missedDate }),
+  batchAddKaza: (prayers: string[], count: number) =>
+    api.post('/prayer/kaza/batch', { prayers, count }),
+  quickCompleteKaza: (prayerTime: string) =>
+    api.post('/prayer/kaza/quick-complete', { prayer_time: prayerTime }),
   completeKaza: (id: string) => api.patch(`/prayer/kaza/${id}/complete`),
   deleteKaza: (id: string) => api.delete(`/prayer/kaza/${id}`),
 };

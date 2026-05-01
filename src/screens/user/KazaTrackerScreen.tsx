@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   Alert,
   Modal,
   Platform,
+  TextInput,
+  useColorScheme,
 } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
@@ -181,73 +183,209 @@ function KazaItem({
     onComplete();
   };
 
+  const prayer = PRAYERS.find((p) => p.key === item.prayer_time);
+
   return (
-    <Animated.View entering={FadeInDown} exiting={FadeOutUp} layout={Layout.springify()}>
-      <Animated.View
-        style={[animStyle]}
-        className="mb-3 flex-row items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
-        <View
-          className="mr-4 h-11 w-11 items-center justify-center rounded-2xl"
-          style={{ backgroundColor: `${getPrayerColor(item.prayer_time)}18` }}>
-          <View
-            className="h-4 w-4 rounded-full"
-            style={{ backgroundColor: getPrayerColor(item.prayer_time) }}
+    <View className="mb-3 flex-row items-center gap-3 overflow-hidden rounded-3xl border border-slate-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800/80">
+      <View
+        style={{ backgroundColor: prayer?.color }}
+        className="h-12 w-12 items-center justify-center rounded-2xl">
+        <Ionicons name={prayer?.icon || 'time-outline'} size={24} color="#fff" />
+      </View>
+
+      <View className="flex-1">
+        <Text className="text-base font-black text-slate-900 dark:text-white">
+          {prayer?.label}
+        </Text>
+        <Text className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
+          {new Date(item.missed_date).toLocaleDateString('tr-TR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </Text>
+      </View>
+
+      <View className="flex-row items-center gap-2">
+        <TouchableOpacity
+          onPress={onComplete}
+          className="h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20">
+          <Ionicons
+            name="checkmark"
+            size={20}
+            color={isDark ? '#34d399' : '#10b981'}
           />
-        </View>
-
-        <View className="flex-1">
-          <Text className="text-sm font-black text-slate-900 dark:text-white">
-            {getPrayerLabel(item.prayer_time)} Namazı
-          </Text>
-          <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-300">
-            {formatMissedDate(item.missed_date)}
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          onPress={() => {
-            Alert.alert('Sil', 'Bu kaza namazı listeden kaldırılsın mı?', [
-              { text: 'İptal', style: 'cancel' },
-              { text: 'Sil', style: 'destructive', onPress: onDelete },
-            ]);
-          }}
-          className="mr-2 h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40">
-          <Ionicons name="trash-outline" size={16} color={isDark ? '#4b5563' : '#94a3b8'} />
         </TouchableOpacity>
-
         <TouchableOpacity
-          onPress={handleComplete}
-          className="h-9 w-9 items-center justify-center rounded-xl bg-teal-600 dark:bg-teal-500">
-          <Ionicons name="checkmark" size={18} color="white" />
+          onPress={onDelete}
+          className="h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/10 dark:bg-rose-500/20">
+          <Ionicons
+            name="trash-outline"
+            size={18}
+            color={isDark ? '#fb7185' : '#f43f5e'}
+          />
         </TouchableOpacity>
-      </Animated.View>
-    </Animated.View>
+      </View>
+    </View>
+  );
+}
+
+function KazaWizard({
+  visible,
+  onClose,
+  onBatchAdd,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onBatchAdd: (prayers: string[], count: number) => void;
+}) {
+  const { isDark } = useThemeStore();
+  const [startAge, setStartAge] = useState('13');
+  const [regularAge, setRegularAge] = useState('20');
+  const [discountPercent, setDiscountPercent] = useState('0'); // Muafiyet veya kılınmış namaz oranı
+
+  const totalYears = Math.max(0, parseInt(regularAge || '0') - parseInt(startAge || '0'));
+  let totalDays = totalYears * 365;
+
+  // İndirim (Muafiyet veya zaten kılınanlar)
+  const discount = Math.round((totalDays * parseInt(discountPercent || '0')) / 100);
+  totalDays = Math.max(0, totalDays - discount);
+
+  return (
+    <Modal visible={visible} animationType="slide" transparent>
+      <View className="flex-1 justify-end bg-black/60">
+        <View className="rounded-t-[40px] bg-white p-6 pb-12 dark:bg-slate-900">
+          <View className="mb-6 flex-row items-center justify-between">
+            <View>
+              <Text className="text-xl font-black text-slate-900 dark:text-white">Hassas Kaza Hesabı</Text>
+              <Text className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Buluğ → Düzene Giriş</Text>
+            </View>
+            <TouchableOpacity onPress={onClose} className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              <Ionicons name="close" size={24} color={isDark ? '#94a3b8' : '#64748b'} />
+            </TouchableOpacity>
+          </View>
+
+          <View className="mb-6 space-y-4">
+            <View>
+              <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Borcun başladığı yaş (Buluğ):</Text>
+              <TextInput
+                value={startAge}
+                onChangeText={setStartAge}
+                keyboardType="numeric"
+                className="rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
+                placeholder="Örn: 13"
+              />
+            </View>
+
+            <View>
+              <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Namazın düzene girdiği yaş:</Text>
+              <TextInput
+                value={regularAge}
+                onChangeText={setRegularAge}
+                keyboardType="numeric"
+                className="rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
+                placeholder="Örn: 25"
+              />
+            </View>
+
+            <View>
+              <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">Muafiyet / Kılınmış Tahmini Oran (%):</Text>
+              <View className="flex-row items-center gap-4">
+                <TextInput
+                  value={discountPercent}
+                  onChangeText={setDiscountPercent}
+                  keyboardType="numeric"
+                  className="flex-1 rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
+                  placeholder="Örn: 20"
+                />
+                <View className="rounded-xl bg-slate-100 px-3 py-2 dark:bg-slate-800">
+                  <Text className="text-xs font-bold text-slate-500">Düşülecek</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View className="mb-8 items-center rounded-3xl bg-amber-50 p-6 border border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/20">
+            <Text className="text-xs font-bold text-amber-600 uppercase tracking-tighter">Toplam Namaz Borcu Süresi</Text>
+            <View className="flex-row items-baseline gap-2">
+              <Text className="text-4xl font-black text-amber-700 dark:text-amber-400">{totalDays}</Text>
+              <Text className="text-lg font-bold text-amber-600">GÜN</Text>
+            </View>
+            <Text className="mt-2 text-center text-[10px] leading-4 text-amber-500 font-medium">
+              Bu işlem her vakit için {totalDays} adet kaza ekleyecektir.{'\n'}
+              ({totalYears} yıl üzerinden hesaplanmıştır.)
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => onBatchAdd(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'], totalDays)}
+            disabled={totalDays <= 0}
+            className={`flex-row items-center justify-center gap-3 rounded-3xl p-5 ${totalDays > 0 ? 'bg-teal-600' : 'bg-slate-200 dark:bg-slate-800'}`}>
+            <Ionicons name="calculator" size={20} color="white" />
+            <Text className="text-lg font-black text-white">Borçları Kaydet</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
 export default function KazaTrackerScreen() {
-  const { kazaList, kazaCompleted, fetchKazaList, addKaza, completeKaza, deleteKaza } =
-    useGamificationStore();
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
+  const {
+    kazaList,
+    kazaCompleted,
+    completedLast30Days,
+    kazaCounters,
+    isLoading: loading,
+    fetchKazaList,
+    addKaza,
+    batchAddKaza,
+    quickCompleteKaza,
+    completeKaza,
+    deleteKaza,
+  } = useGamificationStore();
   const { isDark } = useThemeStore();
 
   const load = useCallback(async () => {
-    setLoading(true);
     await fetchKazaList();
-    setLoading(false);
   }, [fetchKazaList]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const handleAdd = async (prayer: string, date: string) => {
+  const handleAdd = async (prayer: string, dateStr: string) => {
     try {
-      await addKaza(prayer, date);
+      await addKaza(prayer, dateStr);
+      setShowModal(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch {
-      Alert.alert('Hata', 'Bu kaza namazı zaten listede olabilir.');
+    } catch (e) {
+      Alert.alert('Hata', 'Kaza eklenirken bir hata oluştu');
+    }
+  };
+
+  const handleBatchAdd = async (prayers: string[], count: number) => {
+    try {
+      await batchAddKaza(prayers, count);
+      setShowWizard(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert('Başarılı', `${count} günlük kaza borcu başarıyla eklendi.`);
+    } catch (e) {
+      Alert.alert('Hata', 'Toplu ekleme sırasında bir hata oluştu');
+    }
+  };
+
+  const handleQuickComplete = async (prayer: string) => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const points = await quickCompleteKaza(prayer);
+      if (points > 0) {
+        // Opsiyonel: Puan kazandın bildirimi
+      }
+    } catch (e) {
+      Alert.alert('Bilgi', 'Bu vakit için bekleyen kaza namazınız bulunmuyor.');
     }
   };
 
@@ -272,6 +410,47 @@ export default function KazaTrackerScreen() {
       ? Math.round((kazaCompleted / (kazaCompleted + totalPending)) * 100)
       : 0;
 
+  const groupedKaza = useMemo(() => {
+    const groups: Record<string, typeof kazaList> = {
+      Bugün: [],
+      Dün: [],
+      'Daha Eski': [],
+    };
+
+    const sortedList = [...kazaList].sort((a, b) => b.missed_date.localeCompare(a.missed_date));
+
+    const today = new Date().toISOString().split('T')[0];
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterday = yesterdayDate.toISOString().split('T')[0];
+
+    sortedList.forEach((item) => {
+      const date = item.missed_date.split('T')[0];
+      if (date === today) groups['Bugün'].push(item);
+      else if (date === yesterday) groups['Dün'].push(item);
+      else groups['Daha Eski'].push(item);
+    });
+
+    return Object.entries(groups).filter(([_, items]) => items.length > 0);
+  }, [kazaList]);
+
+  const prediction = useMemo(() => {
+    if (totalPending === 0) return null;
+    const velocityPerDay = completedLast30Days / 30;
+    if (velocityPerDay === 0) return 'Hesaplanıyor...';
+
+    const daysRemaining = totalPending / velocityPerDay;
+    if (daysRemaining > 365 * 100) return 'Çok uzun zaman...';
+
+    const finishDate = new Date();
+    finishDate.setDate(finishDate.getDate() + daysRemaining);
+
+    return finishDate.toLocaleDateString('tr-TR', {
+      month: 'long',
+      year: 'numeric',
+    });
+  }, [totalPending, completedLast30Days]);
+
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       <ScrollView
@@ -292,17 +471,15 @@ export default function KazaTrackerScreen() {
             <View>
               <Text className="text-2xl font-black text-white">{totalPending}</Text>
               <Text className="text-[10px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">
-                Bekleyen Kaza
+                Toplam Borç
               </Text>
             </View>
-            <View className="h-10 w-[1px] bg-white/10" />
             <View>
               <Text className="text-2xl font-black text-white">{kazaCompleted}</Text>
               <Text className="text-[10px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">
-                Tamamlanan
+                Eritilen
               </Text>
             </View>
-            <View className="h-10 w-[1px] bg-white/10" />
             <View>
               <Text className="text-2xl font-black text-white">%{progressPercent}</Text>
               <Text className="text-[10px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400/80">
@@ -310,29 +487,94 @@ export default function KazaTrackerScreen() {
               </Text>
             </View>
           </View>
+        </View>
 
-          {kazaCompleted + totalPending > 0 && (
-            <View className="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
-              <View
-                className="h-full rounded-full bg-white"
-                style={{ width: `${progressPercent}%` }}
-              />
+        {prediction && totalPending > 0 && (
+          <View className="mx-4 mb-8 flex-row items-center gap-4 rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-800/80">
+            <View className="h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-500/20">
+              <Ionicons name="calendar" size={24} color="#f59e0b" />
             </View>
-          )}
+            <View className="flex-1">
+              <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                Tahmini Bitiş
+              </Text>
+              <Text className="text-lg font-black text-slate-900 dark:text-white">{prediction}</Text>
+            </View>
+            <View className="items-end">
+              <View
+                className={`rounded-full px-2 py-1 ${
+                  completedLast30Days > 30 ? 'bg-emerald-100' : 'bg-slate-100'
+                } dark:bg-slate-700`}>
+                <Text
+                  className={`text-[9px] font-black uppercase ${
+                    completedLast30Days > 30 ? 'text-emerald-600' : 'text-slate-500'
+                  }`}>
+                  {completedLast30Days > 30 ? 'Hızlı Eritme' : 'Normal Hız'}
+                </Text>
+              </View>
+              <Text className="mt-1 text-[10px] font-bold text-slate-400">
+                {completedLast30Days} kaza / ay
+              </Text>
+            </View>
+          </View>
+        )}
+
+        <View className="mb-8 px-4">
+          <Text className="mb-4 px-1 text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+            Hızlı Sayaç (En Eskiden Erit)
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3">
+            {PRAYERS.map((p) => {
+              const count = kazaCounters[p.key] || 0;
+              return (
+                <TouchableOpacity
+                  key={p.key}
+                  onPress={() => handleQuickComplete(p.key)}
+                  disabled={count <= 0}
+                  className={`items-center rounded-3xl p-4 shadow-sm ${
+                    count > 0 ? 'bg-white dark:bg-slate-800/80' : 'bg-slate-50 opacity-50 dark:bg-slate-900/40'
+                  }`}
+                  style={{ width: 100 }}>
+                  <View
+                    style={{ backgroundColor: count > 0 ? p.color : '#94a3b8' }}
+                    className="mb-2 h-10 w-10 items-center justify-center rounded-2xl">
+                    <Ionicons name={p.icon} size={20} color="#fff" />
+                  </View>
+                  <Text className="text-[10px] font-black text-slate-500 dark:text-slate-400">
+                    {p.label}
+                  </Text>
+                  <Text className="mt-0.5 text-lg font-black text-slate-900 dark:text-white">
+                    {count}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
 
         <View className="px-4">
           <View className="mb-4 flex-row items-center justify-between">
             <Text className="text-lg font-black text-slate-900 dark:text-white">Kaza Listesi</Text>
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setShowModal(true);
-              }}
-              className="flex-row items-center gap-2 rounded-2xl bg-teal-600 px-4 py-2.5 dark:bg-teal-500">
-              <Ionicons name="add" size={18} color="#fff" />
-              <Text className="text-sm font-bold text-white">Ekle</Text>
-            </TouchableOpacity>
+            <View className="flex-row gap-2">
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setShowWizard(true);
+                }}
+                className="flex-row items-center gap-2 rounded-2xl bg-amber-500 px-4 py-2.5">
+                <Ionicons name="flash" size={18} color="#fff" />
+                <Text className="text-sm font-bold text-white">Sihirbaz</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setShowModal(true);
+                }}
+                className="flex-row items-center gap-2 rounded-2xl bg-teal-600 px-4 py-2.5 dark:bg-teal-500">
+                <Ionicons name="add" size={18} color="#fff" />
+                <Text className="text-sm font-bold text-white">Ekle</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {kazaList.length === 0 && !loading ? (
@@ -350,19 +592,31 @@ export default function KazaTrackerScreen() {
               </Text>
             </View>
           ) : (
-            kazaList.map((item) => (
-              <KazaItem
-                key={item.id}
-                item={item}
-                onComplete={() => handleComplete(item.id, getPrayerLabel(item.prayer_time))}
-                onDelete={() => handleDelete(item.id)}
-              />
+            groupedKaza.map(([title, items]) => (
+              <View key={title} className="mb-6">
+                <Text className="mb-3 px-1 text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                  {title}
+                </Text>
+                {items.map((item) => (
+                  <KazaItem
+                    key={item.id}
+                    item={item}
+                    onComplete={() => handleComplete(item.id, getPrayerLabel(item.prayer_time))}
+                    onDelete={() => handleDelete(item.id)}
+                  />
+                ))}
+              </View>
             ))
           )}
         </View>
       </ScrollView>
 
       <AddKazaModal visible={showModal} onClose={() => setShowModal(false)} onAdd={handleAdd} />
+      <KazaWizard
+        visible={showWizard}
+        onClose={() => setShowWizard(false)}
+        onBatchAdd={handleBatchAdd}
+      />
     </Screen>
   );
 }

@@ -110,7 +110,7 @@ export default function HomeScreen({ navigation }: Props) {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       navigation.navigate(action.screen);
                     }}
-                    className="relative h-[140px] w-[115px] items-center overflow-hidden rounded-[22px] border p-[14px] shadow-sm shadow-black/5"
+                    className="relative h-[115px] w-[115px] items-center overflow-hidden rounded-[22px] border p-[10px] shadow-sm shadow-black/5"
                     style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
                     {isDark && (
                       <View

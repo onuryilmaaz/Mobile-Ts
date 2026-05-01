@@ -18,6 +18,8 @@ type GamificationState = {
   monthlyStats: any | null;
   kazaList: KazaItem[];
   kazaCompleted: number;
+  completedLast30Days: number;
+  kazaCounters: Record<string, number>;
   isLoading: boolean;
 
   fetchStats: () => Promise<void>;
@@ -33,6 +35,8 @@ type GamificationState = {
 
   untrackPrayer: (prayerTime: string) => Promise<void>;
   addKaza: (prayerTime: string, missedDate: string) => Promise<void>;
+  batchAddKaza: (prayers: string[], count: number) => Promise<void>;
+  quickCompleteKaza: (prayerTime: string) => Promise<number>;
   completeKaza: (id: string) => Promise<number>;
   deleteKaza: (id: string) => Promise<void>;
 };
@@ -47,6 +51,8 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
   monthlyStats: null,
   kazaList: [],
   kazaCompleted: 0,
+  completedLast30Days: 0,
+  kazaCounters: { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 },
   isLoading: false,
 
   fetchStats: async () => {
@@ -107,6 +113,8 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
         set({
           kazaList: data.data.pending,
           kazaCompleted: data.data.total_completed,
+          completedLast30Days: data.data.completed_last_30_days || 0,
+          kazaCounters: data.data.counters || { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 },
         });
       }
     } catch (e) {
@@ -145,30 +153,118 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
   addKaza: async (prayerTime, missedDate) => {
     try {
       await gamificationApi.addKaza(prayerTime, missedDate);
-      await get().fetchKazaList();
+      await Promise.all([get().fetchKazaList(), get().fetchStats()]);
     } catch (e) {
       console.error('Failed to add kaza', e);
       throw e;
     }
   },
 
-  completeKaza: async (id) => {
+  batchAddKaza: async (prayers, count) => {
     try {
-      const { data } = await gamificationApi.completeKaza(id);
-      await get().fetchKazaList();
-      await get().fetchStats();
+      set({ isLoading: true });
+      await gamificationApi.batchAddKaza(prayers, count);
+      await Promise.all([get().fetchKazaList(), get().fetchStats()]);
+    } catch (e) {
+      console.error('Failed to batch add kaza', e);
+      throw e;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  quickCompleteKaza: async (prayerTime) => {
+    const previousKazaList = get().kazaList;
+    const previousCompleted = get().kazaCompleted;
+    const previousCounters = get().kazaCounters;
+
+    // Optimistic Update
+    set((state) => ({
+      kazaCompleted: state.kazaCompleted + 1,
+      kazaCounters: {
+        ...state.kazaCounters,
+        [prayerTime]: Math.max(0, state.kazaCounters[prayerTime] - 1),
+      },
+      // Listeyi de güncellemek için en eski olanı bulup çıkarıyoruz
+      kazaList: state.kazaList
+        .filter((k, i, self) => {
+          const firstMatchIndex = self.findIndex((x) => x.prayer_time === prayerTime);
+          return i !== firstMatchIndex;
+        })
+        .filter((k) => k.id !== 'temp'), // (Varsa temp'leri temizle)
+    }));
+
+    try {
+      const { data } = await gamificationApi.quickCompleteKaza(prayerTime);
+      get().fetchStats();
+      get().fetchKazaList(); // Sync exact list in background
       return data.pointsEarned || 0;
     } catch (e) {
+      set({
+        kazaList: previousKazaList,
+        kazaCompleted: previousCompleted,
+        kazaCounters: previousCounters,
+      });
+      console.error('Failed to quick complete kaza', e);
+      throw e;
+    }
+  },
+
+  completeKaza: async (id) => {
+    const previousKazaList = get().kazaList;
+    const previousCompleted = get().kazaCompleted;
+    const previousCounters = get().kazaCounters;
+
+    const item = previousKazaList.find((k) => k.id === id);
+
+    // Optimistic Update
+    set((state) => ({
+      kazaList: state.kazaList.filter((k) => k.id !== id),
+      kazaCompleted: state.kazaCompleted + 1,
+      kazaCounters: item
+        ? {
+            ...state.kazaCounters,
+            [item.prayer_time]: Math.max(0, state.kazaCounters[item.prayer_time] - 1),
+          }
+        : state.kazaCounters,
+    }));
+
+    try {
+      const { data } = await gamificationApi.completeKaza(id);
+      get().fetchStats();
+      return data.pointsEarned || 0;
+    } catch (e) {
+      set({
+        kazaList: previousKazaList,
+        kazaCompleted: previousCompleted,
+        kazaCounters: previousCounters,
+      });
       console.error('Failed to complete kaza', e);
       throw e;
     }
   },
 
   deleteKaza: async (id) => {
+    const previousKazaList = get().kazaList;
+    const previousCounters = get().kazaCounters;
+
+    const item = previousKazaList.find((k) => k.id === id);
+
+    // Optimistic Update
+    set((state) => ({
+      kazaList: state.kazaList.filter((k) => k.id !== id),
+      kazaCounters: item
+        ? {
+            ...state.kazaCounters,
+            [item.prayer_time]: Math.max(0, state.kazaCounters[item.prayer_time] - 1),
+          }
+        : state.kazaCounters,
+    }));
+
     try {
       await gamificationApi.deleteKaza(id);
-      set(s => ({ kazaList: s.kazaList.filter(k => k.id !== id) }));
     } catch (e) {
+      set({ kazaList: previousKazaList, kazaCounters: previousCounters });
       console.error('Failed to delete kaza', e);
       throw e;
     }
