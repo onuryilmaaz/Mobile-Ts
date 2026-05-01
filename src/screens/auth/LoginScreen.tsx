@@ -15,7 +15,6 @@ type Props = {
 };
 
 export default function LoginScreen({ navigation }: Props) {
-  const { isDark } = useThemeStore();
   const login = useAuthStore((s) => s.login);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -72,22 +71,33 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <Screen className="justify-center bg-slate-50 dark:bg-black">
+    <Screen className="justify-center">
       <ScrollView
         ref={scrollViewRef}
         className="m-0"
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: 24,
+          paddingHorizontal: 16,
+        }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         bounces={false}>
-        <Card className="mx-4 border-teal-500 shadow-xl shadow-teal-500/10 dark:border-teal-500/20 dark:shadow-none">
+        <View className="w-full items-center">
+          {/* Premium ambient background */}
+          <View className="pointer-events-none absolute -top-20 left-0 right-0 h-44 rounded-[48px] bg-teal-500/10" />
+          <View className="pointer-events-none absolute -bottom-20 left-10 right-10 h-44 rounded-[48px] bg-indigo-500/10" />
+
+          <Card className="w-full max-w-[520px] border-slate-100 dark:border-white/10">
           <View className="mb-8 items-center">
-            <Text className="text-3xl font-bold text-slate-900 dark:text-white">Hoş Geldin!</Text>
-            <Text className="mt-2 text-slate-500 dark:text-slate-400">Hesabına giriş yap ve devam et</Text>
+            <Text className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Hoş Geldin</Text>
+            <Text className="mt-2 text-slate-600 dark:text-slate-300">Hesabına giriş yap ve devam et</Text>
           </View>
           {error && (
-            <View className="mb-4 rounded-xl bg-red-50 p-3 dark:bg-red-500/10">
+            <View className="mb-4 rounded-2xl bg-red-50 p-3 dark:bg-red-500/10">
               <Text className="text-center text-sm font-medium text-red-600 dark:text-red-400">{error}</Text>
             </View>
           )}
@@ -125,12 +135,13 @@ export default function LoginScreen({ navigation }: Props) {
           />
 
           <View className="mt-6 flex-row justify-center">
-            <Text className="text-slate-600 dark:text-slate-400">Hesabın yok mu? </Text>
+            <Text className="text-slate-600 dark:text-slate-300">Hesabın yok mu? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
               <Text className="font-bold text-teal-600 dark:text-teal-400">Kayıt Ol</Text>
             </TouchableOpacity>
           </View>
-        </Card>
+          </Card>
+        </View>
       </ScrollView>
     </Screen>
   );

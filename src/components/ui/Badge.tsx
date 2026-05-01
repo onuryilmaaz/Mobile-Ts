@@ -23,7 +23,7 @@ const textColors: Record<BadgeVariant, string> = {
   warning: 'text-amber-700 dark:text-amber-400',
   danger: 'text-red-700 dark:text-red-400',
   info: 'text-blue-700 dark:text-blue-400',
-  neutral: 'text-slate-700 dark:text-slate-400',
+  neutral: 'text-slate-700 dark:text-slate-300',
 };
 
 const sizeStyles = {

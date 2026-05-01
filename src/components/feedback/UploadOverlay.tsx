@@ -93,8 +93,11 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }],
+            borderWidth: 1,
+            borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.06)',
           }}
-          className="items-center rounded-[40px] bg-white dark:bg-slate-900 px-12 py-10 shadow-2xl">
+          className="items-center rounded-[40px] bg-white px-12 py-10 shadow-2xl dark:bg-slate-800/70 dark:shadow-none"
+        >
           <Animated.View
             style={{ transform: [{ scale: pulseAnim }] }}
             className="absolute h-28 w-28 rounded-full bg-teal-100/50 dark:bg-teal-500/10"
@@ -112,7 +115,7 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
           </Animated.View>
 
           <Text className="text-center text-lg font-bold text-slate-900 dark:text-white">{message}</Text>
-          <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-400">Lütfen bekleyin...</Text>
+          <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-300">Lütfen bekleyin...</Text>
 
           <View className="mt-6 flex-row gap-2">
             <AnimatedDot delay={0} />

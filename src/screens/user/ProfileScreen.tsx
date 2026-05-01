@@ -428,7 +428,7 @@ export default function ProfileScreen({ navigation }: Props) {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color={item.danger ? '#fca5a5' : isDark ? '#1e293b' : '#94a3b8'}
+                  color={item.danger ? '#fca5a5' : isDark ? '#4b5563' : '#94a3b8'}
                 />
               </TouchableOpacity>
             ))}

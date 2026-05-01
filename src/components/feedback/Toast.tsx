@@ -113,6 +113,11 @@ const toastConfig: Record<
   },
 };
 
+const premiumSurfaceBorder = {
+  light: 'rgba(15,23,42,0.06)',
+  dark: 'rgba(255,255,255,0.08)',
+};
+
 function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismiss: () => void }) {
   const { isDark } = useThemeStore();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -140,7 +145,7 @@ function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismis
         opacity: fadeAnim,
         transform: [{ translateY }],
         backgroundColor: isDark ? config.darkBg : config.bg,
-        borderColor: isDark ? config.darkBorder : config.border,
+        borderColor: isDark ? premiumSurfaceBorder.dark : premiumSurfaceBorder.light,
       }}
       className="mx-4 mb-2 flex-row items-center rounded-2xl border p-4 shadow-sm">
       <Ionicons 

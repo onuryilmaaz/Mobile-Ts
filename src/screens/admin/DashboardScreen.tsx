@@ -103,9 +103,7 @@ export default function DashboardScreen({ navigation }: Props) {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => loadData()} />}
         contentContainerStyle={{ paddingBottom: 40 }}>
         {stats?.users && (
-          <Card 
-            className={`mx-4 my-4`} 
-            style={{ backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
+          <Card className="mx-4 my-4">
             <Text className="mb-3 text-base font-bold text-slate-900 dark:text-white">Özet İstatistikler</Text>
             <View className="flex-row flex-wrap gap-3">
               <View className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-slate-700 bg-slate-700/30' : 'bg-slate-50 border-transparent'}`}>
@@ -146,9 +144,7 @@ export default function DashboardScreen({ navigation }: Props) {
           </Card>
         )}
 
-        <Card 
-          className="mx-4 mb-4"
-          style={{ backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
+        <Card className="mx-4 mb-4">
           <Text className="mb-3 text-base font-bold text-slate-900 dark:text-white">Yönetim</Text>
           <View className="gap-2">
             {menuItems.map((item) => (

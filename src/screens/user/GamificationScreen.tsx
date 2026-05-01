@@ -139,7 +139,7 @@ export function GamificationScreen() {
           <View 
             className={`mx-6 mb-6 overflow-hidden rounded-[28px] border p-5 shadow-sm ${
               isDark 
-                ? 'border-slate-800 bg-slate-800 shadow-none' 
+                ? 'border-slate-700 bg-slate-800/70 shadow-none' 
                 : 'border-slate-200 bg-white shadow-black/5'
             }`}>
             <View className="mb-3 flex-row items-center justify-between">
@@ -159,9 +159,9 @@ export function GamificationScreen() {
               />
             </View>
             <View className="mt-2 flex-row justify-between">
-              <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-400">%{level.progressPercent} tamamlandı</Text>
+              <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-300">%{level.progressPercent} tamamlandı</Text>
               {nextLevel && (
-                <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-300">
                   {level.pointsToNextLevel} puan kaldı → {nextLevel.name}
                 </Text>
               )}
@@ -244,7 +244,7 @@ export function GamificationScreen() {
             <View 
               className={`rounded-[32px] border p-2 shadow-sm ${
                 isDark 
-                  ? 'border-slate-800 bg-slate-800 shadow-none' 
+                  ? 'border-slate-700 bg-slate-800/70 shadow-none' 
                   : 'border-slate-200 bg-white shadow-black/5'
               }`}>
               {rest.map((item: any, idx: number) => {
@@ -257,7 +257,7 @@ export function GamificationScreen() {
                       ? 'bg-teal-600 dark:bg-teal-500 shadow-sm shadow-teal-600/30' 
                       : 'bg-transparent'
                   }`}>
-                  <Text className={`w-8 text-xs font-black ${isMe ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`}>
+                  <Text className={`w-8 text-xs font-black ${isMe ? 'text-white' : 'text-slate-500 dark:text-slate-300'}`}>
                     {idx + 4}
                   </Text>
                   <View className={`mr-3 h-10 w-10 items-center justify-center overflow-hidden rounded-full ${
@@ -273,7 +273,7 @@ export function GamificationScreen() {
                     <Text className={`text-sm font-bold ${isMe ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
                       {item.first_name} {item.last_name || ''}
                     </Text>
-                    <Text className={`text-[9px] font-medium ${isMe ? 'text-white/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                    <Text className={`text-[9px] font-medium ${isMe ? 'text-white/80' : 'text-slate-500 dark:text-slate-300'}`}>
                       {item.current_streak} Günlük Seri
                     </Text>
                   </View>
@@ -293,7 +293,7 @@ export function GamificationScreen() {
                   <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
                     <Ionicons name="people-outline" size={32} color={isDark ? '#4b5563' : '#94a3b8'} />
                   </View>
-                  <Text className="text-center font-bold text-slate-500 dark:text-slate-400">Henüz kimse puan kazanmadı.</Text>
+                  <Text className="text-center font-bold text-slate-500 dark:text-slate-300">Henüz kimse puan kazanmadı.</Text>
                 </View>
               )}
             </View>

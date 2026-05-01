@@ -102,7 +102,7 @@ export default function SessionsScreen() {
             <Ionicons name="information-circle-outline" size={20} color={isDark ? '#94a3b8' : '#64748b'} />
             <Text className="text-sm font-medium text-slate-700 dark:text-slate-300">Bilgi</Text>
           </View>
-          <Text className="text-sm text-slate-600 dark:text-slate-400">
+          <Text className="text-sm text-slate-600 dark:text-slate-300">
             Hesabınıza bağlı tüm aktif oturumları görüntüleyin ve yönetin.
           </Text>
         </Card>
@@ -140,13 +140,13 @@ export default function SessionsScreen() {
                       )}
                     </View>
 
-                    <Text className="mb-2 text-xs text-slate-500 dark:text-slate-400" numberOfLines={2}>
+                    <Text className="mb-2 text-xs text-slate-500 dark:text-slate-300" numberOfLines={2}>
                       {session.userAgent?.slice(0, 60) ?? 'Bilinmeyen cihaz'}
                     </Text>
 
                     <View className="flex-row items-center gap-1">
                       <Ionicons name="location-outline" size={14} color="#94a3b8" />
-                      <Text className="text-xs text-slate-400 dark:text-slate-500">
+                      <Text className="text-xs text-slate-400 dark:text-slate-400">
                         IP: {session.ip ?? 'Bilinmiyor'}
                       </Text>
                     </View>

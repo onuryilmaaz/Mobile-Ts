@@ -61,8 +61,8 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
             key={index}
             onPress={() => handlePress(index)}
             className={`
-              h-14 flex-1 items-center justify-center rounded-xl border-2 bg-white dark:bg-slate-900
-              ${isFocused ? 'border-teal-500' : hasValue ? 'border-teal-300 dark:border-teal-500/50' : 'border-slate-200 dark:border-slate-800'}
+              h-14 flex-1 items-center justify-center rounded-xl border-2 bg-white dark:bg-slate-800/70
+              ${isFocused ? 'border-teal-500' : hasValue ? 'border-teal-300 dark:border-teal-500/50' : 'border-slate-200 dark:border-slate-700'}
             `}>
             <TextInput
               ref={(ref) => {

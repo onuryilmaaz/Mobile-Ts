@@ -31,7 +31,7 @@ export function ErrorView({
         {title}
       </Text>
 
-      <Text className="mb-6 text-center text-sm text-slate-500 dark:text-slate-400">{message}</Text>
+      <Text className="mb-6 text-center text-sm text-slate-500 dark:text-slate-300">{message}</Text>
 
       {onRetry && (
         <TouchableOpacity
@@ -47,7 +47,7 @@ export function ErrorView({
 
   if (fullScreen) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-black">
+      <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-slate-900">
         {content}
       </View>
     );

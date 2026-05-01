@@ -19,6 +19,9 @@ export function Screen({
   const defaultEdges: Edge[] = Platform.OS === 'ios' ? ['left', 'right'] : ['left', 'right'];
   const edges = safeAreaEdges ?? defaultEdges;
 
+  // Premium global backgrounds (consistent across app)
+  const appBg = isDark ? '#0b1220' : '#f8fafc';
+
   const content = (
     <View className="flex-1" style={style} {...props}>
       {children}
@@ -27,8 +30,8 @@ export function Screen({
 
   return (
     <SafeAreaView 
-      className="flex-1 bg-white dark:bg-slate-900" 
-      style={[{ backgroundColor: isDark ? '#0f172a' : '#f8fafc' }, style]}
+      className="flex-1 bg-slate-50 dark:bg-slate-950" 
+      style={[{ backgroundColor: appBg }, style]}
       edges={edges}>
       {keyboardAvoiding ? (
         <KeyboardAvoidingView

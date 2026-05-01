@@ -334,7 +334,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
           ╚══════════════════════════════╝ */}
       <View
         className={`mb-3 rounded-3xl border p-3.5 ${
-          isDark ? 'border-slate-800 bg-slate-800' : 'border-slate-200 bg-white'
+          isDark ? 'border-slate-700 bg-slate-800/80' : 'border-slate-200 bg-white'
         }`}>
         {loading && !data ? (
           <View className="items-center py-7">
@@ -356,7 +356,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                         ? 'border-teal-500/40 bg-teal-500/15'
                         : 'border-teal-600/40 bg-teal-50'
                       : isDark
-                        ? 'border-slate-700 bg-slate-700/40'
+                        ? 'border-slate-700 bg-slate-800/60'
                         : 'border-slate-200 bg-slate-50'
                   }`}>
                   <Ionicons
@@ -368,7 +368,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                           ? '#2dd4bf'
                           : '#0f766e'
                         : isDark
-                          ? 'rgba(240,244,255,0.30)'
+                          ? '#94a3b8'
                           : '#94a3b8'
                     }
                     style={{ marginBottom: 5 }}
@@ -377,7 +377,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                     className={`mb-1 text-[9px] font-bold uppercase tracking-widest ${
                       isNext
                         ? 'text-teal-700 dark:text-teal-400'
-                        : 'text-slate-400 dark:text-slate-500'
+                        : 'text-slate-400 dark:text-slate-400'
                     }`}>
                     {item.label}
                   </Text>
@@ -385,7 +385,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                     className={`text-[15px] font-black ${
                       isNext
                         ? 'text-slate-900 dark:text-white'
-                        : 'text-slate-500 dark:text-slate-400'
+                        : 'text-slate-500 dark:text-slate-200'
                     }`}>
                     {item.time}
                   </Text>

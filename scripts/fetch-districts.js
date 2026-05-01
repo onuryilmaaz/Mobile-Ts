@@ -2,9 +2,12 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
+// eslint-disable-next-line no-undef
+const DIRNAME = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+
 const BASE_URL = 'https://ezanvakti.imsakiyem.com/api';
-const STATES_FILE = path.join(__dirname, '../states.json');
-const OUTPUT_FILE = path.join(__dirname, '../src/constants/all-districts.json');
+const STATES_FILE = path.join(DIRNAME, '../states.json');
+const OUTPUT_FILE = path.join(DIRNAME, '../src/constants/all-districts.json');
 
 async function fetchDistrictsForAllStates() {
   try {

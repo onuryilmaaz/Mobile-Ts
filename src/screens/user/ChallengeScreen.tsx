@@ -55,10 +55,10 @@ function ChallengeCard({ challenge, onJoin }: { challenge: any; onJoin: () => vo
   return (
     <Animated.View
       entering={FadeInDown}
-      className={`mb-4 overflow-hidden rounded-[24px] border bg-white shadow-sm dark:bg-slate-900 dark:shadow-none ${
+      className={`mb-4 overflow-hidden rounded-[24px] border bg-white shadow-sm shadow-black/5 dark:bg-slate-800/70 dark:shadow-none ${
         isCompleted 
           ? 'border-green-200 dark:border-green-400/30' 
-          : 'border-slate-200 dark:border-slate-800'
+          : 'border-slate-200 dark:border-slate-700'
       }`}>
       <View className={`flex-row items-center justify-between px-5 py-3 ${typeStyles.bg}`}>
         <View className="flex-row items-center gap-2">
@@ -78,23 +78,23 @@ function ChallengeCard({ challenge, onJoin }: { challenge: any; onJoin: () => vo
             <Text className="text-[10px] font-black text-green-700 dark:text-green-400">Tamamlandı</Text>
           </View>
         ) : (
-          <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-400">{timeLeft(challenge.ends_at)}</Text>
+          <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-300">{timeLeft(challenge.ends_at)}</Text>
         )}
       </View>
 
       <View className="px-5 py-4">
         <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">{challenge.title}</Text>
-        <Text className="mb-4 text-sm leading-5 text-slate-500 dark:text-slate-400">{challenge.description}</Text>
+        <Text className="mb-4 text-sm leading-5 text-slate-500 dark:text-slate-300">{challenge.description}</Text>
 
         {isJoined && (
           <View className="mb-4">
             <View className="mb-1.5 flex-row justify-between">
-              <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">İlerleme</Text>
+              <Text className="text-xs font-bold text-slate-500 dark:text-slate-300">İlerleme</Text>
               <Text className={`text-xs font-black ${typeStyles.text}`}>
                 {progress} / {challenge.goal_value}
               </Text>
             </View>
-            <View className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+            <View className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900/40">
               <View 
                 className="h-full rounded-full" 
                 style={{ width: `${percent}%`, backgroundColor: typeStyles.raw }} 
@@ -211,13 +211,13 @@ export default function ChallengeScreen() {
         )}
 
         {active.length === 0 && !isLoading && (
-          <View className="mx-4 items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-800 dark:bg-slate-900">
+          <View className="mx-4 items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-700 dark:bg-slate-800/70">
             <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
               <Ionicons name="trophy-outline" size={40} color={isDark ? '#4b5563' : '#94a3b8'} />
             </View>
             <Text className="text-base font-black text-slate-900 dark:text-white">Challenge Yok</Text>
-            <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-400">
-              Yakında yeni challenge'lar eklenecek!
+            <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-300">
+              Yakında yeni challenge’lar eklenecek!
             </Text>
           </View>
         )}

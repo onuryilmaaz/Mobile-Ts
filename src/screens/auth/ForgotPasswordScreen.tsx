@@ -47,7 +47,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="justify-center bg-slate-50 dark:bg-black">
+    <Screen className="justify-center bg-slate-50 dark:bg-slate-900">
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}

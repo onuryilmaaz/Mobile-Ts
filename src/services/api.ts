@@ -1,4 +1,6 @@
 import axios from 'axios';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 import {
   clearTokens,
   getAccessToken,
@@ -14,15 +16,39 @@ export function setLogoutCallback(callback: () => Promise<void>) {
   logoutCallback = callback;
 }
 
-const BASE_URL = 'http://192.168.1.34:3000';
+function getApiBaseUrl() {
+  const envUrl = process.env.EXPO_PUBLIC_API_URL;
+  const extraUrl = (Constants.expoConfig as any)?.extra?.apiUrl as string | undefined;
+
+  // If explicitly provided, trust it.
+  const explicit = (envUrl || extraUrl || '').trim();
+  if (explicit) return explicit.replace(/\/+$/, '');
+
+  // Android emulator -> host loopback
+  if (Platform.OS === 'android') {
+    // On Android emulator, localhost points to emulator, not host machine.
+    return 'http://10.0.2.2:3000';
+  }
+
+  // iOS simulator -> localhost works
+  // Physical devices -> derive LAN IP from Expo hostUri when possible.
+  const hostUri = (Constants.expoConfig as any)?.hostUri as string | undefined; // e.g. "192.168.1.34:8081"
+  const host = (hostUri || '').split(':')[0].trim();
+  if (host && host !== 'localhost') {
+    return `http://${host}:3000`;
+  }
+  return 'http://localhost:3000';
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   timeout: 10000,
 });
 
 const refreshClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   timeout: 10000,
 });
 

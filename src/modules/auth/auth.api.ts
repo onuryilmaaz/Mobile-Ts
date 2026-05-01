@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { api } from '@/services/api';
+import { api, API_BASE_URL } from '@/services/api';
 import {
   AuthResponse,
   ChangeEmailConfirmPayload,
@@ -15,11 +15,8 @@ import {
 } from './auth.types';
 import { getRefreshToken } from '@/services/token.service';
 
-const BASE_URL = 'http://192.168.1.34:3000';
-//const BASE_URL = 'https://mobileapi-vxxh.onrender.com';
-
 const refreshClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   timeout: 10000,
 });
 

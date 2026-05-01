@@ -30,8 +30,9 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
 
       <View
         className={`
-          h-12 flex-row items-center rounded-2xl border bg-white dark:bg-slate-900 px-4
-          ${focused ? 'border-teal-500' : 'border-slate-200 dark:border-slate-800'}
+          h-12 flex-row items-center rounded-2xl border px-4
+          ${isDark ? 'bg-slate-800/50' : 'bg-white'}
+          ${focused ? 'border-teal-500' : isDark ? 'border-slate-700' : 'border-slate-200'}
           ${error ? 'border-red-500' : ''}
         `}>
         <TextInput

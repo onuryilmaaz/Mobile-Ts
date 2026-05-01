@@ -6,10 +6,10 @@ export function Card({ children, className, style, ...props }: ViewProps) {
   
   return (
     <View
-      className={`rounded-3xl border p-5 shadow-sm ${
+      className={`rounded-3xl border p-5 ${
         isDark 
-          ? 'border-slate-800 bg-slate-800 shadow-none' 
-          : 'border-slate-100 bg-white shadow-slate-200'
+          ? 'border-slate-700 bg-slate-800' 
+          : 'border-slate-100 bg-white shadow-sm shadow-black/5'
       } ${className}`}
       style={style}
       {...props}>

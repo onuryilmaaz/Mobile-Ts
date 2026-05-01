@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { hadithService } from '@/services/hadith.service';
+import { useThemeStore } from '@/store/theme.store';
 
 // Shape returned by hadithService (different from the raw DB Hadith type)
 type HadithResult = { hadithnumber: number; text: string };
@@ -12,6 +13,7 @@ export function DailyHadithCard() {
   const [bookName, setBookName] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const { isDark } = useThemeStore();
 
   useEffect(() => {
     loadHourlyHadith();
@@ -39,8 +41,11 @@ export function DailyHadithCard() {
 
   if (loading) {
     return (
-      <View className="mx-4 mb-6 rounded-3xl bg-gradient-to-br from-amber-50 to-orange-50 p-6 shadow-lg">
-        <ActivityIndicator size="large" color="#d97706" />
+      <View 
+        className={`mx-4 mb-6 items-center justify-center rounded-3xl border p-12 ${
+          isDark ? 'border-slate-700 bg-slate-800' : 'border-amber-100 bg-amber-50'
+        }`}>
+        <ActivityIndicator size="large" color={isDark ? '#fbbf24' : '#d97706'} />
       </View>
     );
   }
@@ -54,8 +59,15 @@ export function DailyHadithCard() {
 
   return (
     <View className="mx-4 mb-6">
-      <View className="overflow-hidden rounded-3xl border border-amber-100 bg-white shadow-xl shadow-amber-900/10">
-        <View className="bg-amber-600 px-6 py-4">
+      <View 
+        className={`overflow-hidden rounded-3xl border shadow-xl ${
+          isDark 
+            ? 'border-slate-700 bg-slate-800 shadow-none' 
+            : 'border-amber-100 bg-white shadow-amber-900/10'
+        }`}>
+        <View 
+          className="px-6 py-4"
+          style={{ backgroundColor: isDark ? '#92400e' : '#d97706' }}>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <Ionicons name="book" size={20} color="#fff" />
@@ -72,21 +84,21 @@ export function DailyHadithCard() {
           </View>
         </View>
         <View className="p-6">
-          <Text className="mb-4 text-base leading-7 text-slate-700">{truncatedText}</Text>
+          <Text className="mb-4 text-base leading-7 text-slate-700 dark:text-slate-300">{truncatedText}</Text>
           {hadith.text.length > 150 && (
             <TouchableOpacity onPress={() => setExpanded(!expanded)} className="mb-4">
-              <Text className="text-sm font-semibold text-amber-600">
+              <Text className="text-sm font-semibold text-amber-600 dark:text-amber-400">
                 {expanded ? 'Daha Az Göster' : 'Devamını Oku'}
               </Text>
             </TouchableOpacity>
           )}
-          <View className="mt-2 flex-row items-center justify-between border-t border-slate-100 pt-4">
+          <View className="mt-2 flex-row items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-700">
             <View>
-              <Text className="text-xs font-medium text-slate-500">Kaynak</Text>
-              <Text className="text-sm font-bold text-slate-700">{bookName}</Text>
+              <Text className="text-xs font-medium text-slate-500 dark:text-slate-400">Kaynak</Text>
+              <Text className="text-sm font-bold text-slate-700 dark:text-slate-200">{bookName}</Text>
             </View>
-            <View className="rounded-full bg-amber-50 px-3 py-1.5">
-              <Text className="text-xs font-semibold text-amber-600">#{hadith.hadithnumber}</Text>
+            <View className="rounded-full bg-amber-50 px-3 py-1.5 dark:bg-amber-500/15">
+              <Text className="text-xs font-semibold text-amber-600 dark:text-amber-400">#{hadith.hadithnumber}</Text>
             </View>
           </View>
         </View>

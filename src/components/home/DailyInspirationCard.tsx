@@ -130,7 +130,7 @@ export function DailyInspirationCard() {
           <Text
             className="text-center text-lg font-bold italic leading-8 text-slate-900 dark:text-white"
             numberOfLines={0}>
-            "{current.text}"
+            “{current.text}”
           </Text>
           <View className="mt-6 flex-row items-center gap-2">
             <View className="h-[1px] w-8 bg-slate-200 dark:bg-white/10" />

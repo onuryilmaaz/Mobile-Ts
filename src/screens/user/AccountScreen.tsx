@@ -73,7 +73,7 @@ export default function AccountScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-lg font-semibold text-slate-900 dark:text-white">Çıkış Yap</Text>
-              <Text className="text-sm text-slate-500 dark:text-slate-400">
+              <Text className="text-sm text-slate-500 dark:text-slate-300">
                 Hesabınızdan güvenli bir şekilde çıkış yapın
               </Text>
             </View>

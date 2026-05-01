@@ -33,8 +33,11 @@ function StatCard({ icon, label, value, color, twBg }: { icon: any; label: strin
   const { isDark } = useThemeStore();
   return (
     <View 
-      className="mx-1.5 flex-1 items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-      style={{ backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
+      className={`mx-1.5 flex-1 items-center rounded-2xl border p-4 shadow-sm ${
+        isDark 
+          ? 'border-slate-800 bg-slate-800 shadow-none' 
+          : 'border-slate-200 bg-white shadow-black/5'
+      }`}>
       <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${twBg}`}>
         <Ionicons name={icon} size={20} color={color} />
       </View>
@@ -126,8 +129,8 @@ export default function StatsScreen() {
           <View 
             className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
               isDark 
-                ? 'border-slate-800 bg-slate-800' 
-                : 'border-slate-200 bg-white'
+                ? 'border-slate-800 bg-slate-800 shadow-none' 
+                : 'border-slate-200 bg-white shadow-black/5'
             }`}>
             <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Haftalık Namaz Grafiği</Text>
             <BarChart
@@ -143,8 +146,8 @@ export default function StatsScreen() {
               showValuesOnTopOfBars
               withInnerLines={false}
               chartConfig={{
-                backgroundGradientFrom: isDark ? '#0f172a' : '#ffffff',
-                backgroundGradientTo: isDark ? '#0f172a' : '#ffffff',
+                backgroundGradientFrom: isDark ? '#1e293b' : '#ffffff',
+                backgroundGradientTo: isDark ? '#1e293b' : '#ffffff',
                 decimalPlaces: 0,
                 color: (opacity = 1) => isDark ? `rgba(45, 212, 191, ${opacity})` : `rgba(15, 118, 110, ${opacity})`,
                 labelColor: () => isDark ? '#94a3b8' : '#64748b',
@@ -160,7 +163,11 @@ export default function StatsScreen() {
           </View>
         )}
 
-        <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <View className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
+          isDark 
+            ? 'border-slate-800 bg-slate-800 shadow-none' 
+            : 'border-slate-200 bg-white shadow-black/5'
+        }`}>
           <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">Vakit Bazlı Analiz</Text>
           <Text className="mb-4 text-xs text-slate-500 dark:text-slate-400">Son 7 gün — Hangi vakitte daha başarılısın?</Text>
 
@@ -200,7 +207,11 @@ export default function StatsScreen() {
           )}
         </View>
 
-        <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <View className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
+          isDark 
+            ? 'border-slate-800 bg-slate-800 shadow-none' 
+            : 'border-slate-200 bg-white shadow-black/5'
+        }`}>
           <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Genel Bilgiler</Text>
           <View className="flex-row flex-wrap gap-3">
             {[

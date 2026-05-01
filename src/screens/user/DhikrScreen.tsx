@@ -435,7 +435,7 @@ export default function DhikrScreen() {
                 className={`mr-2 flex-row items-center gap-1 rounded-2xl border px-4 py-2.5 ${
                   activePreset === idx
                     ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/10'
-                    : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                    : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800/70'
                 }`}>
                 {preset.isCustom && (
                   <Ionicons name="star" size={10} color={activePreset === idx ? (isDark ? '#14b8a6' : '#0f766e') : (isDark ? '#4b5563' : '#94a3b8')} />
@@ -507,13 +507,13 @@ export default function DhikrScreen() {
         <View className="mt-8 flex-row justify-center gap-4 px-4">
           <TouchableOpacity
             onPress={resetCount}
-            className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm dark:shadow-none">
+            className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
             <Ionicons name="refresh-outline" size={22} color={isDark ? '#94a3b8' : '#475569'} />
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={shareProgress}
-            className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm dark:shadow-none">
+            className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
             <Ionicons name="share-social-outline" size={22} color={isDark ? '#94a3b8' : '#475569'} />
           </TouchableOpacity>
         </View>

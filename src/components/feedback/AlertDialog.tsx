@@ -91,13 +91,13 @@ export function AlertDialog() {
     return {
       container: `flex-1 h-12 rounded-2xl items-center justify-center min-w-[100px] ${
         isCancel
-          ? 'bg-slate-100 dark:bg-slate-800'
+          ? 'bg-slate-100 dark:bg-slate-900/40'
           : isDestructive
             ? 'bg-red-500 dark:bg-red-600'
             : 'bg-teal-600 dark:bg-teal-500'
       }`,
       text: `text-base font-semibold ${
-        isCancel ? 'text-slate-600 dark:text-slate-400' : 'text-white'
+        isCancel ? 'text-slate-600 dark:text-slate-300' : 'text-white'
       }`,
     };
   };
@@ -121,8 +121,11 @@ export function AlertDialog() {
             maxWidth: 340,
             transform: [{ scale: scaleAnim }],
             opacity: opacityAnim,
+            borderWidth: 1,
+            borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.06)',
           }}
-          className="items-center rounded-[32px] bg-white p-8 shadow-2xl dark:bg-slate-900">
+          className="items-center rounded-[32px] bg-white p-8 shadow-2xl dark:bg-slate-800/70 dark:shadow-none"
+        >
           <View
             style={{ backgroundColor: iconConfig.bgColor }}
             className="mb-4 h-16 w-16 items-center justify-center rounded-full">
@@ -133,7 +136,7 @@ export function AlertDialog() {
             {title}
           </Text>
           {message && (
-            <Text className="mb-6 text-center text-base leading-6 text-slate-600 dark:text-slate-400">
+            <Text className="mb-6 text-center text-base leading-6 text-slate-600 dark:text-slate-300">
               {message}
             </Text>
           )}

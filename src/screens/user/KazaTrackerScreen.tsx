@@ -66,17 +66,17 @@ function AddKazaModal({
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/60">
-        <View className="rounded-t-[32px] border-t border-slate-200 bg-white dark:bg-slate-900 p-6 pb-10 dark:border-slate-800">
+        <View className="rounded-t-[32px] border-t border-slate-200 bg-white p-6 pb-10 dark:border-slate-700 dark:bg-slate-800/70">
           <View className="mb-6 flex-row items-center justify-between">
             <Text className="text-xl font-black text-slate-900 dark:text-white">Kaza Namaz Ekle</Text>
             <TouchableOpacity
               onPress={onClose}
-              className="h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              className="h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900/40">
               <Ionicons name="close" size={20} color={isDark ? '#94a3b8' : '#475569'} />
             </TouchableOpacity>
           </View>
 
-          <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+          <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300">
             Namaz Vakti
           </Text>
           <View className="mb-5 flex-row flex-wrap gap-2">
@@ -90,11 +90,11 @@ function AddKazaModal({
                 className={`rounded-2xl border px-4 py-2.5 ${
                   selectedPrayer === p.key
                     ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
-                    : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50'
+                    : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40'
                 }`}>
                 <Text
                   className={`text-sm font-bold ${
-                    selectedPrayer === p.key ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'
+                    selectedPrayer === p.key ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-300'
                   }`}>
                   {p.label}
                 </Text>
@@ -102,7 +102,7 @@ function AddKazaModal({
             ))}
           </View>
 
-          <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+          <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300">
             Hangi Gün?
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-1 mb-6">
@@ -120,11 +120,11 @@ function AddKazaModal({
                   className={`mx-1 w-14 items-center rounded-2xl border py-3 ${
                     selectedDate === d
                       ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
-                      : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50'
+                      : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40'
                   }`}>
                   <Text
                     className={`text-[10px] font-bold uppercase ${
-                      selectedDate === d ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'
+                      selectedDate === d ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-300'
                     }`}>
                     {day}
                   </Text>
@@ -178,7 +178,7 @@ function KazaItem({
     <Animated.View entering={FadeInDown} exiting={FadeOutUp} layout={Layout.springify()}>
       <Animated.View
         style={[animStyle]}
-        className="mb-3 flex-row items-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4 shadow-sm dark:border-slate-800">
+        className="mb-3 flex-row items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
         <View
           className="mr-4 h-11 w-11 items-center justify-center rounded-2xl"
           style={{ backgroundColor: `${getPrayerColor(item.prayer_time)}18` }}>
@@ -192,7 +192,7 @@ function KazaItem({
           <Text className="text-sm font-black text-slate-900 dark:text-white">
             {getPrayerLabel(item.prayer_time)} Namazı
           </Text>
-          <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-300">
             {formatMissedDate(item.missed_date)}
           </Text>
         </View>
@@ -204,7 +204,7 @@ function KazaItem({
               { text: 'Sil', style: 'destructive', onPress: onDelete },
             ]);
           }}
-          className="mr-2 h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
+          className="mr-2 h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40">
           <Ionicons name="trash-outline" size={16} color={isDark ? '#4b5563' : '#94a3b8'} />
         </TouchableOpacity>
 
@@ -329,12 +329,12 @@ export default function KazaTrackerScreen() {
           </View>
 
           {kazaList.length === 0 && !loading ? (
-            <View className="items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-800 dark:bg-slate-900">
+            <View className="items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-700 dark:bg-slate-800/70">
               <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-500/15">
                 <Ionicons name="checkmark-circle-outline" size={40} color={isDark ? '#34d399' : '#10b981'} />
               </View>
               <Text className="text-lg font-black text-slate-900 dark:text-white">Tebrikler!</Text>
-              <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-400">
+              <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-300">
                 Hiç bekleyen kaza namazın yok.{'\n'}Elhamdülillah!
               </Text>
             </View>

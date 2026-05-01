@@ -53,14 +53,14 @@ export function AuthWallModal({
         
         <View className="w-full overflow-hidden rounded-[32px] bg-white dark:bg-slate-900 shadow-2xl">
           <View className="items-center bg-teal-50 dark:bg-teal-500/10 p-8">
-            <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm">
+            <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm shadow-black/5 dark:bg-slate-900/40 dark:shadow-none">
               <Ionicons name="lock-closed" size={40} color={isDark ? "#14b8a6" : "#0f766e"} />
             </View>
             <Text className="text-center text-2xl font-black text-slate-900 dark:text-white">{title}</Text>
           </View>
 
           <View className="p-8">
-            <Text className="text-center text-lg leading-7 text-slate-600 dark:text-slate-400">
+            <Text className="text-center text-lg leading-7 text-slate-600 dark:text-slate-300">
               {description}
             </Text>
 
@@ -86,7 +86,7 @@ export function AuthWallModal({
                 className="h-12 items-center justify-center"
                 activeOpacity={0.7}
               >
-                <Text className="font-semibold text-slate-400 dark:text-slate-500">Daha Sonra</Text>
+                <Text className="font-semibold text-slate-400 dark:text-slate-400">Daha Sonra</Text>
               </TouchableOpacity>
             </View>
           </View>

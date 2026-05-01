@@ -115,7 +115,7 @@ export default function QiblaFinderScreen() {
               height: width * 0.75,
               borderRadius: (width * 0.75) / 2,
             }}
-            className="relative items-center justify-center rounded-full border-4 border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+            className="relative items-center justify-center rounded-full border-4 border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
             
             <View className="absolute top-4 items-center">
               <Text className="mb-1 text-xl font-bold text-red-500 dark:text-red-400">N</Text>
@@ -155,7 +155,7 @@ export default function QiblaFinderScreen() {
               />
             ))}
 
-            <View className="h-[120px] w-[120px] items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <View className="h-[120px] w-[120px] items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900/40">
               <Ionicons
                 name="arrow-up"
                 size={70}
@@ -176,7 +176,7 @@ export default function QiblaFinderScreen() {
               </Text>
             </View>
           ) : (
-            <Text className="text-sm text-slate-500 dark:text-slate-400">
+            <Text className="text-sm text-slate-500 dark:text-slate-300">
               Cihazı yatay tutun ve döndürün
             </Text>
           )}

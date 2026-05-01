@@ -19,8 +19,8 @@ export function Loading({
 
   if (fullScreen) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-black">
-        <View className="items-center rounded-2xl bg-white dark:bg-slate-900 p-8 shadow-sm">
+      <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <View className={`items-center rounded-2xl p-8 shadow-sm ${isDark ? 'bg-slate-800 shadow-none' : 'bg-white shadow-black/5'}`}>
           <ActivityIndicator size={size} color={loaderColor} />
           {message && (
             <Text className="mt-4 text-base font-medium text-slate-600 dark:text-slate-400">

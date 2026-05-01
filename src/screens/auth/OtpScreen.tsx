@@ -86,7 +86,7 @@ export default function OtpScreen({ navigation, route }: Props) {
   }
 
   return (
-    <Screen className="justify-center bg-slate-50 dark:bg-black">
+    <Screen className="justify-center bg-slate-50 dark:bg-slate-900">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}

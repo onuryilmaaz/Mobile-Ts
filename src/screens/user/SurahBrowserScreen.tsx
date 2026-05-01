@@ -62,7 +62,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
         <View 
           className={`flex-row items-center rounded-2xl border px-4 py-3 shadow-sm shadow-black/5 ${
             isDark 
-              ? 'border-slate-800 bg-slate-800' 
+              ? 'border-slate-700 bg-slate-800/70' 
               : 'border-slate-200 bg-white'
           }`}>
           <Ionicons name="search" size={20} color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'} />
@@ -102,7 +102,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
                 onPress={() => handleSurahPress(surah)}
                 className={`mb-3 flex-row items-center rounded-3xl border p-4 shadow-sm shadow-black/5 ${
                   isDark 
-                    ? 'border-slate-800 bg-slate-800' 
+                    ? 'border-slate-700 bg-slate-800/70' 
                     : 'border-slate-200 bg-white'
                 }`}>
                 
