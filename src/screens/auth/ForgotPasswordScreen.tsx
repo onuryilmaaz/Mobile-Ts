@@ -47,7 +47,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen className="justify-center bg-slate-50 dark:bg-slate-900">
+    <Screen>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
@@ -56,8 +56,12 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
         keyboardDismissMode="interactive"
         bounces={false}>
         <Card className="mx-4 shadow-lg shadow-teal-500/10 dark:border-teal-500/20 dark:shadow-none">
-          <Text className="mb-2 text-3xl font-bold text-slate-900 dark:text-white">Şifremi Unuttum</Text>
-          <Text className="mb-6 text-slate-500 dark:text-slate-400">Email adresine kod gönderelim</Text>
+          <Text className="mb-2 text-3xl font-bold text-slate-900 dark:text-white">
+            Şifremi Unuttum
+          </Text>
+          <Text className="mb-6 text-slate-500 dark:text-slate-400">
+            Email adresine kod gönderelim
+          </Text>
 
           {error && <Text className="mb-3 text-red-500 dark:text-red-400">{error}</Text>}
           {message && <Text className="mb-3 text-green-600 dark:text-green-400">{message}</Text>}

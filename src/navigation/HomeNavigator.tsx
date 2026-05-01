@@ -87,7 +87,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
         </View>
 
         <TouchableOpacity
-          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-teal-600 bg-teal-600/5 dark:border-white/10 dark:bg-white/5"
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-teal-600 bg-teal-600/5 dark:border-white"
           onPress={() => {
             if (isAuthenticated) {
               navigation.navigate('Profile' as any, { screen: 'ProfileMain' });

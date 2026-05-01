@@ -93,7 +93,6 @@ export default function HomeScreen({ navigation }: Props) {
         <PrayerTimesCard focusNonce={focusNonce} />
         <PrayerTrackerCard />
 
-        {/* ── Premium Quick Actions ── */}
         {isAuthenticated && (
           <View className="mb-5 pl-4">
             <ScrollView
@@ -111,9 +110,8 @@ export default function HomeScreen({ navigation }: Props) {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       navigation.navigate(action.screen);
                     }}
-                    className="relative w-[130px] items-center overflow-hidden rounded-[22px] border p-[18px] shadow-sm shadow-black/5"
+                    className="relative h-[140px] w-[115px] items-center overflow-hidden rounded-[22px] border p-[14px] shadow-sm shadow-black/5"
                     style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
-                    {/* Glow orb — dark only */}
                     {isDark && (
                       <View
                         className="absolute -right-5 -top-5 h-[70px] w-[70px] rounded-full"
@@ -149,7 +147,6 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
-        {/* ── Inspiration & Religious Days ── */}
         <DailyInspirationCard />
         <ReligiousDaysCard />
       </ScrollView>

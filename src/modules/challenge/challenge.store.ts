@@ -10,7 +10,6 @@ type Challenge = {
   goal_value: number;
   bonus_points: number;
   ends_at: string;
-  // User fields
   user_challenge_id: string | null;
   progress: number | null;
   is_completed: boolean | null;

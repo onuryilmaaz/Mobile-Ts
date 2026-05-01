@@ -75,7 +75,7 @@ export function DailyInspirationCard() {
 
   if (!current && loading) {
     return (
-      <View 
+      <View
         className={`mx-4 mb-6 items-center justify-center rounded-[32px] border p-12 ${
           isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
         }`}>
@@ -91,13 +91,18 @@ export function DailyInspirationCard() {
       <Animated.View
         layout={Layout.springify()}
         className={`overflow-hidden rounded-[32px] border shadow-xl ${
-          isDark ? 'border-slate-700 bg-slate-800 shadow-none' : 'border-slate-200 bg-white shadow-black/5'
+          isDark
+            ? 'border-slate-700 bg-slate-800 shadow-none'
+            : 'border-slate-200 bg-white shadow-black/5'
         }`}>
-        
         <View className="flex-row items-center justify-between px-6 pt-6">
           <View className="flex-row items-center gap-2">
             <View className="h-8 w-8 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/15">
-              <Ionicons name={current.icon as any} size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
+              <Ionicons
+                name={current.icon as any}
+                size={16}
+                color={isDark ? '#14b8a6' : '#0f766e'}
+              />
             </View>
             <Text className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
               {current.type}
@@ -108,16 +113,27 @@ export function DailyInspirationCard() {
               onPress={shareInspiration}
               className="h-8 w-8 items-center justify-center rounded-2xl"
               style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }}>
-              <Ionicons name="share-outline" size={16} color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+              <Ionicons
+                name="share-outline"
+                size={16}
+                color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleRefresh}
               className="h-8 w-8 items-center justify-center rounded-2xl"
               style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }}>
               {loading ? (
-                <ActivityIndicator size="small" color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+                <ActivityIndicator
+                  size="small"
+                  color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                />
               ) : (
-                <Ionicons name="refresh-outline" size={16} color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+                <Ionicons
+                  name="refresh-outline"
+                  size={16}
+                  color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                />
               )}
             </TouchableOpacity>
           </View>
@@ -141,10 +157,11 @@ export function DailyInspirationCard() {
           </View>
         </Animated.View>
 
-        <View 
+        <View
           className="items-center px-6 py-4"
           style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc' }}>
-          <Text className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+          <Text
+            className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-400'}`}>
             Manevi Huzur İçin Küçük Bir Hatırlatma
           </Text>
         </View>

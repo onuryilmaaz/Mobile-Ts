@@ -124,8 +124,7 @@ export function AlertDialog() {
             borderWidth: 1,
             borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.06)',
           }}
-          className="items-center rounded-[32px] bg-white p-8 shadow-2xl dark:bg-slate-800/70 dark:shadow-none"
-        >
+          className="items-center rounded-[32px] bg-white p-8 shadow-2xl dark:bg-slate-800/70 dark:shadow-none">
           <View
             style={{ backgroundColor: iconConfig.bgColor }}
             className="mb-4 h-16 w-16 items-center justify-center rounded-full">

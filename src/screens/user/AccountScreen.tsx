@@ -72,7 +72,9 @@ export default function AccountScreen() {
               <Ionicons name="log-out-outline" size={24} color={isDark ? '#14b8a6' : '#0f766e'} />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-slate-900 dark:text-white">Çıkış Yap</Text>
+              <Text className="text-lg font-semibold text-slate-900 dark:text-white">
+                Çıkış Yap
+              </Text>
               <Text className="text-sm text-slate-500 dark:text-slate-300">
                 Hesabınızdan güvenli bir şekilde çıkış yapın
               </Text>
@@ -87,7 +89,9 @@ export default function AccountScreen() {
               <Ionicons name="warning-outline" size={24} color="#dc2626" />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-red-700 dark:text-red-400">Tehlikeli Bölge</Text>
+              <Text className="text-lg font-semibold text-red-700 dark:text-red-400">
+                Tehlikeli Bölge
+              </Text>
               <Text className="text-sm text-red-600 dark:text-red-400/80">
                 Hesabınızı devre dışı bırakmak geri alınabilir ancak dikkatli olun
               </Text>

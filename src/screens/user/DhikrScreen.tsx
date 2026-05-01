@@ -31,20 +31,20 @@ import { useThemeStore } from '@/store/theme.store';
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.72;
 
-const STORAGE_KEY_TOTAL   = 'DHIKR_TOTAL_COUNT';
+const STORAGE_KEY_TOTAL = 'DHIKR_TOTAL_COUNT';
 const STORAGE_KEY_CUSTOMS = 'DHIKR_CUSTOM_PRESETS';
-const STORAGE_KEY_LOG     = 'DHIKR_DAILY_LOG';
+const STORAGE_KEY_LOG = 'DHIKR_DAILY_LOG';
 
 type Preset = { name: string; target: number; isCustom?: boolean };
 type DailyLog = { date: string; count: number; presetName: string }[];
 
 const DEFAULT_PRESETS: Preset[] = [
-  { name: 'Subhânallâh',       target: 33  },
-  { name: 'Elhamdülillâh',     target: 33  },
-  { name: 'Allâhu Ekber',      target: 33  },
+  { name: 'Subhânallâh', target: 33 },
+  { name: 'Elhamdülillâh', target: 33 },
+  { name: 'Allâhu Ekber', target: 33 },
   { name: 'Lâ ilâhe illallâh', target: 100 },
-  { name: 'Salavât',           target: 100 },
-  { name: 'İstiğfar',          target: 70  },
+  { name: 'Salavât', target: 100 },
+  { name: 'İstiğfar', target: 70 },
 ];
 
 function MilestoneToast({ message, visible }: { message: string; visible: boolean }) {
@@ -68,7 +68,7 @@ function AddPresetModal({
   onClose: () => void;
   onAdd: (preset: Preset) => void;
 }) {
-  const [name, setName]     = useState('');
+  const [name, setName] = useState('');
   const [target, setTarget] = useState('33');
   const { isDark } = useThemeStore();
 
@@ -89,9 +89,11 @@ function AddPresetModal({
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1 justify-end bg-black/40">
-        <View className="rounded-t-[32px] bg-white dark:bg-slate-900 p-6 pb-10 dark:border-t dark:border-slate-800">
+        <View className="rounded-t-[32px] bg-white p-6 pb-10 dark:border-t dark:border-slate-800 dark:bg-slate-900">
           <View className="mb-6 flex-row items-center justify-between">
-            <Text className="text-xl font-black text-slate-900 dark:text-white">Özel Zikir Ekle</Text>
+            <Text className="text-xl font-black text-slate-900 dark:text-white">
+              Özel Zikir Ekle
+            </Text>
             <TouchableOpacity
               onPress={onClose}
               className="h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
@@ -128,7 +130,9 @@ function AddPresetModal({
                 }`}>
                 <Text
                   className={`text-sm font-bold ${
-                    target === t.toString() ? 'text-teal-700 dark:text-teal-400' : 'text-slate-600 dark:text-slate-400'
+                    target === t.toString()
+                      ? 'text-teal-700 dark:text-teal-400'
+                      : 'text-slate-600 dark:text-slate-400'
                   }`}>
                   {t}
                 </Text>
@@ -147,12 +151,20 @@ function AddPresetModal({
   );
 }
 
-function HistoryModal({ visible, onClose, log }: { visible: boolean; onClose: () => void; log: DailyLog }) {
+function HistoryModal({
+  visible,
+  onClose,
+  log,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  log: DailyLog;
+}) {
   const { isDark } = useThemeStore();
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/40">
-        <View className="max-h-[70%] rounded-t-[32px] bg-white dark:bg-slate-900 p-6 pb-10 dark:border-t dark:border-slate-800">
+        <View className="max-h-[70%] rounded-t-[32px] bg-white p-6 pb-10 dark:border-t dark:border-slate-800 dark:bg-slate-900">
           <View className="mb-6 flex-row items-center justify-between">
             <Text className="text-xl font-black text-slate-900 dark:text-white">Zikir Geçmişi</Text>
             <TouchableOpacity
@@ -165,22 +177,32 @@ function HistoryModal({ visible, onClose, log }: { visible: boolean; onClose: ()
             {log.length === 0 ? (
               <View className="items-center py-12">
                 <Ionicons name="time-outline" size={40} color={isDark ? '#1e293b' : '#94a3b8'} />
-                <Text className="mt-3 text-sm text-slate-600 dark:text-slate-400">Henüz zikir kaydı yok.</Text>
+                <Text className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+                  Henüz zikir kaydı yok.
+                </Text>
               </View>
             ) : (
               [...log].reverse().map((entry, i) => (
                 <View
                   key={i}
-                  className="mb-3 flex-row items-center rounded-2xl border border-slate-200 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 dark:border-slate-800">
+                  className="mb-3 flex-row items-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-800/50">
                   <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/10">
-                    <Ionicons name="radio-button-on" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
+                    <Ionicons
+                      name="radio-button-on"
+                      size={16}
+                      color={isDark ? '#14b8a6' : '#0f766e'}
+                    />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-sm font-black text-slate-900 dark:text-white">{entry.presetName}</Text>
+                    <Text className="text-sm font-black text-slate-900 dark:text-white">
+                      {entry.presetName}
+                    </Text>
                     <Text className="text-xs text-slate-500 dark:text-slate-400">{entry.date}</Text>
                   </View>
                   <View className="rounded-full bg-teal-50 px-3 py-1 dark:bg-teal-500/15">
-                    <Text className="text-sm font-black text-teal-700 dark:text-teal-400">{entry.count}</Text>
+                    <Text className="text-sm font-black text-teal-700 dark:text-teal-400">
+                      {entry.count}
+                    </Text>
                   </View>
                 </View>
               ))
@@ -204,8 +226,7 @@ function CircularProgressRing({ progress, color }: { progress: number; color: st
         borderRadius: CIRCLE_SIZE / 2,
         borderWidth: 6,
         borderColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9',
-      }}
-    >
+      }}>
       {clamped > 0 && (
         <View
           style={{
@@ -224,12 +245,12 @@ function CircularProgressRing({ progress, color }: { progress: number; color: st
 }
 
 export default function DhikrScreen() {
-  const [count, setCount]             = useState(0);
+  const [count, setCount] = useState(0);
   const [activePreset, setActivePreset] = useState(0);
-  const [presets, setPresets]         = useState<Preset[]>(DEFAULT_PRESETS);
+  const [presets, setPresets] = useState<Preset[]>(DEFAULT_PRESETS);
   const [totalSessions, setTotalSessions] = useState(0);
-  const [todayCount, setTodayCount]   = useState(0);
-  const [log, setLog]                 = useState<DailyLog>([]);
+  const [todayCount, setTodayCount] = useState(0);
+  const [log, setLog] = useState<DailyLog>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [milestoneMsg, setMilestoneMsg] = useState('');
@@ -238,7 +259,7 @@ export default function DhikrScreen() {
   const { isDark } = useThemeStore();
 
   const target = presets[activePreset]?.target ?? 33;
-  const scale    = useSharedValue(1);
+  const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -266,8 +287,7 @@ export default function DhikrScreen() {
     })();
   }, []);
 
-  const saveTotal = async (n: number) =>
-    AsyncStorage.setItem(STORAGE_KEY_TOTAL, n.toString());
+  const saveTotal = async (n: number) => AsyncStorage.setItem(STORAGE_KEY_TOTAL, n.toString());
 
   const saveLog = async (newLog: DailyLog) =>
     AsyncStorage.setItem(STORAGE_KEY_LOG, JSON.stringify(newLog));
@@ -373,8 +393,8 @@ export default function DhikrScreen() {
   };
 
   const progressFraction = target > 0 ? (count % target) / target : 0;
-  const completedRounds  = Math.floor(count / target);
-  const currentPreset    = presets[activePreset];
+  const completedRounds = Math.floor(count / target);
+  const currentPreset = presets[activePreset];
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
@@ -384,41 +404,46 @@ export default function DhikrScreen() {
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}>
-
         <View className="mx-4 mt-4 flex-row gap-3">
-          <View 
+          <View
             className={`flex-1 items-center rounded-2xl border py-3 shadow-sm ${
-              isDark 
-                ? 'border-slate-800 bg-slate-800' 
-                : 'border-slate-200 bg-white'
+              isDark ? 'border-slate-800 bg-slate-800' : 'border-slate-200 bg-white'
             }`}>
-            <Text className="text-xl font-black text-teal-700 dark:text-teal-400">{todayCount.toLocaleString()}</Text>
-            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Bugün</Text>
+            <Text className="text-xl font-black text-teal-700 dark:text-teal-400">
+              {todayCount.toLocaleString()}
+            </Text>
+            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Bugün
+            </Text>
           </View>
-          <View 
+          <View
             className={`flex-1 items-center rounded-2xl border py-3 shadow-sm ${
-              isDark 
-                ? 'border-slate-800 bg-slate-800' 
-                : 'border-slate-200 bg-white'
+              isDark ? 'border-slate-800 bg-slate-800' : 'border-slate-200 bg-white'
             }`}>
-            <Text className="text-xl font-black text-slate-900 dark:text-white">{totalSessions.toLocaleString()}</Text>
-            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Toplam</Text>
+            <Text className="text-xl font-black text-slate-900 dark:text-white">
+              {totalSessions.toLocaleString()}
+            </Text>
+            <Text className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Toplam
+            </Text>
           </View>
           <TouchableOpacity
             onPress={() => setShowHistory(true)}
             className={`flex-1 items-center justify-center rounded-2xl border py-3 shadow-sm ${
-              isDark 
-                ? 'border-slate-800 bg-slate-800' 
-                : 'border-slate-200 bg-white'
+              isDark ? 'border-slate-800 bg-slate-800' : 'border-slate-200 bg-white'
             }`}>
             <Ionicons name="time-outline" size={20} color={isDark ? '#14b8a6' : '#0f766e'} />
-            <Text className="mt-1 text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Geçmiş</Text>
+            <Text className="mt-1 text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Geçmiş
+            </Text>
           </TouchableOpacity>
         </View>
 
         <View className="mt-5 px-4">
           <View className="mb-2 flex-row items-center justify-between">
-            <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Zikir Seç</Text>
+            <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Zikir Seç
+            </Text>
             <TouchableOpacity
               onPress={() => setShowAddModal(true)}
               className="flex-row items-center gap-1 rounded-xl border border-teal-200 bg-teal-50 px-3 py-1.5 dark:border-teal-500/30 dark:bg-teal-500/10">
@@ -426,7 +451,10 @@ export default function DhikrScreen() {
               <Text className="text-xs font-bold text-teal-700 dark:text-teal-400">Özel Ekle</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -16, paddingHorizontal: 16 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ marginHorizontal: -16, paddingHorizontal: 16 }}>
             {presets.map((preset, idx) => (
               <TouchableOpacity
                 key={`${preset.name}-${idx}`}
@@ -438,11 +466,25 @@ export default function DhikrScreen() {
                     : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800/70'
                 }`}>
                 {preset.isCustom && (
-                  <Ionicons name="star" size={10} color={activePreset === idx ? (isDark ? '#14b8a6' : '#0f766e') : (isDark ? '#4b5563' : '#94a3b8')} />
+                  <Ionicons
+                    name="star"
+                    size={10}
+                    color={
+                      activePreset === idx
+                        ? isDark
+                          ? '#14b8a6'
+                          : '#0f766e'
+                        : isDark
+                          ? '#4b5563'
+                          : '#94a3b8'
+                    }
+                  />
                 )}
                 <Text
                   className={`text-sm font-bold ${
-                    activePreset === idx ? 'text-teal-700 dark:text-teal-400' : 'text-slate-600 dark:text-slate-400'
+                    activePreset === idx
+                      ? 'text-teal-700 dark:text-teal-400'
+                      : 'text-slate-600 dark:text-slate-400'
                   }`}>
                   {preset.name}
                 </Text>
@@ -453,21 +495,32 @@ export default function DhikrScreen() {
 
         <View className="mt-8 items-center">
           {completedRounds > 0 && (
-            <Animated.View entering={FadeIn} className="mb-4 flex-row items-center gap-2 rounded-full bg-teal-50 dark:bg-teal-500/15 px-4 py-2">
+            <Animated.View
+              entering={FadeIn}
+              className="mb-4 flex-row items-center gap-2 rounded-full bg-teal-50 px-4 py-2 dark:bg-teal-500/15">
               <Ionicons name="checkmark-circle" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
-              <Text className="text-sm font-black text-teal-700 dark:text-teal-400">{completedRounds} tur tamamlandı</Text>
+              <Text className="text-sm font-black text-teal-700 dark:text-teal-400">
+                {completedRounds} tur tamamlandı
+              </Text>
             </Animated.View>
           )}
 
-          <TouchableOpacity activeOpacity={1} onPress={handlePress} className="items-center justify-center">
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={handlePress}
+            className="items-center justify-center">
             <Animated.View
-              style={[{ width: CIRCLE_SIZE, height: CIRCLE_SIZE, borderRadius: CIRCLE_SIZE / 2 }, animatedStyle]}
+              style={[
+                { width: CIRCLE_SIZE, height: CIRCLE_SIZE, borderRadius: CIRCLE_SIZE / 2 },
+                animatedStyle,
+              ]}
               className={`items-center justify-center rounded-full border-[6px] shadow-2xl shadow-teal-600/20 ${
-                isDark 
-                  ? 'border-slate-800 bg-slate-800 shadow-none' 
-                  : 'border-slate-100 bg-white'
+                isDark ? 'border-slate-800 bg-slate-800 shadow-none' : 'border-slate-100 bg-white'
               }`}>
-              <CircularProgressRing progress={progressFraction} color={isDark ? '#14b8a6' : '#0f766e'} />
+              <CircularProgressRing
+                progress={progressFraction}
+                color={isDark ? '#14b8a6' : '#0f766e'}
+              />
 
               <View className="items-center">
                 <Text className="text-[96px] font-black leading-[96px] text-slate-900 dark:text-white">
@@ -489,18 +542,23 @@ export default function DhikrScreen() {
                   height: CIRCLE_SIZE - 16,
                   borderRadius: (CIRCLE_SIZE - 16) / 2,
                   borderWidth: 2,
-                  borderColor: isDark ? `rgba(20,184,166, ${progressFraction})` : `rgba(15,118,110, ${progressFraction})`,
+                  borderColor: isDark
+                    ? `rgba(20,184,166, ${progressFraction})`
+                    : `rgba(15,118,110, ${progressFraction})`,
                   borderStyle: 'dashed',
                 }}
               />
             </Animated.View>
           </TouchableOpacity>
 
-          <View className={`mt-5 flex-row items-center gap-2 rounded-full border px-4 py-2 shadow-sm ${
-            isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
-          }`}>
+          <View
+            className={`mt-5 flex-row items-center gap-2 rounded-full border px-4 py-2 shadow-sm ${
+              isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
+            }`}>
             <Ionicons name="flag" size={14} color={isDark ? '#14b8a6' : '#0f766e'} />
-            <Text className="text-sm font-black text-teal-700 dark:text-teal-400">Hedef: {target}</Text>
+            <Text className="text-sm font-black text-teal-700 dark:text-teal-400">
+              Hedef: {target}
+            </Text>
           </View>
         </View>
 
@@ -514,7 +572,11 @@ export default function DhikrScreen() {
           <TouchableOpacity
             onPress={shareProgress}
             className="h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
-            <Ionicons name="share-social-outline" size={22} color={isDark ? '#94a3b8' : '#475569'} />
+            <Ionicons
+              name="share-social-outline"
+              size={22}
+              color={isDark ? '#94a3b8' : '#475569'}
+            />
           </TouchableOpacity>
         </View>
 
@@ -532,11 +594,7 @@ export default function DhikrScreen() {
         onAdd={addCustomPreset}
       />
 
-      <HistoryModal
-        visible={showHistory}
-        onClose={() => setShowHistory(false)}
-        log={log}
-      />
+      <HistoryModal visible={showHistory} onClose={() => setShowHistory(false)} log={log} />
     </Screen>
   );
 }

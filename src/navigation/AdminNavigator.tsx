@@ -12,7 +12,11 @@ export default function AdminNavigator() {
 
   return (
     <>
-      <RNStatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent={true} />
+      <RNStatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
@@ -49,9 +53,7 @@ export default function AdminNavigator() {
           name="Roles"
           component={RolesScreen}
           options={{
-            header: ({ navigation }) => (
-              <StandardHeader navigation={navigation} title="Roller" />
-            ),
+            header: ({ navigation }) => <StandardHeader navigation={navigation} title="Roller" />,
           }}
         />
       </Stack.Navigator>

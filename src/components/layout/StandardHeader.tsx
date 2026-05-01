@@ -96,7 +96,8 @@ export function StandardHeader({
         <View className="flex-1 items-center">
           <Text
             numberOfLines={1}
-            className="text-base font-black tracking-wide text-slate-900 dark:text-slate-100">
+            className="text-[20px] font-black tracking-widest text-amber-500"
+            style={{ textShadowColor: 'rgba(246,195,88,0.4)', textShadowRadius: 8 }}>
             {title}
           </Text>
         </View>
@@ -107,7 +108,7 @@ export function StandardHeader({
           ) : showProfile ? (
             <TouchableOpacity
               onPress={handleProfilePress}
-              className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-teal-600 bg-teal-600/5 dark:border-white/10 dark:bg-white/5">
+              className="h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-teal-600 bg-teal-600/5 dark:border-white">
               {isAuthenticated && avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (

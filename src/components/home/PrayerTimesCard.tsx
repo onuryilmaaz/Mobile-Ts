@@ -16,8 +16,6 @@ const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 const DEFAULT_DISTRICT_ID = '9654';
 
-type NavigationProp = NativeStackNavigationProp<HomeStackParamList, any>;
-
 const PRAYER_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   İmsak: 'moon-outline',
   Güneş: 'sunny-outline',
@@ -74,7 +72,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     initNotifications();
   }, []);
 
-  // Reload persisted location when parent screen regains focus.
   useEffect(() => {
     loadDistrict();
   }, [focusNonce]);
@@ -243,7 +240,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     };
   }, [data]);
 
-  // ── Derived values ──────────────────────────────────────────────────────────
   const prayers = data?.times
     ? [
         { label: 'İmsak', time: data.times.imsak, key: 'imsak' },
@@ -268,41 +264,32 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         )
       : 0;
 
-  // ── PREMIUM DYNAMIC UI ─────────────────────────────────────────────────────────
   return (
     <View className="mx-4 mb-4 mt-3">
-      {/* ╔══════════════════════════════╗
-          ║   COUNTDOWN GLASS CARD       ║
-          ╚══════════════════════════════╝ */}
       <View
         className={`mb-3 overflow-hidden rounded-[28px] border shadow-2xl ${
           isDark
             ? 'border-slate-700/50 bg-slate-800'
             : 'border-black/5 bg-teal-700 shadow-teal-700/30'
         }`}>
-        {/* Ambient glow orbs */}
         <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
         <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
 
         <View className="items-center p-7">
-          {/* Mosque emoji watermark */}
           <Text className="absolute bottom-1 text-[72px] text-white opacity-15 dark:text-teal-500 dark:opacity-10">
             🕌
           </Text>
 
-          {/* Gold label pill */}
           <View className="mb-4 rounded-full border border-[#f6c358]/30 bg-[#f6c358]/15 px-4 py-1.5">
             <Text className="text-[10px] font-black uppercase tracking-[2.5px] text-[#f6c358]">
               {nextPrayerName ? `${nextPrayerName} Vaktine Kalan` : 'Bir Sonraki Namaz'}
             </Text>
           </View>
 
-          {/* Big countdown */}
           <Text className="text-center text-[54px] font-black tracking-tight text-white">
             {targetTimeRef.current ? remainingTime : '--:--:--'}
           </Text>
 
-          {/* Sub label */}
           {nextPrayerName && data?.times && (
             <Text className="mt-2 text-[13px] font-semibold tracking-wide text-white/80">
               {nextPrayerName} ·{' '}
@@ -320,7 +307,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
             </Text>
           )}
 
-          {/* Progress bar */}
           {progressPct > 0 && (
             <View className="mt-5 h-[3px] w-[78%] overflow-hidden rounded-full bg-white/20">
               <View style={{ width: `${progressPct}%` }} className="h-full rounded-full bg-white" />
@@ -329,9 +315,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         </View>
       </View>
 
-      {/* ╔══════════════════════════════╗
-          ║   PRAYER TIMES GRID          ║
-          ╚══════════════════════════════╝ */}
       <View
         className={`mb-3 rounded-3xl border p-3.5 ${
           isDark ? 'border-slate-700 bg-slate-800/80' : 'border-slate-200 bg-white'
@@ -363,13 +346,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                     name={PRAYER_ICONS[item.label]}
                     size={17}
                     color={
-                      isNext
-                        ? isDark
-                          ? '#2dd4bf'
-                          : '#0f766e'
-                        : isDark
-                          ? '#94a3b8'
-                          : '#94a3b8'
+                      isNext ? (isDark ? '#2dd4bf' : '#0f766e') : isDark ? '#94a3b8' : '#94a3b8'
                     }
                     style={{ marginBottom: 5 }}
                   />
@@ -396,16 +373,12 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         )}
       </View>
 
-      {/* ╔══════════════════════════════╗
-          ║   LOCATION & NOTIFICATIONS   ║
-          ╚══════════════════════════════╝ */}
       <View
-        className="overflow-hidden rounded-2xl border"
+        className="overflow-hidden rounded-2xl border "
         style={{
           backgroundColor: isDark ? '#1e293b' : '#ffffff',
           borderColor: isDark ? '#334155' : '#e2e8f0',
         }}>
-        {/* Location Row */}
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -435,7 +408,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
           />
         </TouchableOpacity>
 
-        {/* Notifications Row */}
         <View className="flex-row items-center p-3.5">
           <View
             className={`mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl ${isDark ? 'bg-amber-500/10' : 'bg-amber-50'}`}>

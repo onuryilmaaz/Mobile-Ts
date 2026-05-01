@@ -24,12 +24,11 @@ import Animated, {
 import { useThemeStore } from '@/store/theme.store';
 
 const PRAYERS = [
-  { key: 'fajr',    label: 'Sabah',  icon: 'moon-outline'   as const, color: '#1e293b' },
-  { key: 'sunrise', label: 'Güneş',  icon: 'sunny-outline'  as const, color: '#fb923c' },
-  { key: 'dhuhr',   label: 'Öğle',   icon: 'sunny'          as const, color: '#0ea5e9' },
-  { key: 'asr',     label: 'İkindi', icon: 'partly-sunny'   as const, color: '#f59e0b' },
-  { key: 'maghrib', label: 'Akşam',  icon: 'moon'           as const, color: '#4f46e5' },
-  { key: 'isha',    label: 'Yatsı',  icon: 'star-outline'   as const, color: '#0f172a' },
+  { key: 'fajr', label: 'Sabah', icon: 'moon-outline' as const, color: '#1e293b' },
+  { key: 'dhuhr', label: 'Öğle', icon: 'sunny' as const, color: '#0ea5e9' },
+  { key: 'asr', label: 'İkindi', icon: 'partly-sunny' as const, color: '#f59e0b' },
+  { key: 'maghrib', label: 'Akşam', icon: 'moon' as const, color: '#4f46e5' },
+  { key: 'isha', label: 'Yatsı', icon: 'star-outline' as const, color: '#0f172a' },
 ];
 
 function formatMissedDate(dateStr: string) {
@@ -68,7 +67,9 @@ function AddKazaModal({
       <View className="flex-1 justify-end bg-black/60">
         <View className="rounded-t-[32px] border-t border-slate-200 bg-white p-6 pb-10 dark:border-slate-700 dark:bg-slate-800/70">
           <View className="mb-6 flex-row items-center justify-between">
-            <Text className="text-xl font-black text-slate-900 dark:text-white">Kaza Namaz Ekle</Text>
+            <Text className="text-xl font-black text-slate-900 dark:text-white">
+              Kaza Namaz Ekle
+            </Text>
             <TouchableOpacity
               onPress={onClose}
               className="h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900/40">
@@ -94,7 +95,9 @@ function AddKazaModal({
                 }`}>
                 <Text
                   className={`text-sm font-bold ${
-                    selectedPrayer === p.key ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-300'
+                    selectedPrayer === p.key
+                      ? 'text-teal-700 dark:text-teal-400'
+                      : 'text-slate-500 dark:text-slate-300'
                   }`}>
                   {p.label}
                 </Text>
@@ -124,13 +127,17 @@ function AddKazaModal({
                   }`}>
                   <Text
                     className={`text-[10px] font-bold uppercase ${
-                      selectedDate === d ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-300'
+                      selectedDate === d
+                        ? 'text-teal-700 dark:text-teal-400'
+                        : 'text-slate-500 dark:text-slate-300'
                     }`}>
                     {day}
                   </Text>
                   <Text
                     className={`text-lg font-black ${
-                      selectedDate === d ? 'text-teal-700 dark:text-teal-400' : 'text-slate-900 dark:text-white'
+                      selectedDate === d
+                        ? 'text-teal-700 dark:text-teal-400'
+                        : 'text-slate-900 dark:text-white'
                     }`}>
                     {num}
                   </Text>
@@ -271,9 +278,9 @@ export default function KazaTrackerScreen() {
         className="flex-1"
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl 
-            refreshing={loading} 
-            onRefresh={load} 
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={load}
             tintColor={isDark ? '#14b8a6' : '#0f766e'}
             colors={[isDark ? '#14b8a6' : '#0f766e']}
           />
@@ -331,7 +338,11 @@ export default function KazaTrackerScreen() {
           {kazaList.length === 0 && !loading ? (
             <View className="items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-700 dark:bg-slate-800/70">
               <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-500/15">
-                <Ionicons name="checkmark-circle-outline" size={40} color={isDark ? '#34d399' : '#10b981'} />
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={40}
+                  color={isDark ? '#34d399' : '#10b981'}
+                />
               </View>
               <Text className="text-lg font-black text-slate-900 dark:text-white">Tebrikler!</Text>
               <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-300">
@@ -351,11 +362,7 @@ export default function KazaTrackerScreen() {
         </View>
       </ScrollView>
 
-      <AddKazaModal
-        visible={showModal}
-        onClose={() => setShowModal(false)}
-        onAdd={handleAdd}
-      />
+      <AddKazaModal visible={showModal} onClose={() => setShowModal(false)} onAdd={handleAdd} />
     </Screen>
   );
 }
