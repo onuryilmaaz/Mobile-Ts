@@ -387,7 +387,10 @@ export default function KazaTrackerScreen() {
     await deleteKaza(id);
   };
 
-  const totalPending = kazaList.length;
+  const totalPending = useMemo(() => {
+    return Object.values(kazaCounters).reduce((acc, curr) => acc + curr, 0);
+  }, [kazaCounters]);
+
   const progressPercent =
     kazaCompleted + totalPending > 0
       ? Math.round((kazaCompleted / (kazaCompleted + totalPending)) * 100)
@@ -563,7 +566,17 @@ export default function KazaTrackerScreen() {
             </View>
           </View>
 
-          {kazaList.length === 0 && !loading ? (
+          {totalPending > 0 && kazaList.length === 0 ? (
+            <View className="items-center rounded-[28px] border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
+              <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-500/10">
+                <Ionicons name="information-circle-outline" size={32} color="#f59e0b" />
+              </View>
+              <Text className="text-center text-sm font-bold text-slate-600 dark:text-slate-300">
+                Listede manuel kaydınız yok. Toplu borcunuzu yukarıdaki{"\n"}
+                <Text className="text-teal-600 dark:text-teal-400">Hızlı Sayaç</Text> butonlarından eritebilirsiniz.
+              </Text>
+            </View>
+          ) : kazaList.length === 0 && !loading ? (
             <View className="items-center rounded-[28px] border border-slate-200 bg-white py-16 dark:border-slate-800 dark:bg-slate-900">
               <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-500/15">
                 <Ionicons
