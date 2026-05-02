@@ -19,7 +19,7 @@ const PRAYER_LABELS: Record<string, string> = {
 };
 
 const PRAYER_COLORS: Record<string, string> = {
-  fajr: '#1e293b',
+  fajr: 'rgb(27,90,90)',
   sunrise: '#fb923c',
   dhuhr: '#0ea5e9',
   asr: '#f59e0b',
@@ -27,22 +27,44 @@ const PRAYER_COLORS: Record<string, string> = {
   isha: '#0f172a',
 };
 
-const DAY_LABELS: Record<number, string> = { 0: 'Paz', 1: 'Pts', 2: 'Sal', 3: 'Çar', 4: 'Per', 5: 'Cum', 6: 'Cts' };
+const DAY_LABELS: Record<number, string> = {
+  0: 'Pts',
+  1: 'Sal',
+  2: 'Çar',
+  3: 'Per',
+  4: 'Cum',
+  5: 'Cts',
+  6: 'Paz',
+};
 
-function StatCard({ icon, label, value, color, twBg }: { icon: any; label: string; value: string | number; color: string; twBg: string }) {
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+  twBg,
+}: {
+  icon: any;
+  label: string;
+  value: string | number;
+  color: string;
+  twBg: string;
+}) {
   const { isDark } = useThemeStore();
   return (
-    <View 
+    <View
       className={`mx-1.5 flex-1 items-center rounded-2xl border p-4 shadow-sm ${
-        isDark 
-          ? 'border-slate-800 bg-slate-800 shadow-none' 
+        isDark
+          ? 'border-slate-800 bg-slate-800 shadow-none'
           : 'border-slate-200 bg-white shadow-black/5'
       }`}>
       <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${twBg}`}>
         <Ionicons name={icon} size={20} color={color} />
       </View>
       <Text className="text-xl font-black text-slate-900 dark:text-white">{value}</Text>
-      <Text className="mt-0.5 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">{label}</Text>
+      <Text className="mt-0.5 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+        {label}
+      </Text>
     </View>
   );
 }
@@ -59,7 +81,9 @@ export default function StatsScreen() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const buildWeeklyChartData = () => {
     if (!weeklyStats?.daily) return null;
@@ -85,12 +109,17 @@ export default function StatsScreen() {
 
   const buildPrayerBreakdown = () => {
     if (!weeklyStats?.byPrayerTime) return [];
-    return weeklyStats.byPrayerTime.map((r: any) => ({
-      prayer: r.prayer_time,
-      total: Number(r.total),
-      kaza: Number(r.kaza_count),
-      percentage: Math.round((Number(r.total) / 7) * 100),
-    }));
+
+    const PRAYER_ORDER = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+    return [...weeklyStats.byPrayerTime]
+      .sort((a, b) => PRAYER_ORDER.indexOf(a.prayer_time) - PRAYER_ORDER.indexOf(b.prayer_time))
+      .map((r: any) => ({
+        prayer: r.prayer_time,
+        total: Number(r.total),
+        kaza: Number(r.kaza_count),
+        percentage: Math.round((Number(r.total) / 7) * 100),
+      }));
   };
 
   const weeklyData = buildWeeklyChartData();
@@ -99,7 +128,8 @@ export default function StatsScreen() {
   const totalMonthPrayers = Number(monthlyStats?.totals?.total_prayers || 0);
   const totalMonthKaza = Number(monthlyStats?.totals?.total_kaza || 0);
   const activeDays = Number(monthlyStats?.totals?.active_days || 0);
-  const completionRate = activeDays > 0 ? Math.round((totalMonthPrayers / (activeDays * 5)) * 100) : 0;
+  const completionRate =
+    activeDays > 0 ? Math.round((totalMonthPrayers / (activeDays * 5)) * 100) : 0;
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
@@ -107,32 +137,53 @@ export default function StatsScreen() {
         className="flex-1"
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl 
-            refreshing={loading} 
+          <RefreshControl
+            refreshing={loading}
             onRefresh={load}
             tintColor={isDark ? '#14b8a6' : '#0f766e'}
             colors={[isDark ? '#14b8a6' : '#0f766e']}
           />
         }
         contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}>
-
         <View className="mb-6 px-4">
-          <Text className="mb-3 text-lg font-black text-slate-900 dark:text-white">30 Günlük Özet</Text>
+          <Text className="mb-3 text-lg font-black text-slate-900 dark:text-white">
+            30 Günlük Özet
+          </Text>
           <View className="flex-row">
-            <StatCard icon="sunny" label="Toplam Namaz" value={totalMonthPrayers} color={isDark ? '#34d399' : '#0f766e'} twBg={isDark ? 'bg-teal-500/10' : 'bg-teal-50'} />
-            <StatCard icon="flame" label="Aktif Gün" value={activeDays} color="#f59e0b" twBg={isDark ? 'bg-amber-500/10' : 'bg-amber-50'} />
-            <StatCard icon="checkmark-circle" label="Tamamlama" value={`%${completionRate}`} color={isDark ? '#818cf8' : '#6366f1'} twBg={isDark ? 'bg-indigo-500/10' : 'bg-indigo-50'} />
+            <StatCard
+              icon="sunny"
+              label="Toplam Namaz"
+              value={totalMonthPrayers}
+              color={isDark ? '#34d399' : '#0f766e'}
+              twBg={isDark ? 'bg-teal-500/10' : 'bg-teal-50'}
+            />
+            <StatCard
+              icon="flame"
+              label="Aktif Gün"
+              value={activeDays}
+              color="#f59e0b"
+              twBg={isDark ? 'bg-amber-500/10' : 'bg-amber-50'}
+            />
+            <StatCard
+              icon="checkmark-circle"
+              label="Tamamlama"
+              value={`%${completionRate}`}
+              color={isDark ? '#818cf8' : '#6366f1'}
+              twBg={isDark ? 'bg-indigo-500/10' : 'bg-indigo-50'}
+            />
           </View>
         </View>
 
         {weeklyData && (
-          <View 
+          <View
             className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
-              isDark 
-                ? 'border-slate-800 bg-slate-800 shadow-none' 
+              isDark
+                ? 'border-slate-800 bg-slate-800 shadow-none'
                 : 'border-slate-200 bg-white shadow-black/5'
             }`}>
-            <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Haftalık Namaz Grafiği</Text>
+            <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">
+              Haftalık Namaz Grafiği
+            </Text>
             <BarChart
               data={{
                 labels: weeklyData.labels,
@@ -149,8 +200,9 @@ export default function StatsScreen() {
                 backgroundGradientFrom: isDark ? '#1e293b' : '#ffffff',
                 backgroundGradientTo: isDark ? '#1e293b' : '#ffffff',
                 decimalPlaces: 0,
-                color: (opacity = 1) => isDark ? `rgba(45, 212, 191, ${opacity})` : `rgba(15, 118, 110, ${opacity})`,
-                labelColor: () => isDark ? '#94a3b8' : '#64748b',
+                color: (opacity = 1) =>
+                  isDark ? `rgba(45, 212, 191, ${opacity})` : `rgba(15, 118, 110, ${opacity})`,
+                labelColor: () => (isDark ? '#94a3b8' : '#64748b'),
                 barPercentage: 0.6,
                 propsForLabels: { fontSize: 11, fontWeight: '600' },
               }}
@@ -158,39 +210,61 @@ export default function StatsScreen() {
             />
             <View className="mt-2 flex-row items-center gap-2">
               <View className="h-3 w-3 rounded-full bg-teal-600 dark:bg-teal-500" />
-              <Text className="text-xs text-slate-500 dark:text-slate-400">Kılınan namaz sayısı (max 5)</Text>
+              <Text className="text-xs text-slate-500 dark:text-slate-400">
+                Kılınan namaz sayısı (max 5)
+              </Text>
             </View>
           </View>
         )}
 
-        <View className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
-          isDark 
-            ? 'border-slate-800 bg-slate-800 shadow-none' 
-            : 'border-slate-200 bg-white shadow-black/5'
-        }`}>
-          <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">Vakit Bazlı Analiz</Text>
-          <Text className="mb-4 text-xs text-slate-500 dark:text-slate-400">Son 7 gün — Hangi vakitte daha başarılısın?</Text>
+        <View
+          className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
+            isDark
+              ? 'border-slate-800 bg-slate-800 shadow-none'
+              : 'border-slate-200 bg-white shadow-black/5'
+          }`}>
+          <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">
+            Vakit Bazlı Analiz
+          </Text>
+          <Text className="mb-4 text-xs text-slate-500 dark:text-slate-400">
+            Son 7 gün — Hangi vakitte daha başarılısın?
+          </Text>
 
           {breakdown.length === 0 ? (
             <View className="items-center py-8">
-              <Ionicons name="bar-chart-outline" size={36} color={isDark ? 'rgba(240,244,255,0.1)' : '#94a3b8'} />
-              <Text className="mt-2 text-sm text-slate-500 dark:text-slate-400">Henüz yeterli veri yok</Text>
+              <Ionicons
+                name="bar-chart-outline"
+                size={36}
+                color={isDark ? 'rgba(240,244,255,0.1)' : '#94a3b8'}
+              />
+              <Text className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                Henüz yeterli veri yok
+              </Text>
             </View>
           ) : (
             breakdown.map((item: any) => (
               <View key={item.prayer} className="mb-4">
                 <View className="mb-1.5 flex-row items-center justify-between">
                   <View className="flex-row items-center gap-2">
-                    <View className="h-3 w-3 rounded-full" style={{ backgroundColor: PRAYER_COLORS[item.prayer] || '#0f766e' }} />
-                    <Text className="text-sm font-bold text-slate-900 dark:text-white">{PRAYER_LABELS[item.prayer] || item.prayer}</Text>
+                    <View
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: PRAYER_COLORS[item.prayer] || '#0f766e' }}
+                    />
+                    <Text className="text-sm font-bold text-slate-900 dark:text-white">
+                      {PRAYER_LABELS[item.prayer] || item.prayer}
+                    </Text>
                   </View>
                   <View className="flex-row items-center gap-2">
                     {item.kaza > 0 && (
                       <View className="rounded-full bg-orange-50 px-2 py-0.5 dark:bg-orange-500/15">
-                        <Text className="text-[10px] font-bold text-orange-600 dark:text-orange-400">{item.kaza} Kaza</Text>
+                        <Text className="text-[10px] font-bold text-orange-600 dark:text-orange-400">
+                          {item.kaza} Kaza
+                        </Text>
                       </View>
                     )}
-                    <Text className="text-sm font-black text-slate-900 dark:text-white">{item.total}/7</Text>
+                    <Text className="text-sm font-black text-slate-900 dark:text-white">
+                      {item.total}/7
+                    </Text>
                   </View>
                 </View>
                 <View className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -207,30 +281,58 @@ export default function StatsScreen() {
           )}
         </View>
 
-        <View className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
-          isDark 
-            ? 'border-slate-800 bg-slate-800 shadow-none' 
-            : 'border-slate-200 bg-white shadow-black/5'
-        }`}>
-          <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">Genel Bilgiler</Text>
+        <View
+          className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-4 shadow-sm ${
+            isDark
+              ? 'border-slate-800 bg-slate-900 shadow-none'
+              : 'border-slate-200 bg-white shadow-black/5'
+          }`}>
+          <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">
+            Genel Bilgiler
+          </Text>
           <View className="flex-row flex-wrap gap-3">
             {[
-              { label: 'Toplam Puan', value: stats?.total_points || 0, icon: 'star', color: '#fbbf24' },
-              { label: 'Mevcut Seri', value: `${stats?.current_streak || 0} gün`, icon: 'flame', color: '#ef4444' },
-              { label: 'En Yüksek Seri', value: `${stats?.highest_streak || 0} gün`, icon: 'trophy', color: '#f59e0b' },
-              { label: 'Seviye', value: stats?.level?.name || 'Başlangıç', icon: 'shield', color: '#6366f1' },
+              {
+                label: 'Toplam Puan',
+                value: stats?.total_points || 0,
+                icon: 'star',
+                color: '#fbbf24',
+              },
+              {
+                label: 'Mevcut Seri',
+                value: `${stats?.current_streak || 0} gün`,
+                icon: 'flame',
+                color: '#ef4444',
+              },
+              {
+                label: 'En Yüksek Seri',
+                value: `${stats?.highest_streak || 0} gün`,
+                icon: 'trophy',
+                color: '#f59e0b',
+              },
+              {
+                label: 'Seviye',
+                value: stats?.level?.name || 'Başlangıç',
+                icon: 'shield',
+                color: '#6366f1',
+              },
             ].map((item) => (
-              <View key={item.label} className="w-[47%] rounded-2xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-800/50">
+              <View
+                key={item.label}
+                className="w-[47%] rounded-2xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-800/50">
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name={item.icon as any} size={14} color={item.color} />
-                  <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">{item.label}</Text>
+                  <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                    {item.label}
+                  </Text>
                 </View>
-                <Text className="text-base font-black text-slate-900 dark:text-white">{item.value}</Text>
+                <Text className="text-base font-black text-slate-900 dark:text-white">
+                  {item.value}
+                </Text>
               </View>
             ))}
           </View>
         </View>
-
       </ScrollView>
     </Screen>
   );

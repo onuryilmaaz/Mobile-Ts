@@ -268,9 +268,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     <View className="mx-4 mb-4 mt-3">
       <View
         className={`mb-3 overflow-hidden rounded-[28px] border shadow-2xl ${
-          isDark
-            ? 'border-slate-700/50 bg-slate-800'
-            : 'border-black/5 bg-teal-700 shadow-teal-700/30'
+          isDark ? 'border-slate-800 bg-slate-900' : 'border-black/5 bg-teal-700 shadow-teal-700/30'
         }`}>
         <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
         <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
