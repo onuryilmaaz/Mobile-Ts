@@ -59,11 +59,9 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       <View className="px-4 pb-2 pt-4">
-        <View 
+        <View
           className={`flex-row items-center rounded-2xl border px-4 py-3 shadow-sm shadow-black/5 ${
-            isDark 
-              ? 'border-slate-700 bg-slate-800/70' 
-              : 'border-slate-200 bg-white'
+            isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
           }`}>
           <Ionicons name="search" size={20} color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'} />
           <TextInput
@@ -75,7 +73,11 @@ export default function SurahBrowserScreen({ navigation }: Props) {
           />
           {searchQuery !== '' && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={18} color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+              <Ionicons
+                name="close-circle"
+                size={18}
+                color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -101,11 +103,8 @@ export default function SurahBrowserScreen({ navigation }: Props) {
               <TouchableOpacity
                 onPress={() => handleSurahPress(surah)}
                 className={`mb-3 flex-row items-center rounded-3xl border p-4 shadow-sm shadow-black/5 ${
-                  isDark 
-                    ? 'border-slate-700 bg-slate-800/70' 
-                    : 'border-slate-200 bg-white'
+                  isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
                 }`}>
-                
                 <View className="h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/15">
                   <Text className="text-lg font-black text-teal-700 dark:text-teal-400">
                     {surah.id}
@@ -127,14 +126,22 @@ export default function SurahBrowserScreen({ navigation }: Props) {
                   </Text>
                 </View>
 
-                <Ionicons name="chevron-forward" size={18} color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'}
+                />
               </TouchableOpacity>
             </Animated.View>
           ))}
 
           {filteredSurahs.length === 0 && (
             <View className="items-center justify-center py-20">
-              <Ionicons name="search-outline" size={48} color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'} />
+              <Ionicons
+                name="search-outline"
+                size={48}
+                color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'}
+              />
               <Text className="mt-4 text-base font-semibold text-slate-500 dark:text-slate-400">
                 Aradığınız sure bulunamadı
               </Text>

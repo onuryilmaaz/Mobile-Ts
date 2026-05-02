@@ -214,36 +214,6 @@ function HistoryModal({
   );
 }
 
-function CircularProgressRing({ progress, color }: { progress: number; color: string }) {
-  const { isDark } = useThemeStore();
-  const clamped = Math.min(1, Math.max(0, progress));
-  return (
-    <View
-      style={{
-        position: 'absolute',
-        width: CIRCLE_SIZE,
-        height: CIRCLE_SIZE,
-        borderRadius: CIRCLE_SIZE / 2,
-        borderWidth: 6,
-        borderColor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9',
-      }}>
-      {clamped > 0 && (
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: `${Math.min(100, clamped * 100)}%`,
-            backgroundColor: `${color}14`,
-            borderRadius: CIRCLE_SIZE / 2,
-          }}
-        />
-      )}
-    </View>
-  );
-}
-
 export default function DhikrScreen() {
   const [count, setCount] = useState(0);
   const [activePreset, setActivePreset] = useState(0);
@@ -517,11 +487,6 @@ export default function DhikrScreen() {
               className={`items-center justify-center rounded-full border-[6px] shadow-2xl shadow-teal-600/20 ${
                 isDark ? 'border-slate-800 bg-slate-800 shadow-none' : 'border-slate-100 bg-white'
               }`}>
-              <CircularProgressRing
-                progress={progressFraction}
-                color={isDark ? '#14b8a6' : '#0f766e'}
-              />
-
               <View className="items-center">
                 <Text className="text-[96px] font-black leading-[96px] text-slate-900 dark:text-white">
                   {count % target === 0 && count > 0 ? (

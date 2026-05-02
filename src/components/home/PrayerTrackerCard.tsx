@@ -103,11 +103,9 @@ export function PrayerTrackerCard() {
 
   return (
     <View
-      className="mx-4 mb-4 overflow-hidden rounded-[28px] border shadow-xl"
-      style={{
-        backgroundColor: isDark ? '#1e293b' : '#ffffff',
-        borderColor: isDark ? '#334155' : '#e2e8f0',
-      }}>
+      className={`mx-4 mb-4 overflow-hidden rounded-[28px] border shadow-xl ${
+        isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
+      }`}>
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}

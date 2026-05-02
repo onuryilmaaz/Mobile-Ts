@@ -317,7 +317,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
       <View
         className={`mb-3 rounded-3xl border p-3.5 ${
-          isDark ? 'border-slate-700 bg-slate-800/80' : 'border-slate-200 bg-white'
+          isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
         }`}>
         {loading && !data ? (
           <View className="items-center py-7">
@@ -374,11 +374,9 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       </View>
 
       <View
-        className="overflow-hidden rounded-2xl border "
-        style={{
-          backgroundColor: isDark ? '#1e293b' : '#ffffff',
-          borderColor: isDark ? '#334155' : '#e2e8f0',
-        }}>
+        className={`overflow-hidden rounded-2xl border ${
+          isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
+        }`}>
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

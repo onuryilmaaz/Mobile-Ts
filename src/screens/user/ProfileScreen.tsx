@@ -212,8 +212,8 @@ export default function ProfileScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
+          <RefreshControl
+            refreshing={refreshing}
             onRefresh={() => loadProfile(true)}
             tintColor={isDark ? '#14b8a6' : '#0f766e'}
             colors={[isDark ? '#14b8a6' : '#0f766e']}
@@ -221,7 +221,7 @@ export default function ProfileScreen({ navigation }: Props) {
         }>
         <View className="mb-6 items-center">
           <View className="relative">
-            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-slate-100 dark:border-slate-800 bg-teal-50 dark:bg-teal-500/10">
+            <View className="mt-8 h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-slate-100 bg-teal-50 dark:border-slate-800 dark:bg-teal-500/10">
               {avatarUrl ? (
                 <Image source={{ uri: avatarUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (
@@ -240,7 +240,7 @@ export default function ProfileScreen({ navigation }: Props) {
           <Text className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
             {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
           </Text>
-          { (profile?.username || user?.username) && (
+          {(profile?.username || user?.username) && (
             <Text className="text-sm font-medium text-teal-600 dark:text-teal-400">
               @{profile?.username || user?.username}
             </Text>
@@ -320,7 +320,7 @@ export default function ProfileScreen({ navigation }: Props) {
             </>
           ) : (
             <View className="gap-3">
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
                 <Ionicons name="person-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Ad Soyad</Text>
@@ -329,8 +329,12 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
-                <Ionicons name="at-circle-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
+              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+                <Ionicons
+                  name="at-circle-outline"
+                  size={20}
+                  color={isDark ? '#4b5563' : '#64748b'}
+                />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Kullanıcı Adı</Text>
                   <Text className="text-sm font-medium text-slate-900 dark:text-white">
@@ -338,7 +342,7 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
                 <Ionicons name="call-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Telefon</Text>
@@ -347,7 +351,7 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
                 <Ionicons name="mail-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">E-posta</Text>
@@ -384,7 +388,7 @@ export default function ProfileScreen({ navigation }: Props) {
           </Card>
         )}
 
-        <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm dark:shadow-none">
+        <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -427,7 +431,7 @@ export default function ProfileScreen({ navigation }: Props) {
             {settingsItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                className={`flex-row items-center justify-between rounded-xl p-4 ${item.danger ? 'bg-red-50 dark:bg-red-500/10' : 'bg-slate-50 dark:bg-slate-800/50'}`}
+                className={`flex-row items-center justify-between rounded-xl p-4 dark:border ${item.danger ? 'bg-red-50 dark:bg-red-500/10' : 'bg-slate-50 dark:border-slate-800 dark:bg-slate-900'}`}
                 onPress={() => navigation.navigate(item.screen)}>
                 <View className="flex-1 flex-row items-center gap-3">
                   <View

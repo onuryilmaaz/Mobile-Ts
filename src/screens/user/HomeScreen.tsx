@@ -100,9 +100,6 @@ export default function HomeScreen({ navigation }: Props) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 12, paddingRight: 16 }}>
               {QUICK_ACTIONS.map((action) => {
-                const cardBg = isDark ? '#1e293b' : '#ffffff';
-                const cardBorder = isDark ? action.border : '#e2e8f0';
-
                 return (
                   <TouchableOpacity
                     key={action.key}
@@ -110,14 +107,11 @@ export default function HomeScreen({ navigation }: Props) {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       navigation.navigate(action.screen);
                     }}
-                    className="relative h-[115px] w-[115px] items-center overflow-hidden rounded-[22px] border p-[10px] shadow-sm shadow-black/5"
-                    style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
-                    {isDark && (
-                      <View
-                        className="absolute -right-5 -top-5 h-[70px] w-[70px] rounded-full"
-                        style={{ backgroundColor: action.glow }}
-                      />
-                    )}
+                    className="relative h-[116px] w-[116px] items-center overflow-hidden rounded-[22px] border border-slate-200 bg-white p-[10px] shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900">
+                    <View
+                      className="absolute -right-5 -top-5 h-[70px] w-[70px] rounded-full"
+                      style={{ backgroundColor: action.glow }}
+                    />
 
                     <View
                       className="mb-3 h-[52px] w-[52px] items-center justify-center rounded-[18px] border"

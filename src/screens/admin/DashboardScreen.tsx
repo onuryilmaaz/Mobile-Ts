@@ -109,7 +109,7 @@ export default function DashboardScreen({ navigation }: Props) {
             </Text>
             <View className="flex-row flex-wrap gap-3">
               <View
-                className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-slate-700 bg-slate-700/30' : 'border-transparent bg-slate-50'}`}>
+                className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-transparent bg-slate-50'}`}>
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="people" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
                   <Text
@@ -136,7 +136,7 @@ export default function DashboardScreen({ navigation }: Props) {
                 </Text>
               </View>
               <View
-                className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'border-slate-700 bg-slate-700/30' : 'border-transparent bg-slate-100'}`}>
+                className={`min-w-[45%] flex-1 rounded-xl border p-3 ${isDark ? 'bg-slate-850 border-slate-800' : 'border-transparent bg-slate-100'}`}>
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="person-outline" size={16} color="#64748b" />
                   <Text
@@ -176,7 +176,7 @@ export default function DashboardScreen({ navigation }: Props) {
               <TouchableOpacity
                 key={item.id}
                 className={`flex-row items-center justify-between rounded-xl border p-4 shadow-sm ${
-                  isDark ? 'border-slate-700 bg-slate-700/40' : 'border-slate-100 bg-slate-50'
+                  isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-slate-50'
                 }`}
                 activeOpacity={0.7}
                 onPress={() => navigation.navigate(item.screen as any)}>

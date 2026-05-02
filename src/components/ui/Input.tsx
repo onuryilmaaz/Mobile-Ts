@@ -26,12 +26,16 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
 
   return (
     <View className="mb-4 w-full">
-      {label && <Text className="mb-1.5 ml-1 text-sm font-medium text-slate-700 dark:text-slate-300">{label}</Text>}
+      {label && (
+        <Text className="mb-1.5 ml-1 text-sm font-medium text-slate-700 dark:text-slate-100">
+          {label}
+        </Text>
+      )}
 
       <View
         className={`
           h-12 flex-row items-center rounded-2xl border px-4
-          ${isDark ? 'bg-slate-800/50' : 'bg-white'}
+          ${isDark ? 'bg-slate-900/60' : 'bg-white'}
           ${focused ? 'border-teal-500' : isDark ? 'border-slate-700' : 'border-slate-200'}
           ${error ? 'border-red-500' : ''}
         `}>
@@ -41,8 +45,8 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
           onFocus={handleFocus}
           onBlur={handleBlur}
           className="h-full flex-1 text-lg text-slate-900 dark:text-white"
-          placeholderTextColor={isDark ? "#4b5563" : "#94a3b8"}
-          selectionColor={isDark ? "#2dd4bf" : "#0d9488"}
+          placeholderTextColor={isDark ? '#4b5563' : '#94a3b8'}
+          selectionColor={isDark ? '#2dd4bf' : '#0d9488'}
           style={{
             paddingTop: 0,
             paddingBottom: 0,
@@ -53,16 +57,20 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
 
         {isPassword && (
           <Pressable onPress={() => setSecure(!secure)} hitSlop={10}>
-            <Ionicons 
-              name={secure ? 'eye-off-outline' : 'eye-outline'} 
-              size={20} 
-              color={isDark ? "#4b5563" : "#94a3b8"} 
+            <Ionicons
+              name={secure ? 'eye-off-outline' : 'eye-outline'}
+              size={20}
+              color={isDark ? '#4b5563' : '#94a3b8'}
             />
           </Pressable>
         )}
       </View>
 
-      {error && <Text className="ml-1 mt-1 text-xs font-medium text-red-500 dark:text-red-400">{error}</Text>}
+      {error && (
+        <Text className="ml-1 mt-1 text-xs font-medium text-red-500 dark:text-red-400">
+          {error}
+        </Text>
+      )}
     </View>
   );
 }

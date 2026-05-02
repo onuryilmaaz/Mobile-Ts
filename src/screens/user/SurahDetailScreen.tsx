@@ -63,8 +63,8 @@ export default function SurahDetailScreen({ route }: Props) {
             <Animated.View
               key={verse.id}
               entering={FadeInUp.delay(index * 50).duration(400)}
-              className="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
-              <View className="flex-row items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-3 dark:border-slate-700 dark:bg-slate-900/40">
+              className="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+              <View className="flex-row items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-3 dark:border-slate-800 dark:bg-slate-900">
                 <View className="h-6 w-6 items-center justify-center rounded-full bg-teal-600 dark:bg-teal-500">
                   <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
                 </View>
@@ -76,7 +76,7 @@ export default function SurahDetailScreen({ route }: Props) {
                 />
               </View>
 
-              <View className="p-4">
+              <View className="px-4 py-1">
                 <Text
                   className={`mb-1 text-2xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
                   style={{ lineHeight: 50 }}>
@@ -88,7 +88,7 @@ export default function SurahDetailScreen({ route }: Props) {
                   {verse.verse_simplified}
                 </Text>
 
-                <View className="my-6 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
+                <View className="my-2 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
 
                 <Text className="text-base font-medium italic leading-7 text-slate-600 dark:text-slate-300">
                   “{verse.translation.text}”

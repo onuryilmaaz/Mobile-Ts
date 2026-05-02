@@ -92,7 +92,7 @@ export function DailyInspirationCard() {
         layout={Layout.springify()}
         className={`overflow-hidden rounded-[32px] border shadow-xl ${
           isDark
-            ? 'border-slate-700 bg-slate-800 shadow-none'
+            ? 'border-slate-800 bg-slate-900 shadow-none'
             : 'border-slate-200 bg-white shadow-black/5'
         }`}>
         <View className="flex-row items-center justify-between px-6 pt-6">

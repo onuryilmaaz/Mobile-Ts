@@ -96,8 +96,11 @@ export default function LocationSelectionScreen({ navigation }: Props) {
 
   return (
     <Screen safeAreaEdges={['right', 'left']}>
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
-        <View className="mx-4 my-4 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 40 }}>
+        <View className="mx-4 my-4 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <TouchableOpacity onPress={handleBack} className="flex-row items-center">
             <Ionicons name="chevron-back" size={24} color={isDark ? '#14b8a6' : '#0f766e'} />
             <Text className="ml-1 text-base font-bold text-slate-900 dark:text-white">
@@ -106,7 +109,9 @@ export default function LocationSelectionScreen({ navigation }: Props) {
           </TouchableOpacity>
           {step === 'district' && selectedDistrict && (
             <View className="rounded-full bg-teal-50 px-3 py-1 dark:bg-teal-500/15">
-              <Text className="text-xs font-bold text-teal-700 dark:text-teal-400">{selectedDistrict.name}</Text>
+              <Text className="text-xs font-bold text-teal-700 dark:text-teal-400">
+                {selectedDistrict.name}
+              </Text>
             </View>
           )}
         </View>
@@ -122,12 +127,14 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                   className={`flex-row items-center justify-between rounded-xl border p-4 ${
                     isSelected
                       ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/10'
-                      : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800/70'
+                      : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
                   }`}>
                   <View className="flex-1">
                     <Text
                       className={`text-base font-bold ${
-                        isSelected ? 'text-teal-700 dark:text-teal-400' : 'text-slate-900 dark:text-white'
+                        isSelected
+                          ? 'text-teal-700 dark:text-teal-400'
+                          : 'text-slate-900 dark:text-white'
                       }`}>
                       {state.name}
                     </Text>
@@ -135,7 +142,9 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                   <Ionicons
                     name={isSelected ? 'checkmark-circle' : 'chevron-forward'}
                     size={24}
-                    color={isSelected ? (isDark ? '#14b8a6' : '#0f766e') : (isDark ? '#4b5563' : '#94a3b8')}
+                    color={
+                      isSelected ? (isDark ? '#14b8a6' : '#0f766e') : isDark ? '#4b5563' : '#94a3b8'
+                    }
                   />
                 </TouchableOpacity>
               );
@@ -145,8 +154,14 @@ export default function LocationSelectionScreen({ navigation }: Props) {
           <View className="mx-4 gap-2">
             {districts.length === 0 ? (
               <View className="items-center justify-center rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-700 dark:bg-slate-800/70">
-                <Ionicons name="alert-circle-outline" size={48} color={isDark ? '#4b5563' : '#94a3b8'} />
-                <Text className="mt-4 text-center text-slate-500 dark:text-slate-300">Bu il için ilçe bulunamadı</Text>
+                <Ionicons
+                  name="alert-circle-outline"
+                  size={48}
+                  color={isDark ? '#4b5563' : '#94a3b8'}
+                />
+                <Text className="mt-4 text-center text-slate-500 dark:text-slate-300">
+                  Bu il için ilçe bulunamadı
+                </Text>
               </View>
             ) : (
               districts.map((district) => {
@@ -158,17 +173,25 @@ export default function LocationSelectionScreen({ navigation }: Props) {
                     className={`flex-row items-center justify-between rounded-xl border p-4 ${
                       isSelected
                         ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/10'
-                        : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800/70'
+                        : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
                     }`}>
                     <View className="flex-1">
                       <Text
                         className={`text-base font-bold ${
-                          isSelected ? 'text-teal-700 dark:text-teal-400' : 'text-slate-900 dark:text-white'
+                          isSelected
+                            ? 'text-teal-700 dark:text-teal-400'
+                            : 'text-slate-900 dark:text-white'
                         }`}>
                         {district.name}
                       </Text>
                     </View>
-                    {isSelected && <Ionicons name="checkmark-circle" size={24} color={isDark ? '#14b8a6' : '#0f766e'} />}
+                    {isSelected && (
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={24}
+                        color={isDark ? '#14b8a6' : '#0f766e'}
+                      />
+                    )}
                   </TouchableOpacity>
                 );
               })
