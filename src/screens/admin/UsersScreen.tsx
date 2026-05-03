@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, RefreshControl, Image } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AdminStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
@@ -43,7 +43,14 @@ export default function UsersScreen({ navigation }: Props) {
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => navigation.navigate('UserDetail', { userId: item.id })}>
-      <Card className="mx-4 mt-4 mb-2 flex-row items-center justify-between p-4">
+      <Card className="mx-4 mb-2 mt-4 flex-row items-center justify-between p-4">
+        <View className="mr-3 h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+          {item.avatarUrl ? (
+            <Image source={{ uri: item.avatarUrl }} className="h-12 w-12 rounded-full" />
+          ) : (
+            <Ionicons name="person" size={32} color={isDark ? '#14b8a6' : '#0f766e'} />
+          )}
+        </View>
         <View className="flex-1">
           <View className="mb-2 flex-row items-center gap-2">
             <Text className="text-base font-bold text-slate-900 dark:text-white" numberOfLines={1}>
@@ -70,7 +77,11 @@ export default function UsersScreen({ navigation }: Props) {
           </View>
         </View>
 
-        <Ionicons name="chevron-forward" size={20} color={isDark ? "rgba(255,255,255,0.3)" : "#94a3b8"} />
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={isDark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}
+        />
       </Card>
     </TouchableOpacity>
   );
@@ -78,7 +89,7 @@ export default function UsersScreen({ navigation }: Props) {
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       {error && (
-        <Card className="mx-4 my-4 bg-red-50 border-red-200 dark:bg-red-500/10 dark:border-red-500/20">
+        <Card className="mx-4 my-4 border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10">
           <View className="flex-row items-center gap-2">
             <Ionicons name="alert-circle" size={20} color="#dc2626" />
             <Text className="flex-1 text-sm text-red-700 dark:text-red-400">{error}</Text>

@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View, TouchableOpacity, RefreshControl } from 'react-native';
+import { ScrollView, Text, View, TouchableOpacity, RefreshControl, Image } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AdminStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
@@ -221,7 +220,11 @@ export default function UserDetailScreen({ route, navigation }: Props) {
         <Card className="mx-4 mb-4">
           <View className="mb-4 flex-row items-center justify-between">
             <View className="h-16 w-16 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-500/10">
-              <Ionicons name="person" size={32} color={isDark ? "#14b8a6" : "#0f766e"} />
+              {user.avatarUrl ? (
+                <Image source={{ uri: user.avatarUrl }} className="h-16 w-16 rounded-full" />
+              ) : (
+                <Ionicons name="person" size={32} color={isDark ? '#14b8a6' : '#0f766e'} />
+              )}
             </View>
             <Badge variant={user.isActive === false ? 'danger' : 'success'} size="md">
               {user.isActive === false ? 'PASİF' : 'AKTİF'}
@@ -273,7 +276,9 @@ export default function UserDetailScreen({ route, navigation }: Props) {
 
           <Divider />
           <View className="pt-3">
-            <Text className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Rol Ekle</Text>
+            <Text className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+              Rol Ekle
+            </Text>
             <View className="flex-row flex-wrap gap-2">
               {(availableRoles || [])
                 .filter((r) => !userRoles.includes(r.name))
@@ -284,21 +289,27 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                     disabled={actionLoading}
                     className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 dark:border-teal-500/20 dark:bg-teal-500/5">
                     <View className="flex-row items-center gap-1">
-                      <Ionicons name="add" size={16} color={isDark ? "#14b8a6" : "#0f766e"} />
-                      <Text className="text-sm font-medium text-teal-700 dark:text-teal-500">{role.name}</Text>
+                      <Ionicons name="add" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
+                      <Text className="text-sm font-medium text-teal-700 dark:text-teal-500">
+                        {role.name}
+                      </Text>
                     </View>
                   </TouchableOpacity>
                 ))}
               {availableRoles.length === 0 && (
-                <Text className="text-xs text-slate-400 dark:text-slate-500">Eklenebilecek rol bulunamadı</Text>
+                <Text className="text-xs text-slate-400 dark:text-slate-500">
+                  Eklenebilecek rol bulunamadı
+                </Text>
               )}
             </View>
           </View>
         </Card>
 
-        <Card className='mx-4'>
+        <Card className="mx-4">
           <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-lg font-bold text-slate-900 dark:text-white">Aktif Oturumlar</Text>
+            <Text className="text-lg font-bold text-slate-900 dark:text-white">
+              Aktif Oturumlar
+            </Text>
             {sessions.length > 0 && (
               <TouchableOpacity onPress={handleRevokeAllSessions} disabled={actionLoading}>
                 <Text className="text-xs font-bold text-red-600">Hepsini Kapat</Text>
@@ -319,12 +330,18 @@ export default function UserDetailScreen({ route, navigation }: Props) {
                   key={s.id || index}
                   className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
                   <View className="mb-1 flex-row items-center gap-2">
-                    <Ionicons name="phone-portrait-outline" size={16} color={isDark ? "#94a3b8" : "#64748b"} />
+                    <Ionicons
+                      name="phone-portrait-outline"
+                      size={16}
+                      color={isDark ? '#94a3b8' : '#64748b'}
+                    />
                     <Text className="text-xs font-semibold text-slate-900 dark:text-white">
                       IP: {s.ip || 'Bilinmiyor'}
                     </Text>
                   </View>
-                  <Text className="text-[10px] text-slate-500 dark:text-slate-400" numberOfLines={1}>
+                  <Text
+                    className="text-[10px] text-slate-500 dark:text-slate-400"
+                    numberOfLines={1}>
                     {s.userAgent || 'Bilinmeyen cihaz'}
                   </Text>
                 </View>

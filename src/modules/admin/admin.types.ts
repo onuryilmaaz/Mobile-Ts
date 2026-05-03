@@ -5,6 +5,7 @@ export type AdminUser = {
   firstName?: string;
   lastName?: string;
   isActive?: boolean;
+  avatarUrl?: string;
 };
 
 export type AdminRole = {
