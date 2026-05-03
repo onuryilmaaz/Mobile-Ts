@@ -25,6 +25,7 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
 import { useThemeStore } from '@/store/theme.store';
 import { Ionicons } from '@expo/vector-icons';
+import { useFonts, Bungee_400Regular } from '@expo-google-fonts/bungee';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -80,8 +81,12 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
         <View className="flex-1 items-center">
           <Text
-            className="text-[22px] font-black tracking-widest text-amber-500"
-            style={{ textShadowColor: 'rgba(246,195,88,0.4)', textShadowRadius: 8 }}>
+            className="text-4xl font-black tracking-widest text-amber-500"
+            style={{
+              fontFamily: 'Bungee-Regular',
+              textShadowColor: 'rgba(246,195,88,0.4)',
+              textShadowRadius: 8,
+            }}>
             Salah
           </Text>
         </View>
@@ -110,6 +115,9 @@ export default function HomeNavigator() {
   const { isDark } = useThemeStore();
   const headerColor = isDark ? '#0f172a' : '#ffffff';
   const headerTintColor = isDark ? '#ffffff' : '#0f172a';
+  const [fontsLoaded] = useFonts({
+    'Bungee-Regular': Bungee_400Regular,
+  });
 
   return (
     <>

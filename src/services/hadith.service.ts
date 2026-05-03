@@ -129,10 +129,10 @@ export const hadithService = {
 
   getBookDisplayName(book: string) {
     const names: Record<string, string> = {
-      bukhari: 'Sahihi Buhari',
-      muslim: 'Sahihi Müslim',
-      abudawud: 'Sünen-i Ebu Davud',
-      tirmidhi: 'Sünen-i Tirmizi',
+      bukhari: 'Sahih-i Buhârî',
+      muslim: 'Sahih-i Müslim',
+      abudawud: 'Sünen-i Ebû Dâvûd',
+      tirmidhi: 'Sünen-i Tirmizî',
     };
     return names[book] || book;
   },

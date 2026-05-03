@@ -40,9 +40,7 @@ function AppContent() {
   const isDark = useThemeStore((s) => s.isDark);
   const { setColorScheme } = useColorScheme();
 
-  // Sync NativeWind, Android nav bar with theme store
   useEffect(() => {
-    // Force sync NativeWind's colorScheme with our store
     setColorScheme(isDark ? 'dark' : 'light');
 
     if (Platform.OS === 'android') {
@@ -52,11 +50,11 @@ function AppContent() {
   }, [isDark, setColorScheme]);
 
   return (
-    <View 
-      className={`flex-1 ${isDark ? 'dark' : ''}`} 
+    <View
+      className={`flex-1 ${isDark ? 'dark' : ''}`}
       style={{ backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
-      <NavigationContainer 
-        ref={rootNavigationRef} 
+      <NavigationContainer
+        ref={rootNavigationRef}
         key={isDark ? 'dark' : 'light'}
         theme={isDark ? MyDarkTheme : MyLightTheme}>
         <AppNavigator />
@@ -71,7 +69,6 @@ function App() {
   const logout = useAuthStore((s) => s.logout);
   const hydrate = useThemeStore((s) => s.hydrate);
 
-  // Hydrate saved theme from AsyncStorage
   useEffect(() => {
     hydrate();
   }, []);
