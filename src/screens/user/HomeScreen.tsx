@@ -46,6 +46,16 @@ const QUICK_ACTIONS = [
     screen: 'Challenges' as const,
     twColor: 'amber',
   },
+  {
+    key: 'mosques',
+    label: 'Cami Atlası',
+    icon: 'map-outline' as const,
+    color: '#0ea5e9',
+    glow: 'rgba(14,165,233,0.18)',
+    border: 'rgba(14,165,233,0.35)',
+    screen: 'MosqueMap' as const,
+    twColor: 'sky',
+  },
 ];
 
 export default function HomeScreen({ navigation }: Props) {
@@ -105,7 +115,7 @@ export default function HomeScreen({ navigation }: Props) {
                     key={action.key}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      navigation.navigate(action.screen);
+                      navigation.navigate(action.screen as any);
                     }}
                     className="relative h-[116px] w-[116px] items-center overflow-hidden rounded-[22px] border border-slate-200 bg-white p-[10px] shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900">
                     <View

@@ -12,4 +12,6 @@ export { default as SurahDetailScreen } from './SurahDetailScreen';
 export { default as KazaTrackerScreen } from './KazaTrackerScreen';
 export { default as StatsScreen } from './StatsScreen';
 export { default as ChallengeScreen } from './ChallengeScreen';
+import MosqueMapScreen from './MosqueMapScreen';
+export { MosqueMapScreen };
 export * from './GamificationScreen';

@@ -31,6 +31,7 @@ export type HomeStackParamList = {
   KazaTracker: undefined;
   Stats: undefined;
   Challenges: undefined;
+  MosqueMap: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 

@@ -18,6 +18,7 @@ import {
   KazaTrackerScreen,
   StatsScreen,
   ChallengeScreen,
+  MosqueMapScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
@@ -81,7 +82,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
         <View className="flex-1 items-center">
           <Text
-            className="text-4xl font-black tracking-widest text-amber-500"
+            className="text-3xl font-black tracking-widest text-amber-500"
             style={{
               fontFamily: 'Bungee-Regular',
               textShadowColor: 'rgba(246,195,88,0.4)',
@@ -193,7 +194,19 @@ export default function HomeNavigator() {
           options={{
             headerShown: true,
             header: undefined,
-            title: "Challenge'lar",
+            title: 'Meydan Okumalar',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: headerTintColor,
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="MosqueMap"
+          component={MosqueMapScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Cami Atlası',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',
