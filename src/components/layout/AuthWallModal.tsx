@@ -29,7 +29,11 @@ export function AuthWallModal({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onClose();
     if (onLoginPress) return onLoginPress();
-    rootNavigate('Auth', { screen: 'Login' });
+
+    // Navigation hazır olana kadar bekle
+    setTimeout(() => {
+      rootNavigate('Auth', { screen: 'Login' });
+    }, 100);
   };
 
   const handleRegister = () => {

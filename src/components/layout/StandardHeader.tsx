@@ -29,7 +29,12 @@ export function StandardHeader({
   rightComponent,
   showProfile = true,
 }: StandardHeaderProps) {
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    insets = { top: 0, bottom: 0, left: 0, right: 0 };
+  }
   const { user, isAuthenticated } = useAuthStore();
   const avatarUrl = user?.avatarUrl;
   const [statusBarHeight, setStatusBarHeight] = useState(0);

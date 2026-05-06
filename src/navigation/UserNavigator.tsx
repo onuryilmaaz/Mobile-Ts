@@ -19,7 +19,12 @@ const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
   const { user, isAuthenticated } = useAuthStore();
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    insets = { top: 0, bottom: 0, left: 0, right: 0 };
+  }
   const { isDark } = useThemeStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', description: '' });
@@ -57,7 +62,7 @@ export default function UserNavigator() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor:   tabActive,
+          tabBarActiveTintColor: tabActive,
           tabBarInactiveTintColor: tabInactive,
           tabBarStyle: {
             backgroundColor: tabBarBg,
@@ -69,7 +74,7 @@ export default function UserNavigator() {
             elevation: 20,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: -4 },
-            shadowOpacity: isDark ? 0.40 : 0.08,
+            shadowOpacity: isDark ? 0.4 : 0.08,
             shadowRadius: 12,
           },
           tabBarLabelStyle: {

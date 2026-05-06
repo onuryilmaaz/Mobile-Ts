@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { prayerService } from '@/services/prayer.service';
@@ -36,10 +36,60 @@ export function PrayerTrackerCard() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { isDark } = useThemeStore();
 
+  // 🔥 KRİTİK: Tüm component'i saran bir ready state'i
+  const [isComponentReady, setIsComponentReady] = useState(false);
+
+  const isMounted = useRef(true);
+
+  // All hooks must be declared before any conditional return
+  const completedCount = stats?.today_prayers?.length || 0;
+  const totalCount = PRAYERS.length;
+  const progressWidth = useSharedValue(0);
+
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${progressWidth.value * 100}%`,
+  }));
+
   useEffect(() => {
-    loadPrayerTimes();
-    if (isAuthenticated) fetchStats();
-  }, [isAuthenticated, fetchStats]);
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // Component mount olduktan sonra "ready" olarak işaretle
+    const timer = setTimeout(() => {
+      if (isMounted.current) {
+        setIsComponentReady(true);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isComponentReady) return;
+
+    const loadData = async () => {
+      try {
+        await loadPrayerTimes();
+        if (isAuthenticated && isMounted.current) {
+          await fetchStats();
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    };
+
+    loadData();
+  }, [isComponentReady, isAuthenticated, fetchStats]);
+
+  // Progress'i güncelle (sadece ready olduktan sonra)
+  useEffect(() => {
+    progressWidth.value = withSpring(
+      isComponentReady && isAuthenticated ? completedCount / totalCount : 0
+    );
+  }, [stats, isAuthenticated, isComponentReady]);
 
   const loadPrayerTimes = async () => {
     try {
@@ -50,17 +100,18 @@ export function PrayerTrackerCard() {
     } catch {}
   };
 
-  const completedCount = stats?.today_prayers?.length || 0;
-  const totalCount = PRAYERS.length;
-  const progressWidth = useSharedValue(0);
-
-  useEffect(() => {
-    progressWidth.value = withSpring(isAuthenticated ? completedCount / totalCount : 0);
-  }, [completedCount, isAuthenticated]);
-
-  const progressStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value * 100}%`,
-  }));
+  // 🔥 Component hazır değilse loading göster (tüm hook'lar çalıştıktan sonra erken dön)
+  if (!isComponentReady) {
+    return (
+      <View
+        className={`mx-4 mb-4 overflow-hidden rounded-[28px] border p-8 ${
+          isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
+        }`}>
+        <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
+        <Text className="mt-3 text-center text-slate-500 dark:text-slate-400">Yükleniyor...</Text>
+      </View>
+    );
+  }
 
   const getPrayerState = (prayer: any) => {
     if (!prayerTimes) return 'loading';
@@ -89,6 +140,9 @@ export function PrayerTrackerCard() {
       setShowAuthModal(true);
       return;
     }
+
+    if (!isMounted.current) return; // Component unmount olduysa yapma
+
     const state = getPrayerState(prayer);
     if (state === 'upcoming' || stats?.today_prayers?.includes(prayer.id) || isLoading) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

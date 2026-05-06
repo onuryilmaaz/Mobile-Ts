@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { ScrollView, RefreshControl, View, Text, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '@/navigation/types';
@@ -12,6 +12,7 @@ import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '@/store/theme.store';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
@@ -66,6 +67,10 @@ export default function HomeScreen({ navigation }: Props) {
   const [focusNonce, setFocusNonce] = useState(0);
   const { isDark } = useThemeStore();
 
+  // 🔥 Navigation'ın hazır olup olmadığını kontrol et
+  const isNavigationReady = useRef(false);
+  const [isReady, setIsReady] = useState(false);
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -78,13 +83,14 @@ export default function HomeScreen({ navigation }: Props) {
     }
   }, [setUser]);
 
-  useEffect(() => {
-    const unsub = navigation.addListener('focus', () => {
-      if (isAuthenticated && !user?.firstName) fetchData();
+  useFocusEffect(
+    useCallback(() => {
+      if (isAuthenticated && !user?.firstName) {
+        fetchData();
+      }
       setFocusNonce((n) => n + 1);
-    });
-    return unsub;
-  }, [navigation, isAuthenticated, user?.firstName, fetchData]);
+    }, [isAuthenticated, user?.firstName, fetchData])
+  );
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
@@ -101,7 +107,7 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
-        <PrayerTrackerCard />
+        {/* <PrayerTrackerCard /> */}
 
         {isAuthenticated && (
           <View className="mb-5 pl-4">

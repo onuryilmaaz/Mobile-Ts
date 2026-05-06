@@ -3,6 +3,7 @@
     "name": "Salah",
     "slug": "salah",
     "version": "1.0.0",
+    "entryPoint": "./App.tsx",
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -17,9 +18,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#0f766e"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -31,12 +30,7 @@
       "package": "com.onur6541.salah"
     },
     "owner": "onur6541",
-    "plugins": [
-      "expo-asset",
-      "expo-font",
-      "expo-navigation-bar",
-      "expo-sqlite"
-    ],
+    "plugins": ["expo-asset", "expo-font", "expo-navigation-bar", "expo-sqlite"],
     "extra": {
       "expo-navigation-bar": {},
       "eas": {

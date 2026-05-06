@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as NavigationBar from 'expo-navigation-bar';
 import { AppNavigator } from '@/navigation';
 import { ToastContainer } from '@/components/feedback/Toast';
@@ -50,18 +50,12 @@ function AppContent() {
   }, [isDark, setColorScheme]);
 
   return (
-    <View
-      className={`flex-1 ${isDark ? 'dark' : ''}`}
-      style={{ backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
-      <NavigationContainer
-        ref={rootNavigationRef}
-        key={isDark ? 'dark' : 'light'}
-        theme={isDark ? MyDarkTheme : MyLightTheme}>
-        <AppNavigator />
-        <ToastContainer />
-        <AlertDialog />
-      </NavigationContainer>
-    </View>
+    <NavigationContainer
+      ref={rootNavigationRef}
+      key={isDark ? 'dark' : 'light'}
+      theme={isDark ? MyDarkTheme : MyLightTheme}>
+      <AppNavigator />
+    </NavigationContainer>
   );
 }
 
@@ -71,15 +65,17 @@ function App() {
 
   useEffect(() => {
     hydrate();
-  }, []);
+  }, [hydrate]);
 
   useEffect(() => {
     setLogoutCallback(logout);
   }, [logout]);
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <AppContent />
+      <ToastContainer />
+      <AlertDialog />
     </SafeAreaProvider>
   );
 }
