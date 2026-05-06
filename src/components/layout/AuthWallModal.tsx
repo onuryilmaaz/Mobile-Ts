@@ -30,10 +30,7 @@ export function AuthWallModal({
     onClose();
     if (onLoginPress) return onLoginPress();
 
-    // Navigation hazır olana kadar bekle
-    setTimeout(() => {
-      rootNavigate('Auth', { screen: 'Login' });
-    }, 100);
+    rootNavigate('Auth', { screen: 'Login' });
   };
 
   const handleRegister = () => {
