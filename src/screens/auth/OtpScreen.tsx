@@ -8,12 +8,12 @@ import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { authApi } from '@/modules/auth/auth.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Otp'>;
 
 export default function OtpScreen({ navigation, route }: Props) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const { email, password } = route.params;
   const login = useAuthStore((s) => s.login);
 

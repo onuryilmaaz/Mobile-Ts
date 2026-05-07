@@ -7,12 +7,12 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { authApi } from '@/modules/auth/auth.api';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
 export default function ForgotPasswordScreen({ navigation }: Props) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);

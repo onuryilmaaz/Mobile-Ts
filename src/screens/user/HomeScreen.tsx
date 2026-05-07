@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { ScrollView, RefreshControl, View, Text, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '@/navigation/types';
@@ -11,7 +11,7 @@ import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
 import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 import { useFocusEffect } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
@@ -65,11 +65,7 @@ export default function HomeScreen({ navigation }: Props) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [loading, setLoading] = useState(false);
   const [focusNonce, setFocusNonce] = useState(0);
-  const { isDark } = useThemeStore();
-
-  // 🔥 Navigation'ın hazır olup olmadığını kontrol et
-  const isNavigationReady = useRef(false);
-  const [isReady, setIsReady] = useState(false);
+  const { isDark } = useTheme();
 
   const fetchData = useCallback(async () => {
     try {
@@ -107,7 +103,7 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
-        {/* <PrayerTrackerCard /> */}
+        <PrayerTrackerCard />
 
         {isAuthenticated && (
           <View className="mb-5 pl-4">
@@ -156,7 +152,6 @@ export default function HomeScreen({ navigation }: Props) {
             </ScrollView>
           </View>
         )}
-
         <DailyInspirationCard />
         <ReligiousDaysCard />
       </ScrollView>

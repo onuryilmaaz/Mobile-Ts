@@ -11,7 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useAlertStore, AlertType, AlertButton } from '@/store/alert.store';
 import { BlurView } from 'expo-blur';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const getIconConfig = (type: AlertType, isDark: boolean) => {
   switch (type) {
@@ -49,7 +49,7 @@ const getIconConfig = (type: AlertType, isDark: boolean) => {
 };
 
 export function AlertDialog() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const { visible, type, title, message, buttons, hide } = useAlertStore();
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;

@@ -13,7 +13,7 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useState } from 'react';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
@@ -25,7 +25,7 @@ export default function UserNavigator() {
   } catch (error) {
     insets = { top: 0, bottom: 0, left: 0, right: 0 };
   }
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', description: '' });
 

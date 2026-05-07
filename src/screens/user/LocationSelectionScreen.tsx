@@ -12,7 +12,7 @@ import {
   getDistrictById,
   isDistrictsDataLoaded,
 } from '@/constants/locations';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'LocationSelection'>;
 
@@ -24,7 +24,7 @@ export default function LocationSelectionScreen({ navigation }: Props) {
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState<'state' | 'district'>('state');
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const states = getStates();
   const districts = selectedStateId ? getDistrictsByStateId(selectedStateId) : [];

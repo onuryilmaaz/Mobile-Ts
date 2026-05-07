@@ -4,7 +4,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { BarChart } from 'react-native-chart-kit';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 const CHART_WIDTH = width - 48;
@@ -50,7 +50,7 @@ function StatCard({
   color: string;
   twBg: string;
 }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   return (
     <View
       className={`mx-1.5 flex-1 items-center rounded-2xl border p-4 shadow-sm ${
@@ -73,7 +73,7 @@ export default function StatsScreen() {
   const { stats, weeklyStats, monthlyStats, fetchWeeklyStats, fetchMonthlyStats, fetchStats } =
     useGamificationStore();
   const [loading, setLoading] = useState(false);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const load = async () => {
     setLoading(true);

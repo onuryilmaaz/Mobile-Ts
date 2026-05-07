@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useChallengeStore } from '@/modules/challenge/challenge.store';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 function timeLeft(endsAt: string): string {
   const diff = new Date(endsAt).getTime() - Date.now();
@@ -48,7 +48,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 function ChallengeCard({ challenge, onJoin }: { challenge: any; onJoin: () => void }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const isJoined = !!challenge.user_challenge_id;
   const isCompleted = !!challenge.is_completed;
   const progress = isJoined ? (challenge.progress ?? 0) : 0;
@@ -141,7 +141,7 @@ function ChallengeCard({ challenge, onJoin }: { challenge: any; onJoin: () => vo
 
 export default function ChallengeScreen() {
   const { active, isLoading, fetchActive, joinChallenge } = useChallengeStore();
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const load = useCallback(async () => {
     await fetchActive();

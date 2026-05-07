@@ -9,12 +9,12 @@ import {
   AccountScreen,
 } from '@/screens/user';
 import { StandardHeader } from '@/components/layout/StandardHeader';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
 export default function ProfileNavigator() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   return (
     <>

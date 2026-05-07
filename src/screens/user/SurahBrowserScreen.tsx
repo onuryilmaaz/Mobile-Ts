@@ -14,7 +14,7 @@ import { quranService, Surah } from '@/services/quran.service';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahsMain'>;
 
@@ -22,7 +22,7 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     fetchSurahs();

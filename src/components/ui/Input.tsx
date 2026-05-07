@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, Pressable, TextInputProps } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type InputProps = {
   label?: string;
@@ -10,7 +10,7 @@ type InputProps = {
 } & Omit<TextInputProps, 'className'>;
 
 export function Input({ label, isPassword = false, error, onFocus, onBlur, ...props }: InputProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [focused, setFocused] = useState(false);
   const [secure, setSecure] = useState(isPassword);
 
@@ -33,12 +33,11 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
       )}
 
       <View
-        className={`
-          h-12 flex-row items-center rounded-2xl border px-4
-          ${isDark ? 'bg-slate-900/60' : 'bg-white'}
-          ${focused ? 'border-teal-500' : isDark ? 'border-slate-700' : 'border-slate-200'}
-          ${error ? 'border-red-500' : ''}
-        `}>
+        className={[
+          'h-12 flex-row items-center rounded-2xl border px-4 bg-white dark:bg-slate-900/60',
+          focused ? 'border-teal-500' : 'border-slate-200 dark:border-slate-700',
+          error ? 'border-red-500' : '',
+        ].join(' ')}>
         <TextInput
           {...props}
           secureTextEntry={secure}

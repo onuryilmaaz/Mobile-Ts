@@ -7,7 +7,7 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { prayerService } from '@/services/prayer.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -34,7 +34,7 @@ export function PrayerTrackerCard() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [prayerTimes, setPrayerTimes] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   // 🔥 KRİTİK: Tüm component'i saran bir ready state'i
   const [isComponentReady, setIsComponentReady] = useState(false);

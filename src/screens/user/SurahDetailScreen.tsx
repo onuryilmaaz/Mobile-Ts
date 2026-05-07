@@ -7,7 +7,7 @@ import { quranService, Verse } from '@/services/quran.service';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahDetail'>;
 
@@ -15,7 +15,7 @@ export default function SurahDetailScreen({ route }: Props) {
   const { surahId, surahName } = route.params;
   const [verses, setVerses] = useState<Verse[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     fetchVerses();

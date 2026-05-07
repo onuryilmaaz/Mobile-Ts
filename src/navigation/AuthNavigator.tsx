@@ -8,12 +8,12 @@ import {
 } from '@/screens/auth';
 import type { AuthStackParamList } from './types';
 import { StatusBar as RNStatusBar } from 'react-native';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 export default function AuthNavigator() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   return (
     <>

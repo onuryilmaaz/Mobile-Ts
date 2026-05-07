@@ -4,7 +4,7 @@ import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { rootNavigate } from '@/navigation/rootNavigation';
 import * as Haptics from 'expo-haptics';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 interface AuthWallModalProps {
   visible: boolean;
@@ -23,7 +23,7 @@ export function AuthWallModal({
   onLoginPress,
   onRegisterPress,
 }: AuthWallModalProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const handleLogin = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

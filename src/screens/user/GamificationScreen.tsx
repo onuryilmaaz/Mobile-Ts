@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { LEVELS } from '@/constants/levels';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -92,7 +92,7 @@ export function GamificationScreen() {
   const { stats, badges, allBadges, leaderboard, isLoading, fetchStats, fetchLeaderboard } =
     useGamificationStore();
   const { user } = useAuthStore();
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const loadData = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

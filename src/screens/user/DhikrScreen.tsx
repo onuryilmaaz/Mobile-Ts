@@ -26,7 +26,7 @@ import Animated, {
   ZoomIn,
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.72;
@@ -70,7 +70,7 @@ function AddPresetModal({
 }) {
   const [name, setName] = useState('');
   const [target, setTarget] = useState('33');
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const handleAdd = () => {
     const t = parseInt(target);
@@ -160,7 +160,7 @@ function HistoryModal({
   onClose: () => void;
   log: DailyLog;
 }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/40">
@@ -226,7 +226,7 @@ export default function DhikrScreen() {
   const [milestoneMsg, setMilestoneMsg] = useState('');
   const [showMilestone, setShowMilestone] = useState(false);
   const milestoneTimer = useRef<NodeJS.Timeout | null>(null);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const target = presets[activePreset]?.target ?? 33;
   const scale = useSharedValue(1);

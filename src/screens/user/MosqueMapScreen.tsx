@@ -17,13 +17,13 @@ import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useMosqueStore } from '@/modules/mosque/mosque.store';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { mosqueApi } from '@/modules/mosque/mosque.api';
 import * as Haptics from 'expo-haptics';
 
 const MosqueMapScreen = () => {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const { user } = useAuthStore();
   const { mosques, isLoading, fetchMosques, addMosque } = useMosqueStore();
   

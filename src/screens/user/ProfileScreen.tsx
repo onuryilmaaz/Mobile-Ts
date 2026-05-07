@@ -23,6 +23,7 @@ import { UploadOverlay } from '@/components/feedback/UploadOverlay';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { alert } from '@/store/alert.store';
+import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
 import type { UserProfile } from '@/modules/user/user.types';
 import { Ionicons } from '@expo/vector-icons';
@@ -79,7 +80,8 @@ export default function ProfileScreen({ navigation }: Props) {
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const user = useAuthStore((s) => s.user);
   const scrollViewRef = useRef<ScrollView>(null);
-  const { isDark, toggleTheme } = useThemeStore();
+  const { isDark } = useTheme();
+  const { toggleTheme } = useThemeStore();
 
   const [profile, setProfile] = useState<UserProfile | null>(user as UserProfile | null);
   const [firstName, setFirstName] = useState(user?.firstName ?? '');

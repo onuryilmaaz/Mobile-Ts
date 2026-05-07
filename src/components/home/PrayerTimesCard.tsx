@@ -7,6 +7,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '@/navigation/types';
 import { prayerService } from '@/services/prayer.service';
 import { notificationService } from '@/services/notification.service';
+import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
 import { getDistrictById, getStateById } from '@/constants/locations';
 import type { PrayerTimeData } from '@/types/prayer';
@@ -49,7 +50,7 @@ type PrayerTimesCardProps = {
 };
 
 export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<PrayerTimeData | null>(null);
   const [selectedDistrictId, setSelectedDistrictId] = useState<string>(DEFAULT_DISTRICT_ID);

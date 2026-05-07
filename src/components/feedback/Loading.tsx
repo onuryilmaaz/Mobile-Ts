@@ -1,5 +1,5 @@
 import { View, Text, ActivityIndicator } from 'react-native';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 interface LoadingProps {
   message?: string;
@@ -14,13 +14,13 @@ export function Loading({
   size = 'large',
   color,
 }: LoadingProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const loaderColor = color || (isDark ? '#2dd4bf' : '#0f766e');
 
   if (fullScreen) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <View className={`items-center rounded-2xl p-8 shadow-sm ${isDark ? 'bg-slate-800 shadow-none' : 'bg-white shadow-black/5'}`}>
+        <View className="items-center rounded-2xl bg-white p-8 shadow-sm shadow-black/5 dark:bg-slate-800 dark:shadow-none">
           <ActivityIndicator size={size} color={loaderColor} />
           {message && (
             <Text className="mt-4 text-base font-medium text-slate-600 dark:text-slate-400">

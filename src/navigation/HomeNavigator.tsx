@@ -24,7 +24,7 @@ import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { useFonts, Bungee_400Regular } from '@expo-google-fonts/bungee';
 
@@ -49,7 +49,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
     insets = { top: 0, bottom: 0, left: 0, right: 0 };
   }
   const [statusBarHeight, setStatusBarHeight] = useState(0);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -118,7 +118,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 }
 
 export default function HomeNavigator() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const headerColor = isDark ? '#0f172a' : '#ffffff';
   const headerTintColor = isDark ? '#ffffff' : '#0f172a';
   const [fontsLoaded] = useFonts({

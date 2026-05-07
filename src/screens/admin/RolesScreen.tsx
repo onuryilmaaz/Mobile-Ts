@@ -11,10 +11,10 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function RolesScreen() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const alert = useAlertStore();
   const [roles, setRoles] = useState<AdminRole[]>([]);
   const [newRole, setNewRole] = useState('');

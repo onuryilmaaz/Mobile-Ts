@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, TextInput, Pressable } from 'react-native';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type OtpInputProps = {
   length?: number;
@@ -10,7 +10,7 @@ type OtpInputProps = {
 };
 
 export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 

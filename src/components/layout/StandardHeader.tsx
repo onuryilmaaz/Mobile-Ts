@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { HEADER_CONFIG } from '@/navigation/header.config';
 import { useAuthStore } from '@/modules/auth/auth.store';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type StandardHeaderProps = {
   title: string;
@@ -38,7 +38,7 @@ export function StandardHeader({
   const { user, isAuthenticated } = useAuthStore();
   const avatarUrl = user?.avatarUrl;
   const [statusBarHeight, setStatusBarHeight] = useState(0);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (Platform.OS === 'android') {

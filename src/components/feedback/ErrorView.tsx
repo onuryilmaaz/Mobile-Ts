@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 interface ErrorViewProps {
   title?: string;
@@ -19,7 +19,7 @@ export function ErrorView({
   fullScreen = false,
   icon = 'alert-circle-outline',
 }: ErrorViewProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const content = (
     <View className="items-center px-6 py-8">

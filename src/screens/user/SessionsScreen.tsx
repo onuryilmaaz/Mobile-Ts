@@ -9,11 +9,11 @@ import { Badge } from '@/components/ui/Badge';
 import { InlineLoading } from '@/components/feedback/Loading';
 import { authApi } from '@/modules/auth/auth.api';
 import { useAlertStore } from '@/store/alert.store';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 import type { SessionInfo } from '@/modules/auth/auth.types';
 
 export default function SessionsScreen() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const alert = useAlertStore();
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
   const [loading, setLoading] = useState(false);

@@ -1,16 +1,9 @@
 import { View, ViewProps } from 'react-native';
-import { useThemeStore } from '@/store/theme.store';
 
 export function Card({ children, className, style, ...props }: ViewProps) {
-  const { isDark } = useThemeStore();
-
   return (
     <View
-      className={`rounded-3xl border p-5 ${
-        isDark
-          ? 'border-slate-800 bg-slate-900'
-          : 'border-slate-100 bg-white shadow-sm shadow-black/5'
-      } ${className}`}
+      className={`rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none ${className}`}
       style={style}
       {...props}>
       {children}

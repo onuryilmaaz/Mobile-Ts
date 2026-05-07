@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { View, Text, Animated, Easing, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 interface UploadOverlayProps {
   visible: boolean;
@@ -10,7 +10,7 @@ interface UploadOverlayProps {
 }
 
 export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOverlayProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;

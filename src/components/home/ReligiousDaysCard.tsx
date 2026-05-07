@@ -3,14 +3,14 @@ import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { calendarService, type ReligiousDay } from '@/services/calendar.service';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 export function ReligiousDaysCard() {
   const [nextDay, setNextDay] = useState<ReligiousDay | null>(null);
   const [todayHijri, setTodayHijri] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
   const allDays = calendarService.getReligiousDays();
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     setNextDay(calendarService.getNextReligiousDay());

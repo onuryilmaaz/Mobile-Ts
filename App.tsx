@@ -52,7 +52,6 @@ function AppContent() {
   return (
     <NavigationContainer
       ref={rootNavigationRef}
-      key={isDark ? 'dark' : 'light'}
       theme={isDark ? MyDarkTheme : MyLightTheme}>
       <AppNavigator />
     </NavigationContainer>

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Text, TouchableOpacity, View, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { create } from 'zustand';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -119,7 +119,7 @@ const premiumSurfaceBorder = {
 };
 
 function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismiss: () => void }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(-20)).current;
   const config = toastConfig[toastData.type];

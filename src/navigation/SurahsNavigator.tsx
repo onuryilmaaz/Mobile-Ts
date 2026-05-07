@@ -3,12 +3,12 @@ import { StatusBar as RNStatusBar } from 'react-native';
 import { SurahBrowserScreen, SurahDetailScreen } from '@/screens/user';
 import type { SurahsStackParamList } from './types';
 import { StandardHeader } from '@/components/layout/StandardHeader';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const Stack = createNativeStackNavigator<SurahsStackParamList>();
 
 export default function SurahsNavigator() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   return (
     <>

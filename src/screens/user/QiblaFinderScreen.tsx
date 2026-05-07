@@ -7,7 +7,7 @@ import * as Location from 'expo-location';
 import { Screen } from '@/components/layout/Screen';
 import { qiblaService } from '@/services/qibla.service';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -25,7 +25,7 @@ export default function QiblaFinderScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     (async () => {

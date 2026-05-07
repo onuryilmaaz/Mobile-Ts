@@ -8,10 +8,10 @@ import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useAlertStore } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function ChangePasswordScreen() {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const refreshUser = useAuthStore((s) => s.refreshUser);
   const alert = useAlertStore();
   const scrollViewRef = useRef<ScrollView>(null);

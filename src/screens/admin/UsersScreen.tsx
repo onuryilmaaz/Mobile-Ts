@@ -9,12 +9,12 @@ import type { AdminUser } from '@/modules/admin/admin.types';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'Users'>;
 
 export default function UsersScreen({ navigation }: Props) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

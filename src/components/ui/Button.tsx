@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type ButtonProps = {
   title: string;
@@ -18,7 +18,7 @@ export function Button({
   variant = 'primary',
   className = '',
 }: ButtonProps) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const isDisabled = loading || disabled;
 
   const baseButtonClasses = 'h-12 rounded-2xl border-2 items-center justify-center';

@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 import { hadithService } from '@/services/hadith.service';
 import { quranService } from '@/services/quran.service';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 interface Inspiration {
   type: 'Ayet' | 'Hadis';
@@ -17,7 +17,7 @@ interface Inspiration {
 export function DailyInspirationCard() {
   const [current, setCurrent] = useState<Inspiration | null>(null);
   const [loading, setLoading] = useState(true);
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const fetchInspiration = useCallback(async () => {
     try {

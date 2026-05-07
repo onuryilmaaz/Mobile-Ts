@@ -15,7 +15,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 const PRAYERS = [
   { key: 'fajr', label: 'Sabah', icon: 'moon-outline' as const, color: '#1e293b' },
@@ -38,7 +38,7 @@ function AddKazaModal({
   onClose: () => void;
   onAdd: (prayer: string, date: string) => void;
 }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [selectedPrayer, setSelectedPrayer] = useState('fajr');
   const dates = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
@@ -157,7 +157,7 @@ function KazaItem({
   onComplete: () => void;
   onDelete: () => void;
 }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const prayer = PRAYERS.find((p) => p.key === item.prayer_time);
 
@@ -205,7 +205,7 @@ function KazaWizard({
   onClose: () => void;
   onBatchAdd: (prayers: string[], count: number) => void;
 }) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [startAge, setStartAge] = useState('');
   const [regularAge, setRegularAge] = useState('');
   const [discountPercent, setDiscountPercent] = useState('0');
@@ -329,7 +329,7 @@ export default function KazaTrackerScreen() {
     completeKaza,
     deleteKaza,
   } = useGamificationStore();
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
 
   const load = useCallback(async () => {
     await fetchKazaList();

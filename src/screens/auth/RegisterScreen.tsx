@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { authApi } from '@/modules/auth/auth.api';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 

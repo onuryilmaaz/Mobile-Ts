@@ -9,12 +9,12 @@ import { Card } from '@/components/ui/Card';
 import { OtpInput } from '@/components/ui/OtpInput';
 import { authApi } from '@/modules/auth/auth.api';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
 export default function ResetPasswordScreen({ navigation, route }: Props) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const email = route.params?.email ?? '';
   const scrollViewRef = useRef<ScrollView>(null);
 

@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { PageLoading } from '@/components/feedback/Loading';
 import { ErrorView } from '@/components/feedback/ErrorView';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeStore } from '@/store/theme.store';
+import { useTheme } from '@/hooks/useTheme';
 
 type Props = NativeStackScreenProps<AdminStackParamList, 'Dashboard'>;
 
@@ -47,7 +47,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function DashboardScreen({ navigation }: Props) {
-  const { isDark } = useThemeStore();
+  const { isDark } = useTheme();
   const [stats, setStats] = useState<any>(null);
   const [healthy, setHealthy] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
