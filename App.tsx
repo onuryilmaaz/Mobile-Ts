@@ -1,6 +1,6 @@
 import './global.css';
 import { useEffect } from 'react';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -50,9 +50,7 @@ function AppContent() {
   }, [isDark, setColorScheme]);
 
   return (
-    <NavigationContainer
-      ref={rootNavigationRef}
-      theme={isDark ? MyDarkTheme : MyLightTheme}>
+    <NavigationContainer ref={rootNavigationRef} theme={isDark ? MyDarkTheme : MyLightTheme}>
       <AppNavigator />
     </NavigationContainer>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import axios from 'axios';
 import { api, API_BASE_URL } from '@/services/api';
 import {

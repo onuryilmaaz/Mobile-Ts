@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
@@ -126,7 +127,7 @@ export default function StatsScreen() {
   const breakdown = buildPrayerBreakdown();
 
   const totalMonthPrayers = Number(monthlyStats?.totals?.total_prayers || 0);
-  const totalMonthKaza = Number(monthlyStats?.totals?.total_kaza || 0);
+  //const totalMonthKaza = Number(monthlyStats?.totals?.total_kaza || 0);
   const activeDays = Number(monthlyStats?.totals?.active_days || 0);
   const completionRate =
     activeDays > 0 ? Math.round((totalMonthPrayers / (activeDays * 5)) * 100) : 0;

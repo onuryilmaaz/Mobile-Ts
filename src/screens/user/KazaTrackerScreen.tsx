@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   View,
@@ -572,8 +573,9 @@ export default function KazaTrackerScreen() {
                 <Ionicons name="information-circle-outline" size={32} color="#f59e0b" />
               </View>
               <Text className="text-center text-sm font-bold text-slate-600 dark:text-slate-300">
-                Listede manuel kaydınız yok. Toplu borcunuzu yukarıdaki{"\n"}
-                <Text className="text-teal-600 dark:text-teal-400">Hızlı Sayaç</Text> butonlarından eritebilirsiniz.
+                Listede manuel kaydınız yok. Toplu borcunuzu yukarıdaki{'\n'}
+                <Text className="text-teal-600 dark:text-teal-400">Hızlı Sayaç</Text> butonlarından
+                eritebilirsiniz.
               </Text>
             </View>
           ) : kazaList.length === 0 && !loading ? (

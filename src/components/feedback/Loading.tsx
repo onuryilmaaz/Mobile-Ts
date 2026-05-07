@@ -8,12 +8,7 @@ interface LoadingProps {
   color?: string;
 }
 
-export function Loading({
-  message,
-  fullScreen = false,
-  size = 'large',
-  color,
-}: LoadingProps) {
+export function Loading({ message, fullScreen = false, size = 'large', color }: LoadingProps) {
   const { isDark } = useTheme();
   const loaderColor = color || (isDark ? '#2dd4bf' : '#0f766e');
 
@@ -36,9 +31,7 @@ export function Loading({
     <View className="items-center justify-center py-8">
       <ActivityIndicator size={size} color={loaderColor} />
       {message && (
-        <Text className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-          {message}
-        </Text>
+        <Text className="mt-3 text-sm text-slate-500 dark:text-slate-400">{message}</Text>
       )}
     </View>
   );

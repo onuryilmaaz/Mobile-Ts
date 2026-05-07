@@ -9,7 +9,6 @@ import {
   setAccessToken,
   setRefreshToken,
 } from '@/services/token.service';
-import { setLogoutCallback } from '@/services/api';
 import type { AuthUser } from './auth.types';
 
 type AuthState = {
@@ -219,11 +218,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch {
       await clearTokens();
       set({ user: null, isAuthenticated: false, accessToken: null, refreshToken: null });
-      
+
       // Redirect to Home screen and reset stack on session expiration
       const { rootReset } = await import('@/navigation/rootNavigation');
       rootReset('UserTabs', { screen: 'Home' });
-      
+
       return null;
     }
   },

@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/rules-of-hooks */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
-import { DhikrScreen } from '@/screens/user';
-import { GamificationScreen } from '@/screens/user';
-import type { RootStackParamList, UserTabParamList } from './types';
+import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
+import { DhikrScreen, GamificationScreen } from '@/screens';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 

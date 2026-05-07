@@ -18,7 +18,9 @@ export function EmptyState({ icon = 'document-outline', title, message, action }
         <Ionicons name={icon} size={32} color={isDark ? '#4b5563' : '#94a3b8'} />
       </View>
       <Text className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">{title}</Text>
-      {message && <Text className="text-center text-sm text-slate-500 dark:text-slate-400">{message}</Text>}
+      {message && (
+        <Text className="text-center text-sm text-slate-500 dark:text-slate-400">{message}</Text>
+      )}
       {action && <View className="mt-4">{action}</View>}
     </View>
   );

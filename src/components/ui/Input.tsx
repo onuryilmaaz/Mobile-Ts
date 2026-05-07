@@ -34,7 +34,7 @@ export function Input({ label, isPassword = false, error, onFocus, onBlur, ...pr
 
       <View
         className={[
-          'h-12 flex-row items-center rounded-2xl border px-4 bg-white dark:bg-slate-900/60',
+          'h-12 flex-row items-center rounded-2xl border bg-white px-4 dark:bg-slate-900/60',
           focused ? 'border-teal-500' : 'border-slate-200 dark:border-slate-700',
           error ? 'border-red-500' : '',
         ].join(' ')}>

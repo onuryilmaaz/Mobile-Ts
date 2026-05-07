@@ -77,7 +77,7 @@ export function OtpInput({ length = 6, value, onChange, onComplete }: OtpInputPr
               maxLength={1}
               selectTextOnFocus
               className="h-full w-full text-center text-2xl font-bold text-slate-900 dark:text-white"
-              selectionColor={isDark ? "#2dd4bf" : "#0d9488"}
+              selectionColor={isDark ? '#2dd4bf' : '#0d9488'}
               style={{ padding: 0 }}
             />
           </Pressable>

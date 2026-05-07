@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { HomeStackParamList } from '@/navigation/types';
 import { prayerService } from '@/services/prayer.service';
 import { notificationService } from '@/services/notification.service';
 import { useTheme } from '@/hooks/useTheme';

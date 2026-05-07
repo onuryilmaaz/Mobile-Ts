@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, Animated, Easing, Platform } from 'react-native';
+import { View, Text, Animated, Easing } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
@@ -89,15 +89,17 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
 
   return (
     <Animated.View className="absolute inset-0 z-[1000]" style={{ opacity: opacityAnim }}>
-      <BlurView intensity={20} tint={isDark ? "dark" : "light"} className="flex-1 items-center justify-center">
+      <BlurView
+        intensity={20}
+        tint={isDark ? 'dark' : 'light'}
+        className="flex-1 items-center justify-center">
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }],
             borderWidth: 1,
             borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.06)',
           }}
-          className="items-center rounded-[40px] bg-white px-12 py-10 shadow-2xl dark:bg-slate-800/70 dark:shadow-none"
-        >
+          className="items-center rounded-[40px] bg-white px-12 py-10 shadow-2xl dark:bg-slate-800/70 dark:shadow-none">
           <Animated.View
             style={{ transform: [{ scale: pulseAnim }] }}
             className="absolute h-28 w-28 rounded-full bg-teal-100/50 dark:bg-teal-500/10"
@@ -110,12 +112,16 @@ export function UploadOverlay({ visible, message = 'Yükleniyor...' }: UploadOve
             <View className="absolute h-20 w-20 rounded-full border-4 border-transparent border-r-teal-400 border-t-teal-600 dark:border-r-teal-500 dark:border-t-teal-400" />
 
             <View className="h-12 w-12 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-500/20">
-              <Ionicons name="cloud-upload" size={24} color={isDark ? "#2dd4bf" : "#0f766e"} />
+              <Ionicons name="cloud-upload" size={24} color={isDark ? '#2dd4bf' : '#0f766e'} />
             </View>
           </Animated.View>
 
-          <Text className="text-center text-lg font-bold text-slate-900 dark:text-white">{message}</Text>
-          <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-300">Lütfen bekleyin...</Text>
+          <Text className="text-center text-lg font-bold text-slate-900 dark:text-white">
+            {message}
+          </Text>
+          <Text className="mt-1 text-center text-sm text-slate-500 dark:text-slate-300">
+            Lütfen bekleyin...
+          </Text>
 
           <View className="mt-6 flex-row gap-2">
             <AnimatedDot delay={0} />

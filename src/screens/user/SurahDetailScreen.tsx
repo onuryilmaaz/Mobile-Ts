@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, Platform, Share } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SurahsStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
-import { quranService, Verse } from '@/services/quran.service';
+import { Verse } from '@/services/quran.service';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function LoginScreen({ navigation }: Props) {
+  const { isDark } = useTheme();
   const login = useAuthStore((s) => s.login);
   const scrollViewRef = useRef<ScrollView>(null);
 

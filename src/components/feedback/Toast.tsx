@@ -148,21 +148,21 @@ function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismis
         borderColor: isDark ? premiumSurfaceBorder.dark : premiumSurfaceBorder.light,
       }}
       className="mx-4 mb-2 flex-row items-center rounded-2xl border p-4 shadow-sm">
-      <Ionicons 
-        name={config.icon} 
-        size={24} 
-        color={isDark ? config.darkIconColor : config.iconColor} 
+      <Ionicons
+        name={config.icon}
+        size={24}
+        color={isDark ? config.darkIconColor : config.iconColor}
       />
 
       <View className="ml-3 flex-1">
-        <Text 
-          className="font-bold" 
+        <Text
+          className="font-bold"
           style={{ color: isDark ? config.darkTextColor : config.textColor }}>
           {toastData.title}
         </Text>
         {toastData.message && (
-          <Text 
-            className="text-sm opacity-80" 
+          <Text
+            className="text-sm opacity-80"
             style={{ color: isDark ? config.darkTextColor : config.textColor }}>
             {toastData.message}
           </Text>
@@ -170,7 +170,7 @@ function ToastItem({ toast: toastData, onDismiss }: { toast: ToastData; onDismis
       </View>
 
       <TouchableOpacity onPress={onDismiss} className="ml-2 p-1">
-        <Ionicons name="close" size={18} color={isDark ? "#94a3b8" : "#64748b"} />
+        <Ionicons name="close" size={18} color={isDark ? '#94a3b8' : '#64748b'} />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -182,8 +182,8 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <View 
-      className="absolute left-0 right-0 z-[1000]" 
+    <View
+      className="absolute left-0 right-0 z-[1000]"
       style={{ top: Platform.OS === 'ios' ? 60 : 40 }}>
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} onDismiss={() => removeToast(t.id)} />

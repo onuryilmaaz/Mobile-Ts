@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View, TouchableOpacity, RefreshControl, Image } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

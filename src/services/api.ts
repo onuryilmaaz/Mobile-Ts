@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import axios from 'axios';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
@@ -136,7 +137,11 @@ api.interceptors.response.use(
     }
 
     if (status === 401) {
-      if (requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh') || requestUrl.includes('/auth/logout')) {
+      if (
+        requestUrl.includes('/auth/login') ||
+        requestUrl.includes('/auth/refresh') ||
+        requestUrl.includes('/auth/logout')
+      ) {
         return Promise.reject(error);
       }
 

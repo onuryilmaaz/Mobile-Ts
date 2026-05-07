@@ -24,4 +24,3 @@ export function rootReset(name: keyof RootStackParamList, params?: object) {
     routes: [{ name, params }],
   });
 }
-

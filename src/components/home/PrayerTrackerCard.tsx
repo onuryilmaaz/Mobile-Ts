@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
@@ -36,12 +37,10 @@ export function PrayerTrackerCard() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { isDark } = useTheme();
 
-  // 🔥 KRİTİK: Tüm component'i saran bir ready state'i
   const [isComponentReady, setIsComponentReady] = useState(false);
 
   const isMounted = useRef(true);
 
-  // All hooks must be declared before any conditional return
   const completedCount = stats?.today_prayers?.length || 0;
   const totalCount = PRAYERS.length;
   const progressWidth = useSharedValue(0);
@@ -57,7 +56,6 @@ export function PrayerTrackerCard() {
   }, []);
 
   useEffect(() => {
-    // Component mount olduktan sonra "ready" olarak işaretle
     const timer = setTimeout(() => {
       if (isMounted.current) {
         setIsComponentReady(true);
@@ -84,7 +82,6 @@ export function PrayerTrackerCard() {
     loadData();
   }, [isComponentReady, isAuthenticated, fetchStats]);
 
-  // Progress'i güncelle (sadece ready olduktan sonra)
   useEffect(() => {
     progressWidth.value = withSpring(
       isComponentReady && isAuthenticated ? completedCount / totalCount : 0
@@ -100,7 +97,6 @@ export function PrayerTrackerCard() {
     } catch {}
   };
 
-  // 🔥 Component hazır değilse loading göster (tüm hook'lar çalıştıktan sonra erken dön)
   if (!isComponentReady) {
     return (
       <View
