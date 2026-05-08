@@ -30,11 +30,7 @@ export function ReligiousDaysCard() {
   return (
     <View className="mx-4 mb-6">
       <View
-        className={`overflow-hidden rounded-3xl border shadow-xl ${
-          isDark
-            ? 'border-slate-800 bg-slate-900 shadow-none'
-            : 'border-slate-200 bg-white shadow-black/5'
-        }`}>
+        className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
         <View className="px-6 py-4" style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
@@ -43,7 +39,7 @@ export function ReligiousDaysCard() {
               </View>
               <Text className="text-base font-bold text-white">Hicri Takvim</Text>
             </View>
-            <View className={`rounded-full px-3 py-1 ${isDark ? 'bg-white/10' : 'bg-white/20'}`}>
+            <View className="rounded-full bg-white/20 px-3 py-1 dark:bg-white/10">
               <Text className="text-xs font-bold uppercase tracking-widest text-white">
                 {todayHijri}
               </Text>
@@ -112,9 +108,7 @@ export function ReligiousDaysCard() {
         onRequestClose={() => setModalVisible(false)}>
         <BlurView intensity={30} tint="dark" className="flex-1 items-center justify-center px-4">
           <View
-            className={`max-h-[80%] w-full overflow-hidden rounded-[40px] shadow-2xl ${
-              isDark ? 'bg-slate-900' : 'bg-white'
-            }`}>
+            className="max-h-[80%] w-full overflow-hidden rounded-[40px] bg-white shadow-2xl dark:bg-slate-900">
             <View
               className="flex-row items-center justify-between px-6 py-6"
               style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
@@ -139,12 +133,8 @@ export function ReligiousDaysCard() {
                     key={day.id}
                     className={`mb-3 flex-row items-center rounded-2xl border p-4 ${
                       isPast
-                        ? isDark
-                          ? 'border-slate-800 bg-slate-950 opacity-80'
-                          : 'border-slate-100 bg-slate-50 opacity-60'
-                        : isDark
-                          ? 'border-teal-500/30 bg-slate-900 shadow-sm'
-                          : 'border-teal-100 bg-white shadow-sm'
+                        ? 'border-slate-100 bg-slate-50 opacity-60 dark:border-slate-800 dark:bg-slate-950 dark:opacity-80'
+                        : 'border-teal-100 bg-white shadow-sm dark:border-teal-500/30 dark:bg-slate-900'
                     }`}>
                     <View
                       className={`h-12 w-12 items-center justify-center rounded-2xl ${

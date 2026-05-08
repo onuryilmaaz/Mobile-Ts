@@ -76,9 +76,7 @@ export function DailyInspirationCard() {
   if (!current && loading) {
     return (
       <View
-        className={`mx-4 mb-6 items-center justify-center rounded-[32px] border p-12 ${
-          isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
-        }`}>
+        className="mx-4 mb-6 items-center justify-center rounded-[32px] border border-slate-200 bg-white p-12 dark:border-slate-700 dark:bg-slate-800">
         <ActivityIndicator color={isDark ? '#14b8a6' : '#0f766e'} />
       </View>
     );
@@ -90,11 +88,7 @@ export function DailyInspirationCard() {
     <View className="mx-4 mb-6">
       <Animated.View
         layout={Layout.springify()}
-        className={`overflow-hidden rounded-[32px] border shadow-xl ${
-          isDark
-            ? 'border-slate-800 bg-slate-900 shadow-none'
-            : 'border-slate-200 bg-white shadow-black/5'
-        }`}>
+        className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
         <View className="flex-row items-center justify-between px-6 pt-6">
           <View className="flex-row items-center gap-2">
             <View className="h-8 w-8 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/15">
@@ -161,7 +155,7 @@ export function DailyInspirationCard() {
           className="items-center px-6 py-4"
           style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc' }}>
           <Text
-            className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-400'}`}>
+            className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-white">
             Manevi Huzur İçin Küçük Bir Hatırlatma
           </Text>
         </View>

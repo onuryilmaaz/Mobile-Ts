@@ -404,7 +404,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
             <View className="flex-row items-center gap-0.5 rounded-full border border-slate-200 bg-slate-100 p-1 dark:border-teal-500/30 dark:bg-teal-500/20">
               <View
-                className={`h-8 w-8 items-center justify-center rounded-full ${!isDark ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
+                className="h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm dark:bg-transparent">
                 <Ionicons
                   name="sunny"
                   size={16}
@@ -412,7 +412,7 @@ export default function ProfileScreen({ navigation }: Props) {
                 />
               </View>
               <View
-                className={`h-8 w-8 items-center justify-center rounded-full ${isDark ? 'bg-teal-500 shadow-sm shadow-teal-500/40' : 'bg-transparent'}`}>
+                className="h-8 w-8 items-center justify-center rounded-full bg-transparent dark:bg-teal-500 dark:shadow-sm dark:shadow-teal-500/40">
                 <Ionicons name="moon" size={16} color={isDark ? '#ffffff' : 'rgba(0,0,0,0.25)'} />
               </View>
             </View>

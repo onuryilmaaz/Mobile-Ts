@@ -130,7 +130,7 @@ export default function SessionsScreen() {
                         color={session.isCurrent ? (isDark ? '#14b8a6' : '#0f766e') : (isDark ? '#94a3b8' : '#64748b')}
                       />
                       <Text
-                        className={`font-semibold ${session.isCurrent ? (isDark ? 'text-teal-400' : 'text-teal-800') : 'text-slate-900 dark:text-white'}`}>
+                        className={`font-semibold ${session.isCurrent ? 'text-teal-800 dark:text-teal-400' : 'text-slate-900 dark:text-white'}`}>
                         {session.isCurrent ? 'Bu Cihaz' : 'Diğer Cihaz'}
                       </Text>
                       {session.isCurrent && (

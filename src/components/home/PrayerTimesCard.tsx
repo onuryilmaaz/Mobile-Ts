@@ -267,9 +267,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   return (
     <View className="mx-4 mb-4 mt-3">
       <View
-        className={`mb-3 overflow-hidden rounded-[28px] border shadow-2xl ${
-          isDark ? 'border-slate-800 bg-slate-900' : 'border-black/5 bg-teal-700 shadow-teal-700/30'
-        }`}>
+        className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
         <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
         <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
 
@@ -314,9 +312,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       </View>
 
       <View
-        className={`mb-3 rounded-3xl border p-3.5 ${
-          isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
-        }`}>
+        className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
         {loading && !data ? (
           <View className="items-center py-7">
             <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
@@ -333,12 +329,8 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                   key={item.key}
                   className={`w-[31%] items-center rounded-2xl border py-3 shadow-sm ${
                     isNext
-                      ? isDark
-                        ? 'border-teal-500/40 bg-teal-500/15'
-                        : 'border-teal-600/40 bg-teal-50'
-                      : isDark
-                        ? 'border-slate-700 bg-slate-800/60'
-                        : 'border-slate-200 bg-slate-50'
+                      ? 'border-teal-600/40 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/15'
+                      : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/60'
                   }`}>
                   <Ionicons
                     name={PRAYER_ICONS[item.label]}
@@ -372,24 +364,22 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       </View>
 
       <View
-        className={`overflow-hidden rounded-2xl border ${
-          isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
-        }`}>
+        className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             openLocationSelection();
           }}
-          className={`flex-row items-center border-b p-3.5 ${isDark ? 'border-slate-700/50' : 'border-slate-200'}`}>
+          className="flex-row items-center border-b border-slate-200 p-3.5 dark:border-slate-700/50">
           <View
-            className={`mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl ${isDark ? 'bg-teal-500/10' : 'bg-teal-50'}`}>
+            className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/10">
             <Ionicons name="location-outline" size={17} color={isDark ? '#2dd4bf' : '#0f766e'} />
           </View>
           <View className="flex-1">
-            <Text className={`text-[13px] font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">
               Konum
             </Text>
-            <Text className={`mt-0.5 text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
               {selectedState && selectedDistrict
                 ? `${selectedState.name} — ${selectedDistrict.name}`
                 : selectedDistrict
@@ -406,7 +396,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
         <View className="flex-row items-center p-3.5">
           <View
-            className={`mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl ${isDark ? 'bg-amber-500/10' : 'bg-amber-50'}`}>
+            className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
             <Ionicons
               name="notifications-outline"
               size={17}
@@ -414,10 +404,10 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
             />
           </View>
           <View className="flex-1">
-            <Text className={`text-[13px] font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">
               Bildirimler
             </Text>
-            <Text className={`mt-0.5 text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
               Vakit girişinde ve 30dk önce bildirim al
             </Text>
           </View>

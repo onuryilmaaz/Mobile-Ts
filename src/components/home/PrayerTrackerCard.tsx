@@ -100,9 +100,7 @@ export function PrayerTrackerCard() {
   if (!isComponentReady) {
     return (
       <View
-        className={`mx-4 mb-4 overflow-hidden rounded-[28px] border p-8 ${
-          isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
-        }`}>
+        className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
         <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
         <Text className="mt-3 text-center text-slate-500 dark:text-slate-400">Yükleniyor...</Text>
       </View>
@@ -153,9 +151,7 @@ export function PrayerTrackerCard() {
 
   return (
     <View
-      className={`mx-4 mb-4 overflow-hidden rounded-[28px] border shadow-xl ${
-        isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
-      }`}>
+      className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900">
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -179,7 +175,7 @@ export function PrayerTrackerCard() {
           <View className="mb-3.5 flex-row items-center justify-between">
             <View>
               <Text
-                className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-teal-400' : 'text-teal-100'}`}>
+                className="text-[9px] font-black uppercase tracking-widest text-teal-100 dark:text-teal-400">
                 Günlük İlerleme
               </Text>
               <Text className="mt-0.5 text-[22px] font-black text-white">Namaz Takibi</Text>
@@ -232,9 +228,7 @@ export function PrayerTrackerCard() {
                         ? isKazaLog
                           ? 'border-orange-500/50 bg-orange-500/10 shadow-sm shadow-orange-500/30'
                           : 'border-teal-500/50 bg-teal-500/10 shadow-sm shadow-teal-500/30'
-                        : isDark
-                          ? 'border-slate-700 bg-slate-700/30'
-                          : 'border-slate-200 bg-slate-50'
+                        : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-700/30'
                     }`}>
                     {(isKazaLog || (isAuthenticated && !isTracked && isExpired)) && (
                       <View
@@ -284,9 +278,7 @@ export function PrayerTrackerCard() {
                           ? isKazaLog
                             ? 'border-orange-500/40 bg-orange-500/25'
                             : 'border-teal-500/35 bg-teal-500/20'
-                          : isDark
-                            ? 'border-slate-700 bg-slate-700/30'
-                            : 'border-slate-200 bg-white'
+                          : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-700/30'
                       }`}>
                       {isLoading && !isTracked ? (
                         <ActivityIndicator size="small" color="#14b8a6" />
