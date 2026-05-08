@@ -520,7 +520,7 @@ export default function KazaTrackerScreen() {
                   key={p.key}
                   onPress={() => handleQuickComplete(p.key)}
                   disabled={count <= 0}
-                  className={`mx-2 items-center rounded-3xl px-3.5 py-3 shadow-sm ${
+                  className={`mx-1.5 items-center rounded-3xl border border-teal-700 px-3.5 py-3 dark:border-amber-600 ${
                     count > 0
                       ? 'bg-white dark:bg-slate-800/80'
                       : 'bg-slate-50 opacity-50 dark:bg-slate-800'
