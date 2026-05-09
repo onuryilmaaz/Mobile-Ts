@@ -21,6 +21,8 @@ import {
   StatsScreen,
   ChallengeScreen,
   MosqueMapScreen,
+  DuaScreen,
+  HijriCalendarScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
@@ -214,6 +216,30 @@ export default function HomeNavigator() {
             headerShown: true,
             header: undefined,
             title: 'Cami Atlası',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: headerTintColor,
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="Dua"
+          component={DuaScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Dua Koleksiyonu',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: headerTintColor,
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="HijriCalendar"
+          component={HijriCalendarScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Hicri Takvim',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',

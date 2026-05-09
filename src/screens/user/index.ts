@@ -14,3 +14,5 @@ export { default as StatsScreen } from './StatsScreen';
 export { default as ChallengeScreen } from './ChallengeScreen';
 export { default as MosqueMapScreen } from './MosqueMapScreen';
 export * from './GamificationScreen';
+export { default as DuaScreen } from './DuaScreen';
+export { default as HijriCalendarScreen } from './HijriCalendarScreen';

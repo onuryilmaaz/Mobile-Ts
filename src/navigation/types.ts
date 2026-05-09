@@ -32,6 +32,8 @@ export type HomeStackParamList = {
   Stats: undefined;
   Challenges: undefined;
   MosqueMap: undefined;
+  Dua: undefined;
+  HijriCalendar: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 
