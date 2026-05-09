@@ -50,6 +50,7 @@ export type UserTabParamList = {
 };
 
 export type RootStackParamList = {
+  Onboarding: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList>;
   UserTabs: NavigatorScreenParams<UserTabParamList>;
 };
