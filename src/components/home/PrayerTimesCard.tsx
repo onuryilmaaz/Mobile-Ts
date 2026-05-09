@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { prayerService } from '@/services/prayer.service';
 import { notificationService } from '@/services/notification.service';
+import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
 import { getDistrictById, getStateById } from '@/constants/locations';
@@ -62,6 +63,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
   const targetTimeRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const lastActivityPrayerRef = useRef<string>('');
   const setHeaderColor = useThemeStore((s) => s.setHeaderColor);
 
   const selectedDistrict = selectedDistrictId ? getDistrictById(selectedDistrictId) : null;
@@ -150,6 +152,15 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       { key: 'Yatsı', val: times.yatsi },
     ];
 
+    const syncLiveActivity = (name: string, timeStr: string, afterNextName: string) => {
+      const endMs = targetTimeRef.current ?? 0;
+      if (lastActivityPrayerRef.current !== name) {
+        lastActivityPrayerRef.current = name;
+        liveActivityService.startPrayerActivity({ prayerName: name, nextPrayer: afterNextName, endTimeMs: endMs });
+      }
+      liveActivityService.updateWidgetData({ prayerName: name, prayerTime: timeStr, nextPrayer: afterNextName, endTimeMs: endMs });
+    };
+
     let foundNext = false;
     for (let i = 0; i < checkpoints.length; i++) {
       const point = checkpoints[i];
@@ -168,6 +179,8 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
           start.setHours(sph, spm, 0, 0);
           setCurrentPrayerStartTime(start.getTime());
         }
+        const afterNext = checkpoints[(i + 1) % checkpoints.length];
+        syncLiveActivity(point.key, point.val, afterNext.key);
         foundNext = true;
         break;
       }
@@ -183,6 +196,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       if (now.getHours() < ph) start.setDate(start.getDate() - 1);
       start.setHours(sph, spm, 0, 0);
       setCurrentPrayerStartTime(start.getTime());
+      syncLiveActivity('İmsak', times.imsak, checkpoints[1]?.key ?? 'Güneş');
     }
     updateCountdown();
   };
