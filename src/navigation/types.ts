@@ -48,6 +48,7 @@ export type UserTabParamList = {
   MosqueFinder: undefined;
   Dhikr: undefined;
   Gamification: undefined;
+  Tracker: undefined;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };
 

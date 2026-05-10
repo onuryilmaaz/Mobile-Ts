@@ -128,7 +128,7 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
       const { data } = await gamificationApi.trackPrayer(prayerTime, isKaza);
       if (data.success) {
         set({ stats: data.data.stats });
-        await get().fetchStats();
+        await Promise.all([get().fetchStats(), get().fetchWeeklyStats()]);
         return data.data;
       }
       return null;
@@ -143,7 +143,7 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
   untrackPrayer: async (prayerTime) => {
     try {
       await gamificationApi.untrackPrayer(prayerTime);
-      await get().fetchStats();
+      await Promise.all([get().fetchStats(), get().fetchWeeklyStats()]);
     } catch (e) {
       console.error('Failed to untrack prayer', e);
       throw e;

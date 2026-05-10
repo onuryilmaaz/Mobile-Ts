@@ -14,7 +14,7 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,12 +24,56 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { mosqueApi } from '@/modules/mosque/mosque.api';
 import * as Haptics from 'expo-haptics';
 
+const INITIAL_REGION: Region = {
+  latitude: 41.0082,
+  longitude: 28.9784,
+  latitudeDelta: 0.05,
+  longitudeDelta: 0.05,
+};
+
+const MosquePin = ({ isMine }: { isMine: boolean }) => (
+  <View style={{ alignItems: 'center' }}>
+    <View
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: isMine ? '#10b981' : '#0f766e',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.35,
+        shadowRadius: 5,
+        elevation: 8,
+        borderWidth: 2.5,
+        borderColor: '#fff',
+      }}>
+      <Text style={{ fontSize: 20 }}>🕌</Text>
+    </View>
+    <View
+      style={{
+        width: 0,
+        height: 0,
+        borderLeftWidth: 6,
+        borderRightWidth: 6,
+        borderTopWidth: 8,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderTopColor: isMine ? '#10b981' : '#0f766e',
+        marginTop: -1,
+      }}
+    />
+  </View>
+);
+
 const MosqueMapScreen = () => {
   const { isDark } = useTheme();
   const { user } = useAuthStore();
   const { mosques, isLoading, fetchMosques, addMosque } = useMosqueStore();
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [currentRegion, setCurrentRegion] = useState<Region>(INITIAL_REGION);
   const [filter, setFilter] = useState<'mine' | 'all'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [newMosque, setNewMosque] = useState({
@@ -119,13 +163,35 @@ const MosqueMapScreen = () => {
 
   const centerToUser = () => {
     if (location && mapRef.current) {
-      mapRef.current.animateToRegion({
+      const region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
-      });
+      };
+      mapRef.current.animateToRegion(region, 300);
+      setCurrentRegion(region);
     }
+  };
+
+  const zoomIn = () => {
+    const next = {
+      ...currentRegion,
+      latitudeDelta: Math.max(currentRegion.latitudeDelta / 2, 0.001),
+      longitudeDelta: Math.max(currentRegion.longitudeDelta / 2, 0.001),
+    };
+    mapRef.current?.animateToRegion(next, 250);
+    setCurrentRegion(next);
+  };
+
+  const zoomOut = () => {
+    const next = {
+      ...currentRegion,
+      latitudeDelta: Math.min(currentRegion.latitudeDelta * 2, 80),
+      longitudeDelta: Math.min(currentRegion.longitudeDelta * 2, 80),
+    };
+    mapRef.current?.animateToRegion(next, 250);
+    setCurrentRegion(next);
   };
 
   return (
@@ -133,16 +199,11 @@ const MosqueMapScreen = () => {
       <MapView
         ref={mapRef}
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
-        initialRegion={{
-          latitude: location?.coords.latitude || 41.0082,
-          longitude: location?.coords.longitude || 28.9784,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }}
+        initialRegion={INITIAL_REGION}
         showsUserLocation
         showsMyLocationButton={false}
         onLongPress={onMapLongPress}
+        onRegionChangeComplete={setCurrentRegion}
         customMapStyle={isDark ? darkMapStyle : []}>
         {mosques.map((mosque) => (
           <Marker
@@ -151,7 +212,8 @@ const MosqueMapScreen = () => {
               latitude: parseFloat(mosque.latitude),
               longitude: parseFloat(mosque.longitude),
             }}
-            pinColor={mosque.user_id === user?.id ? '#10b981' : '#0ea5e9'}>
+            tracksViewChanges={false}>
+            <MosquePin isMine={mosque.user_id === user?.id} />
             <Callout tooltip>
               <View className="w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
                 {mosque.image_url && (
@@ -206,13 +268,52 @@ const MosqueMapScreen = () => {
         </View>
       </View>
 
-      <View className="absolute bottom-10 right-6 gap-4">
+      <View className="absolute bottom-10 right-6 gap-3">
+        {/* Zoom Controls */}
+        <View
+          style={{
+            borderRadius: 16,
+            overflow: 'hidden',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
+            elevation: 6,
+          }}>
+          <TouchableOpacity
+            onPress={zoomIn}
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: isDark ? '#1e293b' : '#ffffff',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderBottomWidth: 1,
+              borderBottomColor: isDark ? '#334155' : '#e2e8f0',
+            }}>
+            <Ionicons name="add" size={22} color={isDark ? '#2dd4bf' : '#0d9488'} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={zoomOut}
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: isDark ? '#1e293b' : '#ffffff',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Ionicons name="remove" size={22} color={isDark ? '#2dd4bf' : '#0d9488'} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Locate */}
         <TouchableOpacity
           onPress={centerToUser}
-          className="h-14 w-14 items-center justify-center rounded-full bg-white shadow-xl dark:bg-slate-800">
-          <Ionicons name="locate" size={28} color={isDark ? '#2dd4bf' : '#0d9488'} />
+          className="h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-xl dark:bg-slate-800">
+          <Ionicons name="locate" size={22} color={isDark ? '#2dd4bf' : '#0d9488'} />
         </TouchableOpacity>
 
+        {/* Add Mosque */}
         <TouchableOpacity
           onPress={() => {
             if (location) {
@@ -224,8 +325,8 @@ const MosqueMapScreen = () => {
               setShowAddModal(true);
             }
           }}
-          className="h-16 w-16 items-center justify-center rounded-full bg-teal-600 shadow-xl">
-          <Ionicons name="add" size={36} color="white" />
+          className="h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-xl">
+          <Ionicons name="add" size={30} color="white" />
         </TouchableOpacity>
       </View>
 

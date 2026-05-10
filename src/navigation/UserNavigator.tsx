@@ -13,7 +13,7 @@ import { StandardHeader } from '@/components/layout/StandardHeader';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import { DhikrScreen, GamificationScreen } from '@/screens';
+import { DhikrScreen, GamificationScreen, TrackerScreen } from '@/screens';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
@@ -126,6 +126,29 @@ export default function UserNavigator() {
             ),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="apps-outline" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Tracker"
+          component={TrackerScreen}
+          listeners={{
+            tabPress: (e) =>
+              handleTabPress(
+                e,
+                'İbadet Defteri İçin Giriş Yapın',
+                'Günlük ibadetlerinizi kaydetmek ve istatistiklerinizi görmek için lütfen oturum açın.'
+              ),
+          }}
+          options={{
+            tabBarLabel: 'Defterim',
+            headerShown: true,
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="İbadet Defteri" showBackButton={false} />
+            ),
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="journal-outline" size={size} color={color} />
             ),
           }}
         />
