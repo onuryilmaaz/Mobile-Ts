@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   ViewToken,
+  useColorScheme,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -81,6 +82,17 @@ export default function OnboardingScreen({ navigation }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const scheme = useColorScheme();
+  const isDark = scheme === 'dark';
+
+  const bg = isDark ? '#0f172a' : '#f8fafc';
+  const titleColor = isDark ? '#f1f5f9' : '#0f172a';
+  const descColor = isDark ? 'rgba(241,245,249,0.55)' : '#64748b';
+  const skipBorderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+  const skipBgColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)';
+  const skipTextColor = isDark ? 'rgba(255,255,255,0.60)' : '#94a3b8';
+  const orb1Color = isDark ? 'rgba(20,184,166,0.08)' : 'rgba(20,184,166,0.10)';
+  const orb2Color = isDark ? 'rgba(99,102,241,0.07)' : 'rgba(99,102,241,0.08)';
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -107,26 +119,46 @@ export default function OnboardingScreen({ navigation }: Props) {
   }
 
   const isLast = currentIndex === SLIDES.length - 1;
-  const activeSlide = SLIDES[currentIndex];
+  const activeSlide = SLIDES[currentIndex]!;
 
   return (
-    <View className="flex-1 bg-slate-900">
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+    <View style={{ flex: 1, backgroundColor: bg }}>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent
+      />
 
-      <View className="absolute -right-20 -top-20 h-[280px] w-[280px] rounded-full bg-teal-500/[0.08]" />
-      <View className="absolute -bottom-[60px] -left-[60px] h-[220px] w-[220px] rounded-full bg-indigo-500/[0.07]" />
+      <View
+        style={{
+          position: 'absolute', top: -80, right: -80,
+          width: 280, height: 280, borderRadius: 140,
+          backgroundColor: orb1Color,
+        }}
+      />
+      <View
+        style={{
+          position: 'absolute', bottom: -60, left: -60,
+          width: 220, height: 220, borderRadius: 110,
+          backgroundColor: orb2Color,
+        }}
+      />
 
       {!isLast && (
         <TouchableOpacity
-          className="absolute right-6 z-10 rounded-full border border-white/[0.12] bg-white/[0.07] px-3.5 py-1.5"
-          style={{ top: insets.top + 16 }}
+          style={{
+            position: 'absolute', right: 24, top: insets.top + 16, zIndex: 10,
+            paddingHorizontal: 14, paddingVertical: 6,
+            borderRadius: 999,
+            borderWidth: 1, borderColor: skipBorderColor,
+            backgroundColor: skipBgColor,
+          }}
           onPress={handleFinish}
           activeOpacity={0.7}>
-          <Text className="text-[13px] font-semibold text-white/60">Geç</Text>
+          <Text style={{ fontSize: 13, fontWeight: '600', color: skipTextColor }}>Geç</Text>
         </TouchableOpacity>
       )}
 
-      {/* Slides */}
       <Animated.FlatList
         ref={flatListRef}
         data={SLIDES}
@@ -145,26 +177,38 @@ export default function OnboardingScreen({ navigation }: Props) {
           const opacity = scrollX.interpolate({ inputRange, outputRange: [0, 1, 0] });
           const translateY = scrollX.interpolate({ inputRange, outputRange: [40, 0, 40] });
 
+          const iconBg = isDark ? item.accentDim : item.accentDim.replace('0.12', '0.10');
+
           return (
-            <View className="flex-1 items-center justify-center px-8" style={{ width }}>
-              <Animated.View
-                className="w-full items-center"
-                style={{ opacity, transform: [{ translateY }] }}>
+            <View style={{ width, flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+              <Animated.View style={{ width: '100%', alignItems: 'center', opacity, transform: [{ translateY }] }}>
                 <View
-                  className="mb-10 h-[140px] w-[140px] items-center justify-center rounded-full"
-                  style={{ backgroundColor: item.accentDim }}>
+                  style={{
+                    width: 140, height: 140, borderRadius: 70,
+                    backgroundColor: iconBg,
+                    alignItems: 'center', justifyContent: 'center',
+                    marginBottom: 40,
+                    shadowColor: item.accent,
+                    shadowOffset: { width: 0, height: 8 },
+                    shadowOpacity: isDark ? 0.2 : 0.15,
+                    shadowRadius: 20,
+                  }}>
                   <View
-                    className="h-[116px] w-[116px] items-center justify-center rounded-full border-[1.5px]"
-                    style={{ borderColor: item.accent + '40' }}>
+                    style={{
+                      width: 116, height: 116, borderRadius: 58,
+                      alignItems: 'center', justifyContent: 'center',
+                      borderWidth: 1.5,
+                      borderColor: item.accent + '40',
+                    }}>
                     <Ionicons name={item.icon} size={52} color={item.accent} />
                   </View>
                 </View>
 
-                <Text className="mb-4 text-center text-[28px] font-extrabold text-white">
+                <Text style={{ fontSize: 28, fontWeight: '800', color: titleColor, textAlign: 'center', marginBottom: 16 }}>
                   {item.title}
                 </Text>
 
-                <Text className="max-w-[300px] text-center text-[15px] leading-6 text-white/55">
+                <Text style={{ fontSize: 15, lineHeight: 24, color: descColor, textAlign: 'center', maxWidth: 300 }}>
                   {item.description}
                 </Text>
               </Animated.View>
@@ -173,8 +217,8 @@ export default function OnboardingScreen({ navigation }: Props) {
         }}
       />
 
-      <View className="px-7 pt-2" style={{ paddingBottom: insets.bottom + 24 }}>
-        <View className="mb-7 flex-row items-center justify-center gap-1.5">
+      <View style={{ paddingHorizontal: 28, paddingTop: 8, paddingBottom: insets.bottom + 24 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 28 }}>
           {SLIDES.map((_, i) => (
             <TouchableOpacity
               key={i}
@@ -182,9 +226,10 @@ export default function OnboardingScreen({ navigation }: Props) {
               onPress={() => flatListRef.current?.scrollToIndex({ index: i, animated: true })}
               hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}>
               <View
-                className="h-2 rounded"
                 style={{
+                  height: 8,
                   width: i === currentIndex ? 24 : 8,
+                  borderRadius: 4,
                   opacity: i === currentIndex ? 1 : 0.3,
                   backgroundColor: activeSlide.accent,
                 }}
@@ -194,11 +239,19 @@ export default function OnboardingScreen({ navigation }: Props) {
         </View>
 
         <TouchableOpacity
-          className="flex-row items-center justify-center rounded-[20px] py-4 shadow-lg"
-          style={{ backgroundColor: activeSlide.accent }}
+          style={{
+            flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+            borderRadius: 20, paddingVertical: 16,
+            backgroundColor: activeSlide.accent,
+            shadowColor: activeSlide.accent,
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.35,
+            shadowRadius: 12,
+            elevation: 6,
+          }}
           onPress={handleNext}
           activeOpacity={0.85}>
-          <Text className="text-base font-extrabold tracking-[0.5px] text-white">
+          <Text style={{ fontSize: 16, fontWeight: '800', letterSpacing: 0.5, color: '#fff' }}>
             {isLast ? 'Başla' : 'İleri'}
           </Text>
           <Ionicons

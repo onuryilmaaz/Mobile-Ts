@@ -9,7 +9,13 @@ import { notificationService } from '@/services/notification.service';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
-import { getDistrictById, getStateById } from '@/constants/locations';
+import * as Location from 'expo-location';
+import {
+  getDistrictById,
+  getStateById,
+  getStateByName,
+  getDefaultDistrictForState,
+} from '@/constants/locations';
 import type { PrayerTimeData } from '@/types/prayer';
 import { rootNavigate } from '@/navigation/rootNavigation';
 
@@ -108,15 +114,60 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     }
   };
 
+  const autoDetectDistrict = async (): Promise<{ stateId: string; districtId: string } | null> => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return null;
+
+      const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+      const geo = await Location.reverseGeocodeAsync({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      });
+
+      const regionRaw = geo[0]?.region ?? geo[0]?.city ?? '';
+      const normalize = (s: string) =>
+        s.toUpperCase()
+          .replace(/İ/g, 'I').replace(/Ğ/g, 'G').replace(/Ş/g, 'S')
+          .replace(/Ç/g, 'C').replace(/Ö/g, 'O').replace(/Ü/g, 'U');
+
+      const state = getStateByName(regionRaw) ??
+        (() => {
+          const normRegion = normalize(regionRaw);
+          const { STATES } = require('@/constants/locations');
+          return (STATES as any[]).find((s: any) => normalize(s.name) === normRegion || normalize(s.name_en) === normRegion);
+        })();
+
+      if (!state) return null;
+      const district = getDefaultDistrictForState(state._id);
+      if (!district) return null;
+      return { stateId: state._id, districtId: district._id };
+    } catch {
+      return null;
+    }
+  };
+
   const loadDistrict = async () => {
     try {
       const savedStateId = await AsyncStorage.getItem(STORAGE_STATE_ID_KEY);
       const savedDistrictId = await AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY);
       if (savedStateId) setSelectedStateId(savedStateId);
-      if (savedDistrictId) setSelectedDistrictId(savedDistrictId);
-      else if (savedStateId) setSelectedDistrictId(DEFAULT_DISTRICT_ID);
+      if (savedDistrictId) {
+        setSelectedDistrictId(savedDistrictId);
+      } else {
+        const detected = await autoDetectDistrict();
+        if (detected) {
+          setSelectedStateId(detected.stateId);
+          setSelectedDistrictId(detected.districtId);
+          await AsyncStorage.setItem(STORAGE_STATE_ID_KEY, detected.stateId);
+          await AsyncStorage.setItem(STORAGE_DISTRICT_ID_KEY, detected.districtId);
+        } else {
+          setSelectedDistrictId(DEFAULT_DISTRICT_ID);
+        }
+      }
       setIsDistrictLoaded(true);
     } catch {
+      setSelectedDistrictId(DEFAULT_DISTRICT_ID);
       setIsDistrictLoaded(true);
     }
   };
