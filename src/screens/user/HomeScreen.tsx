@@ -67,6 +67,14 @@ const QUICK_ACTIONS = [
     glow: 'rgba(14,165,233,0.18)',
     screen: 'MosqueMap' as const,
   },
+  {
+    key: 'ramadan',
+    label: 'Ramazan',
+    icon: 'moon-outline' as const,
+    color: '#6366f1',
+    glow: 'rgba(99,102,241,0.18)',
+    screen: 'Ramadan' as const,
+  },
 ];
 
 export default function HomeScreen({ navigation }: Props) {

@@ -36,6 +36,7 @@ export type HomeStackParamList = {
   Dua: undefined;
   HijriCalendar: undefined;
   Settings: undefined;
+  Ramadan: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 

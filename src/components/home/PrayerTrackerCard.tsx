@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { useEffect, useRef, useState } from 'react';
@@ -11,11 +11,194 @@ import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useTheme } from '@/hooks/useTheme';
 import Animated, {
   FadeIn,
+  FadeInDown,
+  ZoomIn,
   useAnimatedStyle,
   withSpring,
+  withTiming,
+  withSequence,
+  withDelay,
   useSharedValue,
-  Layout,
+  LinearTransition,
 } from 'react-native-reanimated';
+
+function StreakCelebration({
+  visible,
+  streak,
+  isDark,
+  onDismiss,
+}: {
+  visible: boolean;
+  streak: number;
+  isDark: boolean;
+  onDismiss: () => void;
+}) {
+  const overlayOpacity = useSharedValue(0);
+  const cardScale = useSharedValue(0.6);
+  const cardOpacity = useSharedValue(0);
+  const ringScale = useSharedValue(0.5);
+  const glowOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (visible) {
+      overlayOpacity.value = withTiming(1, { duration: 250 });
+      cardScale.value = withSequence(
+        withSpring(1.06, { damping: 7, stiffness: 220 }),
+        withSpring(1, { damping: 14 }),
+      );
+      cardOpacity.value = withTiming(1, { duration: 200 });
+      ringScale.value = withDelay(150, withSpring(1, { damping: 8, stiffness: 180 }));
+      glowOpacity.value = withDelay(200, withTiming(1, { duration: 400 }));
+
+      const t = setTimeout(onDismiss, 3000);
+      return () => clearTimeout(t);
+    } else {
+      overlayOpacity.value = withTiming(0, { duration: 200 });
+      cardScale.value = withTiming(0.8, { duration: 200 });
+      cardOpacity.value = withTiming(0, { duration: 200 });
+    }
+  }, [visible]);
+
+  const overlayStyle = useAnimatedStyle(() => ({ opacity: overlayOpacity.value }));
+  const cardStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: cardScale.value }],
+    opacity: cardOpacity.value,
+  }));
+  const ringStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: ringScale.value }],
+  }));
+  const glowStyle = useAnimatedStyle(() => ({ opacity: glowOpacity.value }));
+
+  if (!visible) return null;
+
+  return (
+    <Modal transparent visible={visible} animationType="none" onRequestClose={onDismiss}>
+      <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={onDismiss}>
+        <Animated.View
+          style={[
+            {
+              flex: 1,
+              backgroundColor: 'rgba(0,0,0,0.88)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+            overlayStyle,
+          ]}>
+          {/* glow halo */}
+          <Animated.View
+            style={[
+              {
+                position: 'absolute',
+                width: 260,
+                height: 260,
+                borderRadius: 130,
+                backgroundColor: 'rgba(20,184,166,0.12)',
+              },
+              glowStyle,
+            ]}
+          />
+
+          <Animated.View
+            style={[
+              {
+                backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                borderRadius: 36,
+                paddingHorizontal: 40,
+                paddingVertical: 44,
+                alignItems: 'center',
+                width: '82%',
+                borderWidth: 1,
+                borderColor: isDark ? 'rgba(20,184,166,0.25)' : 'rgba(20,184,166,0.2)',
+                shadowColor: '#14b8a6',
+                shadowOpacity: 0.4,
+                shadowRadius: 32,
+                elevation: 20,
+              },
+              cardStyle,
+            ]}>
+            {/* moon */}
+            <Animated.View entering={ZoomIn.delay(100).duration(400)}>
+              <Text style={{ fontSize: 58, marginBottom: 16 }}>🌙</Text>
+            </Animated.View>
+
+            {/* title */}
+            <Animated.Text
+              entering={FadeInDown.delay(180).duration(350)}
+              style={{
+                fontSize: 17,
+                fontWeight: '800',
+                color: '#14b8a6',
+                letterSpacing: 0.4,
+                marginBottom: 24,
+                textAlign: 'center',
+              }}>
+              Tüm Namazlar Tamamlandı!
+            </Animated.Text>
+
+            {/* streak ring */}
+            <Animated.View
+              style={[
+                {
+                  width: 96,
+                  height: 96,
+                  borderRadius: 48,
+                  borderWidth: 3,
+                  borderColor: '#14b8a6',
+                  backgroundColor: 'rgba(20,184,166,0.1)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 20,
+                  shadowColor: '#14b8a6',
+                  shadowOpacity: 0.5,
+                  shadowRadius: 16,
+                  elevation: 8,
+                },
+                ringStyle,
+              ]}>
+              <Text
+                style={{ fontSize: 34, fontWeight: '900', color: '#14b8a6', lineHeight: 38 }}>
+                {streak}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 9,
+                  fontWeight: '800',
+                  color: '#14b8a6',
+                  letterSpacing: 1.5,
+                }}>
+                GÜN
+              </Text>
+            </Animated.View>
+
+            {/* subtitle */}
+            <Animated.Text
+              entering={FadeInDown.delay(300).duration(350)}
+              style={{
+                fontSize: 14,
+                color: isDark ? '#94a3b8' : '#64748b',
+                textAlign: 'center',
+                lineHeight: 21,
+              }}>
+              Serini{' '}
+              <Text style={{ fontWeight: '900', color: '#f59e0b' }}>{streak}</Text>{' '}
+              güne taşıdın. Mâşâllah!
+            </Animated.Text>
+
+            <Animated.Text
+              entering={FadeIn.delay(600).duration(400)}
+              style={{
+                fontSize: 11,
+                color: isDark ? '#334155' : '#cbd5e1',
+                marginTop: 20,
+              }}>
+              Dokunarak kapat
+            </Animated.Text>
+          </Animated.View>
+        </Animated.View>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
 
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 const DEFAULT_DISTRICT_ID = '9654';
@@ -40,6 +223,9 @@ export function PrayerTrackerCard() {
   const [isComponentReady, setIsComponentReady] = useState(false);
 
   const isMounted = useRef(true);
+
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationStreak, setCelebrationStreak] = useState(0);
 
   const completedCount = stats?.today_prayers?.length || 0;
   const totalCount = PRAYERS.length;
@@ -146,12 +332,36 @@ export function PrayerTrackerCard() {
     Haptics.notificationAsync(
       isKaza ? Haptics.NotificationFeedbackType.Warning : Haptics.NotificationFeedbackType.Success
     );
-    await trackPrayer(prayer.id as any, isKaza);
+
+    // Capture streak BEFORE the API call — the store will overwrite stats via fetchStats inside trackPrayer
+    const prevStreak = Number(stats?.current_streak ?? 0);
+
+    try {
+      const result = await trackPrayer(prayer.id as any, isKaza);
+      const newStreak = Number(result?.stats?.current_streak ?? 0);
+      const todayCount = Number(result?.stats?.today_prayers_count ?? 0);
+
+      if (todayCount >= 5 && newStreak > prevStreak) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setCelebrationStreak(newStreak);
+        setShowCelebration(true);
+      }
+    } catch (e: any) {
+      if (e?.response?.status === 400) {
+        fetchStats();
+      }
+    }
   };
 
   return (
     <View
       className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900">
+      <StreakCelebration
+        visible={showCelebration}
+        streak={celebrationStreak}
+        isDark={isDark}
+        onDismiss={() => setShowCelebration(false)}
+      />
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -217,7 +427,7 @@ export function PrayerTrackerCard() {
               return (
                 <AnimatedTouchableOpacity
                   key={prayer.id}
-                  layout={Layout.springify()}
+                  layout={LinearTransition.springify()}
                   disabled={isTracked || (isAuthenticated && isUpcoming) || isLoading}
                   onPress={() => handleTrack(prayer)}
                   activeOpacity={0.7}

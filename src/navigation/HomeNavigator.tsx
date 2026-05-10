@@ -24,6 +24,7 @@ import {
   DuaScreen,
   HijriCalendarScreen,
   SettingsScreen,
+  RamadanScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
@@ -253,6 +254,18 @@ export default function HomeNavigator() {
             headerShown: true,
             header: undefined,
             title: 'Ayarlar',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: headerTintColor,
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="Ramadan"
+          component={RamadanScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Ramazan',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',

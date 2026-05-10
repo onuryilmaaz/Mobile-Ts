@@ -18,3 +18,4 @@ export { default as DuaScreen } from './DuaScreen';
 export { default as HijriCalendarScreen } from './HijriCalendarScreen';
 export { default as TrackerScreen } from './TrackerScreen';
 export { default as SettingsScreen } from './SettingsScreen';
+export { default as RamadanScreen } from './RamadanScreen';
