@@ -7,6 +7,7 @@ import {
   ChangeEmailScreen,
   SessionsScreen,
   AccountScreen,
+  SettingsScreen,
 } from '@/screens/user';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { useTheme } from '@/hooks/useTheme';
@@ -71,6 +72,15 @@ export default function ProfileNavigator() {
           options={{
             header: ({ navigation }) => (
               <StandardHeader navigation={navigation} title="Hesap" />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="AppSettings"
+          component={SettingsScreen}
+          options={{
+            header: ({ navigation }) => (
+              <StandardHeader navigation={navigation} title="Ayarlar" />
             ),
           }}
         />

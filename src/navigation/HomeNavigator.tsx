@@ -23,6 +23,7 @@ import {
   MosqueMapScreen,
   DuaScreen,
   HijriCalendarScreen,
+  SettingsScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
@@ -125,7 +126,7 @@ export default function HomeNavigator() {
   const { isDark } = useTheme();
   const headerColor = isDark ? '#0f172a' : '#ffffff';
   const headerTintColor = isDark ? '#ffffff' : '#0f172a';
-  const [fontsLoaded] = useFonts({
+  useFonts({
     'Bungee-Regular': Bungee_400Regular,
   });
 
@@ -240,6 +241,18 @@ export default function HomeNavigator() {
             headerShown: true,
             header: undefined,
             title: 'Hicri Takvim',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: headerTintColor,
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Ayarlar',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',

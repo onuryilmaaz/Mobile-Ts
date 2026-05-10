@@ -10,6 +10,7 @@ import { PrayerTrackerCard } from '@/components/home/PrayerTrackerCard';
 import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
 import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { StreakCard } from '@/components/home/StreakCard';
+import { TodayTrackerCard } from '@/components/home/TodayTrackerCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
@@ -114,6 +115,7 @@ export default function HomeScreen({ navigation }: Props) {
         <PrayerTimesCard focusNonce={focusNonce} />
         <PrayerTrackerCard />
         <StreakCard />
+        <TodayTrackerCard />
 
         {isAuthenticated && (
           <View className="mb-5 pl-4">

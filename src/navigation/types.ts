@@ -22,6 +22,7 @@ export type ProfileStackParamList = {
   ChangeEmail: undefined;
   Sessions: undefined;
   Account: undefined;
+  AppSettings: undefined;
 };
 
 export type HomeStackParamList = {
@@ -34,6 +35,7 @@ export type HomeStackParamList = {
   MosqueMap: undefined;
   Dua: undefined;
   HijriCalendar: undefined;
+  Settings: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 

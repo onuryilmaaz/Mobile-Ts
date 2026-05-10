@@ -38,6 +38,13 @@ interface SettingsItem {
 
 const settingsItems: SettingsItem[] = [
   {
+    id: 'settings',
+    title: 'Uygulama Ayarları',
+    subtitle: 'Bildirimler, tema ve daha fazlası',
+    icon: 'settings-outline',
+    screen: 'AppSettings',
+  },
+  {
     id: 'password',
     title: 'Şifre Değiştir',
     subtitle: 'Hesap şifrenizi güncelleyin',
