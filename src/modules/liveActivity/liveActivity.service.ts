@@ -16,6 +16,32 @@ export interface WidgetDataParams {
   prayerTime: string;
   nextPrayer: string;
   endTimeMs: number;
+  imsak?: string;
+  gunes?: string;
+  ogle?: string;
+  ikindi?: string;
+  aksam?: string;
+  yatsi?: string;
+}
+
+export interface PrayerTrackerParams {
+  completedPrayers: string[];
+  kazaPrayers: string[];
+  date: string;
+}
+
+export interface AmelDataParams {
+  types: string[];
+  totalCount: number;
+  date: string;
+}
+
+export interface InspirationDataParams {
+  text: string;
+  source: string;
+  type: string;
+  arabic?: string;
+  date: string;
 }
 
 export const liveActivityService = {
@@ -45,6 +71,33 @@ export const liveActivityService = {
     if (!isSupported) return;
     try {
       Native.updateWidgetData(params);
+    } catch {
+      // silent
+    }
+  },
+
+  updatePrayerTrackerData(params: PrayerTrackerParams): void {
+    if (!isSupported) return;
+    try {
+      Native.updatePrayerTrackerData(params);
+    } catch {
+      // silent
+    }
+  },
+
+  updateAmelData(params: AmelDataParams): void {
+    if (!isSupported) return;
+    try {
+      Native.updateAmelData(params);
+    } catch {
+      // silent
+    }
+  },
+
+  updateInspirationData(params: InspirationDataParams): void {
+    if (!isSupported) return;
+    try {
+      Native.updateInspirationData(params);
     } catch {
       // silent
     }

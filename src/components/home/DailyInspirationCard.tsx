@@ -6,6 +6,7 @@ import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 import { hadithService } from '@/services/hadith.service';
 import { quranService } from '@/services/quran.service';
 import { useTheme } from '@/hooks/useTheme';
+import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 
 interface Inspiration {
   type: 'Ayet' | 'Hadis';
@@ -64,6 +65,17 @@ export function DailyInspirationCard() {
   useEffect(() => {
     fetchInspiration();
   }, [fetchInspiration]);
+
+  useEffect(() => {
+    if (!current) return;
+    liveActivityService.updateInspirationData({
+      text: current.text,
+      source: current.source,
+      type: current.type === 'Ayet' ? 'ayet' : 'hadis',
+      arabic: current.arabic || undefined,
+      date: new Date().toISOString().slice(0, 10),
+    });
+  }, [current]);
 
   const handleRefresh = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

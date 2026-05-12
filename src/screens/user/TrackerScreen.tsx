@@ -21,6 +21,7 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { useTrackerStore } from '@/modules/tracker/tracker.store';
 import { useTheme } from '@/hooks/useTheme';
 import { ACTIVITY_META, type ActivityType, type TrackerLog } from '@/modules/tracker/tracker.types';
+import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
@@ -900,6 +901,15 @@ export default function TrackerScreen() {
   useEffect(() => {
     if (isAuthenticated) load();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    const types = [...new Set(todayLogs.map((l) => l.activity_type))];
+    liveActivityService.updateAmelData({
+      types,
+      totalCount: todayLogs.length,
+      date: new Date().toISOString().slice(0, 10),
+    });
+  }, [todayLogs]);
 
   const onRefresh = async () => {
     setIsRefreshing(true);

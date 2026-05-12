@@ -9,6 +9,7 @@ import { prayerService } from '@/services/prayer.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useTheme } from '@/hooks/useTheme';
+import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -273,6 +274,15 @@ export function PrayerTrackerCard() {
       isComponentReady && isAuthenticated ? completedCount / totalCount : 0
     );
   }, [stats, isAuthenticated, isComponentReady]);
+
+  useEffect(() => {
+    if (!stats) return;
+    liveActivityService.updatePrayerTrackerData({
+      completedPrayers: stats.today_prayers ?? [],
+      kazaPrayers: stats.kaza_prayers ?? [],
+      date: new Date().toISOString().slice(0, 10),
+    });
+  }, [stats]);
 
   const loadPrayerTimes = async () => {
     try {

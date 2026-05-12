@@ -296,6 +296,12 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         prayerTime: timeStr,
         nextPrayer: afterNextName,
         endTimeMs: endMs,
+        imsak: prayerData.times.imsak,
+        gunes: prayerData.times.gunes,
+        ogle: prayerData.times.ogle,
+        ikindi: prayerData.times.ikindi,
+        aksam: prayerData.times.aksam,
+        yatsi: prayerData.times.yatsi,
       });
     };
 
