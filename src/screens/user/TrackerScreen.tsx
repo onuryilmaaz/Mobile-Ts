@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -18,11 +20,7 @@ import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useTrackerStore } from '@/modules/tracker/tracker.store';
 import { useTheme } from '@/hooks/useTheme';
-import {
-  ACTIVITY_META,
-  type ActivityType,
-  type TrackerLog,
-} from '@/modules/tracker/tracker.types';
+import { ACTIVITY_META, type ActivityType, type TrackerLog } from '@/modules/tracker/tracker.types';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
@@ -82,15 +80,25 @@ function aggregateToday(logs: TrackerLog[], type: ActivityType): number {
   const filtered = logs.filter((l) => l.activity_type === type);
   if (!filtered.length) return 0;
   switch (type) {
-    case 'quran': return filtered.reduce((s, l) => s + (l.value.pages ?? 0), 0);
-    case 'dhikr': return filtered.reduce((s, l) => s + (l.value.count ?? 0), 0);
-    case 'nafile': return filtered.reduce((s, l) => s + (l.value.rakaat ?? 0), 0);
-    case 'fasting': return filtered.length;
-    case 'sadaka': return filtered.reduce((s, l) => s + (l.value.amount ?? 0), 0);
-    case 'dua': return filtered.reduce((s, l) => s + (l.value.minutes ?? 0), 0);
+    case 'quran':
+      return filtered.reduce((s, l) => s + (l.value.pages ?? 0), 0);
+    case 'dhikr':
+      return filtered.reduce((s, l) => s + (l.value.count ?? 0), 0);
+    case 'nafile':
+      return filtered.reduce((s, l) => s + (l.value.rakaat ?? 0), 0);
+    case 'fasting':
+      return filtered.length;
+    case 'sadaka':
+      return filtered.reduce((s, l) => s + (l.value.amount ?? 0), 0);
+    case 'dua':
+      return filtered.reduce((s, l) => s + (l.value.minutes ?? 0), 0);
     case 'memorization':
-      return filtered.reduce((s, l) => s + (l.value.new_ayets ?? 0) + (l.value.revision_ayets ?? 0), 0);
-    default: return 0;
+      return filtered.reduce(
+        (s, l) => s + (l.value.new_ayets ?? 0) + (l.value.revision_ayets ?? 0),
+        0
+      );
+    default:
+      return 0;
   }
 }
 
@@ -165,8 +173,10 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
         value = { pages: Number(pages), ...(minutes ? { minutes: Number(minutes) } : {}) };
         break;
       case 'dhikr':
-        if (!dhikrCount || Number(dhikrCount) < 1) return Alert.alert('Hata', 'Zikir sayısı giriniz');
-        if (dhikrType === 'custom' && !dhikrCustomName) return Alert.alert('Hata', 'Zikir adı giriniz');
+        if (!dhikrCount || Number(dhikrCount) < 1)
+          return Alert.alert('Hata', 'Zikir sayısı giriniz');
+        if (dhikrType === 'custom' && !dhikrCustomName)
+          return Alert.alert('Hata', 'Zikir adı giriniz');
         value = {
           type: dhikrType,
           count: Number(dhikrCount),
@@ -182,7 +192,10 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
         break;
       case 'sadaka':
         if (!sadakaAmount || Number(sadakaAmount) < 0) return Alert.alert('Hata', 'Miktar giriniz');
-        value = { amount: Number(sadakaAmount), ...(sadakaDesc ? { description: sadakaDesc } : {}) };
+        value = {
+          amount: Number(sadakaAmount),
+          ...(sadakaDesc ? { description: sadakaDesc } : {}),
+        };
         break;
       case 'dua':
         if (!duaMinutes || Number(duaMinutes) < 1) return Alert.alert('Hata', 'Dakika giriniz');
@@ -210,12 +223,18 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
 
       {/* Title */}
       <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
-        <View className="h-10 w-10 items-center justify-center rounded-2xl" style={{ backgroundColor: meta.bgColor }}>
+        <View
+          className="h-10 w-10 items-center justify-center rounded-2xl"
+          style={{ backgroundColor: meta.bgColor }}>
           <Ionicons name={meta.icon as any} size={20} color={meta.color} />
         </View>
         <View>
-          <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{meta.label}</Text>
-          <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{meta.description}</Text>
+          <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {meta.label}
+          </Text>
+          <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            {meta.description}
+          </Text>
         </View>
       </View>
 
@@ -233,7 +252,14 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             </View>
             <View>
               <Text className={labelCls}>Kaç dakika? (opsiyonel)</Text>
-              <TextInput className={inputCls} placeholder="örn: 20" keyboardType="numeric" value={minutes} onChangeText={setMinutes} placeholderTextColor="#94a3b8" />
+              <TextInput
+                className={inputCls}
+                placeholder="örn: 20"
+                keyboardType="numeric"
+                value={minutes}
+                onChangeText={setMinutes}
+                placeholderTextColor="#94a3b8"
+              />
             </View>
           </View>
         )}
@@ -245,8 +271,15 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
               <Text className={labelCls}>Zikir türü</Text>
               <View className="flex-row flex-wrap">
                 {DHIKR_TYPES.map((d) => (
-                  <TouchableOpacity key={d.value} onPress={() => setDhikrType(d.value)} className={chipCls(dhikrType === d.value, meta.color)} style={dhikrType === d.value ? { backgroundColor: meta.color } : {}}>
-                    <Text className={`text-xs font-bold ${dhikrType === d.value ? 'text-white' : isDark ? 'text-slate-300' : 'text-slate-600'}`}>{d.label}</Text>
+                  <TouchableOpacity
+                    key={d.value}
+                    onPress={() => setDhikrType(d.value)}
+                    className={chipCls(dhikrType === d.value, meta.color)}
+                    style={dhikrType === d.value ? { backgroundColor: meta.color } : {}}>
+                    <Text
+                      className={`text-xs font-bold ${dhikrType === d.value ? 'text-white' : isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {d.label}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -254,12 +287,23 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             {dhikrType === 'custom' && (
               <View>
                 <Text className={labelCls}>Zikir adı</Text>
-                <TextInput className={inputCls} placeholder="örn: Estağfirullah" value={dhikrCustomName} onChangeText={setDhikrCustomName} placeholderTextColor="#94a3b8" />
+                <TextInput
+                  className={inputCls}
+                  placeholder="örn: Estağfirullah"
+                  value={dhikrCustomName}
+                  onChangeText={setDhikrCustomName}
+                  placeholderTextColor="#94a3b8"
+                />
               </View>
             )}
             <View>
               <Text className={labelCls}>Kaç kez? *</Text>
-              <NumberStepper value={dhikrCount} onChange={setDhikrCount} className={inputCls} step={33} />
+              <NumberStepper
+                value={dhikrCount}
+                onChange={setDhikrCount}
+                className={inputCls}
+                step={33}
+              />
             </View>
           </View>
         )}
@@ -271,8 +315,15 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
               <Text className={labelCls}>Namaz türü</Text>
               <View className="flex-row flex-wrap">
                 {NAFILE_TYPES.map((n) => (
-                  <TouchableOpacity key={n.value} onPress={() => setNafileType(n.value)} className={chipCls(nafileType === n.value, meta.color)} style={nafileType === n.value ? { backgroundColor: meta.color } : {}}>
-                    <Text className={`text-xs font-bold ${nafileType === n.value ? 'text-white' : isDark ? 'text-slate-300' : 'text-slate-600'}`}>{n.label}</Text>
+                  <TouchableOpacity
+                    key={n.value}
+                    onPress={() => setNafileType(n.value)}
+                    className={chipCls(nafileType === n.value, meta.color)}
+                    style={nafileType === n.value ? { backgroundColor: meta.color } : {}}>
+                    <Text
+                      className={`text-xs font-bold ${nafileType === n.value ? 'text-white' : isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {n.label}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -290,8 +341,15 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             <Text className={labelCls}>Oruç türü</Text>
             <View className="flex-row flex-wrap">
               {FASTING_TYPES.map((f) => (
-                <TouchableOpacity key={f.value} onPress={() => setFastingType(f.value)} className={chipCls(fastingType === f.value, meta.color)} style={fastingType === f.value ? { backgroundColor: meta.color } : {}}>
-                  <Text className={`text-xs font-bold ${fastingType === f.value ? 'text-white' : isDark ? 'text-slate-300' : 'text-slate-600'}`}>{f.label}</Text>
+                <TouchableOpacity
+                  key={f.value}
+                  onPress={() => setFastingType(f.value)}
+                  className={chipCls(fastingType === f.value, meta.color)}
+                  style={fastingType === f.value ? { backgroundColor: meta.color } : {}}>
+                  <Text
+                    className={`text-xs font-bold ${fastingType === f.value ? 'text-white' : isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                    {f.label}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -303,11 +361,24 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
           <View className="gap-4">
             <View>
               <Text className={labelCls}>Miktar (₺) *</Text>
-              <TextInput className={inputCls} placeholder="örn: 100" keyboardType="numeric" value={sadakaAmount} onChangeText={setSadakaAmount} placeholderTextColor="#94a3b8" />
+              <TextInput
+                className={inputCls}
+                placeholder="örn: 100"
+                keyboardType="numeric"
+                value={sadakaAmount}
+                onChangeText={setSadakaAmount}
+                placeholderTextColor="#94a3b8"
+              />
             </View>
             <View>
               <Text className={labelCls}>Açıklama (opsiyonel)</Text>
-              <TextInput className={inputCls} placeholder="örn: yemek yardımı" value={sadakaDesc} onChangeText={setSadakaDesc} placeholderTextColor="#94a3b8" />
+              <TextInput
+                className={inputCls}
+                placeholder="örn: yemek yardımı"
+                value={sadakaDesc}
+                onChangeText={setSadakaDesc}
+                placeholderTextColor="#94a3b8"
+              />
             </View>
           </View>
         )}
@@ -316,7 +387,12 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
         {type === 'dua' && (
           <View>
             <Text className={labelCls}>Kaç dakika? *</Text>
-            <NumberStepper value={duaMinutes} onChange={setDuaMinutes} className={inputCls} step={5} />
+            <NumberStepper
+              value={duaMinutes}
+              onChange={setDuaMinutes}
+              className={inputCls}
+              step={5}
+            />
           </View>
         )}
 
@@ -329,7 +405,11 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             </View>
             <View>
               <Text className={labelCls}>Tekrar edilen ayet sayısı</Text>
-              <NumberStepper value={revisionAyets} onChange={setRevisionAyets} className={inputCls} />
+              <NumberStepper
+                value={revisionAyets}
+                onChange={setRevisionAyets}
+                className={inputCls}
+              />
             </View>
           </View>
         )}
@@ -337,16 +417,28 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
         {/* Notes */}
         <View className="mt-4">
           <Text className={labelCls}>Not (opsiyonel)</Text>
-          <TextInput className={`${inputCls} min-h-[60px]`} placeholder="Bir not ekle..." multiline value={notes} onChangeText={setNotes} placeholderTextColor="#94a3b8" />
+          <TextInput
+            className={`${inputCls} min-h-[60px]`}
+            placeholder="Bir not ekle..."
+            multiline
+            value={notes}
+            onChangeText={setNotes}
+            placeholderTextColor="#94a3b8"
+          />
         </View>
       </ScrollView>
 
       {/* Sabit alt butonlar */}
       <View className="flex-row gap-3 border-t border-slate-100 px-5 py-4 dark:border-slate-800">
-        <TouchableOpacity onPress={onClose} className="flex-1 items-center rounded-2xl border border-slate-200 py-3.5 dark:border-slate-700">
+        <TouchableOpacity
+          onPress={onClose}
+          className="flex-1 items-center rounded-2xl border border-slate-200 py-3.5 dark:border-slate-700">
           <Text className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>İptal</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleSubmit} className="flex-1 items-center rounded-2xl py-3.5" style={{ backgroundColor: meta.color }}>
+        <TouchableOpacity
+          onPress={handleSubmit}
+          className="flex-1 items-center rounded-2xl py-3.5"
+          style={{ backgroundColor: meta.color }}>
           <Text className="font-black text-white">Kaydet</Text>
         </TouchableOpacity>
       </View>
@@ -356,12 +448,25 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
 
 // ─── Number Stepper ───────────────────────────────────────────────────────────
 
-function NumberStepper({ value, onChange, className, step = 1 }: { value: string; onChange: (v: string) => void; className: string; step?: number }) {
+function NumberStepper({
+  value,
+  onChange,
+  className,
+  step = 1,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  className: string;
+  step?: number;
+}) {
   const num = Number(value) || 0;
   return (
     <View className="flex-row items-center gap-3">
       <TouchableOpacity
-        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onChange(String(Math.max(0, num - step))); }}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          onChange(String(Math.max(0, num - step)));
+        }}
         className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
         <Ionicons name="remove" size={20} color="#64748b" />
       </TouchableOpacity>
@@ -374,7 +479,10 @@ function NumberStepper({ value, onChange, className, step = 1 }: { value: string
         placeholderTextColor="#94a3b8"
       />
       <TouchableOpacity
-        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onChange(String(num + step)); }}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          onChange(String(num + step));
+        }}
         className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
         <Ionicons name="add" size={20} color="#64748b" />
       </TouchableOpacity>
@@ -384,7 +492,17 @@ function NumberStepper({ value, onChange, className, step = 1 }: { value: string
 
 // ─── Activity Card ────────────────────────────────────────────────────────────
 
-function ActivityCard({ type, todayLogs, onPress, isDark }: { type: ActivityType; todayLogs: TrackerLog[]; onPress: () => void; isDark: boolean }) {
+function ActivityCard({
+  type,
+  todayLogs,
+  onPress,
+  isDark,
+}: {
+  type: ActivityType;
+  todayLogs: TrackerLog[];
+  onPress: () => void;
+  isDark: boolean;
+}) {
   const meta = ACTIVITY_META[type];
   const total = aggregateToday(todayLogs, type);
   const hasEntries = todayLogs.some((l) => l.activity_type === type);
@@ -396,11 +514,21 @@ function ActivityCard({ type, todayLogs, onPress, isDark }: { type: ActivityType
       activeOpacity={0.8}
       className="mb-3 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
       <View className="flex-row items-center gap-4 p-4">
-        <View className="h-12 w-12 items-center justify-center rounded-2xl" style={{ backgroundColor: hasEntries ? `${meta.color}20` : isDark ? '#1e293b' : '#f8fafc' }}>
-          <Ionicons name={meta.icon as any} size={22} color={hasEntries ? meta.color : isDark ? '#475569' : '#94a3b8'} />
+        <View
+          className="h-12 w-12 items-center justify-center rounded-2xl"
+          style={{
+            backgroundColor: hasEntries ? `${meta.color}20` : isDark ? '#1e293b' : '#f8fafc',
+          }}>
+          <Ionicons
+            name={meta.icon as any}
+            size={22}
+            color={hasEntries ? meta.color : isDark ? '#475569' : '#94a3b8'}
+          />
         </View>
         <View className="flex-1">
-          <Text className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{meta.label}</Text>
+          <Text className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {meta.label}
+          </Text>
           {hasEntries ? (
             <Text style={{ color: meta.color }} className="text-xs font-semibold">
               {total > 0 ? `${total} ${meta.unit}` : `${entryCount} kayıt`}
@@ -410,8 +538,16 @@ function ActivityCard({ type, todayLogs, onPress, isDark }: { type: ActivityType
             <Text className="text-xs text-slate-400 dark:text-slate-600">Henüz kayıt yok</Text>
           )}
         </View>
-        <View className="h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: hasEntries ? `${meta.color}15` : isDark ? '#1e293b' : '#f1f5f9' }}>
-          <Ionicons name="add" size={18} color={hasEntries ? meta.color : isDark ? '#475569' : '#94a3b8'} />
+        <View
+          className="h-8 w-8 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: hasEntries ? `${meta.color}15` : isDark ? '#1e293b' : '#f1f5f9',
+          }}>
+          <Ionicons
+            name="add"
+            size={18}
+            color={hasEntries ? meta.color : isDark ? '#475569' : '#94a3b8'}
+          />
         </View>
       </View>
     </TouchableOpacity>
@@ -423,20 +559,26 @@ function ActivityCard({ type, todayLogs, onPress, isDark }: { type: ActivityType
 function WeeklyView({ isDark }: { isDark: boolean }) {
   const { weeklyStats } = useTrackerStore();
 
-  if (!weeklyStats) return (
-    <View className="flex-1 items-center justify-center py-20">
-      <Text className="text-slate-400">Veriler yükleniyor...</Text>
-    </View>
-  );
+  if (!weeklyStats)
+    return (
+      <View className="flex-1 items-center justify-center py-20">
+        <Text className="text-slate-400">Veriler yükleniyor...</Text>
+      </View>
+    );
 
   const DAYS_TR = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
   const types = Object.keys(ACTIVITY_META) as ActivityType[];
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100, paddingTop: 8 }}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100, paddingTop: 8 }}>
       {/* Weekly Grid */}
-      <View className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
-        <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Son 7 Gün</Text>
+      <View
+        className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+        <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          Son 7 Gün
+        </Text>
         <View className="flex-row justify-between">
           {weeklyStats.days.map((day, i) => {
             const d = new Date(day.date);
@@ -444,14 +586,18 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
             const actCount = Object.keys(day.activities).length;
             return (
               <View key={i} className="items-center gap-1.5">
-                <View className={`h-10 w-10 items-center justify-center rounded-2xl ${hasAny ? 'bg-teal-500/[12%]' : isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                <View
+                  className={`h-10 w-10 items-center justify-center rounded-2xl ${hasAny ? 'bg-teal-500/[12%]' : isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
                   {hasAny ? (
                     <Text className="text-xs font-black text-teal-500">{actCount}</Text>
                   ) : (
                     <Text className="text-[10px] text-slate-400">—</Text>
                   )}
                 </View>
-                <Text className={`text-[10px] font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{DAYS_TR[d.getDay()]}</Text>
+                <Text
+                  className={`text-[10px] font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                  {DAYS_TR[d.getDay()]}
+                </Text>
               </View>
             );
           })}
@@ -459,22 +605,34 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
       </View>
 
       {/* Per-activity totals */}
-      <View className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
-        <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Haftalık Özet</Text>
+      <View
+        className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+        <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          Haftalık Özet
+        </Text>
         {types.map((type) => {
           const meta = ACTIVITY_META[type];
           const total = weeklyStats.totals[type] ?? 0;
           if (total === 0) return null;
           return (
-            <Animated.View key={type} entering={FadeInDown.duration(300)} className="mb-3 flex-row items-center gap-3">
-              <View className="h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: meta.bgColor }}>
+            <Animated.View
+              key={type}
+              entering={FadeInDown.duration(300)}
+              className="mb-3 flex-row items-center gap-3">
+              <View
+                className="h-9 w-9 items-center justify-center rounded-xl"
+                style={{ backgroundColor: meta.bgColor }}>
                 <Ionicons name={meta.icon as any} size={16} color={meta.color} />
               </View>
               <View className="flex-1">
-                <Text className={`text-sm font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{meta.label}</Text>
+                <Text
+                  className={`text-sm font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
+                  {meta.label}
+                </Text>
               </View>
               <Text className="text-base font-black" style={{ color: meta.color }}>
-                {total}{meta.unit ? ` ${meta.unit}` : ''}
+                {total}
+                {meta.unit ? ` ${meta.unit}` : ''}
               </Text>
             </Animated.View>
           );
@@ -485,28 +643,39 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
       </View>
 
       {/* Daily breakdown */}
-      {weeklyStats.days.slice().reverse().map((day, i) => {
-        if (Object.keys(day.activities).length === 0) return null;
-        const d = new Date(day.date);
-        return (
-          <View key={i} className={`mx-4 mb-3 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
-            <Text className={`mb-3 text-xs font-black uppercase tracking-wide ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              {d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'short' })}
-            </Text>
-            {(Object.entries(day.activities) as [ActivityType, any][]).map(([type, data]) => {
-              const meta = ACTIVITY_META[type];
-              if (!meta) return null;
-              return (
-                <View key={type} className="mb-1.5 flex-row items-center gap-2">
-                  <Ionicons name={meta.icon as any} size={14} color={meta.color} />
-                  <Text className={`flex-1 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{meta.label}</Text>
-                  <Text className="text-sm font-bold" style={{ color: meta.color }}>{data.entry_count} giriş</Text>
-                </View>
-              );
-            })}
-          </View>
-        );
-      })}
+      {weeklyStats.days
+        .slice()
+        .reverse()
+        .map((day, i) => {
+          if (Object.keys(day.activities).length === 0) return null;
+          const d = new Date(day.date);
+          return (
+            <View
+              key={i}
+              className={`mx-4 mb-3 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+              <Text
+                className={`mb-3 text-xs font-black uppercase tracking-wide ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                {d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'short' })}
+              </Text>
+              {(Object.entries(day.activities) as [ActivityType, any][]).map(([type, data]) => {
+                const meta = ACTIVITY_META[type];
+                if (!meta) return null;
+                return (
+                  <View key={type} className="mb-1.5 flex-row items-center gap-2">
+                    <Ionicons name={meta.icon as any} size={14} color={meta.color} />
+                    <Text
+                      className={`flex-1 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {meta.label}
+                    </Text>
+                    <Text className="text-sm font-bold" style={{ color: meta.color }}>
+                      {data.entry_count} giriş
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          );
+        })}
     </ScrollView>
   );
 }
@@ -518,13 +687,32 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth() + 1);
 
-  const MONTHS_TR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  const MONTHS_TR = [
+    'Ocak',
+    'Şubat',
+    'Mart',
+    'Nisan',
+    'Mayıs',
+    'Haziran',
+    'Temmuz',
+    'Ağustos',
+    'Eylül',
+    'Ekim',
+    'Kasım',
+    'Aralık',
+  ];
 
   const navigate = (dir: -1 | 1) => {
     let m = viewMonth + dir;
     let y = viewYear;
-    if (m < 1) { m = 12; y -= 1; }
-    if (m > 12) { m = 1; y += 1; }
+    if (m < 1) {
+      m = 12;
+      y -= 1;
+    }
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
     setViewMonth(m);
     setViewYear(y);
     fetchMonthlyStats(y, m);
@@ -533,16 +721,23 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
   const types = Object.keys(ACTIVITY_META) as ActivityType[];
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100, paddingTop: 8 }}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100, paddingTop: 8 }}>
       {/* Month navigator */}
-      <View className={`mx-4 mb-4 flex-row items-center justify-between rounded-3xl border px-5 py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
-        <TouchableOpacity onPress={() => navigate(-1)} className="h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+      <View
+        className={`mx-4 mb-4 flex-row items-center justify-between rounded-3xl border px-5 py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+        <TouchableOpacity
+          onPress={() => navigate(-1)}
+          className="h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
           <Ionicons name="chevron-back" size={18} color={isDark ? '#94a3b8' : '#64748b'} />
         </TouchableOpacity>
         <Text className={`text-base font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
           {MONTHS_TR[viewMonth - 1]} {viewYear}
         </Text>
-        <TouchableOpacity onPress={() => navigate(1)} className="h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+        <TouchableOpacity
+          onPress={() => navigate(1)}
+          className="h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
           <Ionicons name="chevron-forward" size={18} color={isDark ? '#94a3b8' : '#64748b'} />
         </TouchableOpacity>
       </View>
@@ -551,21 +746,32 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
       {monthlyStats && (
         <>
           <View className="mx-4 mb-4 flex-row gap-3">
-            <View className={`flex-1 items-center rounded-3xl border py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+            <View
+              className={`flex-1 items-center rounded-3xl border py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
               <Text className="text-2xl font-black text-teal-500">{monthlyStats.active_days}</Text>
-              <Text className={`mt-0.5 text-[10px] font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Aktif Gün</Text>
+              <Text
+                className={`mt-0.5 text-[10px] font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Aktif Gün
+              </Text>
             </View>
-            <View className={`flex-1 items-center rounded-3xl border py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+            <View
+              className={`flex-1 items-center rounded-3xl border py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
               <Text className="text-2xl font-black text-indigo-500">
                 {Object.values(monthlyStats.totals).reduce((s, v) => s + v, 0)}
               </Text>
-              <Text className={`mt-0.5 text-[10px] font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Toplam Kayıt</Text>
+              <Text
+                className={`mt-0.5 text-[10px] font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Toplam Kayıt
+              </Text>
             </View>
           </View>
 
           {/* Per-activity totals */}
-          <View className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
-            <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Aylık Toplam</Text>
+          <View
+            className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+            <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              Aylık Toplam
+            </Text>
             {types.map((type) => {
               const meta = ACTIVITY_META[type];
               const total = monthlyStats.totals[type] ?? 0;
@@ -573,14 +779,24 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
                 <View key={type} className="mb-4">
                   <View className="mb-1.5 flex-row items-center gap-2">
                     <Ionicons name={meta.icon as any} size={14} color={meta.color} />
-                    <Text className={`flex-1 text-sm font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{meta.label}</Text>
+                    <Text
+                      className={`flex-1 text-sm font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {meta.label}
+                    </Text>
                     <Text className="text-sm font-black" style={{ color: meta.color }}>
-                      {total}{meta.unit ? ` ${meta.unit}` : ''}
+                      {total}
+                      {meta.unit ? ` ${meta.unit}` : ''}
                     </Text>
                   </View>
                   {/* Mini progress bar relative to 30-day "ideal" */}
                   <View className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
-                    <View className="h-1.5 rounded-full" style={{ backgroundColor: meta.color, width: `${Math.min(100, (total / Math.max(1, total + 1)) * 100)}%` }} />
+                    <View
+                      className="h-1.5 rounded-full"
+                      style={{
+                        backgroundColor: meta.color,
+                        width: `${Math.min(100, (total / Math.max(1, total + 1)) * 100)}%`,
+                      }}
+                    />
                   </View>
                 </View>
               );
@@ -588,14 +804,29 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
           </View>
 
           {/* Heatmap – active days in month grid */}
-          <MonthHeatmap year={viewYear} month={viewMonth} daily={monthlyStats.daily} isDark={isDark} />
+          <MonthHeatmap
+            year={viewYear}
+            month={viewMonth}
+            daily={monthlyStats.daily}
+            isDark={isDark}
+          />
         </>
       )}
     </ScrollView>
   );
 }
 
-function MonthHeatmap({ year, month, daily, isDark }: { year: number; month: number; daily: Record<string, any>; isDark: boolean }) {
+function MonthHeatmap({
+  year,
+  month,
+  daily,
+  isDark,
+}: {
+  year: number;
+  month: number;
+  daily: Record<string, any>;
+  isDark: boolean;
+}) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const firstDayOfWeek = new Date(year, month - 1, 1).getDay();
   const DAYS_TR = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
@@ -604,12 +835,16 @@ function MonthHeatmap({ year, month, daily, isDark }: { year: number; month: num
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
-    <View className={`mx-4 mb-4 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+    <View
+      className={`mx-4 mb-4 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
       <Text className={`mb-3 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Takvim</Text>
       <View className="mb-2 flex-row">
         {DAYS_TR.map((d) => (
           <View key={d} className="flex-1 items-center">
-            <Text className={`text-[10px] font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{d}</Text>
+            <Text
+              className={`text-[10px] font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+              {d}
+            </Text>
           </View>
         ))}
       </View>
@@ -621,11 +856,21 @@ function MonthHeatmap({ year, month, daily, isDark }: { year: number; month: num
             const hasActivity = !!daily[dateStr];
             const actCount = hasActivity ? Object.keys(daily[dateStr]).length : 0;
             const today = new Date();
-            const isToday = today.getFullYear() === year && today.getMonth() + 1 === month && today.getDate() === day;
+            const isToday =
+              today.getFullYear() === year &&
+              today.getMonth() + 1 === month &&
+              today.getDate() === day;
             return (
-              <View key={col} className="flex-1 h-8 items-center justify-center">
-                <View className={`h-7 w-7 items-center justify-center rounded-xl ${isToday ? 'border-2 border-teal-500' : ''}`} style={hasActivity ? { backgroundColor: '#14b8a6' + (actCount >= 3 ? '' : '60') } : {}}>
-                  <Text className={`text-[11px] font-bold ${hasActivity ? 'text-white' : isToday ? 'text-teal-500' : isDark ? 'text-slate-500' : 'text-slate-400'}`}>{day}</Text>
+              <View key={col} className="h-8 flex-1 items-center justify-center">
+                <View
+                  className={`h-7 w-7 items-center justify-center rounded-xl ${isToday ? 'border-2 border-teal-500' : ''}`}
+                  style={
+                    hasActivity ? { backgroundColor: '#14b8a6' + (actCount >= 3 ? '' : '60') } : {}
+                  }>
+                  <Text
+                    className={`text-[11px] font-bold ${hasActivity ? 'text-white' : isToday ? 'text-teal-500' : isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                    {day}
+                  </Text>
                 </View>
               </View>
             );
@@ -640,7 +885,8 @@ function MonthHeatmap({ year, month, daily, isDark }: { year: number; month: num
 
 export default function TrackerScreen() {
   const { isAuthenticated } = useAuthStore();
-  const { todayLogs, fetchTodayLogs, fetchWeeklyStats, fetchMonthlyStats, logActivity, deleteLog } = useTrackerStore();
+  const { todayLogs, fetchTodayLogs, fetchWeeklyStats, fetchMonthlyStats, logActivity, deleteLog } =
+    useTrackerStore();
   const { isDark } = useTheme();
 
   const [activeTab, setActiveTab] = useState<Tab>('Bugün');
@@ -681,7 +927,8 @@ export default function TrackerScreen() {
     Alert.alert('Kaydı Sil', 'Bu kaydı silmek istediğinize emin misiniz?', [
       { text: 'İptal', style: 'cancel' },
       {
-        text: 'Sil', style: 'destructive',
+        text: 'Sil',
+        style: 'destructive',
         onPress: () => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           deleteLog(log.id);
@@ -695,13 +942,20 @@ export default function TrackerScreen() {
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
       {/* Tab Selector */}
-      <View className={`mx-4 mt-3 flex-row rounded-2xl p-1 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+      <View
+        className={`mx-4 mt-3 flex-row rounded-2xl p-1 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
         {TABS.map((tab) => (
           <TouchableOpacity
             key={tab}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveTab(tab); }}
-            className={`flex-1 items-center rounded-xl py-2.5 ${activeTab === tab ? 'bg-white dark:bg-slate-700 shadow-sm' : ''}`}>
-            <Text className={`text-sm font-black ${activeTab === tab ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>{tab}</Text>
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setActiveTab(tab);
+            }}
+            className={`flex-1 items-center rounded-xl py-2.5 ${activeTab === tab ? 'bg-white shadow-sm dark:bg-slate-700' : ''}`}>
+            <Text
+              className={`text-sm font-black ${activeTab === tab ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'}`}>
+              {tab}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -710,41 +964,72 @@ export default function TrackerScreen() {
       {activeTab === 'Bugün' && (
         <ScrollView
           className="flex-1"
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor="#14b8a6" />}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor="#14b8a6" />
+          }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}>
-
           {/* Date header */}
           <Animated.View entering={FadeIn.duration(300)} className="mb-4">
-            <Text className={`text-lg font-black capitalize ${isDark ? 'text-white' : 'text-slate-900'}`}>{formatTurkishDate()}</Text>
-            <Text className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{todayLogs.length} kayıt · {new Set(todayLogs.map((l) => l.activity_type)).size} farklı aktivite</Text>
+            <Text
+              className={`text-lg font-black capitalize ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              {formatTurkishDate()}
+            </Text>
+            <Text className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              {todayLogs.length} kayıt · {new Set(todayLogs.map((l) => l.activity_type)).size}{' '}
+              farklı aktivite
+            </Text>
           </Animated.View>
 
           {/* Activity cards */}
           {types.map((type, i) => (
             <Animated.View key={type} entering={FadeInDown.delay(i * 40).duration(300)}>
-              <ActivityCard type={type} todayLogs={todayLogs} onPress={() => openModal(type)} isDark={isDark} />
+              <ActivityCard
+                type={type}
+                todayLogs={todayLogs}
+                onPress={() => openModal(type)}
+                isDark={isDark}
+              />
             </Animated.View>
           ))}
 
           {/* Today's log list */}
           {todayLogs.length > 0 && (
-            <View className={`mt-2 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
-              <Text className={`mb-3 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Bugünkü Kayıtlar</Text>
+            <View
+              className={`mt-2 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
+              <Text className={`mb-3 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Bugünkü Kayıtlar
+              </Text>
               {todayLogs.map((log, i) => {
                 const meta = ACTIVITY_META[log.activity_type];
                 if (!meta) return null;
                 return (
-                  <Animated.View key={log.id} entering={ZoomIn.delay(i * 30)} className="mb-2 flex-row items-center gap-3">
-                    <View className="h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: meta.bgColor }}>
+                  <Animated.View
+                    key={log.id}
+                    entering={ZoomIn.delay(i * 30)}
+                    className="mb-2 flex-row items-center gap-3">
+                    <View
+                      className="h-8 w-8 items-center justify-center rounded-xl"
+                      style={{ backgroundColor: meta.bgColor }}>
                       <Ionicons name={meta.icon as any} size={14} color={meta.color} />
                     </View>
                     <View className="flex-1">
-                      <Text className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{meta.label}</Text>
-                      <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{getValueLabel(log)}</Text>
+                      <Text
+                        className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
+                        {meta.label}
+                      </Text>
+                      <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        {getValueLabel(log)}
+                      </Text>
                     </View>
-                    <TouchableOpacity onPress={() => handleDelete(log)} className="h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
-                      <Ionicons name="trash-outline" size={13} color={isDark ? '#64748b' : '#94a3b8'} />
+                    <TouchableOpacity
+                      onPress={() => handleDelete(log)}
+                      className="h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                      <Ionicons
+                        name="trash-outline"
+                        size={13}
+                        color={isDark ? '#64748b' : '#94a3b8'}
+                      />
                     </TouchableOpacity>
                   </Animated.View>
                 );

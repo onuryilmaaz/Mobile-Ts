@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
@@ -39,15 +40,12 @@ function AnimatedDigit({ char }: { char: string }) {
     prevRef.current = char;
     setPair([old, char]);
     translateY.value = 0;
-    // Smooth ease-out: starts fast, eases into place
     translateY.value = withTiming(-DIGIT_H, {
       duration: 240,
       easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
     });
     const t = setTimeout(() => {
       setPair([char, char]);
-      // Wait one frame for React to commit the new pair before resetting position.
-      // Without this, translateY jumps to 0 while the old char is still rendered → stutter.
       requestAnimationFrame(() => {
         translateY.value = 0;
       });
@@ -58,7 +56,7 @@ function AnimatedDigit({ char }: { char: string }) {
   const cStyle = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }));
 
   return (
-    <View className="h-[68px] w-9 overflow-hidden">
+    <View className="h-[68px] w-[44px] overflow-hidden">
       <Animated.View className="flex-col" style={cStyle}>
         {pair.map((d, i) => (
           <Text
@@ -86,7 +84,7 @@ function RollingCountdown({ time }: { time: string }) {
           </Text>
         ) : (
           <AnimatedDigit key={i} char={char} />
-        ),
+        )
       )}
     </View>
   );
@@ -144,7 +142,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const lastActivityPrayerRef = useRef<string>('');
   const setHeaderColor = useThemeStore((s) => s.setHeaderColor);
 
-
   const selectedDistrict = selectedDistrictId ? getDistrictById(selectedDistrictId) : null;
   const selectedState = selectedStateId ? getStateById(selectedStateId) : null;
 
@@ -200,15 +197,23 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
       const regionRaw = geo[0]?.region ?? geo[0]?.city ?? '';
       const normalize = (s: string) =>
-        s.toUpperCase()
-          .replace(/İ/g, 'I').replace(/Ğ/g, 'G').replace(/Ş/g, 'S')
-          .replace(/Ç/g, 'C').replace(/Ö/g, 'O').replace(/Ü/g, 'U');
+        s
+          .toUpperCase()
+          .replace(/İ/g, 'I')
+          .replace(/Ğ/g, 'G')
+          .replace(/Ş/g, 'S')
+          .replace(/Ç/g, 'C')
+          .replace(/Ö/g, 'O')
+          .replace(/Ü/g, 'U');
 
-      const state = getStateByName(regionRaw) ??
+      const state =
+        getStateByName(regionRaw) ??
         (() => {
           const normRegion = normalize(regionRaw);
           const { STATES } = require('@/constants/locations');
-          return (STATES as any[]).find((s: any) => normalize(s.name) === normRegion || normalize(s.name_en) === normRegion);
+          return (STATES as any[]).find(
+            (s: any) => normalize(s.name) === normRegion || normalize(s.name_en) === normRegion
+          );
         })();
 
       if (!state) return null;
@@ -280,9 +285,18 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       const endMs = targetTimeRef.current ?? 0;
       if (lastActivityPrayerRef.current !== name) {
         lastActivityPrayerRef.current = name;
-        liveActivityService.startPrayerActivity({ prayerName: name, nextPrayer: afterNextName, endTimeMs: endMs });
+        liveActivityService.startPrayerActivity({
+          prayerName: name,
+          nextPrayer: afterNextName,
+          endTimeMs: endMs,
+        });
       }
-      liveActivityService.updateWidgetData({ prayerName: name, prayerTime: timeStr, nextPrayer: afterNextName, endTimeMs: endMs });
+      liveActivityService.updateWidgetData({
+        prayerName: name,
+        prayerTime: timeStr,
+        nextPrayer: afterNextName,
+        endTimeMs: endMs,
+      });
     };
 
     let foundNext = false;
@@ -333,7 +347,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     const current = NEXT_TO_CURRENT[nextPrayerName];
     setHeaderColor(THEME_COLORS[current as keyof typeof THEME_COLORS] || THEME_COLORS['Default']);
   }, [nextPrayerName, setHeaderColor]);
-
 
   const fetchPrayerTimes = async (districtId: string) => {
     try {
@@ -405,8 +418,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
   return (
     <View className="mx-4 mb-4 mt-3">
-      <View
-        className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+      <View className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
         <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
         <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
 
@@ -454,8 +466,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         </View>
       </View>
 
-      <View
-        className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
+      <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
         {loading && !data ? (
           <View className="items-center py-7">
             <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
@@ -506,22 +517,18 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         )}
       </View>
 
-      <View
-        className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <View className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             openLocationSelection();
           }}
           className="flex-row items-center border-b border-slate-200 p-3.5 dark:border-slate-700/50">
-          <View
-            className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/10">
+          <View className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/10">
             <Ionicons name="location-outline" size={17} color={isDark ? '#2dd4bf' : '#0f766e'} />
           </View>
           <View className="flex-1">
-            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">
-              Konum
-            </Text>
+            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">Konum</Text>
             <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
               {selectedState && selectedDistrict
                 ? `${selectedState.name} — ${selectedDistrict.name}`
@@ -538,8 +545,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         </TouchableOpacity>
 
         <View className="flex-row items-center p-3.5">
-          <View
-            className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
+          <View className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
             <Ionicons
               name="notifications-outline"
               size={17}

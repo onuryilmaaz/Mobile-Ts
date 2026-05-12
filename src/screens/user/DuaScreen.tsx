@@ -1,13 +1,6 @@
+/* eslint-disable no-unused-expressions */
 import { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-  Share,
-  FlatList,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Share, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -54,10 +47,14 @@ export default function DuaScreen() {
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header */}
         <View className="mx-4 mb-5 mt-4">
-          <Text className="text-2xl font-black text-slate-900 dark:text-white">Dua Koleksiyonu</Text>
+          <Text className="text-2xl font-black text-slate-900 dark:text-white">
+            Dua Koleksiyonu
+          </Text>
           <Text className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Günlük dualar ve zikirler
           </Text>
@@ -80,10 +77,16 @@ export default function DuaScreen() {
                   setSelectedDua(dua);
                 }}
                 className="mb-2 flex-row items-center justify-between rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 dark:border-pink-500/20 dark:bg-pink-500/10">
-                <Text className="flex-1 text-sm font-bold text-slate-900 dark:text-white" numberOfLines={1}>
+                <Text
+                  className="flex-1 text-sm font-bold text-slate-900 dark:text-white"
+                  numberOfLines={1}>
                   {dua.title}
                 </Text>
-                <Ionicons name="chevron-forward" size={16} color={isDark ? '#ec489960' : '#ec4899'} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={16}
+                  color={isDark ? '#ec489960' : '#ec4899'}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -140,7 +143,11 @@ export default function DuaScreen() {
                 <View
                   className="h-10 w-10 items-center justify-center rounded-xl"
                   style={{ backgroundColor: selectedCategory.accentDim }}>
-                  <Ionicons name={selectedCategory.icon as any} size={20} color={selectedCategory.color} />
+                  <Ionicons
+                    name={selectedCategory.icon as any}
+                    size={20}
+                    color={selectedCategory.color}
+                  />
                 </View>
               )}
               <Text className="text-lg font-black text-slate-900 dark:text-white">
@@ -178,7 +185,11 @@ export default function DuaScreen() {
                       />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => shareDua(dua)}>
-                      <Ionicons name="share-outline" size={18} color={isDark ? '#475569' : '#94a3b8'} />
+                      <Ionicons
+                        name="share-outline"
+                        size={18}
+                        color={isDark ? '#475569' : '#94a3b8'}
+                      />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -221,11 +232,17 @@ export default function DuaScreen() {
                   <Ionicons
                     name={favorites.has(selectedDua.id) ? 'heart' : 'heart-outline'}
                     size={22}
-                    color={favorites.has(selectedDua.id) ? '#ec4899' : isDark ? '#475569' : '#94a3b8'}
+                    color={
+                      favorites.has(selectedDua.id) ? '#ec4899' : isDark ? '#475569' : '#94a3b8'
+                    }
                   />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => shareDua(selectedDua)}>
-                  <Ionicons name="share-social-outline" size={22} color={isDark ? '#475569' : '#94a3b8'} />
+                  <Ionicons
+                    name="share-social-outline"
+                    size={22}
+                    color={isDark ? '#475569' : '#94a3b8'}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setSelectedDua(null)}
@@ -262,7 +279,11 @@ export default function DuaScreen() {
 
               {selectedDua.source && (
                 <View className="flex-row items-center gap-2 rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-800">
-                  <Ionicons name="library-outline" size={14} color={isDark ? '#475569' : '#94a3b8'} />
+                  <Ionicons
+                    name="library-outline"
+                    size={14}
+                    color={isDark ? '#475569' : '#94a3b8'}
+                  />
                   <Text className="text-xs text-slate-500 dark:text-slate-400">
                     Kaynak: {selectedDua.source}
                   </Text>

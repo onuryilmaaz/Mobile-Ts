@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NativeModules, Platform } from 'react-native';
 
 const { SalahLiveActivityModule: Native } = NativeModules;

@@ -1,9 +1,9 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useEffect } from 'react';
-import { useTheme } from '@/hooks/useTheme';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
@@ -11,7 +11,6 @@ const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 export function StreakCard() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { stats, weeklyStats, fetchStats, fetchWeeklyStats } = useGamificationStore();
-  const { isDark } = useTheme();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -59,7 +58,9 @@ export function StreakCard() {
           </View>
           <View className="flex-row items-center gap-1 rounded-full bg-amber-50 px-3 py-1 dark:bg-amber-500/15">
             <Ionicons name="flame" size={14} color="#f59e0b" />
-            <Text className="text-sm font-black text-amber-600 dark:text-amber-400">{streak} gün</Text>
+            <Text className="text-sm font-black text-amber-600 dark:text-amber-400">
+              {streak} gün
+            </Text>
           </View>
         </View>
 
@@ -90,7 +91,9 @@ export function StreakCard() {
                 </View>
                 <Text
                   className={`text-[10px] font-bold ${
-                    day.isToday ? 'text-teal-600 dark:text-teal-400' : 'text-slate-400 dark:text-slate-600'
+                    day.isToday
+                      ? 'text-teal-600 dark:text-teal-400'
+                      : 'text-slate-400 dark:text-slate-600'
                   }`}>
                   {day.label}
                 </Text>

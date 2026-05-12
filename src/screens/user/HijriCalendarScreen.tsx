@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Screen } from '@/components/layout/Screen';
@@ -6,9 +6,18 @@ import { useTheme } from '@/hooks/useTheme';
 import { calendarService } from '@/services/calendar.service';
 
 const HIJRI_MONTHS = [
-  'Muharrem', 'Safer', 'Rebiulevvel', 'Rebiulahir',
-  'Cemaziyelevvel', 'Cemaziyelahir', 'Receb', 'Şaban',
-  'Ramazan', 'Şevval', 'Zilkade', 'Zilhicce',
+  'Muharrem',
+  'Safer',
+  'Rebiulevvel',
+  'Rebiulahir',
+  'Cemaziyelevvel',
+  'Cemaziyelahir',
+  'Receb',
+  'Şaban',
+  'Ramazan',
+  'Şevval',
+  'Zilkade',
+  'Zilhicce',
 ];
 
 function getDaysUntil(date: Date): number {
@@ -29,9 +38,7 @@ export default function HijriCalendarScreen() {
   const allDays = calendarService.getReligiousDays();
   const now = new Date();
 
-  const upcoming = allDays
-    .filter((d) => d.date >= now)
-    .slice(0, 12);
+  const upcoming = allDays.filter((d) => d.date >= now).slice(0, 12);
 
   const past = allDays
     .filter((d) => d.date < now)
@@ -43,7 +50,9 @@ export default function HijriCalendarScreen() {
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Bugünün Hicri tarihi */}
         <Animated.View
           entering={FadeInUp.duration(400)}
@@ -109,7 +118,9 @@ export default function HijriCalendarScreen() {
               <View className="flex-1 p-4">
                 <View className="flex-row items-start justify-between">
                   <View className="flex-1">
-                    <Text className="font-black text-slate-900 dark:text-white">{nextDay.name}</Text>
+                    <Text className="font-black text-slate-900 dark:text-white">
+                      {nextDay.name}
+                    </Text>
                     <Text className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       {formatDate(nextDay.date)}
                     </Text>
@@ -142,9 +153,7 @@ export default function HijriCalendarScreen() {
               const isToday = daysLeft === 0;
               const isTomorrow = daysLeft === 1;
               return (
-                <Animated.View
-                  key={day.id}
-                  entering={FadeInUp.delay(200 + idx * 40).duration(300)}>
+                <Animated.View key={day.id} entering={FadeInUp.delay(200 + idx * 40).duration(300)}>
                   <View
                     className={`flex-row items-center rounded-2xl border p-4 ${
                       day.isHoliday
@@ -175,7 +184,9 @@ export default function HijriCalendarScreen() {
                       }`}>
                       <Text
                         className={`text-xs font-black ${
-                          isToday || isTomorrow ? 'text-white' : 'text-slate-500 dark:text-slate-400'
+                          isToday || isTomorrow
+                            ? 'text-white'
+                            : 'text-slate-500 dark:text-slate-400'
                         }`}>
                         {isToday ? 'Bugün' : isTomorrow ? 'Yarın' : `${daysLeft}g`}
                       </Text>
@@ -198,7 +209,11 @@ export default function HijriCalendarScreen() {
                 <View
                   key={day.id}
                   className="flex-row items-center rounded-2xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
-                  <Ionicons name="checkmark-circle" size={16} color={isDark ? '#334155' : '#cbd5e1'} />
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={16}
+                    color={isDark ? '#334155' : '#cbd5e1'}
+                  />
                   <Text className="ml-3 flex-1 text-sm font-bold text-slate-500 dark:text-slate-600">
                     {day.name}
                   </Text>

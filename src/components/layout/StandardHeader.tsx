@@ -20,6 +20,7 @@ type StandardHeaderProps = {
   title: string;
   navigation: any;
   showBackButton?: boolean;
+  backTitle?: string;
   rightComponent?: React.ReactNode;
   showProfile?: boolean;
 };
@@ -28,6 +29,7 @@ export function StandardHeader({
   title,
   navigation,
   showBackButton = true,
+  backTitle = 'Geri',
   rightComponent,
   showProfile = true,
 }: StandardHeaderProps) {
@@ -89,7 +91,7 @@ export function StandardHeader({
               activeOpacity={0.7}>
               <Ionicons name="chevron-back" size={20} color={isDark ? '#F0F4FF' : '#0f172a'} />
               <Text className="ml-0.5 text-sm font-bold text-slate-900 dark:text-slate-100">
-                Ana Sayfa
+                {backTitle}
               </Text>
             </TouchableOpacity>
           )}

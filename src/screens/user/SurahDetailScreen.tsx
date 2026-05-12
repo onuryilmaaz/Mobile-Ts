@@ -1,6 +1,15 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Platform, Share, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  Platform,
+  Share,
+  TouchableOpacity,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SurahsStackParamList } from '@/navigation/types';
 import { Screen } from '@/components/layout/Screen';
@@ -32,7 +41,9 @@ function AudioPlayer({ surahId }: { surahId: number }) {
 
   useEffect(() => {
     Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    return () => { soundRef.current?.unloadAsync(); };
+    return () => {
+      soundRef.current?.unloadAsync();
+    };
   }, []);
 
   useEffect(() => {
@@ -174,7 +185,10 @@ function AudioPlayer({ surahId }: { surahId: number }) {
         {/* Stop */}
         {(status === 'playing' || status === 'paused') && (
           <TouchableOpacity
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); stop(); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              stop();
+            }}
             className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
             <Ionicons name="stop" size={16} color={isDark ? '#94a3b8' : '#475569'} />
           </TouchableOpacity>
@@ -259,11 +273,22 @@ export default function SurahDetailScreen({ route }: Props) {
                   <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
                 </View>
                 <View className="flex-row items-center gap-4">
-                  <TouchableOpacity onPress={() => toggleBookmark(`${surahId}:${verse.verse_number}`)}>
+                  <TouchableOpacity
+                    onPress={() => toggleBookmark(`${surahId}:${verse.verse_number}`)}>
                     <Ionicons
-                      name={bookmarks.has(`${surahId}:${verse.verse_number}`) ? 'bookmark' : 'bookmark-outline'}
+                      name={
+                        bookmarks.has(`${surahId}:${verse.verse_number}`)
+                          ? 'bookmark'
+                          : 'bookmark-outline'
+                      }
                       size={18}
-                      color={bookmarks.has(`${surahId}:${verse.verse_number}`) ? '#f59e0b' : isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                      color={
+                        bookmarks.has(`${surahId}:${verse.verse_number}`)
+                          ? '#f59e0b'
+                          : isDark
+                            ? 'rgba(240,244,255,0.55)'
+                            : '#475569'
+                      }
                     />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => shareVerse(verse)}>
@@ -291,7 +316,7 @@ export default function SurahDetailScreen({ route }: Props) {
                 <View className="my-2 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
 
                 <Text className="text-base font-medium italic leading-7 text-slate-600 dark:text-slate-300">
-                  "{verse.translation.text}"
+                  {`"${verse.translation.text}"`}
                 </Text>
               </View>
             </Animated.View>

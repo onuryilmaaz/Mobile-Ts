@@ -45,13 +45,19 @@ export type SurahsStackParamList = {
   SurahDetail: { surahId: number; surahName: string };
 };
 
+export type TrackerStackParamList = {
+  TrackerMain: undefined;
+  Gamification: undefined;
+  KazaTracker: undefined;
+  Stats: undefined;
+  Challenges: undefined;
+};
+
 export type UserTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
   Surahs: NavigatorScreenParams<SurahsStackParamList>;
-  MosqueFinder: undefined;
   Dhikr: undefined;
-  Gamification: undefined;
-  Tracker: undefined;
+  Tracker: NavigatorScreenParams<TrackerStackParamList>;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };
 

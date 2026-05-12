@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AdminNavigator from './AdminNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
+import TrackerNavigator from './TrackerNavigator';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -13,7 +14,7 @@ import { StandardHeader } from '@/components/layout/StandardHeader';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
 import { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import { DhikrScreen, GamificationScreen, TrackerScreen } from '@/screens';
+import { DhikrScreen } from '@/screens';
 
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
@@ -107,7 +108,7 @@ export default function UserNavigator() {
               ),
           }}
           options={{
-            tabBarLabel: 'Sureler',
+            tabBarLabel: "Kur'an",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="book-outline" size={size} color={color} />
@@ -132,46 +133,20 @@ export default function UserNavigator() {
 
         <Tab.Screen
           name="Tracker"
-          component={TrackerScreen}
+          component={TrackerNavigator}
           listeners={{
             tabPress: (e) =>
               handleTabPress(
                 e,
-                'İbadet Defteri İçin Giriş Yapın',
-                'Günlük ibadetlerinizi kaydetmek ve istatistiklerinizi görmek için lütfen oturum açın.'
+                'Amel Defteri İçin Giriş Yapın',
+                'İbadet kaydı ve başarılarınızı görmek için lütfen oturum açın.'
               ),
           }}
           options={{
-            tabBarLabel: 'Defterim',
-            headerShown: true,
-            header: ({ navigation }) => (
-              <StandardHeader navigation={navigation} title="İbadet Defteri" showBackButton={false} />
-            ),
+            tabBarLabel: 'Amel',
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="journal-outline" size={size} color={color} />
-            ),
-          }}
-        />
-
-        <Tab.Screen
-          name="Gamification"
-          component={GamificationScreen}
-          listeners={{
-            tabPress: (e) =>
-              handleTabPress(
-                e,
-                'Başarılar İçin Giriş Yapın',
-                'Puan, rozet ve sıralama özelliklerini kullanmak için lütfen oturum açın.'
-              ),
-          }}
-          options={{
-            tabBarLabel: 'Başarılar',
-            headerShown: true,
-            header: ({ navigation }) => (
-              <StandardHeader navigation={navigation} title="Başarılar" showBackButton={false} />
-            ),
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="trophy-outline" size={size} color={color} />
+              <Ionicons name="stats-chart-outline" size={size} color={color} />
             ),
           }}
         />

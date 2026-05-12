@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,13 +14,20 @@ function getTotal(type: string, logs: any[]): number {
   const entries = logs.filter((l) => l.activity_type === type);
   if (!entries.length) return 0;
   switch (type) {
-    case 'quran': return entries.reduce((s, l) => s + (l.value?.pages || 0), 0);
-    case 'dhikr': return entries.reduce((s, l) => s + (l.value?.count || 0), 0);
-    case 'nafile': return entries.reduce((s, l) => s + (l.value?.rakaat || 0), 0);
-    case 'fasting': return entries.length;
-    case 'sadaka': return entries.reduce((s, l) => s + (l.value?.amount || 0), 0);
-    case 'dua': return entries.reduce((s, l) => s + (l.value?.minutes || 0), 0);
-    default: return entries.length;
+    case 'quran':
+      return entries.reduce((s, l) => s + (l.value?.pages || 0), 0);
+    case 'dhikr':
+      return entries.reduce((s, l) => s + (l.value?.count || 0), 0);
+    case 'nafile':
+      return entries.reduce((s, l) => s + (l.value?.rakaat || 0), 0);
+    case 'fasting':
+      return entries.length;
+    case 'sadaka':
+      return entries.reduce((s, l) => s + (l.value?.amount || 0), 0);
+    case 'dua':
+      return entries.reduce((s, l) => s + (l.value?.minutes || 0), 0);
+    default:
+      return entries.length;
   }
 }
 
@@ -40,10 +48,9 @@ export function TodayTrackerCard() {
 
   return (
     <View className="mx-4 mb-5 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-950">
-      <View className="flex-row items-center justify-between px-4 pt-4 pb-2">
+      <View className="flex-row items-center justify-between px-4 pb-2 pt-4">
         <View className="flex-row items-center gap-2">
-          <View
-            className="h-8 w-8 items-center justify-center rounded-xl bg-teal-700/[8%] dark:bg-teal-500/[12%]">
+          <View className="h-8 w-8 items-center justify-center rounded-xl bg-teal-700/[8%] dark:bg-teal-500/[12%]">
             <Ionicons name="journal" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
           </View>
           <Text className="text-sm font-black text-slate-900 dark:text-white">
@@ -53,18 +60,14 @@ export function TodayTrackerCard() {
         <TouchableOpacity
           onPress={() => navigation.navigate('Tracker')}
           className="flex-row items-center gap-1">
-          <Text className="text-xs font-bold text-teal-700 dark:text-teal-500">
-            Ekle
-          </Text>
+          <Text className="text-xs font-bold text-teal-700 dark:text-teal-500">Ekle</Text>
           <Ionicons name="add-circle" size={18} color={isDark ? '#14b8a6' : '#0f766e'} />
         </TouchableOpacity>
       </View>
 
       {isEmpty ? (
         <View className="items-center py-5">
-          <Text className="text-xs font-medium text-slate-400">
-            Bugün henüz kayıt yok
-          </Text>
+          <Text className="text-xs font-medium text-slate-400">Bugün henüz kayıt yok</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Tracker')}
             className="mt-2 rounded-xl bg-teal-700/[6%] px-4 py-2 dark:bg-teal-500/[8%]">
@@ -84,9 +87,7 @@ export function TodayTrackerCard() {
                 className="flex-row items-center gap-1.5 rounded-xl px-3 py-2"
                 style={{ backgroundColor: meta.bgColor }}>
                 <Ionicons name={meta.icon as any} size={14} color={meta.color} />
-                <Text
-                  className="text-xs font-black"
-                  style={{ color: meta.color }}>
+                <Text className="text-xs font-black" style={{ color: meta.color }}>
                   {total}
                   {meta.unit ? ` ${meta.unit}` : ''}
                 </Text>
