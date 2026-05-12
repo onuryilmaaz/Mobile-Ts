@@ -72,15 +72,11 @@ export default function SettingsScreen() {
     if (sent) Alert.alert('Gönderildi', 'Test bildirimi birkaç saniye içinde gelecek.');
   };
 
-  const bg = isDark ? '#0f172a' : '#f8fafc';
-  const card = isDark ? '#1e293b' : '#ffffff';
-  const border = isDark ? 'rgba(255,255,255,0.07)' : '#f1f5f9';
-  const text = isDark ? '#f1f5f9' : '#0f172a';
   const sub = isDark ? '#64748b' : '#94a3b8';
   const teal = isDark ? '#14b8a6' : '#0f766e';
 
   const Section = ({ title }: { title: string }) => (
-    <Text className="mb-2 ml-1 text-xs font-black uppercase tracking-widest" style={{ color: sub }}>
+    <Text className="mb-2 ml-1 text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
       {title}
     </Text>
   );
@@ -100,29 +96,28 @@ export default function SettingsScreen() {
       onPress={onPress}
       disabled={!onPress}
       activeOpacity={onPress ? 0.7 : 1}
-      className="flex-row items-center px-4 py-3.5"
-      style={{ borderBottomWidth: 1, borderBottomColor: border }}>
+      className="flex-row items-center border-b border-slate-100 px-4 py-3.5 dark:border-white/[7%]">
       <View
         className="mr-3 h-9 w-9 items-center justify-center rounded-xl"
         style={{ backgroundColor: `${iconColor}18` }}>
         <Ionicons name={icon} size={18} color={iconColor} />
       </View>
       <View className="flex-1">
-        <Text className="text-sm font-bold" style={{ color: danger ? '#ef4444' : text }}>
+        <Text className={`text-sm font-bold ${danger ? 'text-red-500' : 'text-slate-950 dark:text-slate-100'}`}>
           {label}
         </Text>
-        {sublabel && <Text className="mt-0.5 text-xs" style={{ color: sub }}>{sublabel}</Text>}
+        {sublabel && <Text className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{sublabel}</Text>}
       </View>
       {right}
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: bg }} contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
+    <ScrollView className="flex-1 bg-slate-50 dark:bg-slate-950" contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
 
       {/* Bildirimler */}
       <Section title="Bildirimler" />
-      <View className="mb-6 overflow-hidden rounded-3xl" style={{ backgroundColor: card, borderWidth: 1, borderColor: border }}>
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon="notifications-outline"
           iconColor={teal}
@@ -141,7 +136,7 @@ export default function SettingsScreen() {
         {notifEnabled && (
           <>
             <View className="px-4 pt-3 pb-1">
-              <Text className="mb-2 text-xs font-bold" style={{ color: sub }}>
+              <Text className="mb-2 text-xs font-bold text-slate-400 dark:text-slate-500">
                 Kaç dakika önce hatırlatılsın?
               </Text>
               <View className="flex-row gap-2">
@@ -164,7 +159,7 @@ export default function SettingsScreen() {
             </View>
 
             <View className="mt-2 px-4 pb-2">
-              <Text className="mb-2 text-xs font-bold" style={{ color: sub }}>
+              <Text className="mb-2 text-xs font-bold text-slate-400 dark:text-slate-500">
                 Hangi namazlar için?
               </Text>
               <View className="flex-row flex-wrap gap-2">
@@ -209,7 +204,7 @@ export default function SettingsScreen() {
 
       {/* Görünüm */}
       <Section title="Görünüm" />
-      <View className="mb-6 overflow-hidden rounded-3xl" style={{ backgroundColor: card, borderWidth: 1, borderColor: border }}>
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon={isDark ? 'moon' : 'sunny'}
           iconColor="#f59e0b"
@@ -232,7 +227,7 @@ export default function SettingsScreen() {
 
       {/* Uygulama */}
       <Section title="Uygulama" />
-      <View className="mb-6 overflow-hidden rounded-3xl" style={{ backgroundColor: card, borderWidth: 1, borderColor: border }}>
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon="information-circle-outline"
           iconColor="#3b82f6"

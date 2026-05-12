@@ -371,7 +371,7 @@ export default function DhikrScreen() {
       <MilestoneToast message={milestoneMsg} visible={showMilestone} />
 
       <ScrollView
-        style={{ flex: 1 }}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}>
         <View className="mx-4 mt-4 flex-row gap-3">

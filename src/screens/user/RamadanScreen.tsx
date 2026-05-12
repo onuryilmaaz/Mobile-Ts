@@ -164,11 +164,6 @@ function OffSeasonView({
   onRefresh: () => void;
   isRefreshing: boolean;
 }) {
-  const cardBg = isDark ? '#0f172a' : '#ffffff';
-  const cardBorder = isDark ? '#1e293b' : '#f1f5f9';
-  const textPrimary = isDark ? '#f1f5f9' : '#0f172a';
-  const textSecondary = isDark ? '#94a3b8' : '#64748b';
-
   const kadirDate = new Date('2026-03-16');
   const kadirStr = kadirDate.toLocaleDateString('tr-TR', {
     day: 'numeric',
@@ -194,119 +189,54 @@ function OffSeasonView({
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{ paddingTop: 48, paddingBottom: 40, paddingHorizontal: 24 }}>
-        <Animated.View
-          entering={ZoomIn.duration(500)}
-          style={{ alignItems: 'center', marginBottom: 20 }}>
-          <View
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              backgroundColor: isDark ? 'rgba(20,184,166,0.15)' : 'rgba(20,184,166,0.1)',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 4,
-            }}>
-            <Text style={{ fontSize: 52 }}>🌙</Text>
+        <Animated.View entering={ZoomIn.duration(500)} className="items-center mb-5">
+          <View className="w-[100px] h-[100px] rounded-full bg-teal-500/10 dark:bg-teal-500/15 items-center justify-center mb-1">
+            <Text className="text-[52px]">🌙</Text>
           </View>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.duration(400)} style={{ alignItems: 'center' }}>
-          <Text
-            style={{
-              fontSize: 13,
-              fontWeight: '700',
-              color: '#14b8a6',
-              letterSpacing: 2,
-              textTransform: 'uppercase',
-              marginBottom: 4,
-            }}>
+        <Animated.View entering={FadeInDown.duration(400)} className="items-center">
+          <Text className="text-[13px] font-bold text-teal-500 tracking-[2px] uppercase mb-1">
             Ramazan 1448e
           </Text>
-          <Text
-            style={{
-              fontSize: 64,
-              fontWeight: '900',
-              color: isDark ? '#f1f5f9' : '#0f172a',
-              lineHeight: 72,
-            }}>
+          <Text className="text-[64px] font-black text-slate-950 dark:text-slate-100 leading-[72px]">
             {daysUntilRamadan}
           </Text>
-          <Text style={{ fontSize: 20, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b' }}>
-            gün kaldı
-          </Text>
+          <Text className="text-xl font-bold text-slate-500 dark:text-slate-400">gün kaldı</Text>
         </Animated.View>
       </LinearGradient>
 
-      <View style={{ marginHorizontal: 16, marginTop: -16 }}>
+      <View className="mx-4 -mt-4">
         <Animated.View
           entering={FadeInDown.delay(100).duration(400)}
-          style={{
-            backgroundColor: cardBg,
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor: cardBorder,
-            padding: 20,
-            marginBottom: 12,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: isDark ? 0.3 : 0.06,
-            shadowRadius: 8,
-            elevation: 3,
-          }}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '700',
-              color: '#14b8a6',
-              letterSpacing: 1.5,
-              textTransform: 'uppercase',
-              marginBottom: 16,
-            }}>
+          className="bg-white dark:bg-slate-950 rounded-[24px] border border-slate-100 dark:border-slate-800 p-5 mb-3 shadow-sm">
+          <Text className="text-xs font-bold text-teal-500 tracking-[1.5px] uppercase mb-4">
             Önemli Tarihler
           </Text>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 12,
-                backgroundColor: '#14b8a615',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 14,
-              }}>
+          <View className="flex-row items-center mb-3.5">
+            <View className="w-10 h-10 rounded-xl bg-teal-500/10 items-center justify-center mr-3.5">
               <Ionicons name="moon" size={18} color="#14b8a6" />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: textPrimary }}>
+            <View className="flex-1">
+              <Text className="text-[13px] font-extrabold text-slate-950 dark:text-slate-100">
                 Ramazan 1448 Başlangıcı
               </Text>
-              <Text style={{ fontSize: 12, color: textSecondary, marginTop: 1 }}>
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-px">
                 {ramadanStartStr}
               </Text>
             </View>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 12,
-                backgroundColor: '#6366f115',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 14,
-              }}>
+          <View className="flex-row items-center">
+            <View className="w-10 h-10 rounded-xl bg-indigo-500/10 items-center justify-center mr-3.5">
               <Ionicons name="sparkles" size={18} color="#6366f1" />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: textPrimary }}>
+            <View className="flex-1">
+              <Text className="text-[13px] font-extrabold text-slate-950 dark:text-slate-100">
                 Kadir Gecesi (1447)
               </Text>
-              <Text style={{ fontSize: 12, color: textSecondary, marginTop: 1 }}>
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-px">
                 {kadirStr} — 26 Ramazan 1447
               </Text>
             </View>
@@ -314,11 +244,11 @@ function OffSeasonView({
         </Animated.View>
       </View>
 
-      <View style={{ marginHorizontal: 16, marginTop: 4 }}>
-        <Text style={{ fontSize: 17, fontWeight: '900', color: textPrimary, marginBottom: 12 }}>
+      <View className="mx-4 mt-1">
+        <Text className="text-[17px] font-black text-slate-950 dark:text-slate-100 mb-3">
           Ramazana Hazırlanıyorum
         </Text>
-        <Text style={{ fontSize: 13, color: textSecondary, marginBottom: 16 }}>
+        <Text className="text-[13px] text-slate-500 dark:text-slate-400 mb-4">
           Şimdi ne yapabilirsin?
         </Text>
 
@@ -326,16 +256,7 @@ function OffSeasonView({
           <Animated.View
             key={card.title}
             entering={FadeInDown.delay(i * 80 + 200).duration(400)}
-            style={{
-              backgroundColor: cardBg,
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: cardBorder,
-              padding: 16,
-              marginBottom: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
+            className="bg-white dark:bg-slate-950 rounded-[20px] border border-slate-100 dark:border-slate-800 p-4 mb-[10px] flex-row items-center">
             <View
               style={{
                 width: 46,
@@ -348,88 +269,43 @@ function OffSeasonView({
               }}>
               <Ionicons name={card.icon} size={22} color={card.color} />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{ fontSize: 14, fontWeight: '800', color: textPrimary, marginBottom: 2 }}>
+            <View className="flex-1">
+              <Text className="text-sm font-extrabold text-slate-950 dark:text-slate-100 mb-0.5">
                 {card.title}
               </Text>
-              <Text style={{ fontSize: 12, color: textSecondary }}>{card.desc}</Text>
+              <Text className="text-xs text-slate-500 dark:text-slate-400">{card.desc}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={16} color={textSecondary} />
+            <Ionicons name="chevron-forward" size={16} color={isDark ? '#94a3b8' : '#64748b'} />
           </Animated.View>
         ))}
       </View>
 
       <Animated.View
         entering={FadeInDown.delay(500).duration(400)}
-        style={{
-          marginHorizontal: 16,
-          marginTop: 16,
-          backgroundColor: cardBg,
-          borderRadius: 24,
-          borderWidth: 1,
-          borderColor: cardBorder,
-          padding: 20,
-        }}>
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: '700',
-            color: '#6366f1',
-            letterSpacing: 1.5,
-            textTransform: 'uppercase',
-            marginBottom: 16,
-          }}>
+        className="mx-4 mt-4 bg-white dark:bg-slate-950 rounded-[24px] border border-slate-100 dark:border-slate-800 p-5">
+        <Text className="text-xs font-bold text-indigo-500 tracking-[1.5px] uppercase mb-4">
           Geçen Ramazan
         </Text>
 
-        <View style={{ flexDirection: 'row', gap: 12 }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: isDark ? '#1e293b' : '#f8fafc',
-              borderRadius: 16,
-              padding: 16,
-              alignItems: 'center',
-            }}>
-            <Text style={{ fontSize: 28, fontWeight: '900', color: '#10b981' }}>
+        <View className="flex-row gap-3">
+          <View className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 items-center">
+            <Text className="text-[28px] font-black text-emerald-500">
               {todayLogs.filter((l) => l.activity_type === 'fasting').length > 0
                 ? todayLogs.filter((l) => l.activity_type === 'fasting').length
                 : '—'}
             </Text>
-            <Text
-              style={{
-                fontSize: 11,
-                fontWeight: '700',
-                color: textSecondary,
-                marginTop: 2,
-                textAlign: 'center',
-              }}>
+            <Text className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5 text-center">
               Oruç Kaydı
             </Text>
           </View>
 
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: isDark ? '#1e293b' : '#f8fafc',
-              borderRadius: 16,
-              padding: 16,
-              alignItems: 'center',
-            }}>
-            <Text style={{ fontSize: 28, fontWeight: '900', color: '#8b5cf6' }}>
+          <View className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 items-center">
+            <Text className="text-[28px] font-black text-violet-500">
               {todayLogs
                 .filter((l) => l.activity_type === 'quran')
                 .reduce((s, l) => s + (l.value?.pages ?? 0), 0) || '—'}
             </Text>
-            <Text
-              style={{
-                fontSize: 11,
-                fontWeight: '700',
-                color: textSecondary,
-                marginTop: 2,
-                textAlign: 'center',
-              }}>
+            <Text className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5 text-center">
               Quran Sayfası
             </Text>
           </View>
@@ -454,11 +330,6 @@ function RamadanModeView({
   onRefresh: () => void;
   isRefreshing: boolean;
 }) {
-  const cardBg = isDark ? '#0f172a' : '#ffffff';
-  const cardBorder = isDark ? '#1e293b' : '#f1f5f9';
-  const textPrimary = isDark ? '#f1f5f9' : '#0f172a';
-  const textSecondary = isDark ? '#94a3b8' : '#64748b';
-
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimeData | null>(null);
   const [prayerLoading, setPrayerLoading] = useState(true);
 
@@ -484,7 +355,6 @@ function RamadanModeView({
       : 0;
 
   const todayDhikr = DAILY_DHIKRS[ramadanDay % DAILY_DHIKRS.length];
-
   const daysUntilKadir = getDaysUntilKadir(ramadanDay);
 
   useEffect(() => {
@@ -573,45 +443,30 @@ function RamadanModeView({
         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor="#14b8a6" />
       }
       contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* ── Header Gradient ── */}
       <LinearGradient
         colors={isDark ? ['#0f172a', '#134e4a'] : ['#f0fdf4', '#ccfbf1']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{ paddingTop: 48, paddingBottom: 32, paddingHorizontal: 24 }}>
         <Animated.View entering={FadeIn.duration(400)}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '700',
-              color: '#14b8a6',
-              letterSpacing: 2,
-              textTransform: 'uppercase',
-              marginBottom: 6,
-            }}>
+          <Text className="text-xs font-bold text-teal-500 tracking-[2px] uppercase mb-1.5">
             Ramazan-ı Şerif
           </Text>
-          <Text
-            style={{
-              fontSize: 36,
-              fontWeight: '900',
-              color: isDark ? '#f1f5f9' : '#0f172a',
-              marginBottom: 6,
-            }}>
+          <Text className="text-[36px] font-black text-slate-950 dark:text-slate-100 mb-1.5">
             {ramadanDay}. Gün 🌙
           </Text>
 
           {daysUntilKadir > 0 ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <View className="flex-row items-center gap-1.5">
               <Ionicons name="sparkles" size={14} color="#a78bfa" />
-              <Text style={{ fontSize: 13, color: '#a78bfa', fontWeight: '700' }}>
+              <Text className="text-[13px] text-violet-400 font-bold">
                 Kadir Gecesine {daysUntilKadir} gün kaldı
               </Text>
             </View>
           ) : (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <View className="flex-row items-center gap-1.5">
               <Ionicons name="sparkles" size={14} color="#a78bfa" />
-              <Text style={{ fontSize: 13, color: '#a78bfa', fontWeight: '700' }}>
+              <Text className="text-[13px] text-violet-400 font-bold">
                 Kadir Gecesi — Bin aydan hayırlı!
               </Text>
             </View>
@@ -619,181 +474,107 @@ function RamadanModeView({
         </Animated.View>
       </LinearGradient>
 
-      <View style={{ marginHorizontal: 16, marginTop: -12 }}>
+      <View className="mx-4 -mt-3">
+        {/* Countdown card */}
         <Animated.View
           entering={FadeInDown.delay(50).duration(400)}
-          style={{
-            backgroundColor: cardBg,
-            borderRadius: 28,
-            borderWidth: 1,
-            borderColor: cardBorder,
-            padding: 22,
-            marginBottom: 12,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: isDark ? 0.35 : 0.08,
-            shadowRadius: 10,
-            elevation: 4,
-          }}>
+          className="bg-white dark:bg-slate-950 rounded-[28px] border border-slate-100 dark:border-slate-800 p-[22px] mb-3 shadow-sm">
           {prayerLoading ? (
-            <View style={{ alignItems: 'center', paddingVertical: 12 }}>
-              <Text style={{ color: textSecondary, fontSize: 14 }}>Vakitler yükleniyor...</Text>
+            <View className="items-center py-3">
+              <Text className="text-slate-500 dark:text-slate-400 text-sm">
+                Vakitler yükleniyor...
+              </Text>
             </View>
           ) : prayerTimes ? (
             <>
-              <View style={{ alignItems: 'center', marginBottom: 20 }}>
+              <View className="items-center mb-5">
                 <Text
-                  style={{
-                    fontSize: 46,
-                    fontWeight: '900',
-                    color: '#14b8a6',
-                    letterSpacing: 2,
-                    fontVariant: ['tabular-nums'],
-                  }}>
+                  className="text-[46px] font-black text-teal-500 tracking-[2px]"
+                  style={{ fontVariant: ['tabular-nums'] }}>
                   {countdown}
                 </Text>
-                <Text
-                  style={{ fontSize: 12, color: textSecondary, marginTop: 4, textAlign: 'center' }}>
+                <Text className="text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">
                   {countdownLabel}
                 </Text>
               </View>
 
-              <View style={{ flexDirection: 'row', gap: 10 }}>
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: isDark ? '#1e293b' : '#f0fdf4',
-                    borderRadius: 16,
-                    padding: 14,
-                    alignItems: 'center',
-                  }}>
+              <View className="flex-row gap-2.5">
+                <View className="flex-1 bg-green-50 dark:bg-slate-800 rounded-2xl p-3.5 items-center">
                   <Ionicons
                     name="moon-outline"
                     size={18}
                     color="#6366f1"
                     style={{ marginBottom: 4 }}
                   />
-                  <Text
-                    style={{
-                      fontSize: 11,
-                      fontWeight: '700',
-                      color: '#6366f1',
-                      textTransform: 'uppercase',
-                      letterSpacing: 1,
-                    }}>
+                  <Text className="text-[11px] font-bold text-indigo-500 uppercase tracking-[1px]">
                     İmsak (Suhur)
                   </Text>
-                  <Text
-                    style={{ fontSize: 20, fontWeight: '900', color: textPrimary, marginTop: 4 }}>
+                  <Text className="text-xl font-black text-slate-950 dark:text-slate-100 mt-1">
                     {prayerTimes.times.imsak}
                   </Text>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: isDark ? '#1e293b' : '#fff7ed',
-                    borderRadius: 16,
-                    padding: 14,
-                    alignItems: 'center',
-                  }}>
+                <View className="flex-1 bg-orange-50 dark:bg-slate-800 rounded-2xl p-3.5 items-center">
                   <Ionicons name="moon" size={18} color="#f59e0b" style={{ marginBottom: 4 }} />
-                  <Text
-                    style={{
-                      fontSize: 11,
-                      fontWeight: '700',
-                      color: '#f59e0b',
-                      textTransform: 'uppercase',
-                      letterSpacing: 1,
-                    }}>
+                  <Text className="text-[11px] font-bold text-amber-500 uppercase tracking-[1px]">
                     Akşam (İftar)
                   </Text>
-                  <Text
-                    style={{ fontSize: 20, fontWeight: '900', color: textPrimary, marginTop: 4 }}>
+                  <Text className="text-xl font-black text-slate-950 dark:text-slate-100 mt-1">
                     {prayerTimes.times.aksam}
                   </Text>
                 </View>
               </View>
 
-              <View
-                style={{
-                  marginTop: 16,
-                  backgroundColor: isDark ? '#1e293b' : '#fef9e7',
-                  borderRadius: 14,
-                  padding: 14,
-                }}>
-                <Text
-                  style={{ fontSize: 11, fontWeight: '700', color: '#f59e0b', marginBottom: 6 }}>
-                  İFTAR DUASI
-                </Text>
-                <Text
-                  style={{ fontSize: 13, color: textPrimary, fontStyle: 'italic', lineHeight: 20 }}>
+              <View className="mt-4 bg-yellow-50 dark:bg-slate-800 rounded-[14px] p-3.5">
+                <Text className="text-[11px] font-bold text-amber-500 mb-1.5">İFTAR DUASI</Text>
+                <Text className="text-[13px] text-slate-950 dark:text-slate-100 italic leading-5">
                   &ldquo;Allahümme leke sumtü ve bike amentü ve aleyke tevekkeltu ve alâ rızkike
                   eftartü.&rdquo;
                 </Text>
-                <Text style={{ fontSize: 11, color: textSecondary, marginTop: 6 }}>
+                <Text className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
                   Allah&apos;ım! Senin için oruç tuttum, sana inandım, sana dayandım ve senin
                   rızkınla orucumu açtım.
                 </Text>
               </View>
             </>
           ) : (
-            <View style={{ alignItems: 'center', paddingVertical: 8 }}>
-              <Ionicons name="location-outline" size={32} color={textSecondary} />
-              <Text
-                style={{ color: textSecondary, fontSize: 13, marginTop: 8, textAlign: 'center' }}>
+            <View className="items-center py-2">
+              <Ionicons name="location-outline" size={32} color={isDark ? '#94a3b8' : '#64748b'} />
+              <Text className="text-slate-500 dark:text-slate-400 text-[13px] mt-2 text-center">
                 Namaz vakitleri için konum seçiniz
               </Text>
             </View>
           )}
         </Animated.View>
 
+        {/* Fasting card */}
         <Animated.View
           entering={FadeInDown.delay(150).duration(400)}
-          style={{
-            backgroundColor: cardBg,
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor: hasFastingLog ? '#10b98130' : cardBorder,
-            padding: 18,
-            marginBottom: 12,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+          className={`bg-white dark:bg-slate-950 rounded-[24px] border p-[18px] mb-3 flex-row items-center ${
+            hasFastingLog ? 'border-emerald-500/20' : 'border-slate-100 dark:border-slate-800'
+          }`}>
           <View
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
-              backgroundColor: hasFastingLog ? '#10b98120' : isDark ? '#1e293b' : '#f8fafc',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 14,
-            }}>
+            className={`w-12 h-12 rounded-2xl items-center justify-center mr-3.5 ${
+              hasFastingLog ? 'bg-emerald-500/10' : 'bg-slate-50 dark:bg-slate-800'
+            }`}>
             <Ionicons
               name={hasFastingLog ? 'checkmark-circle' : 'nutrition-outline'}
               size={24}
-              color={hasFastingLog ? '#10b981' : textSecondary}
+              color={hasFastingLog ? '#10b981' : isDark ? '#94a3b8' : '#64748b'}
             />
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: textPrimary }}>
+          <View className="flex-1">
+            <Text className="text-[15px] font-extrabold text-slate-950 dark:text-slate-100">
               {hasFastingLog ? 'Oruç tutuyorum' : 'Bugünkü Oruç'}
             </Text>
             {hasFastingLog ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                <View
-                  style={{
-                    backgroundColor: '#10b981',
-                    borderRadius: 6,
-                    paddingHorizontal: 8,
-                    paddingVertical: 2,
-                  }}>
-                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>Kaydedildi</Text>
+              <View className="flex-row items-center gap-1 mt-0.5">
+                <View className="bg-emerald-500 rounded-[6px] px-2 py-0.5">
+                  <Text className="text-[11px] font-extrabold text-white">Kaydedildi</Text>
                 </View>
               </View>
             ) : (
-              <Text style={{ fontSize: 12, color: textSecondary, marginTop: 1 }}>
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-px">
                 Ramazan orucunu kaydet
               </Text>
             )}
@@ -803,42 +584,23 @@ function RamadanModeView({
             <TouchableOpacity
               onPress={handleLogFasting}
               disabled={fastingLoading}
-              style={{
-                backgroundColor: '#10b981',
-                borderRadius: 16,
-                paddingHorizontal: 16,
-                paddingVertical: 10,
-              }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: '#fff' }}>
+              className="bg-emerald-500 rounded-2xl px-4 py-2.5">
+              <Text className="text-[13px] font-extrabold text-white">
                 {fastingLoading ? '...' : 'Kaydet'}
               </Text>
             </TouchableOpacity>
           )}
         </Animated.View>
 
+        {/* Hatim card */}
         <Animated.View
           entering={FadeInDown.delay(250).duration(400)}
-          style={{
-            backgroundColor: cardBg,
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor: cardBorder,
-            padding: 20,
-            marginBottom: 12,
-          }}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '700',
-              color: '#8b5cf6',
-              letterSpacing: 1.5,
-              textTransform: 'uppercase',
-              marginBottom: 16,
-            }}>
+          className="bg-white dark:bg-slate-950 rounded-[24px] border border-slate-100 dark:border-slate-800 p-5 mb-3">
+          <Text className="text-xs font-bold text-violet-500 tracking-[1.5px] uppercase mb-4">
             Hatim Takibi
           </Text>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+          <View className="flex-row items-center gap-5">
             <CircularProgress
               percent={hatimPercent}
               size={110}
@@ -847,41 +609,27 @@ function RamadanModeView({
               isDark={isDark}
             />
 
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 22, fontWeight: '900', color: textPrimary }}>
+            <View className="flex-1">
+              <Text className="text-[22px] font-black text-slate-950 dark:text-slate-100">
                 {totalQuranPages}
-                <Text style={{ fontSize: 14, fontWeight: '600', color: textSecondary }}>
+                <Text className="text-sm font-semibold text-slate-500 dark:text-slate-400">
                   {' '}
                   /{QURAN_TOTAL_PAGES} sayfa
                 </Text>
               </Text>
-              <Text style={{ fontSize: 13, color: textSecondary, marginTop: 4 }}>
+              <Text className="text-[13px] text-slate-500 dark:text-slate-400 mt-1">
                 %{hatimPercent.toFixed(1)} tamamlandı
               </Text>
 
               {daysToFinish > 0 ? (
-                <View
-                  style={{
-                    marginTop: 10,
-                    backgroundColor: isDark ? '#1e293b' : '#f5f3ff',
-                    borderRadius: 10,
-                    paddingHorizontal: 10,
-                    paddingVertical: 6,
-                  }}>
-                  <Text style={{ fontSize: 12, color: '#8b5cf6', fontWeight: '700' }}>
+                <View className="mt-2.5 bg-violet-50 dark:bg-slate-800 rounded-[10px] px-2.5 py-1.5">
+                  <Text className="text-xs text-violet-500 font-bold">
                     Günde {DAILY_TARGET_PAGES} sayfayla {daysToFinish} günde biter
                   </Text>
                 </View>
               ) : (
-                <View
-                  style={{
-                    marginTop: 10,
-                    backgroundColor: '#8b5cf620',
-                    borderRadius: 10,
-                    paddingHorizontal: 10,
-                    paddingVertical: 6,
-                  }}>
-                  <Text style={{ fontSize: 12, color: '#8b5cf6', fontWeight: '800' }}>
+                <View className="mt-2.5 bg-violet-500/10 rounded-[10px] px-2.5 py-1.5">
+                  <Text className="text-xs text-violet-500 font-extrabold">
                     Hatim tamamlandı! 🎉
                   </Text>
                 </View>
@@ -890,97 +638,60 @@ function RamadanModeView({
           </View>
         </Animated.View>
 
+        {/* Günün Zikri card */}
         <Animated.View
           entering={FadeInDown.delay(350).duration(400)}
-          style={{
-            backgroundColor: cardBg,
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor: cardBorder,
-            padding: 20,
-            marginBottom: 12,
-          }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 }}>
-            <View
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                backgroundColor: '#06b6d415',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+          className="bg-white dark:bg-slate-950 rounded-[24px] border border-slate-100 dark:border-slate-800 p-5 mb-3">
+          <View className="flex-row items-center mb-3.5 gap-2.5">
+            <View className="w-[38px] h-[38px] rounded-xl bg-cyan-500/10 items-center justify-center">
               <Ionicons name="radio-button-on" size={18} color="#06b6d4" />
             </View>
             <View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '700',
-                  color: '#06b6d4',
-                  letterSpacing: 1.5,
-                  textTransform: 'uppercase',
-                }}>
+              <Text className="text-xs font-bold text-cyan-500 tracking-[1.5px] uppercase">
                 Günün Zikri
               </Text>
-              <Text style={{ fontSize: 11, color: textSecondary }}>{ramadanDay}. gün</Text>
+              <Text className="text-[11px] text-slate-500 dark:text-slate-400">
+                {ramadanDay}. gün
+              </Text>
             </View>
           </View>
 
-          <Text style={{ fontSize: 15, fontWeight: '700', color: textPrimary, lineHeight: 22 }}>
+          <Text className="text-[15px] font-bold text-slate-950 dark:text-slate-100 leading-[22px]">
             {todayDhikr}
           </Text>
         </Animated.View>
 
+        {/* Teravih card */}
         <Animated.View
           entering={FadeInDown.delay(450).duration(400)}
-          style={{
-            backgroundColor: cardBg,
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor: hasTeravihLog ? '#f59e0b30' : cardBorder,
-            padding: 18,
-            marginBottom: 12,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+          className={`bg-white dark:bg-slate-950 rounded-[24px] border p-[18px] mb-3 flex-row items-center ${
+            hasTeravihLog ? 'border-amber-500/20' : 'border-slate-100 dark:border-slate-800'
+          }`}>
           <View
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
-              backgroundColor: hasTeravihLog ? '#f59e0b20' : isDark ? '#1e293b' : '#f8fafc',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 14,
-            }}>
+            className={`w-12 h-12 rounded-2xl items-center justify-center mr-3.5 ${
+              hasTeravihLog ? 'bg-amber-500/10' : 'bg-slate-50 dark:bg-slate-800'
+            }`}>
             <Ionicons
               name={hasTeravihLog ? 'star' : 'star-outline'}
               size={24}
-              color={hasTeravihLog ? '#f59e0b' : textSecondary}
+              color={hasTeravihLog ? '#f59e0b' : isDark ? '#94a3b8' : '#64748b'}
             />
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: textPrimary }}>
+          <View className="flex-1">
+            <Text className="text-[15px] font-extrabold text-slate-950 dark:text-slate-100">
               Bu gece Teravih
             </Text>
             {hasTeravihLog ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                <View
-                  style={{
-                    backgroundColor: '#f59e0b',
-                    borderRadius: 6,
-                    paddingHorizontal: 8,
-                    paddingVertical: 2,
-                  }}>
-                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>
+              <View className="flex-row items-center gap-1 mt-0.5">
+                <View className="bg-amber-500 rounded-[6px] px-2 py-0.5">
+                  <Text className="text-[11px] font-extrabold text-white">
                     20 rekat kaydedildi
                   </Text>
                 </View>
               </View>
             ) : (
-              <Text style={{ fontSize: 12, color: textSecondary, marginTop: 1 }}>
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-px">
                 Teravih namazını kaydet (20 rekat)
               </Text>
             )}
@@ -990,13 +701,8 @@ function RamadanModeView({
             <TouchableOpacity
               onPress={handleLogTeravih}
               disabled={teravihLoading}
-              style={{
-                backgroundColor: '#f59e0b',
-                borderRadius: 16,
-                paddingHorizontal: 16,
-                paddingVertical: 10,
-              }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: '#fff' }}>
+              className="bg-amber-500 rounded-2xl px-4 py-2.5">
+              <Text className="text-[13px] font-extrabold text-white">
                 {teravihLoading ? '...' : 'Kıldım'}
               </Text>
             </TouchableOpacity>
@@ -1031,7 +737,7 @@ export default function RamadanScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#020617' : '#f8fafc' }}>
+    <View className="flex-1 bg-slate-50 dark:bg-slate-950">
       {isRamadan ? (
         <RamadanModeView
           isDark={isDark}

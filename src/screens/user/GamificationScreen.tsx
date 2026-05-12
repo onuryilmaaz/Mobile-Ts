@@ -263,8 +263,7 @@ export function GamificationScreen() {
                           isEarned
                             ? 'border-teal-100 bg-white dark:border-teal-500/20 dark:bg-slate-800'
                             : 'border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800/40'
-                        }`}
-                        style={{ opacity: isEarned ? 1 : 0.4 }}>
+                        } ${isEarned ? 'opacity-100' : 'opacity-40'}`}>
                         <Ionicons
                           name={isEarned ? badgeDesc.icon || 'ribbon' : 'lock-closed'}
                           size={32}

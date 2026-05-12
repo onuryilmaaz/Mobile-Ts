@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   RefreshControl,
   ScrollView,
   Text,
@@ -22,7 +24,7 @@ import {
   type TrackerLog,
 } from '@/modules/tracker/tracker.types';
 
-const { width: SCREEN_W } = Dimensions.get('window');
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
 const TABS = ['Bugün', 'Haftalık', 'Aylık'] as const;
 type Tab = (typeof TABS)[number];
@@ -198,14 +200,16 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
   };
 
   return (
-    <View className={`rounded-t-3xl px-5 pb-8 pt-5 ${isDark ? 'bg-slate-900' : 'bg-white'}`}>
+    <View
+      className={`rounded-t-3xl pt-3 ${isDark ? 'bg-slate-900' : 'bg-white'}`}
+      style={{ maxHeight: SCREEN_H * 0.82 }}>
       {/* Handle */}
-      <View className="mb-5 items-center">
+      <View className="mb-3 items-center">
         <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
       </View>
 
       {/* Title */}
-      <View className="mb-6 flex-row items-center gap-3">
+      <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
         <View className="h-10 w-10 items-center justify-center rounded-2xl" style={{ backgroundColor: meta.bgColor }}>
           <Ionicons name={meta.icon as any} size={20} color={meta.color} />
         </View>
@@ -215,7 +219,11 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        className="px-5"
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 8, paddingTop: 4 }}>
         {/* ── QURAN ── */}
         {type === 'quran' && (
           <View className="gap-4">
@@ -331,17 +339,17 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
           <Text className={labelCls}>Not (opsiyonel)</Text>
           <TextInput className={`${inputCls} min-h-[60px]`} placeholder="Bir not ekle..." multiline value={notes} onChangeText={setNotes} placeholderTextColor="#94a3b8" />
         </View>
-
-        {/* Buttons */}
-        <View className="mt-6 flex-row gap-3">
-          <TouchableOpacity onPress={onClose} className="flex-1 items-center rounded-2xl border py-3.5" style={{ borderColor: isDark ? '#334155' : '#e2e8f0' }}>
-            <Text className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>İptal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSubmit} className="flex-1 items-center rounded-2xl py-3.5" style={{ backgroundColor: meta.color }}>
-            <Text className="font-black text-white">Kaydet</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
+
+      {/* Sabit alt butonlar */}
+      <View className="flex-row gap-3 border-t border-slate-100 px-5 py-4 dark:border-slate-800">
+        <TouchableOpacity onPress={onClose} className="flex-1 items-center rounded-2xl border border-slate-200 py-3.5 dark:border-slate-700">
+          <Text className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>İptal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleSubmit} className="flex-1 items-center rounded-2xl py-3.5" style={{ backgroundColor: meta.color }}>
+          <Text className="font-black text-white">Kaydet</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -386,8 +394,7 @@ function ActivityCard({ type, todayLogs, onPress, isDark }: { type: ActivityType
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
-      className="mb-3 overflow-hidden rounded-3xl border"
-      style={{ borderColor: isDark ? '#1e293b' : '#f1f5f9', backgroundColor: isDark ? '#0f172a' : '#ffffff' }}>
+      className="mb-3 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
       <View className="flex-row items-center gap-4 p-4">
         <View className="h-12 w-12 items-center justify-center rounded-2xl" style={{ backgroundColor: hasEntries ? `${meta.color}20` : isDark ? '#1e293b' : '#f8fafc' }}>
           <Ionicons name={meta.icon as any} size={22} color={hasEntries ? meta.color : isDark ? '#475569' : '#94a3b8'} />
@@ -437,9 +444,9 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
             const actCount = Object.keys(day.activities).length;
             return (
               <View key={i} className="items-center gap-1.5">
-                <View className={`h-10 w-10 items-center justify-center rounded-2xl ${hasAny ? '' : isDark ? 'bg-slate-800' : 'bg-slate-100'}`} style={hasAny ? { backgroundColor: '#14b8a620' } : {}}>
+                <View className={`h-10 w-10 items-center justify-center rounded-2xl ${hasAny ? 'bg-teal-500/[12%]' : isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
                   {hasAny ? (
-                    <Text className="text-xs font-black" style={{ color: '#14b8a6' }}>{actCount}</Text>
+                    <Text className="text-xs font-black text-teal-500">{actCount}</Text>
                   ) : (
                     <Text className="text-[10px] text-slate-400">—</Text>
                   )}
@@ -601,7 +608,7 @@ function MonthHeatmap({ year, month, daily, isDark }: { year: number; month: num
       <Text className={`mb-3 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Takvim</Text>
       <View className="mb-2 flex-row">
         {DAYS_TR.map((d) => (
-          <View key={d} style={{ flex: 1, alignItems: 'center' }}>
+          <View key={d} className="flex-1 items-center">
             <Text className={`text-[10px] font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{d}</Text>
           </View>
         ))}
@@ -616,7 +623,7 @@ function MonthHeatmap({ year, month, daily, isDark }: { year: number; month: num
             const today = new Date();
             const isToday = today.getFullYear() === year && today.getMonth() + 1 === month && today.getDate() === day;
             return (
-              <View key={col} style={{ flex: 1, height: 32, alignItems: 'center', justifyContent: 'center' }}>
+              <View key={col} className="flex-1 h-8 items-center justify-center">
                 <View className={`h-7 w-7 items-center justify-center rounded-xl ${isToday ? 'border-2 border-teal-500' : ''}`} style={hasActivity ? { backgroundColor: '#14b8a6' + (actCount >= 3 ? '' : '60') } : {}}>
                   <Text className={`text-[11px] font-bold ${hasActivity ? 'text-white' : isToday ? 'text-teal-500' : isDark ? 'text-slate-500' : 'text-slate-400'}`}>{day}</Text>
                 </View>
@@ -759,10 +766,14 @@ export default function TrackerScreen() {
         animationType="slide"
         transparent
         onRequestClose={() => setModalType(null)}>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setModalType(null)}
-          className="flex-1 justify-end bg-black/50">
+        <KeyboardAvoidingView
+          className="flex-1 justify-end"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TouchableOpacity
+            className="absolute inset-0 bg-black/50"
+            activeOpacity={1}
+            onPress={() => setModalType(null)}
+          />
           <TouchableOpacity activeOpacity={1} onPress={() => {}}>
             {modalType && (
               <LogForm
@@ -773,7 +784,7 @@ export default function TrackerScreen() {
               />
             )}
           </TouchableOpacity>
-        </TouchableOpacity>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

@@ -31,7 +31,7 @@ export function ReligiousDaysCard() {
     <View className="mx-4 mb-6">
       <View
         className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-        <View className="px-6 py-4" style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
+        <View className="bg-[#0f766e] px-6 py-4 dark:bg-[#0c4a3e]">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <View className="rounded-full bg-white/20 p-1.5 dark:bg-teal-500/20">
@@ -109,9 +109,7 @@ export function ReligiousDaysCard() {
         <BlurView intensity={30} tint="dark" className="flex-1 items-center justify-center px-4">
           <View
             className="max-h-[80%] w-full overflow-hidden rounded-[40px] bg-white shadow-2xl dark:bg-slate-900">
-            <View
-              className="flex-row items-center justify-between px-6 py-6"
-              style={{ backgroundColor: isDark ? '#0c4a3e' : '#0f766e' }}>
+            <View className="flex-row items-center justify-between bg-[#0f766e] px-6 py-6 dark:bg-[#0c4a3e]">
               <View>
                 <Text className="text-2xl font-bold text-white">2026 Dini Günler</Text>
                 <Text className="mt-1 text-xs text-teal-100 dark:text-teal-500/80">

@@ -52,9 +52,6 @@ export function StandardHeader({
   const headerHeight = HEADER_CONFIG.height;
   const finalStatusBarHeight = Platform.OS === 'android' ? statusBarHeight : insets.top;
   const totalHeight = finalStatusBarHeight + headerHeight;
-  const headerBg = isDark ? '#0b1220' : '#ffffff';
-  const border = isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0';
-
   const handleProfilePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (isAuthenticated) {
@@ -66,14 +63,12 @@ export function StandardHeader({
 
   return (
     <View
-      className="w-full justify-center border-b bg-white"
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-white/[6%] dark:bg-[#0b1220]"
       style={{
         paddingTop: finalStatusBarHeight,
         paddingBottom: 0,
         paddingHorizontal: 16,
         height: totalHeight,
-        backgroundColor: headerBg,
-        borderBottomColor: border,
       }}>
       {isDark && (
         <View

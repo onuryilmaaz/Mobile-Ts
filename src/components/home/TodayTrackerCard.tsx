@@ -38,18 +38,12 @@ export function TodayTrackerCard() {
   const activeTypes = SUMMARY_TYPES.filter((t) => getTotal(t, todayLogs) > 0);
   const isEmpty = activeTypes.length === 0;
 
-  const cardBg = isDark ? '#0f172a' : '#ffffff';
-  const borderColor = isDark ? 'rgba(255,255,255,0.07)' : '#f1f5f9';
-
   return (
-    <View
-      className="mx-4 mb-5 overflow-hidden rounded-3xl"
-      style={{ backgroundColor: cardBg, borderWidth: 1, borderColor }}>
+    <View className="mx-4 mb-5 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-950">
       <View className="flex-row items-center justify-between px-4 pt-4 pb-2">
         <View className="flex-row items-center gap-2">
           <View
-            className="h-8 w-8 items-center justify-center rounded-xl"
-            style={{ backgroundColor: isDark ? '#14b8a620' : '#0f766e15' }}>
+            className="h-8 w-8 items-center justify-center rounded-xl bg-teal-700/[8%] dark:bg-teal-500/[12%]">
             <Ionicons name="journal" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
           </View>
           <Text className="text-sm font-black text-slate-900 dark:text-white">
@@ -59,7 +53,7 @@ export function TodayTrackerCard() {
         <TouchableOpacity
           onPress={() => navigation.navigate('Tracker')}
           className="flex-row items-center gap-1">
-          <Text className="text-xs font-bold" style={{ color: isDark ? '#14b8a6' : '#0f766e' }}>
+          <Text className="text-xs font-bold text-teal-700 dark:text-teal-500">
             Ekle
           </Text>
           <Ionicons name="add-circle" size={18} color={isDark ? '#14b8a6' : '#0f766e'} />
@@ -73,11 +67,8 @@ export function TodayTrackerCard() {
           </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Tracker')}
-            className="mt-2 rounded-xl px-4 py-2"
-            style={{ backgroundColor: isDark ? '#14b8a615' : '#0f766e10' }}>
-            <Text
-              className="text-xs font-bold"
-              style={{ color: isDark ? '#14b8a6' : '#0f766e' }}>
+            className="mt-2 rounded-xl bg-teal-700/[6%] px-4 py-2 dark:bg-teal-500/[8%]">
+            <Text className="text-xs font-bold text-teal-700 dark:text-teal-500">
               İlk kaydı ekle
             </Text>
           </TouchableOpacity>

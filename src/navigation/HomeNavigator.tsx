@@ -70,12 +70,11 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
   return (
     <View
-      className="w-full justify-center border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+      className="w-full justify-center border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950"
       style={{
         paddingTop: finalStatusBarHeight,
         paddingHorizontal: 16,
         height: totalHeight,
-        backgroundColor: isDark ? '#0f172a' : '#ffffff',
       }}>
       {isDark && (
         <View

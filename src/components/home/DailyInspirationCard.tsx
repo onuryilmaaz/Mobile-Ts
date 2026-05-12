@@ -105,8 +105,7 @@ export function DailyInspirationCard() {
           <View className="flex-row gap-2">
             <TouchableOpacity
               onPress={shareInspiration}
-              className="h-8 w-8 items-center justify-center rounded-2xl"
-              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }}>
+              className="h-8 w-8 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/5">
               <Ionicons
                 name="share-outline"
                 size={16}
@@ -115,8 +114,7 @@ export function DailyInspirationCard() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleRefresh}
-              className="h-8 w-8 items-center justify-center rounded-2xl"
-              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }}>
+              className="h-8 w-8 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/5">
               {loading ? (
                 <ActivityIndicator
                   size="small"
@@ -151,9 +149,7 @@ export function DailyInspirationCard() {
           </View>
         </Animated.View>
 
-        <View
-          className="items-center px-6 py-4"
-          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc' }}>
+        <View className="items-center bg-slate-50 px-6 py-4 dark:bg-white/[3%]">
           <Text
             className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-white">
             Manevi Huzur İçin Küçük Bir Hatırlatma

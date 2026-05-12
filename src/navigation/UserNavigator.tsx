@@ -52,7 +52,7 @@ export default function UserNavigator() {
   const tabInactive = isDark ? '#64748b' : '#94a3b8';
 
   return (
-    <View style={{ flex: 1 }}>
+    <View className="flex-1">
       <AuthWallModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}

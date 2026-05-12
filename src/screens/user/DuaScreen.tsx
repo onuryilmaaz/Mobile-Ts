@@ -183,7 +183,7 @@ export default function DuaScreen() {
                   </View>
                 </View>
                 <View className="px-5 py-4">
-                  <Text className="mb-3 text-right font-bold leading-8 text-slate-900 dark:text-white" style={{ fontSize: 18 }}>
+                  <Text className="mb-3 text-right text-[18px] font-bold leading-8 text-slate-900 dark:text-white">
                     {dua.arabic}
                   </Text>
                   <Text className="mb-2 text-xs italic text-slate-500 dark:text-slate-400">
@@ -237,9 +237,7 @@ export default function DuaScreen() {
 
             <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
               <View className="mb-6 rounded-3xl bg-slate-50 p-6 dark:bg-slate-800/60">
-                <Text
-                  className="text-right font-bold leading-10 text-slate-900 dark:text-white"
-                  style={{ fontSize: 22 }}>
+                <Text className="text-right text-[22px] font-bold leading-10 text-slate-900 dark:text-white">
                   {selectedDua.arabic}
                 </Text>
               </View>

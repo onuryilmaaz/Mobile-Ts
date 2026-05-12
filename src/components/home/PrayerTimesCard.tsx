@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,6 +26,72 @@ import type { PrayerTimeData } from '@/types/prayer';
 import { rootNavigate } from '@/navigation/rootNavigation';
 
 const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
+const DIGIT_H = 68;
+
+function AnimatedDigit({ char }: { char: string }) {
+  const prevRef = React.useRef(char);
+  const [pair, setPair] = React.useState<[string, string]>([char, char]);
+  const translateY = useSharedValue(0);
+
+  React.useEffect(() => {
+    if (char === prevRef.current) return;
+    const old = prevRef.current;
+    prevRef.current = char;
+    setPair([old, char]);
+    translateY.value = 0;
+    // Smooth ease-out: starts fast, eases into place
+    translateY.value = withTiming(-DIGIT_H, {
+      duration: 240,
+      easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+    });
+    const t = setTimeout(() => {
+      setPair([char, char]);
+      // Wait one frame for React to commit the new pair before resetting position.
+      // Without this, translateY jumps to 0 while the old char is still rendered → stutter.
+      requestAnimationFrame(() => {
+        translateY.value = 0;
+      });
+    }, 270);
+    return () => clearTimeout(t);
+  }, [char]);
+
+  const cStyle = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }));
+
+  return (
+    <View className="h-[68px] w-9 overflow-hidden">
+      <Animated.View className="flex-col" style={cStyle}>
+        {pair.map((d, i) => (
+          <Text
+            key={i}
+            className="h-[68px] text-center text-[54px] font-black leading-[68px] text-white"
+            style={{ includeFontPadding: false }}>
+            {d}
+          </Text>
+        ))}
+      </Animated.View>
+    </View>
+  );
+}
+
+function RollingCountdown({ time }: { time: string }) {
+  return (
+    <View className="flex-row items-center">
+      {time.split('').map((char, i) =>
+        char === ':' ? (
+          <Text
+            key={i}
+            className="mx-px text-[46px] font-black leading-[68px] text-white/55"
+            style={{ includeFontPadding: false }}>
+            :
+          </Text>
+        ) : (
+          <AnimatedDigit key={i} char={char} />
+        ),
+      )}
+    </View>
+  );
+}
+
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 const DEFAULT_DISTRICT_ID = '9654';
 
@@ -71,6 +143,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastActivityPrayerRef = useRef<string>('');
   const setHeaderColor = useThemeStore((s) => s.setHeaderColor);
+
 
   const selectedDistrict = selectedDistrictId ? getDistrictById(selectedDistrictId) : null;
   const selectedState = selectedStateId ? getStateById(selectedStateId) : null;
@@ -261,6 +334,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     setHeaderColor(THEME_COLORS[current as keyof typeof THEME_COLORS] || THEME_COLORS['Default']);
   }, [nextPrayerName, setHeaderColor]);
 
+
   const fetchPrayerTimes = async (districtId: string) => {
     try {
       setLoading(true);
@@ -347,9 +421,13 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
             </Text>
           </View>
 
-          <Text className="text-center text-[54px] font-black tracking-tight text-white">
-            {targetTimeRef.current ? remainingTime : '--:--:--'}
-          </Text>
+          {targetTimeRef.current && remainingTime ? (
+            <RollingCountdown time={remainingTime} />
+          ) : (
+            <Text className="text-center text-[54px] font-black tracking-tight text-white">
+              --:--:--
+            </Text>
+          )}
 
           {nextPrayerName && data?.times && (
             <Text className="mt-2 text-[13px] font-semibold tracking-wide text-white/80">
