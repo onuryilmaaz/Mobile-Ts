@@ -138,12 +138,12 @@ export default function UserNavigator() {
             tabPress: (e) =>
               handleTabPress(
                 e,
-                'Amel Defteri İçin Giriş Yapın',
+                'İbadet Defteri İçin Giriş Yapın',
                 'İbadet kaydı ve başarılarınızı görmek için lütfen oturum açın.'
               ),
           }}
           options={{
-            tabBarLabel: 'Amel',
+            tabBarLabel: 'İbadet',
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="stats-chart-outline" size={size} color={color} />

@@ -14,6 +14,20 @@ import { setLogoutCallback } from '@/services/api';
 import { useColorScheme } from 'nativewind';
 import { rootNavigationRef } from '@/navigation/rootNavigation';
 
+const linking = {
+  prefixes: ['com.onur6541.salah://'],
+  config: {
+    screens: {
+      UserTabs: {
+        screens: {
+          Tracker: 'ibadet',
+          Home: 'home',
+        },
+      },
+    },
+  },
+};
+
 const MyDarkTheme = {
   ...DarkTheme,
   colors: {
@@ -50,7 +64,7 @@ function AppContent() {
   }, [isDark, setColorScheme]);
 
   return (
-    <NavigationContainer ref={rootNavigationRef} theme={isDark ? MyDarkTheme : MyLightTheme}>
+    <NavigationContainer ref={rootNavigationRef} linking={linking} theme={isDark ? MyDarkTheme : MyLightTheme}>
       <AppNavigator />
     </NavigationContainer>
   );

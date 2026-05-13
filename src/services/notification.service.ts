@@ -153,61 +153,73 @@ export const notificationService = {
       const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
       if (enabled !== 'true') return;
 
+      // Pre-fetch content so network failures don't silently drop slots
+      const [verseResult, hadithResult] = await Promise.allSettled([
+        quranService.getRandomVerse(),
+        hadithService.getRandomHadith(),
+      ]);
+
+      const verse = verseResult.status === 'fulfilled' ? verseResult.value : null;
+      const hadith = hadithResult.status === 'fulfilled' ? hadithResult.value : null;
+
+      // 48 hours keeps us well under iOS's 64 scheduled notification limit
+      // (prayer slots use at most 12, leaving 52 for reminders)
+      const HOURS_AHEAD = 48;
       const now = new Date();
-      
-      for (let i = 1; i <= 12; i++) {
+
+      for (let i = 1; i <= HOURS_AHEAD; i++) {
         const scheduleTime = new Date(now.getTime() + i * 60 * 60 * 1000);
         scheduleTime.setMinutes(0, 0, 0);
 
-        const isAyet = i % 2 === 0;
-        
+        const useAyet = i % 2 === 0;
+
         let title = '';
         let subtitle = '';
         let body = '';
 
-        if (isAyet) {
-          const result = await quranService.getRandomVerse();
-          if (result) {
-            title = '📖 İlahi Kelam';
-            subtitle = `${result.surah.name}, ${result.verse.verse_number}. Ayet`;
-            body = result.verse.translation.text;
-          }
-        } else {
-          const result = await hadithService.getRandomHadith();
-          if (result) {
-            title = '✨ Nurdan Damlalar';
-            subtitle = result.bookName;
-            body = result.hadith.text;
-          }
+        // Prefer the intended type, fall back to the other if unavailable
+        if (useAyet && verse) {
+          title = '📖 İlahi Kelam';
+          subtitle = `${verse.surah.name}, ${verse.verse.verse_number}. Ayet`;
+          body = verse.verse.translation.text;
+        } else if (!useAyet && hadith) {
+          title = '✨ Nurdan Damlalar';
+          subtitle = hadith.bookName;
+          body = hadith.hadith.text;
+        } else if (hadith) {
+          // verse unavailable, fall back to hadith
+          title = '✨ Nurdan Damlalar';
+          subtitle = hadith.bookName;
+          body = hadith.hadith.text;
+        } else if (verse) {
+          // hadith unavailable, fall back to verse
+          title = '📖 İlahi Kelam';
+          subtitle = `${verse.surah.name}, ${verse.verse.verse_number}. Ayet`;
+          body = verse.verse.translation.text;
         }
 
-        if (body) {
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title,
-              subtitle,
-              body,
-              sound: 'default',
-              data: { type: 'spiritual_reminder' },
-              android: {
-                priority: 'high',
-                style: {
-                  type: 'bigtext',
-                  text: body,
-                  title: title,
-                  summary: subtitle,
-                },
-              },
-            } as any,
-            trigger: {
-              type: Notifications.SchedulableTriggerInputTypes.DATE,
-              date: scheduleTime,
+        if (!body) continue; // both sources unavailable — skip
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title,
+            subtitle,
+            body,
+            sound: 'default',
+            data: { type: 'spiritual_reminder' },
+            android: {
+              priority: 'high',
+              style: { type: 'bigtext', text: body, title, summary: subtitle },
             },
-          });
-        }
+          } as any,
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: scheduleTime,
+          },
+        });
       }
-      
-      console.log('Hourly spiritual reminders scheduled successfully');
+
+      console.log(`Hourly spiritual reminders scheduled for ${HOURS_AHEAD}h`);
     } catch (error) {
       console.error('Error scheduling hourly reminders:', error);
     }
