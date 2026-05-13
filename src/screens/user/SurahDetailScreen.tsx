@@ -22,12 +22,12 @@ import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BOOKMARKS_KEY = 'QURAN_BOOKMARKS';
+const SURAH_CACHE_PREFIX = 'QURAN_SURAH_CACHE_';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahDetail'>;
 
 const RECITERS = [
   { id: 'ar.alafasy', label: 'Alafasy' },
-  { id: 'ar.abdurrahmaansudais', label: 'Sudais' },
   { id: 'ar.abdullahbasfar', label: 'Basfar' },
 ];
 
@@ -215,9 +215,18 @@ export default function SurahDetailScreen({ route }: Props) {
   const fetchVerses = async () => {
     try {
       setLoading(true);
+      const cacheKey = `${SURAH_CACHE_PREFIX}${surahId}`;
+      const cached = await AsyncStorage.getItem(cacheKey);
+      if (cached) {
+        setVerses(JSON.parse(cached));
+        setLoading(false);
+        return;
+      }
       const response = await fetch(`https://api.acikkuran.com/surah/${surahId}`);
       const result = await response.json();
-      setVerses(result.data.verses);
+      const verses: Verse[] = result.data.verses;
+      setVerses(verses);
+      await AsyncStorage.setItem(cacheKey, JSON.stringify(verses));
     } catch (error) {
       console.error('Error fetching verses:', error);
     } finally {

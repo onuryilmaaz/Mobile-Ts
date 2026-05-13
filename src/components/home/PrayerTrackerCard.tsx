@@ -42,21 +42,21 @@ function StreakCelebration({
 
   useEffect(() => {
     if (visible) {
-      overlayOpacity.value = withTiming(1, { duration: 250 });
+      overlayOpacity.value = withTiming(1, { duration: 160 });
       cardScale.value = withSequence(
-        withSpring(1.06, { damping: 7, stiffness: 220 }),
-        withSpring(1, { damping: 14 }),
+        withSpring(1.03, { damping: 12, stiffness: 260 }),
+        withSpring(1, { damping: 18 }),
       );
-      cardOpacity.value = withTiming(1, { duration: 200 });
-      ringScale.value = withDelay(150, withSpring(1, { damping: 8, stiffness: 180 }));
-      glowOpacity.value = withDelay(200, withTiming(1, { duration: 400 }));
+      cardOpacity.value = withTiming(1, { duration: 140 });
+      ringScale.value = withDelay(80, withSpring(1, { damping: 14, stiffness: 240 }));
+      glowOpacity.value = withDelay(100, withTiming(1, { duration: 200 }));
 
-      const t = setTimeout(onDismiss, 3000);
+      const t = setTimeout(onDismiss, 2000);
       return () => clearTimeout(t);
     } else {
-      overlayOpacity.value = withTiming(0, { duration: 200 });
-      cardScale.value = withTiming(0.8, { duration: 200 });
-      cardOpacity.value = withTiming(0, { duration: 200 });
+      overlayOpacity.value = withTiming(0, { duration: 150 });
+      cardScale.value = withTiming(0.85, { duration: 150 });
+      cardOpacity.value = withTiming(0, { duration: 150 });
     }
   }, [visible]);
 
@@ -118,13 +118,13 @@ function StreakCelebration({
               cardStyle,
             ]}>
             {/* moon */}
-            <Animated.View entering={ZoomIn.delay(100).duration(400)}>
+            <Animated.View entering={ZoomIn.delay(60).duration(220)}>
               <Text style={{ fontSize: 58, marginBottom: 16 }}>🌙</Text>
             </Animated.View>
 
             {/* title */}
             <Animated.Text
-              entering={FadeInDown.delay(180).duration(350)}
+              entering={FadeInDown.delay(100).duration(200)}
               style={{
                 fontSize: 17,
                 fontWeight: '800',
@@ -173,7 +173,7 @@ function StreakCelebration({
 
             {/* subtitle */}
             <Animated.Text
-              entering={FadeInDown.delay(300).duration(350)}
+              entering={FadeInDown.delay(160).duration(200)}
               style={{
                 fontSize: 14,
                 color: isDark ? '#94a3b8' : '#64748b',
@@ -186,7 +186,7 @@ function StreakCelebration({
             </Animated.Text>
 
             <Animated.Text
-              entering={FadeIn.delay(600).duration(400)}
+              entering={FadeIn.delay(320).duration(200)}
               style={{
                 fontSize: 11,
                 color: isDark ? '#334155' : '#cbd5e1',
