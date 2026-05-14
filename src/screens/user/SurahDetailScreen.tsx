@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useImperativeHandle } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Platform,
   Share,
   TouchableOpacity,
+  PanResponder,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SurahsStackParamList } from '@/navigation/types';
@@ -31,81 +32,159 @@ const RECITERS = [
   { id: 'ar.abdullahbasfar', label: 'Basfar' },
 ];
 
-function AudioPlayer({ surahId }: { surahId: number }) {
+type AudioPlayerRef = {
+  playFromIndex: (idx: number) => void;
+};
+
+const AudioPlayer = React.forwardRef<
+  AudioPlayerRef,
+  { verses: Verse[]; onActiveVerseChange: (idx: number) => void }
+>(function AudioPlayer({ verses, onActiveVerseChange }, ref) {
   const { isDark } = useTheme();
   const soundRef = useRef<Audio.Sound | null>(null);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'playing' | 'paused' | 'error'>('idle');
+  const [playState, setPlayState] = useState<'idle' | 'loading' | 'playing' | 'paused'>('idle');
   const [reciterIdx, setReciterIdx] = useState(0);
+  const [activeIdx, setActiveIdx] = useState(-1);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  const activeIdxRef = useRef(-1);
+  const reciterIdxRef = useRef(0);
+  const versesRef = useRef(verses);
+  const durationRef = useRef(0);
+  const barWidthRef = useRef(0);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => { versesRef.current = verses; }, [verses]);
+  useEffect(() => { reciterIdxRef.current = reciterIdx; }, [reciterIdx]);
+  useEffect(() => { durationRef.current = duration; }, [duration]);
+
+  const setActiveBoth = useCallback((idx: number) => {
+    activeIdxRef.current = idx;
+    setActiveIdx(idx);
+    onActiveVerseChange(idx);
+  }, [onActiveVerseChange]);
 
   useEffect(() => {
     Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     return () => {
+      isMountedRef.current = false;
       soundRef.current?.unloadAsync();
     };
   }, []);
 
-  useEffect(() => {
-    if (status === 'playing' || status === 'paused') {
-      stop();
-    }
-  }, [reciterIdx]);
-
-  const getAudioUrl = () =>
-    `https://cdn.islamic.network/quran/audio-surah/128/${RECITERS[reciterIdx].id}/${surahId}.mp3`;
-
-  const onPlaybackStatus = useCallback((s: any) => {
-    if (s.isLoaded) {
-      setPosition(s.positionMillis || 0);
-      setDuration(s.durationMillis || 0);
-      if (s.didJustFinish) setStatus('idle');
-    }
-  }, []);
-
-  const play = async () => {
-    try {
-      setStatus('loading');
-      if (soundRef.current) {
-        await soundRef.current.unloadAsync();
-        soundRef.current = null;
-      }
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: getAudioUrl() },
-        { shouldPlay: true },
-        onPlaybackStatus
-      );
-      soundRef.current = sound;
-      setStatus('playing');
-    } catch {
-      setStatus('error');
+  const unload = async () => {
+    if (soundRef.current) {
+      await soundRef.current.unloadAsync();
+      soundRef.current = null;
     }
   };
 
-  const pause = async () => {
-    await soundRef.current?.pauseAsync();
-    setStatus('paused');
-  };
+  const playVerseAt = async (idx: number) => {
+    if (!isMountedRef.current) return;
+    const vList = versesRef.current;
 
-  const resume = async () => {
-    await soundRef.current?.playAsync();
-    setStatus('playing');
-  };
+    if (idx >= vList.length || idx < 0) {
+      await unload();
+      if (!isMountedRef.current) return;
+      setPlayState('idle');
+      setActiveBoth(-1);
+      setPosition(0);
+      setDuration(0);
+      return;
+    }
 
-  const stop = async () => {
-    await soundRef.current?.stopAsync();
-    await soundRef.current?.unloadAsync();
-    soundRef.current = null;
-    setStatus('idle');
+    setPlayState('loading');
     setPosition(0);
     setDuration(0);
+    setActiveBoth(idx);
+
+    try {
+      await unload();
+      if (!isMountedRef.current) return;
+
+      const url = `https://cdn.islamic.network/quran/audio/128/${RECITERS[reciterIdxRef.current].id}/${vList[idx].id}.mp3`;
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: url },
+        { shouldPlay: true },
+        (status) => {
+          if (!isMountedRef.current || !status.isLoaded) return;
+          setPosition(status.positionMillis || 0);
+          setDuration(status.durationMillis || 0);
+          if (status.didJustFinish) {
+            playVerseAt(activeIdxRef.current + 1);
+          }
+        }
+      );
+
+      if (!isMountedRef.current) { sound.unloadAsync(); return; }
+      soundRef.current = sound;
+      setPlayState('playing');
+    } catch {
+      if (isMountedRef.current) setPlayState('idle');
+    }
   };
 
-  const handleMain = () => {
+  // playVerseAt ref — useImperativeHandle her zaman güncel versiyonu çağırsın
+  const playVerseAtRef = useRef(playVerseAt);
+  useEffect(() => { playVerseAtRef.current = playVerseAt; });
+
+  useImperativeHandle(ref, () => ({
+    playFromIndex: (idx: number) => playVerseAtRef.current(idx),
+  }), []);
+
+  useEffect(() => {
+    const reset = async () => {
+      await unload();
+      if (!isMountedRef.current) return;
+      setPlayState('idle');
+      setActiveBoth(-1);
+      setPosition(0);
+      setDuration(0);
+    };
+    reset();
+  }, [reciterIdx]);
+
+  // Seek bar — PanResponder refs ile stale closure olmadan çalışır
+  const seekBarResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => durationRef.current > 0,
+      onMoveShouldSetPanResponder: () => durationRef.current > 0,
+      onPanResponderGrant: (evt) => {
+        const ratio = Math.max(0, Math.min(1, evt.nativeEvent.locationX / barWidthRef.current));
+        const ms = ratio * durationRef.current;
+        setPosition(ms);
+        soundRef.current?.setPositionAsync(ms);
+      },
+      onPanResponderMove: (evt) => {
+        const ratio = Math.max(0, Math.min(1, evt.nativeEvent.locationX / barWidthRef.current));
+        const ms = ratio * durationRef.current;
+        setPosition(ms);
+        soundRef.current?.setPositionAsync(ms);
+      },
+    })
+  ).current;
+
+  const handlePlayPause = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (status === 'idle' || status === 'error') play();
-    else if (status === 'playing') pause();
-    else if (status === 'paused') resume();
+    if (playState === 'idle') {
+      playVerseAt(0);
+    } else if (playState === 'playing') {
+      soundRef.current?.pauseAsync();
+      setPlayState('paused');
+    } else if (playState === 'paused') {
+      soundRef.current?.playAsync();
+      setPlayState('playing');
+    }
+  };
+
+  const handleStop = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await unload();
+    setPlayState('idle');
+    setActiveBoth(-1);
+    setPosition(0);
+    setDuration(0);
   };
 
   const formatTime = (ms: number) => {
@@ -114,29 +193,28 @@ function AudioPlayer({ surahId }: { surahId: number }) {
   };
 
   const progress = duration > 0 ? position / duration : 0;
+  const isActive = playState === 'playing' || playState === 'paused';
 
   return (
     <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900">
       <View className="flex-row items-center p-4">
-        {/* Play/Pause */}
         <TouchableOpacity
-          onPress={handleMain}
+          onPress={handlePlayPause}
           className="mr-4 h-12 w-12 items-center justify-center rounded-full bg-teal-600 dark:bg-teal-500"
           activeOpacity={0.8}>
-          {status === 'loading' ? (
+          {playState === 'loading' ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
             <Ionicons
-              name={status === 'playing' ? 'pause' : 'play'}
+              name={playState === 'playing' ? 'pause' : 'play'}
               size={22}
               color="#fff"
-              style={{ marginLeft: status === 'playing' ? 0 : 2 }}
+              style={{ marginLeft: playState === 'playing' ? 0 : 2 }}
             />
           )}
         </TouchableOpacity>
 
         <View className="flex-1">
-          {/* Reciter selector */}
           <View className="mb-2 flex-row gap-1.5">
             {RECITERS.map((r, i) => (
               <TouchableOpacity
@@ -162,33 +240,32 @@ function AudioPlayer({ surahId }: { surahId: number }) {
             ))}
           </View>
 
-          {/* Progress bar */}
-          <View className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            <View
-              className="h-full rounded-full bg-teal-500"
-              style={{ width: `${progress * 100}%` }}
-            />
+          {/* Seek bar — geniş dokunma alanı için py-3 wrapper */}
+          <View
+            onLayout={(e) => { barWidthRef.current = e.nativeEvent.layout.width; }}
+            className="py-3"
+            {...seekBarResponder.panHandlers}>
+            <View className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+              <View
+                className="h-full rounded-full bg-teal-500"
+                style={{ width: `${progress * 100}%` }}
+              />
+            </View>
           </View>
 
-          {/* Time */}
-          {duration > 0 && (
-            <View className="mt-1 flex-row justify-between">
-              <Text className="text-[10px] text-slate-400">{formatTime(position)}</Text>
-              <Text className="text-[10px] text-slate-400">{formatTime(duration)}</Text>
-            </View>
-          )}
-          {status === 'error' && (
-            <Text className="mt-1 text-[10px] text-red-500">Ses yüklenemedi. Tekrar deneyin.</Text>
+          {activeIdx >= 0 ? (
+            <Text className="text-[10px] text-slate-400">
+              {activeIdx + 1}. ayet
+              {duration > 0 ? ` · ${formatTime(position)} / ${formatTime(duration)}` : ''}
+            </Text>
+          ) : (
+            <Text className="text-[10px] text-slate-400">{verses.length} ayet</Text>
           )}
         </View>
 
-        {/* Stop */}
-        {(status === 'playing' || status === 'paused') && (
+        {isActive && (
           <TouchableOpacity
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              stop();
-            }}
+            onPress={handleStop}
             className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
             <Ionicons name="stop" size={16} color={isDark ? '#94a3b8' : '#475569'} />
           </TouchableOpacity>
@@ -196,14 +273,19 @@ function AudioPlayer({ surahId }: { surahId: number }) {
       </View>
     </View>
   );
-}
+});
 
 export default function SurahDetailScreen({ route }: Props) {
   const { surahId, surahName } = route.params;
   const [verses, setVerses] = useState<Verse[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
+  const [activeVerseIdx, setActiveVerseIdx] = useState(-1);
   const { isDark } = useTheme();
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const audioPlayerRef = useRef<AudioPlayerRef>(null);
+  const verseYPositions = useRef<number[]>([]);
 
   useEffect(() => {
     fetchVerses();
@@ -211,6 +293,12 @@ export default function SurahDetailScreen({ route }: Props) {
       if (val) setBookmarks(new Set(JSON.parse(val)));
     });
   }, []);
+
+  useEffect(() => {
+    if (activeVerseIdx < 0 || verseYPositions.current[activeVerseIdx] == null) return;
+    const y = verseYPositions.current[activeVerseIdx];
+    scrollViewRef.current?.scrollTo({ y: Math.max(0, y - 120), animated: true });
+  }, [activeVerseIdx]);
 
   const fetchVerses = async () => {
     try {
@@ -224,9 +312,9 @@ export default function SurahDetailScreen({ route }: Props) {
       }
       const response = await fetch(`https://api.acikkuran.com/surah/${surahId}`);
       const result = await response.json();
-      const verses: Verse[] = result.data.verses;
-      setVerses(verses);
-      await AsyncStorage.setItem(cacheKey, JSON.stringify(verses));
+      const fetched: Verse[] = result.data.verses;
+      setVerses(fetched);
+      await AsyncStorage.setItem(cacheKey, JSON.stringify(fetched));
     } catch (error) {
       console.error('Error fetching verses:', error);
     } finally {
@@ -266,70 +354,108 @@ export default function SurahDetailScreen({ route }: Props) {
         </View>
       ) : (
         <ScrollView
+          ref={scrollViewRef}
           className="flex-1"
           contentContainerStyle={{ paddingTop: 16, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}>
-          {/* Audio Player */}
-          <AudioPlayer surahId={surahId} />
+          <AudioPlayer
+            ref={audioPlayerRef}
+            verses={verses}
+            onActiveVerseChange={setActiveVerseIdx}
+          />
 
-          {verses.map((verse, index) => (
-            <Animated.View
-              key={verse.id}
-              entering={FadeInUp.delay(index * 50).duration(400)}
-              className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-              <View className="flex-row items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-3 dark:border-slate-800 dark:bg-slate-900">
-                <View className="h-6 w-6 items-center justify-center rounded-full bg-teal-600 dark:bg-teal-500">
-                  <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
-                </View>
-                <View className="flex-row items-center gap-4">
-                  <TouchableOpacity
-                    onPress={() => toggleBookmark(`${surahId}:${verse.verse_number}`)}>
-                    <Ionicons
-                      name={
-                        bookmarks.has(`${surahId}:${verse.verse_number}`)
-                          ? 'bookmark'
-                          : 'bookmark-outline'
-                      }
-                      size={18}
-                      color={
-                        bookmarks.has(`${surahId}:${verse.verse_number}`)
-                          ? '#f59e0b'
-                          : isDark
-                            ? 'rgba(240,244,255,0.55)'
-                            : '#475569'
-                      }
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => shareVerse(verse)}>
-                    <Ionicons
-                      name="share-outline"
-                      size={18}
-                      color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
+          {verses.map((verse, index) => {
+            const isActive = index === activeVerseIdx;
+            return (
+              <TouchableOpacity
+                key={verse.id}
+                activeOpacity={0.88}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  audioPlayerRef.current?.playFromIndex(index);
+                }}>
+                <Animated.View
+                  entering={FadeInUp.delay(index * 50).duration(400)}
+                  onLayout={(e) => {
+                    verseYPositions.current[index] = e.nativeEvent.layout.y;
+                  }}
+                  className={`mx-4 mb-6 overflow-hidden rounded-3xl border shadow-sm shadow-black/5 dark:shadow-none ${
+                    isActive
+                      ? 'border-teal-500/60 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/10'
+                      : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                  }`}>
+                  {isActive && (
+                    <View className="absolute left-0 top-0 h-full w-1 rounded-l-3xl bg-teal-500" />
+                  )}
 
-              <View className="px-4 py-1">
-                <Text
-                  className={`mb-1 text-2xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
-                  style={{ lineHeight: 50 }}>
-                  {verse.transcription}
-                </Text>
-                <Text
-                  className={`mb-1 text-right text-xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
-                  style={{ lineHeight: 50 }}>
-                  {verse.verse_simplified}
-                </Text>
+                  <View
+                    className={`flex-row items-center justify-between border-b px-6 py-3 ${
+                      isActive
+                        ? 'border-teal-200 bg-teal-100/60 dark:border-teal-500/30 dark:bg-teal-500/15'
+                        : 'border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
+                    }`}>
+                    <View
+                      className={`h-6 w-6 items-center justify-center rounded-full ${
+                        isActive ? 'bg-teal-500' : 'bg-teal-600 dark:bg-teal-500'
+                      }`}>
+                      <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
+                    </View>
+                    <View className="flex-row items-center gap-4">
+                      <TouchableOpacity
+                        onPress={() => toggleBookmark(`${surahId}:${verse.verse_number}`)}>
+                        <Ionicons
+                          name={
+                            bookmarks.has(`${surahId}:${verse.verse_number}`)
+                              ? 'bookmark'
+                              : 'bookmark-outline'
+                          }
+                          size={18}
+                          color={
+                            bookmarks.has(`${surahId}:${verse.verse_number}`)
+                              ? '#f59e0b'
+                              : isDark
+                                ? 'rgba(240,244,255,0.55)'
+                                : '#475569'
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => shareVerse(verse)}>
+                        <Ionicons
+                          name="share-outline"
+                          size={18}
+                          color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
 
-                <View className="my-2 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
+                  <View className="px-4 py-1">
+                    <Text
+                      className={`mb-1 text-2xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
+                      style={{ lineHeight: 50 }}>
+                      {verse.transcription}
+                    </Text>
+                    <Text
+                      className={`mb-1 text-right text-xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
+                      style={{ lineHeight: 50 }}>
+                      {verse.verse_simplified}
+                    </Text>
 
-                <Text className="text-base font-medium italic leading-7 text-slate-600 dark:text-slate-300">
-                  {`"${verse.translation.text}"`}
-                </Text>
-              </View>
-            </Animated.View>
-          ))}
+                    <View className="my-2 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
+
+                    <Text
+                      className={`text-base font-medium italic leading-7 ${
+                        isActive
+                          ? 'text-teal-700 dark:text-teal-300'
+                          : 'text-slate-600 dark:text-slate-300'
+                      }`}>
+                      {`"${verse.translation.text}"`}
+                    </Text>
+                  </View>
+                </Animated.View>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       )}
     </Screen>

@@ -102,4 +102,13 @@ export const liveActivityService = {
       // silent
     }
   },
+
+  async getPendingWidgetPrayers(): Promise<string> {
+    if (!isSupported) return '';
+    try {
+      return (await Native.getPendingWidgetPrayers()) ?? '';
+    } catch {
+      return '';
+    }
+  },
 };

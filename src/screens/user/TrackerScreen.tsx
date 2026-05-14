@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { TrackerStackParamList } from '@/navigation/types';
 import {
   Alert,
   Dimensions,
@@ -884,7 +886,7 @@ function MonthHeatmap({
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
-export default function TrackerScreen() {
+export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerStackParamList, 'TrackerMain'>) {
   const { isAuthenticated } = useAuthStore();
   const { todayLogs, fetchTodayLogs, fetchWeeklyStats, fetchMonthlyStats, logActivity, deleteLog } =
     useTrackerStore();
@@ -893,6 +895,7 @@ export default function TrackerScreen() {
   const [activeTab, setActiveTab] = useState<Tab>('Bugün');
   const [modalType, setModalType] = useState<ActivityType | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const handledTypeRef = useRef<string | null>(null);
 
   const load = useCallback(async () => {
     await Promise.all([fetchTodayLogs(), fetchWeeklyStats(), fetchMonthlyStats()]);
@@ -901,6 +904,14 @@ export default function TrackerScreen() {
   useEffect(() => {
     if (isAuthenticated) load();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    const type = route.params?.type;
+    if (type && isAuthenticated && type !== handledTypeRef.current) {
+      handledTypeRef.current = type;
+      openModal(type as ActivityType);
+    }
+  }, [route.params?.type, isAuthenticated]);
 
   useEffect(() => {
     const types = [...new Set(todayLogs.map((l) => l.activity_type))];

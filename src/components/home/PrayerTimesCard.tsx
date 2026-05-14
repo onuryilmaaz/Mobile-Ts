@@ -56,7 +56,7 @@ function AnimatedDigit({ char }: { char: string }) {
   const cStyle = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }));
 
   return (
-    <View className="h-[68px] w-[40px] overflow-hidden">
+    <View className="h-[68px] w-[40px] overflow-hidden ">
       <Animated.View className="flex-col" style={cStyle}>
         {pair.map((d, i) => (
           <Text
@@ -73,7 +73,7 @@ function AnimatedDigit({ char }: { char: string }) {
 
 function RollingCountdown({ time }: { time: string }) {
   return (
-    <View className="flex-row items-center">
+    <View className="flex-row items-center ">
       {time.split('').map((char, i) =>
         char === ':' ? (
           <Text

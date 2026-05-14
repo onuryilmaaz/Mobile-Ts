@@ -1,6 +1,6 @@
 import './global.css';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -13,6 +13,8 @@ import { useThemeStore } from '@/store/theme.store';
 import { setLogoutCallback } from '@/services/api';
 import { useColorScheme } from 'nativewind';
 import { rootNavigationRef } from '@/navigation/rootNavigation';
+import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
+import { useGamificationStore } from '@/modules/gamification/gamification.store';
 
 const linking = {
   prefixes: ['com.onur6541.salah://'],
@@ -20,8 +22,19 @@ const linking = {
     screens: {
       UserTabs: {
         screens: {
-          Tracker: 'ibadet',
-          Home: 'home',
+          Home: {
+            screens: {
+              HomeMain: 'home',
+            },
+          },
+          Tracker: {
+            screens: {
+              TrackerMain: {
+                path: 'tracker',
+                parse: { type: (t: string) => t },
+              },
+            },
+          },
         },
       },
     },
@@ -53,6 +66,24 @@ const MyLightTheme = {
 function AppContent() {
   const isDark = useThemeStore((s) => s.isDark);
   const { setColorScheme } = useColorScheme();
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    const syncPending = async () => {
+      const { isAuthenticated } = useAuthStore.getState();
+      if (!isAuthenticated) return;
+      const raw = await liveActivityService.getPendingWidgetPrayers();
+      if (!raw) return;
+      const { trackPrayer } = useGamificationStore.getState();
+      for (const entry of raw.split(',').filter(Boolean)) {
+        const [id, flag] = entry.split(':');
+        try { await trackPrayer(id as any, flag === 'kaza'); } catch { /* already tracked */ }
+      }
+    };
+    syncPending();
+    const sub = AppState.addEventListener('change', (s) => { if (s === 'active') syncPending(); });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     setColorScheme(isDark ? 'dark' : 'light');

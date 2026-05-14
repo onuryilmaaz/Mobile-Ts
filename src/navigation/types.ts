@@ -46,7 +46,7 @@ export type SurahsStackParamList = {
 };
 
 export type TrackerStackParamList = {
-  TrackerMain: undefined;
+  TrackerMain: { type?: string } | undefined;
   Gamification: undefined;
   KazaTracker: undefined;
   Stats: undefined;
