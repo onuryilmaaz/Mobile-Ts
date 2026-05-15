@@ -5,9 +5,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TrackerStackParamList } from '@/navigation/types';
 import {
   Alert,
+  Animated as RNAnimated,
   Dimensions,
   KeyboardAvoidingView,
   Modal,
+  PanResponder,
   Platform,
   RefreshControl,
   ScrollView,
@@ -25,7 +27,9 @@ import { useTheme } from '@/hooks/useTheme';
 import { ACTIVITY_META, type ActivityType, type TrackerLog } from '@/modules/tracker/tracker.types';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+const { height: SCREEN_H } = Dimensions.get('window');
+const SNAP_PARTIAL = SCREEN_H * 0.56;
+const SNAP_FULL = SCREEN_H * 0.90;
 
 const TABS = ['Bugün', 'Haftalık', 'Aylık'] as const;
 type Tab = (typeof TABS)[number];
@@ -112,9 +116,10 @@ interface LogFormProps {
   onSubmit: (value: Record<string, any>, notes?: string) => void;
   onClose: () => void;
   isDark: boolean;
+  panHandlers: Record<string, any>;
 }
 
-function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
+function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps) {
   const meta = ACTIVITY_META[type];
   const inputCls = `rounded-2xl border px-4 py-3 text-base ${isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-slate-50 text-slate-900'}`;
   const labelCls = `mb-1.5 text-sm font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`;
@@ -216,33 +221,31 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
   };
 
   return (
-    <View
-      className={`rounded-t-3xl pt-3 ${isDark ? 'bg-slate-900' : 'bg-white'}`}
-      style={{ maxHeight: SCREEN_H * 0.82 }}>
-      {/* Handle */}
-      <View className="mb-3 items-center">
-        <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
-      </View>
-
-      {/* Title */}
-      <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
-        <View
-          className="h-10 w-10 items-center justify-center rounded-2xl"
-          style={{ backgroundColor: meta.bgColor }}>
-          <Ionicons name={meta.icon as any} size={20} color={meta.color} />
+    <View className="flex-1 pt-3">
+      {/* Handle + title — tek sürükleme alanı */}
+      <View {...panHandlers}>
+        <View className="mb-3 items-center py-2">
+          <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
         </View>
-        <View>
-          <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            {meta.label}
-          </Text>
-          <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-            {meta.description}
-          </Text>
+        <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
+          <View
+            className="h-10 w-10 items-center justify-center rounded-2xl"
+            style={{ backgroundColor: meta.bgColor }}>
+            <Ionicons name={meta.icon as any} size={20} color={meta.color} />
+          </View>
+          <View>
+            <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              {meta.label}
+            </Text>
+            <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              {meta.description}
+            </Text>
+          </View>
         </View>
       </View>
 
       <ScrollView
-        className="px-5"
+        className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 8, paddingTop: 4 }}>
@@ -897,6 +900,51 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
   const [isRefreshing, setIsRefreshing] = useState(false);
   const handledTypeRef = useRef<string | null>(null);
 
+  // ── Bottom sheet drag ────────────────────────────────────────────────────
+  const sheetHeight = useRef(new RNAnimated.Value(SNAP_PARTIAL)).current;
+  const currentH = useRef(SNAP_PARTIAL);
+  const snapRef = useRef<'partial' | 'full'>('partial');
+  const gestureStartH = useRef(SNAP_PARTIAL);
+
+  useEffect(() => {
+    const id = sheetHeight.addListener(({ value }) => { currentH.current = value; });
+    return () => sheetHeight.removeListener(id);
+  }, []);
+
+  const snapTo = (h: number) => {
+    snapRef.current = h >= SNAP_FULL ? 'full' : 'partial';
+    RNAnimated.spring(sheetHeight, { toValue: h, useNativeDriver: false, tension: 60, friction: 12 }).start();
+  };
+
+  const closeSheet = () => {
+    sheetHeight.setValue(SNAP_PARTIAL);
+    snapRef.current = 'partial';
+    setModalType(null);
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 5 && Math.abs(g.dy) > Math.abs(g.dx),
+      onPanResponderGrant: () => {
+        sheetHeight.stopAnimation();
+        gestureStartH.current = currentH.current;
+      },
+      onPanResponderMove: (_, g) => {
+        const next = gestureStartH.current - g.dy;
+        sheetHeight.setValue(Math.max(SNAP_PARTIAL * 0.4, Math.min(SNAP_FULL, next)));
+      },
+      onPanResponderRelease: (_, g) => {
+        const finalH = gestureStartH.current - g.dy;
+        if (g.vy > 0.8 && snapRef.current === 'partial') { closeSheet(); return; }
+        if (g.vy < -0.5) { snapTo(SNAP_FULL); return; }
+        if (finalH < SNAP_PARTIAL * 0.6) { closeSheet(); }
+        else if (finalH > (SNAP_PARTIAL + SNAP_FULL) / 2) { snapTo(SNAP_FULL); }
+        else { snapTo(snapRef.current === 'full' ? SNAP_FULL : SNAP_PARTIAL); }
+      },
+    })
+  ).current;
+
   const load = useCallback(async () => {
     await Promise.all([fetchTodayLogs(), fetchWeeklyStats(), fetchMonthlyStats()]);
   }, []);
@@ -930,6 +978,8 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
 
   const openModal = (type: ActivityType) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    snapRef.current = 'partial';
+    sheetHeight.setValue(SNAP_PARTIAL);
     setModalType(type);
   };
 
@@ -938,7 +988,7 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
     try {
       await logActivity(modalType, value, notes);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setModalType(null);
+      closeSheet();
     } catch {
       Alert.alert('Hata', 'Kayıt eklenirken bir sorun oluştu.');
     }
@@ -1071,26 +1121,31 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
         visible={!!modalType}
         animationType="slide"
         transparent
-        onRequestClose={() => setModalType(null)}>
-        <KeyboardAvoidingView
-          className="flex-1 justify-end"
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        onRequestClose={closeSheet}>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
           <TouchableOpacity
             className="absolute inset-0 bg-black/50"
             activeOpacity={1}
-            onPress={() => setModalType(null)}
+            onPress={closeSheet}
           />
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-            {modalType && (
-              <LogForm
-                type={modalType}
-                onSubmit={handleLogSubmit}
-                onClose={() => setModalType(null)}
-                isDark={isDark}
-              />
-            )}
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
+          <RNAnimated.View
+            className={`overflow-hidden rounded-t-3xl ${isDark ? 'bg-slate-900' : 'bg-white'}`}
+            style={{ height: sheetHeight }}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={{ flex: 1 }}>
+              {modalType && (
+                <LogForm
+                  type={modalType}
+                  onSubmit={handleLogSubmit}
+                  onClose={closeSheet}
+                  isDark={isDark}
+                  panHandlers={panResponder.panHandlers}
+                />
+              )}
+            </KeyboardAvoidingView>
+          </RNAnimated.View>
+        </View>
       </Modal>
     </View>
   );

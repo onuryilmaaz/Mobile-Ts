@@ -370,15 +370,15 @@ export default function SurahDetailScreen({ route }: Props) {
               <TouchableOpacity
                 key={verse.id}
                 activeOpacity={0.88}
+                onLayout={(e) => {
+                  verseYPositions.current[index] = e.nativeEvent.layout.y;
+                }}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   audioPlayerRef.current?.playFromIndex(index);
                 }}>
                 <Animated.View
                   entering={FadeInUp.delay(index * 50).duration(400)}
-                  onLayout={(e) => {
-                    verseYPositions.current[index] = e.nativeEvent.layout.y;
-                  }}
                   className={`mx-4 mb-6 overflow-hidden rounded-3xl border shadow-sm shadow-black/5 dark:shadow-none ${
                     isActive
                       ? 'border-teal-500/60 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/10'
