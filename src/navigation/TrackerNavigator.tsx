@@ -1,12 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar as RNStatusBar, TouchableOpacity } from 'react-native';
-import {
-  TrackerScreen,
-  GamificationScreen,
-  KazaTrackerScreen,
-  StatsScreen,
-  ChallengeScreen,
-} from '@/screens/user';
+import { TrackerScreen, GamificationScreen, KazaTrackerScreen, StatsScreen } from '@/screens/user';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
@@ -75,18 +69,6 @@ export default function TrackerNavigator() {
             headerShown: true,
             header: undefined,
             title: 'İstatistikler',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
-          }}
-        />
-        <Stack.Screen
-          name="Challenges"
-          component={ChallengeScreen}
-          options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Meydan Okumalar',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',

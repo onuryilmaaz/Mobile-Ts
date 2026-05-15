@@ -28,6 +28,14 @@ const QUICK_ACTIONS = [
     screen: 'KazaTracker' as const,
   },
   {
+    key: 'mosques',
+    label: 'Cami Atlası',
+    icon: 'map-outline' as const,
+    color: '#0ea5e9',
+    glow: 'rgba(14,165,233,0.18)',
+    screen: 'MosqueMap' as const,
+  },
+  {
     key: 'stats',
     label: 'İstatistikler',
     icon: 'bar-chart-outline' as const,
@@ -42,38 +50,6 @@ const QUICK_ACTIONS = [
     color: '#ec4899',
     glow: 'rgba(236,72,153,0.18)',
     screen: 'Dua' as const,
-  },
-  {
-    key: 'takvim',
-    label: 'Hicri Takvim',
-    icon: 'calendar-outline' as const,
-    color: '#f59e0b',
-    glow: 'rgba(245,158,11,0.18)',
-    screen: 'HijriCalendar' as const,
-  },
-  {
-    key: 'challenges',
-    label: 'Challenge',
-    icon: 'trophy-outline' as const,
-    color: '#f6c358',
-    glow: 'rgba(246,195,88,0.18)',
-    screen: 'Challenges' as const,
-  },
-  {
-    key: 'mosques',
-    label: 'Cami Atlası',
-    icon: 'map-outline' as const,
-    color: '#0ea5e9',
-    glow: 'rgba(14,165,233,0.18)',
-    screen: 'MosqueMap' as const,
-  },
-  {
-    key: 'ramadan',
-    label: 'Ramazan',
-    icon: 'moon-outline' as const,
-    color: '#6366f1',
-    glow: 'rgba(99,102,241,0.18)',
-    screen: 'Ramadan' as const,
   },
 ];
 

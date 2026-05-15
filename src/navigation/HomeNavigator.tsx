@@ -19,12 +19,9 @@ import {
   LocationSelectionScreen,
   KazaTrackerScreen,
   StatsScreen,
-  ChallengeScreen,
   MosqueMapScreen,
   DuaScreen,
-  HijriCalendarScreen,
   SettingsScreen,
-  RamadanScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
@@ -199,18 +196,6 @@ export default function HomeNavigator() {
           }}
         />
         <Stack.Screen
-          name="Challenges"
-          component={ChallengeScreen}
-          options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Meydan Okumalar',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
-          }}
-        />
-        <Stack.Screen
           name="MosqueMap"
           component={MosqueMapScreen}
           options={{
@@ -235,36 +220,12 @@ export default function HomeNavigator() {
           }}
         />
         <Stack.Screen
-          name="HijriCalendar"
-          component={HijriCalendarScreen}
-          options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Hicri Takvim',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
-          }}
-        />
-        <Stack.Screen
           name="Settings"
           component={SettingsScreen}
           options={{
             headerShown: true,
             header: undefined,
             title: 'Ayarlar',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
-          }}
-        />
-        <Stack.Screen
-          name="Ramadan"
-          component={RamadanScreen}
-          options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Ramazan',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',
