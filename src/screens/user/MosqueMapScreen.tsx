@@ -1,12 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Modal,
   TextInput,
   Image,
   ScrollView,
@@ -14,21 +11,43 @@ import {
   Alert,
   Platform,
 } from 'react-native';
+import { DraggableBottomSheet } from '@/components/layout/DraggableBottomSheet';
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
+import { cssInterop } from 'nativewind';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { useMosqueStore } from '@/modules/mosque/mosque.store';
+import { useMosqueStore, type Mosque } from '@/modules/mosque/mosque.store';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { mosqueApi } from '@/modules/mosque/mosque.api';
 import * as Haptics from 'expo-haptics';
+
+cssInterop(MapView, { className: 'style' });
 
 const INITIAL_REGION: Region = {
   latitude: 41.0082,
   longitude: 28.9784,
   latitudeDelta: 0.05,
   longitudeDelta: 0.05,
+};
+
+type FormState = {
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  image_url: string;
+  image_public_id: string;
+};
+
+const EMPTY_FORM: FormState = {
+  name: '',
+  description: '',
+  latitude: 0,
+  longitude: 0,
+  image_url: '',
+  image_public_id: '',
 };
 
 const MosquePin = ({ isMine }: { isMine: boolean }) => (
@@ -70,33 +89,33 @@ const MosquePin = ({ isMine }: { isMine: boolean }) => (
 const MosqueMapScreen = () => {
   const { isDark } = useTheme();
   const { user } = useAuthStore();
-  const { mosques, isLoading, fetchMosques, addMosque } = useMosqueStore();
+  const { mosques, fetchMosques, addMosque, updateMosque, deleteMosque } = useMosqueStore();
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [currentRegion, setCurrentRegion] = useState<Region>(INITIAL_REGION);
   const [filter, setFilter] = useState<'mine' | 'all'>('all');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newMosque, setNewMosque] = useState({
-    name: '',
-    description: '',
-    latitude: 0,
-    longitude: 0,
-    image_url: '',
-  });
+
+  // Add/Edit sheet
+  const [sheetMode, setSheetMode] = useState<'add' | 'edit'>('add');
+  const [showFormSheet, setShowFormSheet] = useState(false);
+  const [editingMosque, setEditingMosque] = useState<Mosque | null>(null);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Manage sheet (edit/delete for own mosque)
+  const [showManageSheet, setShowManageSheet] = useState(false);
+  const [managingMosque, setManagingMosque] = useState<Mosque | null>(null);
+
   const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          'İzin Gerekli',
-          'Harita özelliğini kullanmak için konum izni vermeniz gerekiyor.'
-        );
+        Alert.alert('İzin Gerekli', 'Harita özelliğini kullanmak için konum izni vermeniz gerekiyor.');
         return;
       }
-
       const currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
       fetchMosques(filter);
@@ -110,7 +129,6 @@ const MosqueMapScreen = () => {
       aspect: [4, 3],
       quality: 0.7,
     });
-
     if (!result.canceled && result.assets[0]) {
       uploadImage(result.assets[0].uri);
     }
@@ -125,39 +143,99 @@ const MosqueMapScreen = () => {
         name: 'mosque.jpg',
         type: 'image/jpeg',
       } as any);
-
       const response = await mosqueApi.uploadImage(formData);
       if (response.data.success) {
-        setNewMosque({ ...newMosque, image_url: response.data.imageUrl });
+        setForm((prev) => ({
+          ...prev,
+          image_url: response.data.imageUrl,
+          image_public_id: response.data.imagePublicId,
+        }));
       }
     } catch (error) {
-      console.error('Upload error:', error);
       Alert.alert('Hata', 'Görsel yüklenemedi');
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleSaveMosque = async () => {
-    if (!newMosque.name) {
+  const openAddSheet = (lat: number, lng: number) => {
+    setSheetMode('add');
+    setEditingMosque(null);
+    setForm({ ...EMPTY_FORM, latitude: lat, longitude: lng });
+    setShowFormSheet(true);
+  };
+
+  const openEditSheet = (mosque: Mosque) => {
+    setSheetMode('edit');
+    setEditingMosque(mosque);
+    setForm({
+      name: mosque.name,
+      description: mosque.description ?? '',
+      latitude: parseFloat(mosque.latitude),
+      longitude: parseFloat(mosque.longitude),
+      image_url: mosque.image_url ?? '',
+      image_public_id: mosque.image_public_id ?? '',
+    });
+    setShowManageSheet(false);
+    setShowFormSheet(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.name) {
       Alert.alert('Hata', 'Lütfen cami adını girin');
       return;
     }
-
-    const success = await addMosque(newMosque);
+    setIsSaving(true);
+    let success = false;
+    if (sheetMode === 'add') {
+      success = await addMosque({
+        name: form.name,
+        description: form.description,
+        latitude: form.latitude,
+        longitude: form.longitude,
+        image_url: form.image_url || undefined,
+        image_public_id: form.image_public_id || undefined,
+      });
+    } else if (editingMosque) {
+      success = await updateMosque(editingMosque.id, {
+        name: form.name,
+        description: form.description,
+        image_url: form.image_url || undefined,
+        image_public_id: form.image_public_id || undefined,
+      });
+    }
+    setIsSaving(false);
     if (success) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setShowAddModal(false);
-      setNewMosque({ name: '', description: '', latitude: 0, longitude: 0, image_url: '' });
+      setShowFormSheet(false);
+      setForm(EMPTY_FORM);
     } else {
-      Alert.alert('Hata', 'Cami kaydedilemedi');
+      Alert.alert('Hata', 'Kaydedilemedi');
     }
+  };
+
+  const handleDelete = (mosque: Mosque) => {
+    Alert.alert('Camiyi Sil', `"${mosque.name}" silinecek. Emin misin?`, [
+      { text: 'İptal', style: 'cancel' },
+      {
+        text: 'Sil',
+        style: 'destructive',
+        onPress: async () => {
+          const success = await deleteMosque(mosque.id);
+          if (success) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            setShowManageSheet(false);
+          } else {
+            Alert.alert('Hata', 'Silinemedi');
+          }
+        },
+      },
+    ]);
   };
 
   const onMapLongPress = (e: any) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
-    setNewMosque({ ...newMosque, latitude, longitude });
-    setShowAddModal(true);
+    openAddSheet(latitude, longitude);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
@@ -195,81 +273,93 @@ const MosqueMapScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <MapView
         ref={mapRef}
-        style={styles.map}
+        className="flex-1"
         initialRegion={INITIAL_REGION}
         showsUserLocation
         showsMyLocationButton={false}
         onLongPress={onMapLongPress}
         onRegionChangeComplete={setCurrentRegion}
         customMapStyle={isDark ? darkMapStyle : []}>
-        {mosques.map((mosque) => (
-          <Marker
-            key={mosque.id}
-            coordinate={{
-              latitude: parseFloat(mosque.latitude),
-              longitude: parseFloat(mosque.longitude),
-            }}
-            tracksViewChanges={false}>
-            <MosquePin isMine={mosque.user_id === user?.id} />
-            <Callout tooltip>
-              <View className="w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
-                {mosque.image_url && (
-                  <Image
-                    source={{ uri: mosque.image_url }}
-                    className="h-32 w-full"
-                    resizeMode="cover"
-                  />
-                )}
-                <View className="p-3">
-                  <Text className="text-sm font-bold text-slate-900 dark:text-white">
-                    {mosque.name}
-                  </Text>
-                  {mosque.username && (
-                    <Text className="text-[10px] font-medium text-teal-600">
-                      @{mosque.username} tarafından eklendi
-                    </Text>
+        {mosques.map((mosque) => {
+          const isMine = mosque.user_id === user?.id;
+          return (
+            <Marker
+              key={mosque.id}
+              coordinate={{
+                latitude: parseFloat(mosque.latitude),
+                longitude: parseFloat(mosque.longitude),
+              }}
+              tracksViewChanges={false}
+              onCalloutPress={() => {
+                if (isMine) {
+                  setManagingMosque(mosque);
+                  setShowManageSheet(true);
+                }
+              }}>
+              <MosquePin isMine={isMine} />
+              <Callout tooltip>
+                <View className="w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
+                  {mosque.image_url && (
+                    <Image
+                      source={{ uri: mosque.image_url }}
+                      className="h-32 w-full"
+                      resizeMode="cover"
+                    />
                   )}
-                  {mosque.description && (
-                    <Text
-                      className="mt-1 text-xs text-slate-500 dark:text-slate-400"
-                      numberOfLines={2}>
-                      {mosque.description}
+                  <View className="p-3">
+                    <Text className="text-sm font-bold text-slate-900 dark:text-white">
+                      {mosque.name}
                     </Text>
-                  )}
+                    {mosque.username && (
+                      <Text className="text-[10px] font-medium text-teal-600">
+                        @{mosque.username} tarafından eklendi
+                      </Text>
+                    )}
+                    {mosque.description ? (
+                      <Text
+                        className="mt-1 text-xs text-slate-500 dark:text-slate-400"
+                        numberOfLines={2}>
+                        {mosque.description}
+                      </Text>
+                    ) : null}
+                    {isMine && (
+                      <Text className="mt-2 text-center text-[10px] font-bold text-teal-600">
+                        Düzenlemek için dokun
+                      </Text>
+                    )}
+                  </View>
                 </View>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
+              </Callout>
+            </Marker>
+          );
+        })}
       </MapView>
 
-      {/* Floating Controls */}
+      {/* Filter */}
       <View className="absolute left-4 right-4 top-4 flex-row items-center justify-between">
         <View className="flex-row items-center gap-2 rounded-full bg-white/90 p-1 shadow-sm dark:bg-slate-900/90">
           <TouchableOpacity
             onPress={() => setFilter('all')}
             className={`rounded-full px-4 py-2 ${filter === 'all' ? 'bg-teal-600' : ''}`}>
-            <Text
-              className={`text-xs font-bold ${filter === 'all' ? 'text-white' : 'text-slate-600'}`}>
+            <Text className={`text-xs font-bold ${filter === 'all' ? 'text-white' : 'text-slate-600'}`}>
               Herkes
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setFilter('mine')}
             className={`rounded-full px-4 py-2 ${filter === 'mine' ? 'bg-teal-600' : ''}`}>
-            <Text
-              className={`text-xs font-bold ${filter === 'mine' ? 'text-white' : 'text-slate-600'}`}>
+            <Text className={`text-xs font-bold ${filter === 'mine' ? 'text-white' : 'text-slate-600'}`}>
               Benimkiler
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
+      {/* Zoom + Locate + Add */}
       <View className="absolute bottom-10 right-6 gap-3">
-        {/* Zoom Controls */}
         <View
           style={{
             borderRadius: 16,
@@ -306,55 +396,105 @@ const MosqueMapScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Locate */}
         <TouchableOpacity
           onPress={centerToUser}
           className="h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-xl dark:bg-slate-800">
           <Ionicons name="locate" size={22} color={isDark ? '#2dd4bf' : '#0d9488'} />
         </TouchableOpacity>
 
-        {/* Add Mosque */}
         <TouchableOpacity
           onPress={() => {
-            if (location) {
-              setNewMosque({
-                ...newMosque,
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-              });
-              setShowAddModal(true);
-            }
+            const lat = location?.coords.latitude ?? INITIAL_REGION.latitude;
+            const lng = location?.coords.longitude ?? INITIAL_REGION.longitude;
+            openAddSheet(lat, lng);
           }}
           className="h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-xl">
           <Ionicons name="add" size={30} color="white" />
         </TouchableOpacity>
       </View>
 
-      <Modal visible={showAddModal} animationType="slide" transparent>
-        <View className="flex-1 justify-end bg-black/50">
-          <View className="rounded-t-[40px] bg-white p-6 pb-12 dark:bg-slate-900">
-            <View className="mb-6 flex-row items-center justify-between">
-              <Text className="text-xl font-black text-slate-900 dark:text-white">
-                Cami İşaretle
-              </Text>
-              <TouchableOpacity
-                onPress={() => setShowAddModal(false)}
-                className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-                <Ionicons name="close" size={24} color={isDark ? '#94a3b8' : '#64748b'} />
-              </TouchableOpacity>
+      {/* Manage Sheet (kendi camisi: düzenle / sil) */}
+      <DraggableBottomSheet
+        visible={showManageSheet}
+        onClose={() => setShowManageSheet(false)}
+        isDark={isDark}
+        snapPartial={280}>
+        {(panHandlers) =>
+          managingMosque ? (
+            <View className="flex-1 pt-3">
+              <View {...panHandlers}>
+                <View className="mb-3 items-center py-2">
+                  <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
+                </View>
+                <View className="mb-4 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
+                  <Text className="text-xl font-black text-slate-900 dark:text-white">
+                    {managingMosque.name}
+                  </Text>
+                  {managingMosque.description ? (
+                    <Text className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                      {managingMosque.description}
+                    </Text>
+                  ) : null}
+                </View>
+              </View>
+              <View className="gap-3 px-5 pb-6">
+                <TouchableOpacity
+                  onPress={() => openEditSheet(managingMosque)}
+                  className="flex-row items-center gap-3 rounded-2xl bg-teal-600 p-4">
+                  <Ionicons name="pencil" size={20} color="white" />
+                  <Text className="text-base font-bold text-white">Düzenle</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleDelete(managingMosque)}
+                  className="flex-row items-center gap-3 rounded-2xl bg-red-500 p-4">
+                  <Ionicons name="trash" size={20} color="white" />
+                  <Text className="text-base font-bold text-white">Sil</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : null
+        }
+      </DraggableBottomSheet>
+
+      {/* Add / Edit Form Sheet */}
+      <DraggableBottomSheet
+        visible={showFormSheet}
+        onClose={() => setShowFormSheet(false)}
+        isDark={isDark}>
+        {(panHandlers) => (
+          <View className="flex-1 pt-3">
+            <View {...panHandlers}>
+              <View className="mb-3 items-center py-2">
+                <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
+              </View>
+              <View className="mb-4 flex-row items-center justify-between border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
+                <Text className="text-xl font-black text-slate-900 dark:text-white">
+                  {sheetMode === 'add' ? 'Cami İşaretle' : 'Camiyi Düzenle'}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setShowFormSheet(false)}
+                  className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                  <Ionicons name="close" size={22} color={isDark ? '#94a3b8' : '#64748b'} />
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <ScrollView className="max-h-[500px]" showsVerticalScrollIndicator={false}>
-              <View className="space-y-4">
+            <ScrollView
+              className="flex-1 px-5"
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{ paddingBottom: 8 }}>
+              <View className="gap-4">
                 <View>
                   <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
                     Cami Adı
                   </Text>
                   <TextInput
-                    value={newMosque.name}
-                    onChangeText={(text) => setNewMosque({ ...newMosque, name: text })}
+                    value={form.name}
+                    onChangeText={(text) => setForm((p) => ({ ...p, name: text }))}
                     className="rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
                     placeholder="Örn: Sultanahmet Camii"
+                    placeholderTextColor="#94a3b8"
                   />
                 </View>
 
@@ -363,12 +503,13 @@ const MosqueMapScreen = () => {
                     Not / Açıklama
                   </Text>
                   <TextInput
-                    value={newMosque.description}
-                    onChangeText={(text) => setNewMosque({ ...newMosque, description: text })}
+                    value={form.description}
+                    onChangeText={(text) => setForm((p) => ({ ...p, description: text }))}
                     multiline
                     numberOfLines={3}
                     className="rounded-2xl bg-slate-50 p-4 font-medium text-slate-900 dark:bg-slate-800 dark:text-white"
                     placeholder="Burada namaz kılmak çok huzurluydu..."
+                    placeholderTextColor="#94a3b8"
                   />
                 </View>
 
@@ -381,9 +522,9 @@ const MosqueMapScreen = () => {
                     className="h-48 w-full items-center justify-center overflow-hidden rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
                     {isUploading ? (
                       <ActivityIndicator color="#0d9488" />
-                    ) : newMosque.image_url ? (
+                    ) : form.image_url ? (
                       <Image
-                        source={{ uri: newMosque.image_url }}
+                        source={{ uri: form.image_url }}
                         className="h-full w-full"
                         resizeMode="cover"
                       />
@@ -398,24 +539,29 @@ const MosqueMapScreen = () => {
               </View>
             </ScrollView>
 
-            <TouchableOpacity
-              onPress={handleSaveMosque}
-              disabled={isUploading}
-              className="mt-6 flex-row items-center justify-center gap-3 rounded-3xl bg-teal-600 p-5 shadow-lg active:opacity-80">
-              <Ionicons name="checkmark-circle" size={24} color="white" />
-              <Text className="text-lg font-black text-white">Kaydet ve Paylaş</Text>
-            </TouchableOpacity>
+            <View className="px-5 pb-6 pt-4">
+              <TouchableOpacity
+                onPress={handleSave}
+                disabled={isUploading || isSaving}
+                className="flex-row items-center justify-center gap-3 rounded-3xl bg-teal-600 p-5 shadow-lg active:opacity-80">
+                {isSaving ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={24} color="white" />
+                    <Text className="text-lg font-black text-white">
+                      {sheetMode === 'add' ? 'Kaydet ve Paylaş' : 'Güncelle'}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        )}
+      </DraggableBottomSheet>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  map: { width: '100%', height: '100%' },
-});
 
 const darkMapStyle = [
   { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },

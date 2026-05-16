@@ -89,7 +89,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
 
         <View className="flex-1 items-center">
           <Text
-            className="text-4xl font-black tracking-widest text-amber-500"
+            className="text-3xl font-black tracking-widest text-amber-500"
             style={{
               fontFamily: 'Bungee-Regular',
               textShadowColor: 'rgba(246,195,88,0.4)',
