@@ -311,15 +311,25 @@ export function PrayerTrackerCard() {
       const [h, m] = t.split(':').map(Number);
       return h * 60 + m;
     };
+
+    const imsakMin = prayerTimes['imsak'] ? parse(prayerTimes['imsak']) : null;
+    // Gece yarısı ile İmsak arası: bir önceki İslami günün köprü dönemi
+    const inIslamicBridge = imsakMin !== null && nowMin < imsakMin;
+
+    if (prayer.id === 'isha') {
+      const start = parse(prayerTimes[prayer.timeKey]);
+      if (nowMin >= start || inIslamicBridge) return 'current';
+      return 'upcoming';
+    }
+
+    // Köprü döneminde (gece yarısı–İmsak arası) tüm diğer namazlar geçmiş sayılır
+    if (inIslamicBridge) return 'expired';
+
     const start = parse(prayerTimes[prayer.timeKey]);
     const end = prayerTimes[prayer.nextTimeKey]
       ? parse(prayerTimes[prayer.nextTimeKey])
       : start + 240;
 
-    if (prayer.id === 'isha' && prayerTimes['imsak']) {
-      if (nowMin >= start || nowMin < parse(prayerTimes['imsak'])) return 'current';
-      return nowMin < start ? 'upcoming' : 'expired';
-    }
     if (nowMin < start) return 'upcoming';
     if (nowMin >= start && nowMin < end) return 'current';
     return 'expired';
