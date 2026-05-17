@@ -123,8 +123,23 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
   },
 
   trackPrayer: async (prayerTime, isKaza = false) => {
+    const prevStats = get().stats;
+
+    // Optimistic update: immediately mark as tracked to prevent duplicate taps
+    set((state) => ({
+      isLoading: true,
+      stats: state.stats
+        ? {
+            ...state.stats,
+            today_prayers: [...(state.stats.today_prayers ?? []), prayerTime],
+            ...(isKaza
+              ? { kaza_prayers: [...(state.stats.kaza_prayers ?? []), prayerTime] }
+              : {}),
+          }
+        : state.stats,
+    }));
+
     try {
-      set({ isLoading: true });
       const { data } = await gamificationApi.trackPrayer(prayerTime, isKaza);
       if (data.success) {
         set({ stats: data.data.stats });
@@ -133,6 +148,8 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
       }
       return null;
     } catch (e) {
+      // Revert optimistic update on failure
+      set({ stats: prevStats });
       console.error('Failed to track prayer', e);
       throw e;
     } finally {
@@ -187,7 +204,7 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
       },
       // Listeyi de güncellemek için en eski olanı bulup çıkarıyoruz
       kazaList: state.kazaList
-        .filter((k, i, self) => {
+        .filter((_k, i, self) => {
           const firstMatchIndex = self.findIndex((x) => x.prayer_time === prayerTime);
           return i !== firstMatchIndex;
         })
