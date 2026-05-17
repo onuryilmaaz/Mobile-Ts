@@ -19,7 +19,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
-import { Audio } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import type { AudioPlayer as ExpoAudioPlayer } from 'expo-audio';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BOOKMARKS_KEY = 'QURAN_BOOKMARKS';
@@ -41,7 +42,8 @@ const AudioPlayer = React.forwardRef<
   { verses: Verse[]; onActiveVerseChange: (idx: number) => void }
 >(function AudioPlayer({ verses, onActiveVerseChange }, ref) {
   const { isDark } = useTheme();
-  const soundRef = useRef<Audio.Sound | null>(null);
+  const soundRef = useRef<ExpoAudioPlayer | null>(null);
+  const statusSubRef = useRef<{ remove: () => void } | null>(null);
   const [playState, setPlayState] = useState<'idle' | 'loading' | 'playing' | 'paused'>('idle');
   const [reciterIdx, setReciterIdx] = useState(0);
   const [activeIdx, setActiveIdx] = useState(-1);
@@ -66,16 +68,19 @@ const AudioPlayer = React.forwardRef<
   }, [onActiveVerseChange]);
 
   useEffect(() => {
-    Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+    setAudioModeAsync({ playsInSilentMode: true });
     return () => {
       isMountedRef.current = false;
-      soundRef.current?.unloadAsync();
+      statusSubRef.current?.remove();
+      soundRef.current?.remove();
     };
   }, []);
 
-  const unload = async () => {
+  const unload = () => {
+    statusSubRef.current?.remove();
+    statusSubRef.current = null;
     if (soundRef.current) {
-      await soundRef.current.unloadAsync();
+      soundRef.current.remove();
       soundRef.current = null;
     }
   };
@@ -100,25 +105,24 @@ const AudioPlayer = React.forwardRef<
     setActiveBoth(idx);
 
     try {
-      await unload();
+      unload();
       if (!isMountedRef.current) return;
 
       const url = `https://cdn.islamic.network/quran/audio/128/${RECITERS[reciterIdxRef.current].id}/${vList[idx].id}.mp3`;
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: url },
-        { shouldPlay: true },
-        (status) => {
-          if (!isMountedRef.current || !status.isLoaded) return;
-          setPosition(status.positionMillis || 0);
-          setDuration(status.durationMillis || 0);
-          if (status.didJustFinish) {
-            playVerseAt(activeIdxRef.current + 1);
-          }
-        }
-      );
+      const player = createAudioPlayer({ uri: url });
 
-      if (!isMountedRef.current) { sound.unloadAsync(); return; }
-      soundRef.current = sound;
+      statusSubRef.current = player.addListener('playbackStatusUpdate', (status) => {
+        if (!isMountedRef.current || !status.isLoaded) return;
+        setPosition((status.currentTime || 0) * 1000);
+        setDuration((status.duration || 0) * 1000);
+        if (status.didJustFinish) {
+          playVerseAt(activeIdxRef.current + 1);
+        }
+      });
+
+      player.play();
+      if (!isMountedRef.current) { player.remove(); return; }
+      soundRef.current = player;
       setPlayState('playing');
     } catch {
       if (isMountedRef.current) setPlayState('idle');
@@ -134,15 +138,12 @@ const AudioPlayer = React.forwardRef<
   }), []);
 
   useEffect(() => {
-    const reset = async () => {
-      await unload();
-      if (!isMountedRef.current) return;
-      setPlayState('idle');
-      setActiveBoth(-1);
-      setPosition(0);
-      setDuration(0);
-    };
-    reset();
+    unload();
+    if (!isMountedRef.current) return;
+    setPlayState('idle');
+    setActiveBoth(-1);
+    setPosition(0);
+    setDuration(0);
   }, [reciterIdx]);
 
   // Seek bar — PanResponder refs ile stale closure olmadan çalışır
@@ -154,13 +155,13 @@ const AudioPlayer = React.forwardRef<
         const ratio = Math.max(0, Math.min(1, evt.nativeEvent.locationX / barWidthRef.current));
         const ms = ratio * durationRef.current;
         setPosition(ms);
-        soundRef.current?.setPositionAsync(ms);
+        soundRef.current?.seekTo(ms / 1000);
       },
       onPanResponderMove: (evt) => {
         const ratio = Math.max(0, Math.min(1, evt.nativeEvent.locationX / barWidthRef.current));
         const ms = ratio * durationRef.current;
         setPosition(ms);
-        soundRef.current?.setPositionAsync(ms);
+        soundRef.current?.seekTo(ms / 1000);
       },
     })
   ).current;
@@ -170,17 +171,17 @@ const AudioPlayer = React.forwardRef<
     if (playState === 'idle') {
       playVerseAt(0);
     } else if (playState === 'playing') {
-      soundRef.current?.pauseAsync();
+      soundRef.current?.pause();
       setPlayState('paused');
     } else if (playState === 'paused') {
-      soundRef.current?.playAsync();
+      soundRef.current?.play();
       setPlayState('playing');
     }
   };
 
-  const handleStop = async () => {
+  const handleStop = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    await unload();
+    unload();
     setPlayState('idle');
     setActiveBoth(-1);
     setPosition(0);
