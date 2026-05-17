@@ -2,6 +2,7 @@
   "expo": {
     "name": "Salah",
     "slug": "salah",
+    "scheme": "salah",
     "version": "1.0.0",
     "entryPoint": "./App.tsx",
     "web": {
@@ -22,14 +23,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onur6541.salah",
+      "appleTeamId": "R5A33U3B5Q",
+      "infoPlist": {
+        "NSSupportsLiveActivities": true,
+        "NSSupportsLiveActivitiesFrequentUpdates": true
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f766e"
       },
-      "package": "com.onur6541.salah"
+      "package": "com.onur6541.salah",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "owner": "onur6541",
     "plugins": [
@@ -37,7 +48,9 @@
       "expo-font",
       "expo-navigation-bar",
       "expo-sqlite",
-      "expo-audio"
+      "expo-audio",
+      "./plugins/removeApsEnvironment",
+      "./plugins/withSalahWidgets"
     ],
     "extra": {
       "expo-navigation-bar": {},

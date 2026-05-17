@@ -17,20 +17,23 @@ import { liveActivityService } from '@/modules/liveActivity/liveActivity.service
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 
 const linking = {
-  prefixes: ['com.onur6541.salah://'],
+  prefixes: ['com.onur6541.salah://', 'salah://'],
   config: {
     screens: {
       UserTabs: {
         screens: {
           Home: {
             screens: {
-              HomeMain: 'home',
+              HomeMain: {
+                path: 'home',
+              },
             },
+            path: 'prayer',
           },
           Tracker: {
             screens: {
               TrackerMain: {
-                path: 'tracker',
+                path: 'tracker/:type?',
                 parse: { type: (t: string) => t },
               },
             },
