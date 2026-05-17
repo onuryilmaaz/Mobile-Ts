@@ -36,19 +36,19 @@ struct AmelSmallView: View {
       HStack(spacing: 5) {
         Image(systemName: "star.fill")
           .foregroundColor(.salahPurple)
-          .font(.system(size: 14, weight: .bold))
+          .font(.system(size: 13, weight: .bold))
         Text("İBADET")
-          .font(.system(size: 13, weight: .heavy))
+          .font(.system(size: 12, weight: .black))
           .foregroundColor(t.textPrimary)
-          .tracking(0.3)
+          .tracking(0.5)
       }
       Spacer()
-      HStack(alignment: .lastTextBaseline, spacing: 4) {
+      HStack(alignment: .lastTextBaseline, spacing: 5) {
         Text("\(count)")
           .font(.system(size: 38, weight: .bold))
           .foregroundColor(t.textPrimary)
         Text("kayıt")
-          .font(.system(size: 13, weight: .medium))
+          .font(.system(size: 13, weight: .bold))
           .foregroundColor(t.textSecondary)
       }
       Spacer()
@@ -57,16 +57,16 @@ struct AmelSmallView: View {
           if i < activeTypes.count {
             Circle()
               .fill(amelColor(for: activeTypes[i]))
-              .frame(width: 9, height: 9)
+              .frame(width: 8, height: 8)
           } else {
             Circle()
               .strokeBorder(t.dotInactive, lineWidth: 1.5)
-              .frame(width: 9, height: 9)
+              .frame(width: 8, height: 8)
           }
         }
       }
     }
-    .padding(14)
+    .padding(16)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 }
@@ -78,50 +78,57 @@ struct AmelMediumView: View {
   private var t: SalahTheme { entry.theme }
   private var activeTypes: Set<String> { Set(entry.data?.types ?? []) }
 
-  let cols = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+  // Görseldeki 4 sütunlu simetrik yapı için grid tanımı
+  let cols = Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
+    VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .top) {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 3) {
           Text("BUGÜNÜN İBADETLERİ")
-            .font(.system(size: 10, weight: .heavy))
+            .font(.system(size: 10, weight: .black))
             .foregroundColor(t.textSecondary)
-            .tracking(0.5)
+            .tracking(0.6)
           Text(activeTypes.isEmpty ? "Henüz kayıt yok" : "\(activeTypes.count) ibadet tamamlandı")
-            .font(.system(size: 12, weight: .medium))
+            .font(.system(size: 12, weight: .bold))
             .foregroundColor(t.textSecondary)
         }
         Spacer()
         Image(systemName: "star.fill")
           .foregroundColor(.salahPurple)
-          .font(.system(size: 18))
+          .font(.system(size: 18, weight: .medium))
       }
+      
       LazyVGrid(columns: cols, spacing: 10) {
         ForEach(allAmelTypes, id: \.self) { type in
           let active = activeTypes.contains(type)
           let color = amelColor(for: type)
+          
           Link(destination: URL(string: "salah://tracker/\(type)")!) {
-            VStack(spacing: 4) {
-              ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                  .fill(active ? color.opacity(0.15) : t.subtleBg)
-                Image(systemName: amelIcon(for: type))
-                  .font(.system(size: 16, weight: .medium))
-                  .foregroundColor(active ? color : t.dotInactive)
-              }
-              .frame(height: 38)
+            // Görseldeki bütüncül buton yapısı (ikon ve metin tek bir kutunun içinde)
+            VStack(spacing: 5) {
+              Image(systemName: amelIcon(for: type))
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(active ? color : t.dotInactive)
+                .frame(height: 20)
+              
               Text(amelLabel(for: type))
-                .font(.system(size: 8, weight: .bold))
-                .foregroundColor(active ? t.textPrimary : t.textSecondary.opacity(0.6))
+                .font(.system(size: 9, weight: .bold))
+                .foregroundColor(t.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
             }
+            .frame(height: 48)
+            .frame(maxWidth: .infinity)
+            .background(
+              RoundedRectangle(cornerRadius: 12)
+                .fill(active ? color.opacity(0.12) : t.subtleBg)
+            )
           }
         }
       }
     }
-    .padding(12)
+    .padding(16)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 }

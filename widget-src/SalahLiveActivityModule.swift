@@ -72,6 +72,7 @@ class SalahLiveActivityModule: NSObject {
       ud.set(data, forKey: "salah_widget_data")
     }
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahPrayerTimesWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahPrayerTimesWidgetLight")
   }
 
   @objc func updatePrayerTrackerData(_ params: NSDictionary) {
@@ -85,6 +86,7 @@ class SalahLiveActivityModule: NSObject {
       ud.set(data, forKey: "salah_tracker_data")
     }
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidgetLight")
   }
 
   @objc func updateAmelData(_ params: NSDictionary) {
@@ -98,6 +100,7 @@ class SalahLiveActivityModule: NSObject {
       ud.set(data, forKey: "salah_amel_data")
     }
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahAmelWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahAmelWidgetLight")
   }
 
   @objc func updateInspirationData(_ params: NSDictionary) {
@@ -113,6 +116,7 @@ class SalahLiveActivityModule: NSObject {
       ud.set(data, forKey: "salah_inspiration_data")
     }
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahInspirationWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahInspirationWidgetLight")
   }
 
   @objc func getPendingWidgetPrayers(
