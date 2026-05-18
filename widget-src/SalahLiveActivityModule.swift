@@ -22,16 +22,23 @@ class SalahLiveActivityModule: NSObject {
     let nextPrayer = params["nextPrayer"] as? String ?? ""
     let endTimeMs = params["endTimeMs"] as? Double ?? 0
 
-    let state = SitePongActivityAttributes.ContentState(
-      prayerName: prayerName, nextPrayer: nextPrayer, endTimeMs: endTimeMs)
-    let attrs = SitePongActivityAttributes()
-    let content = ActivityContent(state: state, staleDate: nil)
-    do {
-      let activity = try Activity<SitePongActivityAttributes>.request(
-        attributes: attrs, content: content, pushType: nil)
-      resolve(activity.id)
-    } catch {
-      reject("ERROR", error.localizedDescription, error)
+    Task {
+      for activity in Activity<SitePongActivityAttributes>.activities {
+        await activity.end(nil, dismissalPolicy: .immediate)
+      }
+      
+      let state = SitePongActivityAttributes.ContentState(
+        prayerName: prayerName, nextPrayer: nextPrayer, endTimeMs: endTimeMs)
+      let attrs = SitePongActivityAttributes()
+      let content = ActivityContent(state: state, staleDate: nil)
+      
+      do {
+        let activity = try Activity<SitePongActivityAttributes>.request(
+          attributes: attrs, content: content, pushType: nil)
+        resolve(activity.id)
+      } catch {
+        reject("ERROR", error.localizedDescription, error)
+      }
     }
   }
 

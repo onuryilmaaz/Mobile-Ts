@@ -63,6 +63,39 @@ func isPrayerAvailable(_ p: PrayerInfo, widget: WidgetData?) -> Bool {
   return nowMin >= pMin
 }
 
+// MARK: - Premium Progress Ring
+
+struct PremiumRing: View {
+  let progress: CGFloat
+  let lineWidth: CGFloat
+  let isKaza: Bool
+  let trackColor: Color
+
+  var body: some View {
+    ZStack {
+      Circle()
+        .stroke(trackColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+
+      Circle()
+        .trim(from: 0, to: progress)
+        .stroke(
+          (isKaza ? Color.orange : Color.salahTealBright).opacity(0.40),
+          style: StrokeStyle(lineWidth: lineWidth + 5, lineCap: .round)
+        )
+        .blur(radius: 5)
+        .rotationEffect(.degrees(-90))
+
+      Circle()
+        .trim(from: 0, to: progress)
+        .stroke(
+          isKaza ? AngularGradient.salahKazaRing : AngularGradient.salahRing,
+          style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+        )
+        .rotationEffect(.degrees(-90))
+    }
+  }
+}
+
 // MARK: - Small Widget View
 
 struct PrayerTrackerSmallView: View {
@@ -72,56 +105,71 @@ struct PrayerTrackerSmallView: View {
   private var count: Int {
     allPrayers.filter { isPrayerCompleted($0.id, in: completed) }.count
   }
-  
-  // kaza verisine göre dinamik renk seçimi
-  private var ringColor: Color {
-    let hasKaza = completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
-    if hasKaza {
-      return Color.orange // Kaza ise turuncu
-    } else {
-      return Color(red: 0.18, green: 0.75, blue: 0.45) // Eşsiz ve canlı bir ibadet yeşili
-    }
+
+  private var hasKaza: Bool {
+    completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
   }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      HStack(spacing: 5) {
-        Image(systemName: "checkmark.circle.fill")
-          .foregroundColor(ringColor)
-          .font(.system(size: 14, weight: .bold))
+      HStack(spacing: 6) {
+        Image(systemName: "checkmark.seal.fill")
+          .foregroundStyle(
+            LinearGradient(
+              colors: hasKaza
+                ? [Color(red: 1.0, green: 0.75, blue: 0.25), Color(red: 0.95, green: 0.50, blue: 0.10)]
+                : [Color.salahMint, Color.salahTeal],
+              startPoint: .topLeading,
+              endPoint: .bottomTrailing
+            )
+          )
+          .font(.system(size: 15, weight: .bold))
         Text("Namaz")
           .font(.system(size: 13, weight: .bold))
           .foregroundColor(t.textPrimary)
+        Spacer()
       }
       Spacer()
       HStack {
         Spacer()
         ZStack {
-          Circle()
-            .stroke(t.ringTrack, lineWidth: 5)
-          Circle()
-            .trim(from: 0, to: CGFloat(count) / 5.0)
-            .stroke(ringColor, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-            .rotationEffect(.degrees(-90))
-          VStack(spacing: -1) {
+          PremiumRing(
+            progress: CGFloat(count) / 5.0,
+            lineWidth: 5.5,
+            isKaza: hasKaza,
+            trackColor: t.ringTrack
+          )
+          VStack(spacing: -2) {
             Text("\(count)")
-              .font(.system(size: 26, weight: .bold))
+              .font(.system(size: 28, weight: .heavy, design: .rounded))
               .foregroundColor(t.textPrimary)
             Text("/ 5")
-              .font(.system(size: 13, weight: .semibold))
+              .font(.system(size: 12, weight: .semibold))
               .foregroundColor(t.textSecondary)
           }
         }
-        .frame(width: 68, height: 68)
+        .frame(width: 72, height: 72)
         Spacer()
       }
       Spacer()
+      // Vakit dot'ları artık ikonik mini noktalar
       HStack(spacing: 8) {
         ForEach(allPrayers, id: \.id) { p in
           let done = isPrayerCompleted(p.id, in: completed)
-          Circle()
-            .fill(done ? prayerColor(for: p.id) : t.dotInactive)
-            .frame(width: 8, height: 8)
+          let kaza = done && isPrayerKaza(p.id, in: entry.tracker?.kazaPrayers ?? [])
+          if done && kaza {
+            Circle()
+              .fill(kazaGradient().linear)
+              .frame(width: 9, height: 9)
+          } else if done {
+            Circle()
+              .fill(prayerGradient(for: p.id).linear)
+              .frame(width: 9, height: 9)
+          } else {
+            Circle()
+              .fill(t.dotInactive)
+              .frame(width: 9, height: 9)
+          }
         }
       }
     }
@@ -130,7 +178,7 @@ struct PrayerTrackerSmallView: View {
   }
 }
 
-// MARK: - Prayer Circle (Medium Widget)
+// MARK: - Prayer Tile (Premium — vakit ikonu ile)
 
 struct PrayerCircleView: View {
   let prayer: PrayerInfo
@@ -140,57 +188,97 @@ struct PrayerCircleView: View {
   let theme: SalahTheme
 
   var body: some View {
-    // Kaza ise turuncu, değilse yeşil
-    let color: Color = {
-      if !isDone { return prayerColor(for: prayer.id) }
-      return isKaza ? Color.orange : Color(red: 0.18, green: 0.75, blue: 0.45)
-    }()
-
     if #available(iOS 17.0, *) {
       Button(intent: MarkPrayerIntent(prayerId: prayer.id)) {
-        circleContent(color: color)
+        tileContent
       }
       .buttonStyle(.plain)
       .disabled(isDone || !isAvailable)
     } else {
       Link(destination: URL(string: "salah://home")!) {
-        circleContent(color: color)
+        tileContent
       }
       .disabled(isDone || !isAvailable)
     }
   }
 
   @ViewBuilder
-  private func circleContent(color: Color) -> some View {
-    VStack(spacing: 6) {
+  private var tileContent: some View {
+    let gradient: PrayerGradient = isKaza ? kazaGradient() : prayerGradient(for: prayer.id)
+    let iconName = isKaza ? "exclamationmark.arrow.circlepath" : prayerCompletedIcon(for: prayer.id)
+
+    VStack(spacing: 7) {
       ZStack {
         if isDone {
-          Circle()
-            .fill(color.opacity(0.18))
-            .frame(width: 46, height: 46)
-          Circle()
-            .strokeBorder(color, lineWidth: 1.5)
-            .frame(width: 46, height: 46)
-          Image(systemName: "checkmark")
-            .font(.system(size: 15, weight: .bold))
-            .foregroundColor(color)
+          // Dark için blur glow
+          if theme == .dark {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+              .fill(gradient.glow.opacity(0.35))
+              .frame(width: 50, height: 50)
+              .blur(radius: 8)
+              .offset(y: 2)
+          }
+
+          // Ana gradient body — light'ta renkli gölge ile kabarık
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .fill(gradient.linear)
+            .frame(width: 50, height: 50)
+            .shadow(
+              color: gradient.base.opacity(theme.tileShadowOpacity),
+              radius: theme.tileShadowRadius,
+              x: 0,
+              y: 4
+            )
+
+          // İç parlaklık (üst yarı)
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .fill(
+              LinearGradient(
+                colors: [Color.white.opacity(theme == .light ? 0.50 : 0.40), Color.white.opacity(0)],
+                startPoint: .top,
+                endPoint: .center
+              )
+            )
+            .frame(width: 50, height: 50)
+            .blendMode(.plusLighter)
+            .allowsHitTesting(false)
+
+          // İnce beyaz çerçeve
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(Color.white.opacity(theme.tileInnerBorderOpacity), lineWidth: 1.0)
+            .frame(width: 50, height: 50)
+
+          // VAKİT İKONU — beyaz, hafif gölgeli
+          Image(systemName: iconName)
+            .font(.system(size: 19, weight: .semibold))
+            .foregroundColor(.white)
+            .shadow(color: gradient.base.opacity(0.6), radius: 2, x: 0, y: 1)
         } else if !isAvailable {
-          Circle()
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
             .fill(theme.subtleBg)
-            .frame(width: 46, height: 46)
+            .frame(width: 50, height: 50)
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(theme.subtleBorder, lineWidth: 0.8)
+            .frame(width: 50, height: 50)
           Image(systemName: "lock.fill")
-            .font(.system(size: 13, weight: .medium))
+            .font(.system(size: 13, weight: .semibold))
             .foregroundColor(theme.dotInactive)
         } else {
-          Circle()
-            .strokeBorder(color.opacity(0.3), lineWidth: 1.5)
-            .background(Circle().fill(color.opacity(0.04)))
-            .frame(width: 46, height: 46)
+          // Henüz tamamlanmamış ama vakti gelmiş — o vaktin ikonu, soluk renkli
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .fill(gradient.softFill)
+            .frame(width: 50, height: 50)
+          RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(gradient.glow.opacity(0.50), lineWidth: 1.2)
+            .frame(width: 50, height: 50)
+          Image(systemName: prayerCompletedIcon(for: prayer.id))
+            .font(.system(size: 17, weight: .medium))
+            .foregroundColor(gradient.glow.opacity(0.7))
         }
       }
       Text(prayer.label)
         .font(.system(size: 11, weight: .bold))
-        .foregroundColor(isDone ? color : theme.textSecondary)
+        .foregroundColor(isDone ? gradient.glow : theme.textSecondary)
     }
   }
 }
@@ -204,15 +292,9 @@ struct PrayerTrackerMediumView: View {
   private var count: Int {
     allPrayers.filter { isPrayerCompleted($0.id, in: completed) }.count
   }
-  
-  // kaza verisine göre dinamik renk seçimi
-  private var ringColor: Color {
-    let hasKaza = completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
-    if hasKaza {
-      return Color.orange // Kaza ise turuncu
-    } else {
-      return Color(red: 0.18, green: 0.75, blue: 0.45) // Eşsiz ve canlı bir ibadet yeşili
-    }
+
+  private var hasKaza: Bool {
+    completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
   }
 
   var body: some View {
@@ -222,10 +304,10 @@ struct PrayerTrackerMediumView: View {
           Text("GÜNLÜK NAMAZ TAKİBİ")
             .font(.system(size: 10, weight: .black))
             .foregroundColor(t.textSecondary)
-            .tracking(0.6)
-          HStack(alignment: .firstTextBaseline, spacing: 3) {
+            .tracking(0.7)
+          HStack(alignment: .firstTextBaseline, spacing: 4) {
             Text("\(count)")
-              .font(.system(size: 26, weight: .black))
+              .font(.system(size: 28, weight: .heavy, design: .rounded))
               .foregroundColor(t.textPrimary)
             Text("/ 5 tamamlandı")
               .font(.system(size: 12, weight: .bold))
@@ -233,17 +315,15 @@ struct PrayerTrackerMediumView: View {
           }
         }
         Spacer()
-        ZStack {
-          Circle()
-            .stroke(t.ringTrack, lineWidth: 3)
-          Circle()
-            .trim(from: 0, to: CGFloat(count) / 5.0)
-            .stroke(ringColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-            .rotationEffect(.degrees(-90))
-        }
-        .frame(width: 32, height: 32)
+        PremiumRing(
+          progress: CGFloat(count) / 5.0,
+          lineWidth: 3.5,
+          isKaza: hasKaza,
+          trackColor: t.ringTrack
+        )
+        .frame(width: 34, height: 34)
       }
-      
+
       HStack(spacing: 0) {
         ForEach(allPrayers, id: \.id) { prayer in
           let done = isPrayerCompleted(prayer.id, in: completed)
@@ -281,7 +361,7 @@ struct PrayerTrackerWidgetEntryView: View {
   }
 }
 
-// MARK: - Widget Definitions (Light + Dark)
+// MARK: - Widget Definitions
 
 struct PrayerTrackerWidget: Widget {
   let kind = "SalahTrackerWidget"
