@@ -37,12 +37,13 @@ struct AmelSmallView: View {
         Image(systemName: "star.fill")
           .foregroundStyle(
             LinearGradient(
-              colors: [Color(red: 0.72, green: 0.55, blue: 1.00), Color.salahPurple],
+              colors: [Color(red: 0.85, green: 0.55, blue: 1.00), Color(red: 0.50, green: 0.15, blue: 0.98)],
               startPoint: .topLeading,
               endPoint: .bottomTrailing
             )
           )
-          .font(.system(size: 14, weight: .bold))
+          .font(.system(size: 15, weight: .bold))
+          .shadow(color: Color.salahPurple.opacity(t == .light ? 0.5 : 0.0), radius: 4, x: 0, y: 1)
         Text("İBADET")
           .font(.system(size: 12, weight: .black))
           .foregroundColor(t.textPrimary)
@@ -62,13 +63,15 @@ struct AmelSmallView: View {
       HStack(spacing: 9) {
         ForEach(0..<5, id: \.self) { i in
           if i < activeTypes.count {
+            let c = amelColor(for: activeTypes[i])
             Circle()
               .fill(amelGradient(for: activeTypes[i]))
-              .frame(width: 9, height: 9)
+              .frame(width: 10, height: 10)
+              .shadow(color: c.opacity(t == .light ? 0.6 : 0.0), radius: 3)
           } else {
             Circle()
               .strokeBorder(t.dotInactive, lineWidth: 1.5)
-              .frame(width: 9, height: 9)
+              .frame(width: 10, height: 10)
           }
         }
       }
@@ -78,7 +81,7 @@ struct AmelSmallView: View {
   }
 }
 
-// MARK: - Amel Tile
+// MARK: - Amel Tile (neon)
 
 struct AmelTile: View {
   let type: String
@@ -99,19 +102,21 @@ struct AmelTile: View {
     VStack(spacing: 5) {
       ZStack {
         if isActive {
+          // Dark için arkada güçlü neon glow
           if theme == .dark {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-              .fill(color.opacity(0.40))
-              .blur(radius: 6)
-              .frame(height: 32)
+              .fill(color.opacity(0.55))
+              .blur(radius: 8)
+              .frame(height: 34)
           }
 
           Image(systemName: amelIcon(for: type))
             .font(.system(size: 17, weight: .semibold))
             .foregroundStyle(gradient)
             .shadow(
-              color: theme == .light ? color.opacity(0.35) : .clear,
-              radius: 3, x: 0, y: 1
+              color: theme == .light ? color.opacity(0.65) : color.opacity(0.4),
+              radius: theme == .light ? 5 : 4,
+              x: 0, y: 1
             )
         } else {
           Image(systemName: amelIcon(for: type))
@@ -134,7 +139,7 @@ struct AmelTile: View {
         RoundedRectangle(cornerRadius: 13, style: .continuous)
           .fill(isActive ? AnyShapeStyle(
             LinearGradient(
-              colors: [color.opacity(theme == .light ? 0.18 : 0.22), color.opacity(theme == .light ? 0.08 : 0.10)],
+              colors: [color.opacity(theme == .light ? 0.22 : 0.28), color.opacity(theme == .light ? 0.10 : 0.14)],
               startPoint: .topLeading,
               endPoint: .bottomTrailing
             )
@@ -142,7 +147,7 @@ struct AmelTile: View {
 
         if isActive {
           RoundedRectangle(cornerRadius: 13, style: .continuous)
-            .strokeBorder(color.opacity(theme == .light ? 0.40 : 0.30), lineWidth: 0.8)
+            .strokeBorder(color.opacity(theme == .light ? 0.50 : 0.45), lineWidth: 1.0)
         } else {
           RoundedRectangle(cornerRadius: 13, style: .continuous)
             .strokeBorder(theme.subtleBorder, lineWidth: 0.6)
@@ -177,22 +182,23 @@ struct AmelMediumView: View {
         ZStack {
           if t == .dark {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-              .fill(Color.salahPurple.opacity(0.25))
-              .blur(radius: 5)
-              .frame(width: 30, height: 30)
+              .fill(Color.salahPurple.opacity(0.40))
+              .blur(radius: 7)
+              .frame(width: 32, height: 32)
           }
           Image(systemName: "star.fill")
             .foregroundStyle(
               LinearGradient(
-                colors: [Color(red: 0.78, green: 0.60, blue: 1.00), Color.salahPurple],
+                colors: [Color(red: 0.90, green: 0.60, blue: 1.00), Color(red: 0.50, green: 0.15, blue: 0.98)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
               )
             )
             .font(.system(size: 19, weight: .semibold))
             .shadow(
-              color: t == .light ? Color.salahPurple.opacity(0.35) : .clear,
-              radius: 3, x: 0, y: 1
+              color: Color.salahPurple.opacity(t == .light ? 0.55 : 0.3),
+              radius: t == .light ? 5 : 4,
+              x: 0, y: 1
             )
         }
       }

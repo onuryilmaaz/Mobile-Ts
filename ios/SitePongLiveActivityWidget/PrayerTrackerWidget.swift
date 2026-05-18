@@ -63,7 +63,7 @@ func isPrayerAvailable(_ p: PrayerInfo, widget: WidgetData?) -> Bool {
   return nowMin >= pMin
 }
 
-// MARK: - Premium Progress Ring
+// MARK: - Premium Progress Ring (daha güçlü neon glow)
 
 struct PremiumRing: View {
   let progress: CGFloat
@@ -76,13 +76,14 @@ struct PremiumRing: View {
       Circle()
         .stroke(trackColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
 
+      // Dış neon halka
       Circle()
         .trim(from: 0, to: progress)
         .stroke(
-          (isKaza ? Color.orange : Color.salahTealBright).opacity(0.40),
-          style: StrokeStyle(lineWidth: lineWidth + 5, lineCap: .round)
+          (isKaza ? Color(red: 1.0, green: 0.55, blue: 0.10) : Color(red: 0.10, green: 0.95, blue: 0.82)).opacity(0.55),
+          style: StrokeStyle(lineWidth: lineWidth + 6, lineCap: .round)
         )
-        .blur(radius: 5)
+        .blur(radius: 6)
         .rotationEffect(.degrees(-90))
 
       Circle()
@@ -117,8 +118,8 @@ struct PrayerTrackerSmallView: View {
           .foregroundStyle(
             LinearGradient(
               colors: hasKaza
-                ? [Color(red: 1.0, green: 0.75, blue: 0.25), Color(red: 0.95, green: 0.50, blue: 0.10)]
-                : [Color.salahMint, Color.salahTeal],
+                ? [Color(red: 1.00, green: 0.78, blue: 0.20), Color(red: 1.00, green: 0.42, blue: 0.00)]
+                : [Color(red: 0.30, green: 1.00, blue: 0.85), Color(red: 0.00, green: 0.78, blue: 0.70)],
               startPoint: .topLeading,
               endPoint: .bottomTrailing
             )
@@ -152,7 +153,6 @@ struct PrayerTrackerSmallView: View {
         Spacer()
       }
       Spacer()
-      // Vakit dot'ları artık ikonik mini noktalar
       HStack(spacing: 8) {
         ForEach(allPrayers, id: \.id) { p in
           let done = isPrayerCompleted(p.id, in: completed)
@@ -160,15 +160,18 @@ struct PrayerTrackerSmallView: View {
           if done && kaza {
             Circle()
               .fill(kazaGradient().linear)
-              .frame(width: 9, height: 9)
+              .frame(width: 10, height: 10)
+              .shadow(color: kazaGradient().glow.opacity(t == .light ? 0.6 : 0.0), radius: 3)
           } else if done {
+            let g = prayerGradient(for: p.id)
             Circle()
-              .fill(prayerGradient(for: p.id).linear)
-              .frame(width: 9, height: 9)
+              .fill(g.linear)
+              .frame(width: 10, height: 10)
+              .shadow(color: g.glow.opacity(t == .light ? 0.6 : 0.0), radius: 3)
           } else {
             Circle()
               .fill(t.dotInactive)
-              .frame(width: 9, height: 9)
+              .frame(width: 10, height: 10)
           }
         }
       }
@@ -178,7 +181,7 @@ struct PrayerTrackerSmallView: View {
   }
 }
 
-// MARK: - Prayer Tile (Premium — vakit ikonu ile)
+// MARK: - Prayer Tile (Neon Premium)
 
 struct PrayerCircleView: View {
   let prayer: PrayerInfo
@@ -210,16 +213,16 @@ struct PrayerCircleView: View {
     VStack(spacing: 7) {
       ZStack {
         if isDone {
-          // Dark için blur glow
+          // Dark için güçlü blur glow — tile'ın etrafında belirgin neon hale
           if theme == .dark {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-              .fill(gradient.glow.opacity(0.35))
-              .frame(width: 50, height: 50)
-              .blur(radius: 8)
+              .fill(gradient.glow.opacity(0.65))
+              .frame(width: 52, height: 52)
+              .blur(radius: 10)
               .offset(y: 2)
           }
 
-          // Ana gradient body — light'ta renkli gölge ile kabarık
+          // Ana doygun gradient body
           RoundedRectangle(cornerRadius: 14, style: .continuous)
             .fill(gradient.linear)
             .frame(width: 50, height: 50)
@@ -230,29 +233,29 @@ struct PrayerCircleView: View {
               y: 4
             )
 
-          // İç parlaklık (üst yarı)
+          // Çok ince üst parlaklık — rengi yıkamasın diye düşük opacity
           RoundedRectangle(cornerRadius: 14, style: .continuous)
             .fill(
               LinearGradient(
-                colors: [Color.white.opacity(theme == .light ? 0.50 : 0.40), Color.white.opacity(0)],
+                colors: [Color.white.opacity(theme == .light ? 0.18 : 0.22), Color.white.opacity(0)],
                 startPoint: .top,
                 endPoint: .center
               )
             )
             .frame(width: 50, height: 50)
-            .blendMode(.plusLighter)
             .allowsHitTesting(false)
 
-          // İnce beyaz çerçeve
+          // İnce çerçeve — rengi bozmaması için düşük opacity
           RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .strokeBorder(Color.white.opacity(theme.tileInnerBorderOpacity), lineWidth: 1.0)
+            .strokeBorder(Color.white.opacity(theme.tileInnerBorderOpacity), lineWidth: 0.8)
             .frame(width: 50, height: 50)
 
-          // VAKİT İKONU — beyaz, hafif gölgeli
+          // İkon — güçlü renkli shadow ile parlama
           Image(systemName: iconName)
             .font(.system(size: 19, weight: .semibold))
             .foregroundColor(.white)
-            .shadow(color: gradient.base.opacity(0.6), radius: 2, x: 0, y: 1)
+            .shadow(color: gradient.base.opacity(0.85), radius: 4, x: 0, y: 1)
+            .shadow(color: gradient.glow.opacity(0.55), radius: 8, x: 0, y: 0)
         } else if !isAvailable {
           RoundedRectangle(cornerRadius: 14, style: .continuous)
             .fill(theme.subtleBg)
@@ -264,16 +267,16 @@ struct PrayerCircleView: View {
             .font(.system(size: 13, weight: .semibold))
             .foregroundColor(theme.dotInactive)
         } else {
-          // Henüz tamamlanmamış ama vakti gelmiş — o vaktin ikonu, soluk renkli
+          // Available ama tamamlanmamış — vakit ikonu canlı renkli, doygun fill
           RoundedRectangle(cornerRadius: 14, style: .continuous)
             .fill(gradient.softFill)
             .frame(width: 50, height: 50)
           RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .strokeBorder(gradient.glow.opacity(0.50), lineWidth: 1.2)
+            .strokeBorder(gradient.glow.opacity(0.65), lineWidth: 1.4)
             .frame(width: 50, height: 50)
           Image(systemName: prayerCompletedIcon(for: prayer.id))
-            .font(.system(size: 17, weight: .medium))
-            .foregroundColor(gradient.glow.opacity(0.7))
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(gradient.linear)
         }
       }
       Text(prayer.label)
