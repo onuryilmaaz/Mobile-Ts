@@ -233,22 +233,24 @@ struct PrayerCircleView: View {
               y: 4
             )
 
-          // Çok ince üst parlaklık — rengi yıkamasın diye düşük opacity
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .fill(
-              LinearGradient(
-                colors: [Color.white.opacity(theme == .light ? 0.18 : 0.22), Color.white.opacity(0)],
-                startPoint: .top,
-                endPoint: .center
+          // Üst parlaklık — sadece dark'ta, light'ta beyazlık rengi yıkıyordu
+          if theme == .dark {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+              .fill(
+                LinearGradient(
+                  colors: [Color.white.opacity(0.22), Color.white.opacity(0)],
+                  startPoint: .top,
+                  endPoint: .center
+                )
               )
-            )
-            .frame(width: 50, height: 50)
-            .allowsHitTesting(false)
+              .frame(width: 50, height: 50)
+              .allowsHitTesting(false)
 
-          // İnce çerçeve — rengi bozmaması için düşük opacity
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .strokeBorder(Color.white.opacity(theme.tileInnerBorderOpacity), lineWidth: 0.8)
-            .frame(width: 50, height: 50)
+            // İnce çerçeve — sadece dark'ta cam efekti için
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+              .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
+              .frame(width: 50, height: 50)
+          }
 
           // İkon — güçlü renkli shadow ile parlama
           Image(systemName: iconName)
@@ -267,16 +269,20 @@ struct PrayerCircleView: View {
             .font(.system(size: 13, weight: .semibold))
             .foregroundColor(theme.dotInactive)
         } else {
-          // Available ama tamamlanmamış — vakit ikonu canlı renkli, doygun fill
+          // Available — boş slot, sadece renkli outline ile vakit belirtilir
+          // Done ile arasında dramatik kontrast olsun diye zemin nötr
           RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .fill(gradient.softFill)
+            .fill(theme.subtleBg)
             .frame(width: 50, height: 50)
           RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .strokeBorder(gradient.glow.opacity(0.65), lineWidth: 1.4)
+            .strokeBorder(
+              gradient.glow.opacity(theme == .light ? 0.45 : 0.40),
+              style: StrokeStyle(lineWidth: 1.2, dash: [3, 2.5])
+            )
             .frame(width: 50, height: 50)
-          Image(systemName: prayerCompletedIcon(for: prayer.id))
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(gradient.linear)
+          Image(systemName: "plus")
+            .font(.system(size: 16, weight: .bold))
+            .foregroundColor(gradient.glow.opacity(theme == .light ? 0.75 : 0.65))
         }
       }
       Text(prayer.label)
