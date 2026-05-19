@@ -23,7 +23,7 @@ struct PrayerTimesProvider: TimelineProvider {
   }
 }
 
-// MARK: - Backend ID → widget ID (vakit ismini renge çevirmek için)
+// MARK: - Helpers
 
 private func prayerKeyFromName(_ name: String) -> String {
   let n = name.lowercased()
@@ -33,6 +33,44 @@ private func prayerKeyFromName(_ name: String) -> String {
   if n.contains("akşam") || n.contains("aksam") || n.contains("maghrib") { return "aksam" }
   if n.contains("yatsı") || n.contains("yatsi") || n.contains("isha") { return "yatsi" }
   return "ogle"
+}
+
+private func timeToMinutes(_ s: String) -> Int {
+  let parts = s.split(separator: ":").compactMap { Int($0) }
+  guard parts.count >= 2 else { return 0 }
+  return parts[0] * 60 + parts[1]
+}
+
+// Day's prayer schedule with statuses
+private struct PrayerSlot {
+  let id: String         // "sabah", "ogle", etc.
+  let label: String      // "Sabah", "Öğle"
+  let time: String       // "06:15"
+  let isActive: Bool     // şu an bu vakit
+  let isPast: Bool       // geçti
+}
+
+private func buildDaySlots(widget: WidgetData?, activePrayerName: String) -> [PrayerSlot] {
+  guard let w = widget else { return [] }
+  // Sabah → imsak ile başlar, gunes ile biter
+  let entries: [(String, String, String)] = [
+    ("sabah",  "Sabah",  w.imsak),
+    ("ogle",   "Öğle",   w.ogle),
+    ("ikindi", "İkindi", w.ikindi),
+    ("aksam",  "Akşam",  w.aksam),
+    ("yatsi",  "Yatsı",  w.yatsi),
+  ]
+  let activeKey = prayerKeyFromName(activePrayerName)
+  let nowComp = Calendar.current.dateComponents([.hour, .minute], from: Date())
+  let nowMin = (nowComp.hour ?? 0) * 60 + (nowComp.minute ?? 0)
+
+  return entries.map { (id, label, time) in
+    let startMin = timeToMinutes(time)
+    let isActive = (id == activeKey)
+    // "past" = bu vaktin başlangıcı geçti AND aktif değil
+    let isPast = startMin > 0 && nowMin >= startMin && !isActive
+    return PrayerSlot(id: id, label: label, time: time, isActive: isActive, isPast: isPast)
+  }
 }
 
 // MARK: - Small Widget
@@ -45,24 +83,16 @@ struct PrayerTimesSmallView: View {
     guard let d = entry.data, d.endTimeMs > 0 else { return nil }
     return Date(timeIntervalSince1970: d.endTimeMs / 1000)
   }
-
-  private var prayerKey: String {
-    prayerKeyFromName(entry.data?.prayerName ?? "")
-  }
+  private var prayerKey: String { prayerKeyFromName(entry.data?.prayerName ?? "") }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
   private var iconName: String { prayerCompletedIcon(for: prayerKey) }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      // Üst: vakit ikonu + Salah etiketi
       HStack(spacing: 6) {
         ZStack {
-          // Dark için ikon arkası glow
           if t == .dark {
-            Circle()
-              .fill(gradient.glow.opacity(0.45))
-              .frame(width: 26, height: 26)
-              .blur(radius: 6)
+            Circle().fill(gradient.glow.opacity(0.45)).frame(width: 26, height: 26).blur(radius: 6)
           }
           Image(systemName: iconName)
             .font(.system(size: 14, weight: .bold))
@@ -80,7 +110,6 @@ struct PrayerTimesSmallView: View {
 
       Spacer(minLength: 6)
 
-      // Vakit adı — büyük neon gradient
       Text(entry.data?.prayerName ?? "--")
         .font(.system(size: 26, weight: .heavy, design: .rounded))
         .foregroundStyle(gradient.linear)
@@ -88,7 +117,6 @@ struct PrayerTimesSmallView: View {
         .minimumScaleFactor(0.7)
         .lineLimit(1)
 
-      // Sayaç
       if let end = endDate {
         Text(timerInterval: Date.now...end, pauseTime: nil)
           .font(.system(size: 16, weight: .bold, design: .rounded).monospacedDigit())
@@ -102,8 +130,6 @@ struct PrayerTimesSmallView: View {
       }
 
       Spacer()
-
-      // Sonraki vakit chip
       nextPrayerChip
     }
     .padding(14)
@@ -123,16 +149,9 @@ struct PrayerTimesSmallView: View {
         .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.80))
         .lineLimit(1)
     }
-    .padding(.horizontal, 8)
-    .padding(.vertical, 4)
-    .background(
-      Capsule()
-        .fill(nextGrad.base.opacity(t == .light ? 0.10 : 0.18))
-    )
-    .overlay(
-      Capsule()
-        .strokeBorder(nextGrad.glow.opacity(t == .light ? 0.35 : 0.30), lineWidth: 0.8)
-    )
+    .padding(.horizontal, 8).padding(.vertical, 4)
+    .background(Capsule().fill(nextGrad.base.opacity(t == .light ? 0.10 : 0.18)))
+    .overlay(Capsule().strokeBorder(nextGrad.glow.opacity(t == .light ? 0.35 : 0.30), lineWidth: 0.8))
   }
 }
 
@@ -146,42 +165,27 @@ struct PrayerTimesMediumView: View {
     guard let d = entry.data, d.endTimeMs > 0 else { return nil }
     return Date(timeIntervalSince1970: d.endTimeMs / 1000)
   }
-
-  private var prayerKey: String {
-    prayerKeyFromName(entry.data?.prayerName ?? "")
-  }
+  private var prayerKey: String { prayerKeyFromName(entry.data?.prayerName ?? "") }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
   private var iconName: String { prayerCompletedIcon(for: prayerKey) }
 
   var body: some View {
     HStack(spacing: 16) {
-      // Sol: büyük vakit ikonu - premium glow ile
       ZStack {
         if t == .dark {
           RoundedRectangle(cornerRadius: 18, style: .continuous)
             .fill(gradient.glow.opacity(0.55))
-            .frame(width: 76, height: 76)
-            .blur(radius: 12)
-            .offset(y: 3)
+            .frame(width: 76, height: 76).blur(radius: 12).offset(y: 3)
         }
         RoundedRectangle(cornerRadius: 18, style: .continuous)
           .fill(gradient.linear)
           .frame(width: 76, height: 76)
-          .shadow(
-            color: gradient.base.opacity(t == .light ? 0.55 : 0.0),
-            radius: 10, x: 0, y: 4
-          )
+          .shadow(color: gradient.base.opacity(t == .light ? 0.55 : 0.0), radius: 10, x: 0, y: 4)
 
         if t == .dark {
           RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(
-              LinearGradient(
-                colors: [Color.white.opacity(0.22), Color.white.opacity(0)],
-                startPoint: .top, endPoint: .center
-              )
-            )
-            .frame(width: 76, height: 76)
-            .allowsHitTesting(false)
+            .fill(LinearGradient(colors: [Color.white.opacity(0.22), Color.white.opacity(0)], startPoint: .top, endPoint: .center))
+            .frame(width: 76, height: 76).allowsHitTesting(false)
           RoundedRectangle(cornerRadius: 18, style: .continuous)
             .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
             .frame(width: 76, height: 76)
@@ -194,30 +198,24 @@ struct PrayerTimesMediumView: View {
           .shadow(color: gradient.glow.opacity(0.55), radius: 9, x: 0, y: 0)
       }
 
-      // Sağ: metin hierarchy
       VStack(alignment: .leading, spacing: 4) {
         Text("SONRAKİ NAMAZ")
           .font(.system(size: 10, weight: .black))
-          .foregroundColor(t.textSecondary)
-          .tracking(0.7)
+          .foregroundColor(t.textSecondary).tracking(0.7)
 
         Text(entry.data?.prayerName ?? "--")
           .font(.system(size: 28, weight: .heavy, design: .rounded))
           .foregroundStyle(gradient.linear)
           .shadow(color: gradient.base.opacity(t == .light ? 0.40 : 0.0), radius: 5, x: 0, y: 1)
-          .minimumScaleFactor(0.7)
-          .lineLimit(1)
+          .minimumScaleFactor(0.7).lineLimit(1)
 
         if let end = endDate {
           Text(timerInterval: Date.now...end, pauseTime: nil)
             .font(.system(size: 18, weight: .bold, design: .rounded).monospacedDigit())
-            .foregroundColor(t.textPrimary)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
+            .foregroundColor(t.textPrimary).lineLimit(1).minimumScaleFactor(0.7)
         }
 
         Spacer(minLength: 4)
-
         nextPrayerChip
       }
       Spacer(minLength: 0)
@@ -239,15 +237,202 @@ struct PrayerTimesMediumView: View {
         .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.90 : 0.85))
         .lineLimit(1)
     }
-    .padding(.horizontal, 10)
+    .padding(.horizontal, 10).padding(.vertical, 5)
+    .background(Capsule().fill(nextGrad.base.opacity(t == .light ? 0.10 : 0.18)))
+    .overlay(Capsule().strokeBorder(nextGrad.glow.opacity(t == .light ? 0.40 : 0.30), lineWidth: 0.8))
+  }
+}
+
+// MARK: - Large Widget — Tüm günün vakitleri + aktif vurgu
+
+struct PrayerTimesLargeView: View {
+  let entry: PrayerTimesEntry
+  private var t: SalahTheme { entry.theme }
+
+  private var endDate: Date? {
+    guard let d = entry.data, d.endTimeMs > 0 else { return nil }
+    return Date(timeIntervalSince1970: d.endTimeMs / 1000)
+  }
+  private var prayerKey: String { prayerKeyFromName(entry.data?.prayerName ?? "") }
+  private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
+  private var iconName: String { prayerCompletedIcon(for: prayerKey) }
+
+  private var slots: [PrayerSlot] {
+    buildDaySlots(widget: entry.data, activePrayerName: entry.data?.prayerName ?? "")
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      // === ÜST: Kompakt aktif vakit header ===
+      HStack(spacing: 12) {
+        // Küçük ikon kutusu (60 → 48)
+        ZStack {
+          if t == .dark {
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+              .fill(gradient.glow.opacity(0.55))
+              .frame(width: 52, height: 52).blur(radius: 9).offset(y: 2)
+          }
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
+            .fill(gradient.linear)
+            .frame(width: 48, height: 48)
+            .shadow(color: gradient.base.opacity(t == .light ? 0.50 : 0.0), radius: 7, x: 0, y: 3)
+
+          if t == .dark {
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+              .fill(LinearGradient(colors: [Color.white.opacity(0.22), Color.white.opacity(0)], startPoint: .top, endPoint: .center))
+              .frame(width: 48, height: 48)
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+              .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
+              .frame(width: 48, height: 48)
+          }
+
+          Image(systemName: iconName)
+            .font(.system(size: 22, weight: .semibold))
+            .foregroundColor(.white)
+            .shadow(color: gradient.base.opacity(0.80), radius: 3, x: 0, y: 1)
+            .shadow(color: gradient.glow.opacity(0.55), radius: 7, x: 0, y: 0)
+        }
+        .frame(width: 48, height: 48)
+
+        // Sağ: vakit ismi (üstte) + sayaç (altta) — kompakt iki satır
+        VStack(alignment: .leading, spacing: 2) {
+          Text(entry.data?.prayerName ?? "--")
+            .font(.system(size: 22, weight: .heavy, design: .rounded))
+            .foregroundStyle(gradient.linear)
+            .shadow(color: gradient.base.opacity(t == .light ? 0.40 : 0.0), radius: 5, x: 0, y: 1)
+            .minimumScaleFactor(0.7).lineLimit(1)
+
+          if let end = endDate {
+            Text(timerInterval: Date.now...end, pauseTime: nil)
+              .font(.system(size: 18, weight: .bold, design: .rounded).monospacedDigit())
+              .foregroundColor(t.textPrimary).lineLimit(1).minimumScaleFactor(0.7)
+          }
+        }
+        Spacer(minLength: 0)
+      }
+
+      // Divider — daha ince padding
+      Rectangle()
+        .fill(t.subtleBorder)
+        .frame(height: 1)
+
+      // === ALT: 5 vakit listesi — daha sıkı spacing ===
+      VStack(spacing: 4) {
+        ForEach(slots, id: \.id) { slot in
+          PrayerSlotRow(slot: slot, theme: t)
+        }
+      }
+      Spacer(minLength: 0)
+    }
+    .padding(14)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+  }
+}
+
+// MARK: - Tek vakit satırı (large widget içinde)
+
+private struct PrayerSlotRow: View {
+  let slot: PrayerSlot
+  let theme: SalahTheme
+
+  private var grad: PrayerGradient { prayerGradient(for: slot.id) }
+  private var icon: String { prayerCompletedIcon(for: slot.id) }
+
+  var body: some View {
+    HStack(spacing: 11) {
+      // Sol: küçük ikon kutusu (34 → 32)
+      ZStack {
+        if slot.isActive {
+          if theme == .dark {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+              .fill(grad.glow.opacity(0.50))
+              .frame(width: 36, height: 36).blur(radius: 5).offset(y: 1)
+          }
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(grad.linear)
+            .frame(width: 32, height: 32)
+            .shadow(color: grad.base.opacity(theme == .light ? 0.50 : 0.0), radius: 4, x: 0, y: 2)
+          Image(systemName: icon)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundColor(.white)
+            .shadow(color: grad.base.opacity(0.7), radius: 2, x: 0, y: 1)
+        } else if slot.isPast {
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(theme.subtleBg)
+            .frame(width: 32, height: 32)
+          Image(systemName: icon)
+            .font(.system(size: 13, weight: .medium))
+            .foregroundColor(theme.textTertiary)
+        } else {
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(grad.base.opacity(theme == .light ? 0.07 : 0.10))
+            .frame(width: 32, height: 32)
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .strokeBorder(grad.glow.opacity(theme == .light ? 0.45 : 0.40), lineWidth: 1.0)
+            .frame(width: 32, height: 32)
+          Image(systemName: icon)
+            .font(.system(size: 13, weight: .medium))
+            .foregroundColor(grad.glow.opacity(theme == .light ? 0.85 : 0.75))
+        }
+      }
+      .frame(width: 36, height: 36)
+
+      // Orta: vakit ismi + saat
+      VStack(alignment: .leading, spacing: 0) {
+        Text(slot.label)
+          .font(.system(size: 14, weight: slot.isActive ? .heavy : .bold))
+          .foregroundColor(
+            slot.isActive ? grad.glow :
+            slot.isPast ? theme.textTertiary :
+            theme.textPrimary
+          )
+        Text(slot.time)
+          .font(.system(size: 11, weight: .semibold, design: .rounded).monospacedDigit())
+          .foregroundColor(
+            slot.isActive ? theme.textPrimary :
+            slot.isPast ? theme.textTertiary :
+            theme.textSecondary
+          )
+      }
+
+      Spacer(minLength: 6)
+
+      // Sağ: durum göstergesi
+      if slot.isActive {
+        Text("ŞİMDİ")
+          .font(.system(size: 9, weight: .black))
+          .foregroundColor(.white)
+          .tracking(0.6)
+          .padding(.horizontal, 8)
+          .padding(.vertical, 4)
+          .background(Capsule().fill(grad.linear))
+          .shadow(color: grad.glow.opacity(0.55), radius: 5, x: 0, y: 0)
+      } else if slot.isPast {
+        Image(systemName: "checkmark.circle.fill")
+          .font(.system(size: 14))
+          .foregroundColor(theme.textTertiary.opacity(0.6))
+      } else {
+        Image(systemName: "clock")
+          .font(.system(size: 13, weight: .medium))
+          .foregroundColor(grad.glow.opacity(theme == .light ? 0.55 : 0.45))
+      }
+    }
+    .padding(.horizontal, 9)
     .padding(.vertical, 5)
     .background(
-      Capsule()
-        .fill(nextGrad.base.opacity(t == .light ? 0.10 : 0.18))
-    )
-    .overlay(
-      Capsule()
-        .strokeBorder(nextGrad.glow.opacity(t == .light ? 0.40 : 0.30), lineWidth: 0.8)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .fill(slot.isActive
+              ? AnyShapeStyle(
+                  LinearGradient(
+                    colors: [grad.base.opacity(theme == .light ? 0.10 : 0.16), grad.glow.opacity(theme == .light ? 0.04 : 0.08)],
+                    startPoint: .leading, endPoint: .trailing
+                  )
+                )
+              : AnyShapeStyle(Color.clear))
+        .overlay(
+          RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .strokeBorder(slot.isActive ? grad.glow.opacity(theme == .light ? 0.35 : 0.32) : Color.clear, lineWidth: 1)
+        )
     )
   }
 }
@@ -262,13 +447,15 @@ struct PrayerTimesWidgetEntryView: View {
     switch family {
     case .systemSmall:
       PrayerTimesSmallView(entry: entry)
+    case .systemLarge:
+      PrayerTimesLargeView(entry: entry)
     default:
       PrayerTimesMediumView(entry: entry)
     }
   }
 }
 
-// MARK: - Widget Definitions (Light + Dark)
+// MARK: - Widget Definitions
 
 struct PrayerTimesWidget: Widget {
   let kind = "SalahPrayerTimesWidget"
@@ -280,8 +467,8 @@ struct PrayerTimesWidget: Widget {
         .widgetURL(URL(string: "salah://home"))
     }
     .configurationDisplayName("Namaz Vakitleri")
-    .description("Sonraki namaz vakti — koyu tema.")
-    .supportedFamilies([.systemSmall, .systemMedium])
+    .description("Namaz vakitleri — koyu tema.")
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
   }
 }
 
@@ -295,7 +482,7 @@ struct PrayerTimesLightWidget: Widget {
         .widgetURL(URL(string: "salah://home"))
     }
     .configurationDisplayName("Namaz Vakitleri (Açık)")
-    .description("Sonraki namaz vakti — açık tema.")
-    .supportedFamilies([.systemSmall, .systemMedium])
+    .description("Namaz vakitleri — açık tema.")
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
   }
 }
