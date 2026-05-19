@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import './global.css';
 import { useEffect } from 'react';
 import { AppState, NativeModules, Platform } from 'react-native';
@@ -17,6 +18,11 @@ import { rootNavigationRef } from '@/navigation/rootNavigation';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { gamificationApi } from '@/modules/gamification/gamification.api';
+import * as Notifications from 'expo-notifications';
+import { adhanService } from '@/services/adhan.service';
+import type { AdhanPrayerKey } from '@/services/adhan.service';
+import { useAdhanStore } from '@/services/adhan.store';
+import AdhanModal from '@/components/home/AdhanModal';
 
 const linking = {
   prefixes: ['com.onur6541.salah://', 'salah://'],
@@ -71,6 +77,9 @@ const MyLightTheme = {
 function AppContent() {
   const isDark = useThemeStore((s) => s.isDark);
   const { setColorScheme } = useColorScheme();
+  const adhanPrayer = useAdhanStore((s) => s.activePrayer);
+  const showAdhan = useAdhanStore((s) => s.show);
+  const hideAdhan = useAdhanStore((s) => s.hide);
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
@@ -112,9 +121,40 @@ function AppContent() {
     onForeground();
     const sub = AppState.addEventListener('change', (s) => {
       if (s === 'active') onForeground();
+      if (s === 'background' || s === 'inactive') {
+        adhanService.stop();
+        hideAdhan();
+      }
     });
     return () => sub.remove();
   }, []);
+
+  useEffect(() => {
+    const playIfEnabled = async (data: any) => {
+      if (data?.type === 'prayer_time' && data?.prayerKey) {
+        const enabled = await adhanService.isAdhanEnabled(data.prayerKey as AdhanPrayerKey);
+        if (enabled) {
+          await adhanService.playAdhan(data.prayerKey as AdhanPrayerKey);
+          showAdhan(data.prayerKey as AdhanPrayerKey, data.prayerName ?? data.prayerKey);
+        }
+      }
+    };
+
+    // Uygulama açıkken gelen bildirim
+    const receivedSub = Notifications.addNotificationReceivedListener((notification) => {
+      playIfEnabled(notification.request.content.data);
+    });
+
+    // Uygulama arka plandayken bildirime dokunulduğunda
+    const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
+      playIfEnabled(response.notification.request.content.data);
+    });
+
+    return () => {
+      receivedSub.remove();
+      responseSub.remove();
+    };
+  }, [showAdhan]);
 
   useEffect(() => {
     setColorScheme(isDark ? 'dark' : 'light');
@@ -131,6 +171,11 @@ function AppContent() {
       linking={linking}
       theme={isDark ? MyDarkTheme : MyLightTheme}>
       <AppNavigator />
+      <AdhanModal
+        visible={adhanPrayer !== null}
+        prayerName={adhanPrayer?.name ?? ''}
+        onDismiss={hideAdhan}
+      />
     </NavigationContainer>
   );
 }

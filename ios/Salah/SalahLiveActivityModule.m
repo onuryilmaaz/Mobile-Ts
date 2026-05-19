@@ -6,6 +6,10 @@ RCT_EXTERN_METHOD(startPrayerActivity:(NSDictionary *)params
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(updatePrayerActivity:(NSDictionary *)params
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(endPrayerActivity:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
@@ -19,7 +23,5 @@ RCT_EXTERN_METHOD(updateInspirationData:(NSDictionary *)params)
 
 RCT_EXTERN_METHOD(getPendingWidgetPrayers:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(updateAuthData:(NSDictionary *)params)
 
 @end

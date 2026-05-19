@@ -26,12 +26,20 @@ class SalahLiveActivityModule: NSObject {
       for activity in Activity<SitePongActivityAttributes>.activities {
         await activity.end(nil, dismissalPolicy: .immediate)
       }
-      
+
       let state = SitePongActivityAttributes.ContentState(
         prayerName: prayerName, nextPrayer: nextPrayer, endTimeMs: endTimeMs)
       let attrs = SitePongActivityAttributes()
-      let content = ActivityContent(state: state, staleDate: nil)
-      
+
+      // staleDate = vakit bitiş zamanı. Sistem bu zamana kadar timer'ı tick eder,
+      // sonra activity'yi stale olarak işaretler. nil olunca sistem rastgele süre sonra
+      // tick'i durduruyordu — bu donma sorununun ana sebebi.
+      let endTime = endTimeMs > 0
+        ? Date(timeIntervalSince1970: endTimeMs / 1000)
+        : Date().addingTimeInterval(2 * 60 * 60)  // fallback: 2 saat sonra stale
+
+      let content = ActivityContent(state: state, staleDate: endTime)
+
       do {
         let activity = try Activity<SitePongActivityAttributes>.request(
           attributes: attrs, content: content, pushType: nil)
@@ -39,6 +47,33 @@ class SalahLiveActivityModule: NSObject {
       } catch {
         reject("ERROR", error.localizedDescription, error)
       }
+    }
+  }
+
+  @objc func updatePrayerActivity(
+    _ params: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject _: @escaping RCTPromiseRejectBlock
+  ) {
+    guard #available(iOS 16.2, *) else { resolve(nil); return }
+    let prayerName = params["prayerName"] as? String ?? ""
+    let nextPrayer = params["nextPrayer"] as? String ?? ""
+    let endTimeMs = params["endTimeMs"] as? Double ?? 0
+
+    Task {
+      let state = SitePongActivityAttributes.ContentState(
+        prayerName: prayerName, nextPrayer: nextPrayer, endTimeMs: endTimeMs)
+
+      let endTime = endTimeMs > 0
+        ? Date(timeIntervalSince1970: endTimeMs / 1000)
+        : Date().addingTimeInterval(2 * 60 * 60)
+
+      let content = ActivityContent(state: state, staleDate: endTime)
+
+      for activity in Activity<SitePongActivityAttributes>.activities {
+        await activity.update(content)
+      }
+      resolve(nil)
     }
   }
 
@@ -134,21 +169,5 @@ class SalahLiveActivityModule: NSObject {
     let pending = ud?.string(forKey: "salah_pending_prayers") ?? ""
     ud?.removeObject(forKey: "salah_pending_prayers")
     resolve(pending)
-  }
-
-  // Writes auth tokens + API URL into App Group so the widget can call the backend directly
-  @objc func updateAuthData(_ params: NSDictionary) {
-    guard let ud = defaults() else { return }
-    if let token = params["accessToken"] as? String {
-      if token.isEmpty { ud.removeObject(forKey: "salah_access_token") }
-      else { ud.set(token, forKey: "salah_access_token") }
-    }
-    if let refresh = params["refreshToken"] as? String {
-      if refresh.isEmpty { ud.removeObject(forKey: "salah_refresh_token") }
-      else { ud.set(refresh, forKey: "salah_refresh_token") }
-    }
-    if let url = params["apiUrl"] as? String, !url.isEmpty {
-      ud.set(url, forKey: "salah_api_url")
-    }
   }
 }

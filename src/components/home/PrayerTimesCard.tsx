@@ -11,6 +11,7 @@ import Animated, {
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { prayerService } from '@/services/prayer.service';
+import { notificationService } from '@/services/notification.service';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
@@ -326,6 +327,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       if (prayerData) {
         setData(prayerData);
         calculateNextPrayer(prayerData);
+        notificationService.schedulePrayerNotifications(prayerData.times as unknown as Record<string, string>);
       }
     } catch (e) {
       console.error('Error fetching prayer times:', e);

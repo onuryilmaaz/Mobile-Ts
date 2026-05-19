@@ -120,7 +120,13 @@ export const notificationService = {
           const title = `${prayer.name} Vakti Girdi 🕌`;
           const body = `${prayer.name} namazı vakti girmiştir. Hayırlı namazlar dileriz.`;
           await Notifications.scheduleNotificationAsync({
-            content: { title, subtitle: 'Namaz Vakti', body, sound: 'default' } as any,
+            content: {
+              title,
+              subtitle: 'Namaz Vakti',
+              body,
+              sound: 'default',
+              data: { type: 'prayer_time', prayerKey: prayer.key, prayerName: prayer.name },
+            } as any,
             trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: exactTime },
           });
         }
