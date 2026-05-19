@@ -16,6 +16,10 @@ struct SitePongLiveActivityWidgetBundle: WidgetBundle {
     AmelLightWidget()
     InspirationLightWidget()
 
+    // Kilit ekranı widget'ları (iOS 16+)
+    SalahNextPrayerLockWidget()
+    SalahTrackerLockWidget()
+
     // Live Activity
     SitePongLiveActivityWidgetLiveActivity()
   }

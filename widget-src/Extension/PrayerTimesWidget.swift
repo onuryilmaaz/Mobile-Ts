@@ -455,6 +455,95 @@ struct PrayerTimesWidgetEntryView: View {
   }
 }
 
+// MARK: - Lock Screen: Next Prayer Countdown
+
+struct NextPrayerLockView: View {
+  let entry: PrayerTimesEntry
+  @Environment(\.widgetFamily) var family
+
+  private var name: String { entry.data?.prayerName ?? "—" }
+  private var time: String { entry.data?.prayerTime ?? "--:--" }
+  private var target: Date? {
+    guard let ms = entry.data?.endTimeMs, ms > 0 else { return nil }
+    return Date(timeIntervalSince1970: ms / 1000)
+  }
+  private var iconName: String { prayerCompletedIcon(for: prayerKeyFromName(name)) }
+
+  var body: some View {
+    switch family {
+    case .accessoryCircular:
+      VStack(spacing: 1) {
+        Image(systemName: iconName)
+          .font(.system(size: 12, weight: .bold))
+          .widgetAccentable()
+        Text(name)
+          .font(.system(size: 10, weight: .black))
+          .widgetAccentable()
+          .minimumScaleFactor(0.6)
+          .lineLimit(1)
+        Text(time)
+          .font(.system(size: 14, weight: .black, design: .rounded))
+        if let t = target {
+          Text(t, style: .timer)
+            .font(.system(size: 8, weight: .semibold, design: .monospaced))
+            .foregroundStyle(.secondary)
+        }
+      }
+      .multilineTextAlignment(.center)
+      .withAccessoryBackground()
+
+    case .accessoryRectangular:
+      VStack(alignment: .leading, spacing: 3) {
+        HStack(spacing: 5) {
+          Image(systemName: iconName)
+            .font(.system(size: 13, weight: .bold))
+            .widgetAccentable()
+          Text(name)
+            .font(.system(size: 14, weight: .black))
+            .widgetAccentable()
+          Spacer()
+          Text(time)
+            .font(.system(size: 14, weight: .bold, design: .monospaced))
+        }
+        if let t = target {
+          HStack(spacing: 4) {
+            Image(systemName: "timer")
+              .font(.system(size: 10))
+              .foregroundStyle(.secondary)
+            Text(t, style: .timer)
+              .font(.system(size: 13, weight: .semibold, design: .monospaced))
+              .foregroundStyle(.secondary)
+          }
+        }
+      }
+      .padding(.horizontal, 2)
+
+    default:
+      Label {
+        Text("\(name)  \(time)")
+      } icon: {
+        Image(systemName: iconName)
+      }
+      .widgetAccentable()
+    }
+  }
+}
+
+struct SalahNextPrayerLockWidget: Widget {
+  let kind = "SalahNextPrayerLockWidget"
+
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: kind, provider: PrayerTimesProvider(theme: .dark)) { entry in
+      NextPrayerLockView(entry: entry)
+        .lockWidgetBackground()
+        .widgetURL(URL(string: "salah://home"))
+    }
+    .configurationDisplayName("Sonraki Namaz")
+    .description("Bir sonraki namaz vakti ve geri sayım.")
+    .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+  }
+}
+
 // MARK: - Widget Definitions
 
 struct PrayerTimesWidget: Widget {

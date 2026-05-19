@@ -370,6 +370,102 @@ struct PrayerTrackerWidgetEntryView: View {
   }
 }
 
+// MARK: - Lock Screen: Prayer Tracker
+
+private let lockPrayerIDs = ["sabah", "ogle", "ikindi", "aksam", "yatsi"]
+
+struct TrackerLockView: View {
+  let entry: PrayerTrackerEntry
+  @Environment(\.widgetFamily) var family
+
+  private var completed: [String] { entry.tracker?.completedPrayers ?? [] }
+  private var count: Int { lockPrayerIDs.filter { isPrayerCompleted($0, in: completed) }.count }
+  private let total = 5
+
+  var body: some View {
+    if family == .accessoryCircular {
+      circularBody
+    } else {
+      rectangularBody
+    }
+  }
+
+  private var circularBody: some View {
+    Gauge(value: Double(count), in: 0...Double(total)) {
+      EmptyView()
+    } currentValueLabel: {
+      VStack(spacing: 0) {
+        Text("\(count)")
+          .font(.system(size: 18, weight: .black, design: .rounded))
+          .widgetAccentable()
+        Text("/ \(total)")
+          .font(.system(size: 9, weight: .bold))
+          .foregroundStyle(.secondary)
+      }
+    }
+    .gaugeStyle(.accessoryCircular)
+    .tint(.white)
+    .widgetAccentable()
+    .withAccessoryBackground()
+  }
+
+  private var rectangularBody: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      HStack(spacing: 5) {
+        Image(systemName: "checklist")
+          .font(.system(size: 12, weight: .bold))
+          .widgetAccentable()
+        Text("Namaz Takibi")
+          .font(.system(size: 13, weight: .black))
+          .widgetAccentable()
+        Spacer()
+        Text("\(count)/\(total)")
+          .font(.system(size: 12, weight: .bold))
+          .foregroundStyle(.secondary)
+      }
+      prayerIconRow
+    }
+    .padding(.horizontal, 2)
+  }
+
+  private var prayerIconRow: some View {
+    HStack(spacing: 8) {
+      ForEach(lockPrayerIDs, id: \.self) { prayerId in
+        prayerIcon(for: prayerId)
+      }
+      Spacer()
+    }
+  }
+
+  @ViewBuilder
+  private func prayerIcon(for id: String) -> some View {
+    if isPrayerCompleted(id, in: completed) {
+      Image(systemName: "checkmark.circle.fill")
+        .font(.system(size: 16, weight: .semibold))
+        .widgetAccentable()
+    } else {
+      Image(systemName: "circle")
+        .font(.system(size: 16, weight: .semibold))
+        .foregroundStyle(.secondary)
+    }
+  }
+}
+
+struct SalahTrackerLockWidget: Widget {
+  let kind = "SalahTrackerLockWidget"
+
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: kind, provider: PrayerTrackerProvider(theme: .dark)) { entry in
+      TrackerLockView(entry: entry)
+        .lockWidgetBackground()
+        .widgetURL(URL(string: "salah://home"))
+    }
+    .configurationDisplayName("Namaz Takibi")
+    .description("Bugün kılınan namazların özeti.")
+    .supportedFamilies([.accessoryCircular, .accessoryRectangular])
+  }
+}
+
 // MARK: - Widget Definitions
 
 struct PrayerTrackerWidget: Widget {

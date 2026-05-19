@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 // MARK: - Brand Colors
 
@@ -405,6 +406,30 @@ extension View {
           )
         }
       }
+    }
+  }
+
+  // iOS 16: wraps view in ZStack with AccessoryWidgetBackground
+  // iOS 17+: no-op (containerBackground handles it at the widget level)
+  @ViewBuilder
+  func withAccessoryBackground() -> some View {
+    if #available(iOS 17.0, *) {
+      self
+    } else {
+      ZStack {
+        AccessoryWidgetBackground()
+        self
+      }
+    }
+  }
+
+  // Apply on the widget's entry view inside StaticConfiguration
+  @ViewBuilder
+  func lockWidgetBackground() -> some View {
+    if #available(iOS 17.0, *) {
+      containerBackground(for: .widget) { AccessoryWidgetBackground() }
+    } else {
+      self
     }
   }
 }
