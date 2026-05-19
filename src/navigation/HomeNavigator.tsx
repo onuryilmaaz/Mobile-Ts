@@ -95,7 +95,7 @@ function HomeHeader({ navigation }: HomeHeaderProps) {
               textShadowColor: 'rgba(246,195,88,0.4)',
               textShadowRadius: 8,
             }}>
-            Salah
+            SALAH
           </Text>
         </View>
 

@@ -11,10 +11,12 @@ import { AlertDialog } from '@/components/feedback/AlertDialog';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useThemeStore } from '@/store/theme.store';
 import { setLogoutCallback, API_BASE_URL } from '@/services/api';
+import { getAccessToken, getRefreshToken } from '@/services/token.service';
 import { useColorScheme } from 'nativewind';
 import { rootNavigationRef } from '@/navigation/rootNavigation';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
+import { gamificationApi } from '@/modules/gamification/gamification.api';
 
 const linking = {
   prefixes: ['com.onur6541.salah://', 'salah://'],
@@ -71,32 +73,45 @@ function AppContent() {
   const { setColorScheme } = useColorScheme();
 
   useEffect(() => {
-    // Share API URL with widget extension so it can make direct backend calls
-    if (Platform.OS === 'ios') {
-      NativeModules.SalahLiveActivityModule?.updateAuthData?.({ apiUrl: API_BASE_URL });
-    }
+    if (Platform.OS !== 'ios') return;
+    // Sync API URL and any existing tokens to App Group so widget can call backend directly
+    NativeModules.SalahLiveActivityModule?.updateAuthData?.({ apiUrl: API_BASE_URL });
+    (async () => {
+      const [accessToken, refreshToken] = await Promise.all([getAccessToken(), getRefreshToken()]);
+      if (accessToken || refreshToken) {
+        NativeModules.SalahLiveActivityModule?.updateAuthData?.({
+          accessToken: accessToken ?? '',
+          refreshToken: refreshToken ?? '',
+        });
+      }
+    })();
   }, []);
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
-    const syncPending = async () => {
+    const onForeground = async () => {
       const { isAuthenticated } = useAuthStore.getState();
       if (!isAuthenticated) return;
+
+      // Process any prayers the widget queued as fallback
       const raw = await liveActivityService.getPendingWidgetPrayers();
-      if (!raw) return;
-      const { trackPrayer } = useGamificationStore.getState();
-      for (const entry of raw.split(',').filter(Boolean)) {
-        const [id, flag] = entry.split(':');
-        try {
-          await trackPrayer(id as any, flag === 'kaza');
-        } catch {
-          /* already tracked */
+      if (raw) {
+        for (const entry of raw.split(',').filter(Boolean)) {
+          const [id, flag] = entry.split(':');
+          try {
+            await gamificationApi.trackPrayer(id as any, flag === 'kaza');
+          } catch {
+            // Silently ignore — prayer may already be tracked by widget's direct call
+          }
         }
       }
+
+      // Always refresh stats when app comes to foreground — widget may have written directly to DB
+      useGamificationStore.getState().fetchStats();
     };
-    syncPending();
+    onForeground();
     const sub = AppState.addEventListener('change', (s) => {
-      if (s === 'active') syncPending();
+      if (s === 'active') onForeground();
     });
     return () => sub.remove();
   }, []);

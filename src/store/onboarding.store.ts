@@ -14,16 +14,16 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   done: false,
   hydrated: false,
 
-  // hydrate: async () => {
-  //   const value = await AsyncStorage.getItem(ONBOARDING_KEY);
-  //   set({ done: value === 'true', hydrated: true });
-  // },
-
   hydrate: async () => {
-    await AsyncStorage.removeItem(ONBOARDING_KEY); // ← test için ekle
     const value = await AsyncStorage.getItem(ONBOARDING_KEY);
     set({ done: value === 'true', hydrated: true });
   },
+
+  // hydrate: async () => {
+  //   await AsyncStorage.removeItem(ONBOARDING_KEY); // ← test için ekle
+  //   const value = await AsyncStorage.getItem(ONBOARDING_KEY);
+  //   set({ done: value === 'true', hydrated: true });
+  // },
 
   complete: async () => {
     await AsyncStorage.setItem(ONBOARDING_KEY, 'true');

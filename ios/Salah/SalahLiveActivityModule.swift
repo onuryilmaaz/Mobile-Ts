@@ -135,4 +135,20 @@ class SalahLiveActivityModule: NSObject {
     ud?.removeObject(forKey: "salah_pending_prayers")
     resolve(pending)
   }
+
+  // Writes auth tokens + API URL into App Group so the widget can call the backend directly
+  @objc func updateAuthData(_ params: NSDictionary) {
+    guard let ud = defaults() else { return }
+    if let token = params["accessToken"] as? String {
+      if token.isEmpty { ud.removeObject(forKey: "salah_access_token") }
+      else { ud.set(token, forKey: "salah_access_token") }
+    }
+    if let refresh = params["refreshToken"] as? String {
+      if refresh.isEmpty { ud.removeObject(forKey: "salah_refresh_token") }
+      else { ud.set(refresh, forKey: "salah_refresh_token") }
+    }
+    if let url = params["apiUrl"] as? String, !url.isEmpty {
+      ud.set(url, forKey: "salah_api_url")
+    }
+  }
 }
