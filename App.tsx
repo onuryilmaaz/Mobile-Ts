@@ -1,6 +1,6 @@
 import './global.css';
 import { useEffect } from 'react';
-import { AppState, Platform } from 'react-native';
+import { AppState, NativeModules, Platform } from 'react-native';
 import { registerRootComponent } from 'expo';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,7 +10,7 @@ import { ToastContainer } from '@/components/feedback/Toast';
 import { AlertDialog } from '@/components/feedback/AlertDialog';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useThemeStore } from '@/store/theme.store';
-import { setLogoutCallback } from '@/services/api';
+import { setLogoutCallback, API_BASE_URL } from '@/services/api';
 import { useColorScheme } from 'nativewind';
 import { rootNavigationRef } from '@/navigation/rootNavigation';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
@@ -71,6 +71,13 @@ function AppContent() {
   const { setColorScheme } = useColorScheme();
 
   useEffect(() => {
+    // Share API URL with widget extension so it can make direct backend calls
+    if (Platform.OS === 'ios') {
+      NativeModules.SalahLiveActivityModule?.updateAuthData?.({ apiUrl: API_BASE_URL });
+    }
+  }, []);
+
+  useEffect(() => {
     if (Platform.OS !== 'ios') return;
     const syncPending = async () => {
       const { isAuthenticated } = useAuthStore.getState();
@@ -80,11 +87,17 @@ function AppContent() {
       const { trackPrayer } = useGamificationStore.getState();
       for (const entry of raw.split(',').filter(Boolean)) {
         const [id, flag] = entry.split(':');
-        try { await trackPrayer(id as any, flag === 'kaza'); } catch { /* already tracked */ }
+        try {
+          await trackPrayer(id as any, flag === 'kaza');
+        } catch {
+          /* already tracked */
+        }
       }
     };
     syncPending();
-    const sub = AppState.addEventListener('change', (s) => { if (s === 'active') syncPending(); });
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') syncPending();
+    });
     return () => sub.remove();
   }, []);
 
@@ -98,7 +111,10 @@ function AppContent() {
   }, [isDark, setColorScheme]);
 
   return (
-    <NavigationContainer ref={rootNavigationRef} linking={linking} theme={isDark ? MyDarkTheme : MyLightTheme}>
+    <NavigationContainer
+      ref={rootNavigationRef}
+      linking={linking}
+      theme={isDark ? MyDarkTheme : MyLightTheme}>
       <AppNavigator />
     </NavigationContainer>
   );
