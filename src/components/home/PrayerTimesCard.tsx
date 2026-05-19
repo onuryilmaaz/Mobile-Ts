@@ -1,18 +1,16 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { prayerService } from '@/services/prayer.service';
-import { notificationService } from '@/services/notification.service';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
@@ -24,7 +22,6 @@ import {
   getDefaultDistrictForState,
 } from '@/constants/locations';
 import type { PrayerTimeData } from '@/types/prayer';
-import { rootNavigate } from '@/navigation/rootNavigation';
 
 const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
 const DIGIT_H = 68;
@@ -135,7 +132,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const [nextPrayerName, setNextPrayerName] = useState<string>('');
   const [currentPrayerStartTime, setCurrentPrayerStartTime] = useState<number | null>(null);
   const [isDistrictLoaded, setIsDistrictLoaded] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const targetTimeRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -147,42 +143,11 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
   useEffect(() => {
     loadDistrict();
-    initNotifications();
   }, []);
 
   useEffect(() => {
     loadDistrict();
   }, [focusNonce]);
-
-  const openLocationSelection = () => {
-    rootNavigate('UserTabs', {
-      screen: 'Home',
-      params: { screen: 'LocationSelection' },
-    } as any);
-  };
-
-  const initNotifications = async () => {
-    const enabled = await notificationService.isEnabled();
-    setNotificationsEnabled(enabled);
-  };
-
-  const handleNotificationToggle = async (value: boolean) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    if (value) {
-      const hasPermission = await notificationService.requestPermissions();
-      if (!hasPermission) return;
-      setNotificationsEnabled(true);
-      await notificationService.enableNotifications();
-      if (data) {
-        await notificationService.schedulePrayerNotifications(
-          data.times as unknown as Record<string, string>
-        );
-      }
-    } else {
-      setNotificationsEnabled(false);
-      await notificationService.disableNotifications();
-    }
-  };
 
   const autoDetectDistrict = async (): Promise<{ stateId: string; districtId: string } | null> => {
     try {
@@ -361,16 +326,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       if (prayerData) {
         setData(prayerData);
         calculateNextPrayer(prayerData);
-        if (notificationsEnabled) {
-          await notificationService.schedulePrayerNotifications({
-            imsak: prayerData.times.imsak,
-            gunes: prayerData.times.gunes,
-            ogle: prayerData.times.ogle,
-            ikindi: prayerData.times.ikindi,
-            aksam: prayerData.times.aksam,
-            yatsi: prayerData.times.yatsi,
-          });
-        }
       }
     } catch (e) {
       console.error('Error fetching prayer times:', e);
@@ -433,10 +388,20 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
             🕌
           </Text>
 
-          <View className="mb-4 rounded-full border border-[#f6c358]/30 bg-[#f6c358]/15 px-4 py-1.5">
-            <Text className="text-[10px] font-black uppercase tracking-[2.5px] text-[#f6c358]">
-              {nextPrayerName ? `${nextPrayerName} Vaktine Kalan` : 'Bir Sonraki Namaz'}
-            </Text>
+          <View className="mb-4 flex-row items-center gap-2">
+            <View className="rounded-full border border-[#f6c358]/30 bg-[#f6c358]/15 px-4 py-1.5">
+              <Text className="text-[10px] font-black uppercase tracking-[2.5px] text-[#f6c358]">
+                {nextPrayerName ? `${nextPrayerName} Vaktine Kalan` : 'Bir Sonraki Namaz'}
+              </Text>
+            </View>
+            {(selectedDistrict || selectedState) && (
+              <View className="flex-row items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5">
+                <Ionicons name="location-outline" size={10} color="rgba(255,255,255,0.7)" />
+                <Text className="text-[10px] font-bold text-white/70">
+                  {selectedDistrict?.name ?? selectedState?.name ?? ''}
+                </Text>
+              </View>
+            )}
           </View>
 
           {targetTimeRef.current && remainingTime ? (
@@ -523,61 +488,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         )}
       </View>
 
-      <View className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-        <TouchableOpacity
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            openLocationSelection();
-          }}
-          className="flex-row items-center border-b border-slate-200 p-3.5 dark:border-slate-700/50">
-          <View className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/10">
-            <Ionicons name="location-outline" size={17} color={isDark ? '#2dd4bf' : '#0f766e'} />
-          </View>
-          <View className="flex-1">
-            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">Konum</Text>
-            <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-              {selectedState && selectedDistrict
-                ? `${selectedState.name} — ${selectedDistrict.name}`
-                : selectedDistrict
-                  ? selectedDistrict.name
-                  : 'Konum seçin'}
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={15}
-            color={isDark ? 'rgba(240,244,255,0.30)' : '#94a3b8'}
-          />
-        </TouchableOpacity>
-
-        <View className="flex-row items-center p-3.5">
-          <View className="mr-3 h-[34px] w-[34px] items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
-            <Ionicons
-              name="notifications-outline"
-              size={17}
-              color={isDark ? '#fcd34d' : '#d97706'}
-            />
-          </View>
-          <View className="flex-1">
-            <Text className="text-[13px] font-bold text-slate-900 dark:text-white">
-              Bildirimler
-            </Text>
-            <Text className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-              Vakit girişinde ve 30dk önce bildirim al
-            </Text>
-          </View>
-          <Switch
-            value={notificationsEnabled}
-            onValueChange={handleNotificationToggle}
-            trackColor={{
-              false: isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0',
-              true: isDark ? '#14b8a6' : '#0f766e',
-            }}
-            thumbColor={notificationsEnabled ? '#fff' : isDark ? 'rgba(240,244,255,0.30)' : '#fff'}
-            ios_backgroundColor={isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0'}
-          />
-        </View>
-      </View>
     </View>
   );
 }

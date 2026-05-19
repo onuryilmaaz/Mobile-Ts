@@ -214,7 +214,7 @@ const PRAYERS = [
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-export function PrayerTrackerCard() {
+export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
   const { stats, fetchStats, trackPrayer, isLoading } = useGamificationStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [prayerTimes, setPrayerTimes] = useState<any>(null);
@@ -268,6 +268,11 @@ export function PrayerTrackerCard() {
 
     loadData();
   }, [isComponentReady, isAuthenticated, fetchStats]);
+
+  useEffect(() => {
+    if (!isComponentReady || focusNonce === undefined) return;
+    loadPrayerTimes();
+  }, [focusNonce]);
 
   useEffect(() => {
     progressWidth.value = withSpring(

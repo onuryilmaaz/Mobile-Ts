@@ -97,7 +97,7 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
-        <PrayerTrackerCard />
+        <PrayerTrackerCard focusNonce={focusNonce} />
         <StreakCard />
         <TodayTrackerCard />
 

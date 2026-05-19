@@ -168,38 +168,34 @@ struct SitePongLiveActivityWidgetLiveActivity: Widget {
       return DynamicIsland {
         // ── EXPANDED — premium kompozit tasarım ──
 
-        // Üst leading: kompakt vakit etiketi
+        // Üst leading: sade vakit etiketi — sadece isim + küçük altyazı
         DynamicIslandExpandedRegion(.leading) {
-          HStack(spacing: 6) {
-            Image(systemName: iconName)
-              .font(.system(size: 13, weight: .bold))
-              .foregroundStyle(gradient.linear)
-              .shadow(color: gradient.glow.opacity(0.6), radius: 3)
+          VStack(alignment: .leading, spacing: 0) {
             Text(context.state.prayerName)
-              .font(.system(size: 13, weight: .heavy, design: .rounded))
+              .font(.system(size: 15, weight: .heavy, design: .rounded))
               .foregroundStyle(gradient.linear)
+              .lineLimit(1)
+              .minimumScaleFactor(0.8)
             Text("VAKTİ")
               .font(.system(size: 9, weight: .black))
               .foregroundColor(.secondary)
-              .tracking(0.5)
+              .tracking(0.8)
           }
           .padding(.leading, 6)
         }
 
-        // Üst trailing: sonraki vakit chip
+        // Üst trailing: sonraki vakit chip — kompakt
         DynamicIslandExpandedRegion(.trailing) {
-          HStack(spacing: 4) {
-            Image(systemName: "arrow.right")
-              .font(.system(size: 9, weight: .bold))
-              .foregroundColor(.secondary)
+          HStack(spacing: 5) {
             Image(systemName: nextIconName)
               .font(.system(size: 11, weight: .bold))
               .foregroundColor(nextGradient.glow)
             Text(context.state.nextPrayer)
               .font(.system(size: 12, weight: .bold))
               .foregroundColor(nextGradient.glow)
+              .lineLimit(1)
           }
-          .padding(.horizontal, 9).padding(.vertical, 4)
+          .padding(.horizontal, 8).padding(.vertical, 4)
           .background(Capsule().fill(nextGradient.base.opacity(0.20)))
           .overlay(Capsule().strokeBorder(nextGradient.glow.opacity(0.40), lineWidth: 0.8))
           .padding(.trailing, 6)

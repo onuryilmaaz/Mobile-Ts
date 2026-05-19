@@ -5,6 +5,18 @@ import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
 import { notificationService } from '@/services/notification.service';
 import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
+import {
+  getDistrictById,
+  getStateById,
+  getStateByName,
+  getDefaultDistrictForState,
+} from '@/constants/locations';
+import { rootNavigate } from '@/navigation/rootNavigation';
+
+const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
+const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 
 const PRAYERS = [
   { key: 'imsak' as const, label: 'İmsak' },
@@ -27,18 +39,68 @@ export default function SettingsScreen() {
     imsak: true, gunes: false, ogle: true, ikindi: true, aksam: true, yatsi: true,
   });
 
+  const [districtId, setDistrictId] = useState<string | null>(null);
+  const [stateId, setStateId] = useState<string | null>(null);
+  const [detectingLocation, setDetectingLocation] = useState(false);
+
+  const district = districtId ? getDistrictById(districtId) : null;
+  const state = stateId ? getStateById(stateId) : null;
+
   const load = useCallback(async () => {
-    const [en, off, prayers] = await Promise.all([
+    const [en, off, prayers, savedStateId, savedDistrictId] = await Promise.all([
       notificationService.isEnabled(),
       notificationService.getOffset(),
       notificationService.getPrayerEnabled(),
+      AsyncStorage.getItem(STORAGE_STATE_ID_KEY),
+      AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY),
     ]);
     setNotifEnabled(en);
     setOffset(off);
     setPrayerEnabled(prayers);
+    if (savedStateId) setStateId(savedStateId);
+    if (savedDistrictId) setDistrictId(savedDistrictId);
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  const autoDetect = async () => {
+    setDetectingLocation(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('İzin Gerekli', 'Konum izni verilmedi.');
+        return;
+      }
+      const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+      const geo = await Location.reverseGeocodeAsync({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      });
+      const regionRaw = geo[0]?.region ?? geo[0]?.city ?? '';
+      const normalize = (s: string) =>
+        s.toUpperCase()
+          .replace(/İ/g, 'I').replace(/Ğ/g, 'G').replace(/Ş/g, 'S')
+          .replace(/Ç/g, 'C').replace(/Ö/g, 'O').replace(/Ü/g, 'U');
+      const found = getStateByName(regionRaw) ?? (() => {
+        const { STATES } = require('@/constants/locations');
+        const normRegion = normalize(regionRaw);
+        return (STATES as any[]).find(
+          (s: any) => normalize(s.name) === normRegion || normalize(s.name_en) === normRegion
+        );
+      })();
+      if (!found) { Alert.alert('Bulunamadı', 'Konumunuz tanınamadı, lütfen elle seçin.'); return; }
+      const d = getDefaultDistrictForState(found._id);
+      if (!d) return;
+      await AsyncStorage.setItem(STORAGE_STATE_ID_KEY, found._id);
+      await AsyncStorage.setItem(STORAGE_DISTRICT_ID_KEY, d._id);
+      setStateId(found._id);
+      setDistrictId(d._id);
+    } catch {
+      Alert.alert('Hata', 'Konum alınamadı.');
+    } finally {
+      setDetectingLocation(false);
+    }
+  };
 
   const toggleMaster = async (val: boolean) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -114,6 +176,38 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView className="flex-1 bg-slate-50 dark:bg-slate-950" contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
+
+      {/* Konum */}
+      <Section title="Konum" />
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+        <Row
+          icon="location-outline"
+          iconColor={teal}
+          label="Namaz Vakti Konumu"
+          sublabel={
+            state && district
+              ? `${state.name} — ${district.name}`
+              : district?.name ?? 'Konum seçilmedi'
+          }
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            rootNavigate('UserTabs', { screen: 'Home', params: { screen: 'LocationSelection' } } as any);
+          }}
+          right={<Ionicons name="chevron-forward" size={16} color={sub} />}
+        />
+        <Row
+          icon="navigate-outline"
+          iconColor="#3b82f6"
+          label="Otomatik Algıla"
+          sublabel={detectingLocation ? 'Konum alınıyor…' : 'GPS ile şehrini otomatik bul'}
+          onPress={detectingLocation ? undefined : autoDetect}
+          right={
+            detectingLocation
+              ? <Ionicons name="sync-outline" size={16} color="#3b82f6" />
+              : <Ionicons name="chevron-forward" size={16} color={sub} />
+          }
+        />
+      </View>
 
       {/* Bildirimler */}
       <Section title="Bildirimler" />
