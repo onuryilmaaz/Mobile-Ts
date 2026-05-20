@@ -39,7 +39,8 @@ private struct CompactProgressRing: View {
   var body: some View {
     ZStack {
       Circle()
-        .stroke(Color.white.opacity(0.18), style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+        .stroke(Color.white.opacity(0.18), style: StrokeStyle(lineWidth: 2.2, lineCap: .round))
+        .frame(width: 18, height: 18)
 
       Circle()
         .trim(from: 0, to: CGFloat(progress))
@@ -50,17 +51,18 @@ private struct CompactProgressRing: View {
             startAngle: .degrees(-90),
             endAngle: .degrees(270)
           ),
-          style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
+          style: StrokeStyle(lineWidth: 2.2, lineCap: .round)
         )
+        .frame(width: 18, height: 18)
         .rotationEffect(.degrees(-90))
         .shadow(color: gradient.glow.opacity(0.55), radius: 2)
 
       Image(systemName: centerIcon)
-        .font(.system(size: 10, weight: .bold))
+        .font(.system(size: 9, weight: .bold))
         .foregroundStyle(gradient.linear)
         .shadow(color: gradient.glow.opacity(0.5), radius: 1.5)
     }
-    .frame(width: 22, height: 22)
+    .frame(width: 24, height: 24)
   }
 }
 
@@ -71,7 +73,7 @@ struct SalahLockScreenView: View {
   let isStale: Bool
   @Environment(\.colorScheme) private var colorScheme
 
-  private var endDate: Date { Date(timeIntervalSince1970: (state.endTimeMs / 1000).rounded(.down)) }
+  private var endDate: Date { Date(timeIntervalSince1970: state.endTimeMs / 1000) }
   private var prayerKey: String { prayerKeyFromName(state.prayerName) }
   private var nextKey: String { prayerKeyFromName(state.nextPrayer) }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
@@ -123,7 +125,7 @@ struct SalahLockScreenView: View {
             .font(.system(size: 16, weight: .bold, design: .rounded))
             .foregroundColor(.secondary)
         } else {
-          Text(timerInterval: Date.now...endDate, pauseTime: nil, countsDown: true)
+          Text(timerInterval: Date()...endDate, pauseTime: nil, countsDown: true)
             .font(.system(size: 22, weight: .bold, design: .rounded).monospacedDigit())
             .foregroundColor(.primary)
             .lineLimit(1).minimumScaleFactor(0.7)
@@ -167,7 +169,7 @@ struct SitePongLiveActivityWidgetLiveActivity: Widget {
         .activitySystemActionForegroundColor(.primary)
 
     } dynamicIsland: { context in
-      let endDate = Date(timeIntervalSince1970: (context.state.endTimeMs / 1000).rounded(.down))
+      let endDate = Date(timeIntervalSince1970: context.state.endTimeMs / 1000)
       let prayerKey = prayerKeyFromName(context.state.prayerName)
       let nextKey = prayerKeyFromName(context.state.nextPrayer)
       let gradient = prayerGradient(for: prayerKey)
@@ -267,9 +269,10 @@ struct SitePongLiveActivityWidgetLiveActivity: Widget {
                     .foregroundColor(.secondary)
                     .tracking(0.8)
 
-                  Text(timerInterval: Date.now...endDate, pauseTime: nil, countsDown: true)
+                  Text(timerInterval: Date()...endDate, pauseTime: nil, countsDown: true)
                     .font(.system(size: 34, weight: .heavy, design: .rounded).monospacedDigit())
-                    .foregroundColor(.white)
+                    .foregroundStyle(gradient.linear)
+                    .shadow(color: gradient.glow.opacity(0.55), radius: 4)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
 
@@ -303,10 +306,10 @@ struct SitePongLiveActivityWidgetLiveActivity: Widget {
 
       } compactLeading: {
         Image(systemName: expired ? "checkmark" : iconName)
-          .font(.system(size: 14, weight: .bold))
+          .font(.system(size: 13, weight: .bold))
           .foregroundStyle(gradient.linear)
           .shadow(color: gradient.glow.opacity(0.6), radius: 3)
-          .frame(width: 22, height: 22)
+          .frame(width: 24, height: 24)
 
       } compactTrailing: {
         CompactProgressRing(
