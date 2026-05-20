@@ -135,8 +135,9 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const [isDistrictLoaded, setIsDistrictLoaded] = useState(false);
 
   const targetTimeRef = useRef<number | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastActivityPrayerRef = useRef<string>('');
+  const dataRef = useRef<PrayerTimeData | null>(null);
   const setHeaderColor = useThemeStore((s) => s.setHeaderColor);
 
   const selectedDistrict = selectedDistrictId ? getDistrictById(selectedDistrictId) : null;
@@ -221,6 +222,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     const diff = targetTimeRef.current - Date.now();
     if (diff <= 0) {
       setRemainingTime('00:00:00');
+      if (dataRef.current) calculateNextPrayer(dataRef.current);
       return;
     }
     const h = Math.floor(diff / 3_600_000);
@@ -279,7 +281,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       const pointMinutes = ph * 60 + pm;
       if (pointMinutes > currentMinutes) {
         const diffMins = pointMinutes - currentMinutes;
-        targetTimeRef.current = now.getTime() + diffMins * 60_000 - currentSeconds * 1000;
+        targetTimeRef.current = Math.floor((now.getTime() + diffMins * 60_000 - currentSeconds * 1000) / 1000) * 1000;
         setNextPrayerName(point.key);
         const prev = checkpoints[i === 0 ? checkpoints.length - 1 : i - 1];
         if (prev.val) {
@@ -299,7 +301,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     if (!foundNext && times.imsak) {
       const [ph, pm] = times.imsak.split(':').map(Number);
       const diffMins = 1440 - currentMinutes + ph * 60 + pm;
-      targetTimeRef.current = now.getTime() + diffMins * 60_000 - currentSeconds * 1000;
+      targetTimeRef.current = Math.floor((now.getTime() + diffMins * 60_000 - currentSeconds * 1000) / 1000) * 1000;
       setNextPrayerName('İmsak');
       const [sph, spm] = times.yatsi.split(':').map(Number);
       const start = new Date(now);
@@ -325,6 +327,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       setLoading(true);
       const prayerData = await prayerService.getTodayPrayerTimes(districtId);
       if (prayerData) {
+        dataRef.current = prayerData;
         setData(prayerData);
         calculateNextPrayer(prayerData);
         notificationService.schedulePrayerNotifications(prayerData.times as unknown as Record<string, string>);
@@ -340,12 +343,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     if (isDistrictLoaded && selectedDistrictId) fetchPrayerTimes(selectedDistrictId);
   }, [selectedDistrictId, isDistrictLoaded]);
 
-  useEffect(() => {
-    const t = setInterval(() => {
-      if (data) calculateNextPrayer(data);
-    }, 60_000);
-    return () => clearInterval(t);
-  }, [data]);
 
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);

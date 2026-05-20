@@ -17,9 +17,23 @@ struct PrayerTimesProvider: TimelineProvider {
     completion(PrayerTimesEntry(date: Date(), data: WidgetData.load(), theme: theme))
   }
   func getTimeline(in _: Context, completion: @escaping (Timeline<PrayerTimesEntry>) -> Void) {
-    let entry = PrayerTimesEntry(date: Date(), data: WidgetData.load(), theme: theme)
-    let next = Calendar.current.date(byAdding: .minute, value: 1, to: Date())!
-    completion(Timeline(entries: [entry], policy: .after(next)))
+    let data = WidgetData.load()
+    let cal = Calendar.current
+    let now = Date()
+    var entries: [PrayerTimesEntry] = [PrayerTimesEntry(date: now, data: data, theme: theme)]
+
+    for timeStr in [data?.imsak, data?.gunes, data?.ogle, data?.ikindi, data?.aksam, data?.yatsi].compactMap({ $0 }) {
+      let parts = timeStr.split(separator: ":").compactMap { Int($0) }
+      guard parts.count >= 2 else { continue }
+      var c = cal.dateComponents([.year, .month, .day], from: now)
+      c.hour = parts[0]; c.minute = parts[1]; c.second = 1
+      if let d = cal.date(from: c), d > now {
+        entries.append(PrayerTimesEntry(date: d, data: data, theme: theme))
+      }
+    }
+
+    let midnight = cal.startOfDay(for: cal.date(byAdding: .day, value: 1, to: now)!)
+    completion(Timeline(entries: entries, policy: .after(midnight)))
   }
 }
 
@@ -50,9 +64,8 @@ private struct PrayerSlot {
   let isPast: Bool       // geçti
 }
 
-private func buildDaySlots(widget: WidgetData?, activePrayerName: String) -> [PrayerSlot] {
+private func buildDaySlots(widget: WidgetData?, activePrayerName: String, at date: Date) -> [PrayerSlot] {
   guard let w = widget else { return [] }
-  // Sabah → imsak ile başlar, gunes ile biter
   let entries: [(String, String, String)] = [
     ("sabah",  "Sabah",  w.imsak),
     ("ogle",   "Öğle",   w.ogle),
@@ -61,13 +74,12 @@ private func buildDaySlots(widget: WidgetData?, activePrayerName: String) -> [Pr
     ("yatsi",  "Yatsı",  w.yatsi),
   ]
   let activeKey = prayerKeyFromName(activePrayerName)
-  let nowComp = Calendar.current.dateComponents([.hour, .minute], from: Date())
+  let nowComp = Calendar.current.dateComponents([.hour, .minute], from: date)
   let nowMin = (nowComp.hour ?? 0) * 60 + (nowComp.minute ?? 0)
 
   return entries.map { (id, label, time) in
     let startMin = timeToMinutes(time)
     let isActive = (id == activeKey)
-    // "past" = bu vaktin başlangıcı geçti AND aktif değil
     let isPast = startMin > 0 && nowMin >= startMin && !isActive
     return PrayerSlot(id: id, label: label, time: time, isActive: isActive, isPast: isPast)
   }
@@ -79,11 +91,8 @@ struct PrayerTimesSmallView: View {
   let entry: PrayerTimesEntry
   private var t: SalahTheme { entry.theme }
 
-  private var endDate: Date? {
-    guard let d = entry.data, d.endTimeMs > 0 else { return nil }
-    return Date(timeIntervalSince1970: d.endTimeMs / 1000)
-  }
-  private var prayerKey: String { prayerKeyFromName(entry.data?.prayerName ?? "") }
+  private var computed: ComputedPrayerState? { computeNextPrayer(data: entry.data, at: entry.date) }
+  private var prayerKey: String { prayerKeyFromName(computed?.prayerName ?? "") }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
   private var iconName: String { prayerCompletedIcon(for: prayerKey) }
 
@@ -110,14 +119,14 @@ struct PrayerTimesSmallView: View {
 
       Spacer(minLength: 6)
 
-      Text(entry.data?.prayerName ?? "--")
+      Text(computed?.prayerName ?? "--")
         .font(.system(size: 26, weight: .heavy, design: .rounded))
         .foregroundStyle(gradient.linear)
         .shadow(color: gradient.base.opacity(t == .light ? 0.40 : 0.0), radius: 5, x: 0, y: 1)
         .minimumScaleFactor(0.7)
         .lineLimit(1)
 
-      if let end = endDate {
+      if let end = computed?.endDate {
         Text(timerInterval: Date.now...end, pauseTime: nil)
           .font(.system(size: 16, weight: .bold, design: .rounded).monospacedDigit())
           .foregroundColor(t.textPrimary)
@@ -138,13 +147,13 @@ struct PrayerTimesSmallView: View {
 
   @ViewBuilder
   private var nextPrayerChip: some View {
-    let nextKey = prayerKeyFromName(entry.data?.nextPrayer ?? "")
+    let nextKey = prayerKeyFromName(computed?.nextPrayer ?? "")
     let nextGrad = prayerGradient(for: nextKey)
     HStack(spacing: 5) {
       Image(systemName: "arrow.right")
         .font(.system(size: 9, weight: .bold))
         .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.75))
-      Text(entry.data?.nextPrayer ?? "--")
+      Text(computed?.nextPrayer ?? "--")
         .font(.system(size: 11, weight: .bold))
         .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.80))
         .lineLimit(1)
@@ -161,11 +170,8 @@ struct PrayerTimesMediumView: View {
   let entry: PrayerTimesEntry
   private var t: SalahTheme { entry.theme }
 
-  private var endDate: Date? {
-    guard let d = entry.data, d.endTimeMs > 0 else { return nil }
-    return Date(timeIntervalSince1970: d.endTimeMs / 1000)
-  }
-  private var prayerKey: String { prayerKeyFromName(entry.data?.prayerName ?? "") }
+  private var computed: ComputedPrayerState? { computeNextPrayer(data: entry.data, at: entry.date) }
+  private var prayerKey: String { prayerKeyFromName(computed?.prayerName ?? "") }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
   private var iconName: String { prayerCompletedIcon(for: prayerKey) }
 
@@ -203,13 +209,13 @@ struct PrayerTimesMediumView: View {
           .font(.system(size: 10, weight: .black))
           .foregroundColor(t.textSecondary).tracking(0.7)
 
-        Text(entry.data?.prayerName ?? "--")
+        Text(computed?.prayerName ?? "--")
           .font(.system(size: 28, weight: .heavy, design: .rounded))
           .foregroundStyle(gradient.linear)
           .shadow(color: gradient.base.opacity(t == .light ? 0.40 : 0.0), radius: 5, x: 0, y: 1)
           .minimumScaleFactor(0.7).lineLimit(1)
 
-        if let end = endDate {
+        if let end = computed?.endDate {
           Text(timerInterval: Date.now...end, pauseTime: nil)
             .font(.system(size: 18, weight: .bold, design: .rounded).monospacedDigit())
             .foregroundColor(t.textPrimary).lineLimit(1).minimumScaleFactor(0.7)
@@ -226,13 +232,13 @@ struct PrayerTimesMediumView: View {
 
   @ViewBuilder
   private var nextPrayerChip: some View {
-    let nextKey = prayerKeyFromName(entry.data?.nextPrayer ?? "")
+    let nextKey = prayerKeyFromName(computed?.nextPrayer ?? "")
     let nextGrad = prayerGradient(for: nextKey)
     HStack(spacing: 5) {
       Image(systemName: "arrow.right")
         .font(.system(size: 10, weight: .bold))
         .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.75))
-      Text(entry.data?.nextPrayer ?? "--")
+      Text(computed?.nextPrayer ?? "--")
         .font(.system(size: 12, weight: .bold))
         .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.90 : 0.85))
         .lineLimit(1)
@@ -249,16 +255,13 @@ struct PrayerTimesLargeView: View {
   let entry: PrayerTimesEntry
   private var t: SalahTheme { entry.theme }
 
-  private var endDate: Date? {
-    guard let d = entry.data, d.endTimeMs > 0 else { return nil }
-    return Date(timeIntervalSince1970: d.endTimeMs / 1000)
-  }
-  private var prayerKey: String { prayerKeyFromName(entry.data?.prayerName ?? "") }
+  private var computed: ComputedPrayerState? { computeNextPrayer(data: entry.data, at: entry.date) }
+  private var prayerKey: String { prayerKeyFromName(computed?.prayerName ?? "") }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
   private var iconName: String { prayerCompletedIcon(for: prayerKey) }
 
   private var slots: [PrayerSlot] {
-    buildDaySlots(widget: entry.data, activePrayerName: entry.data?.prayerName ?? "")
+    buildDaySlots(widget: entry.data, activePrayerName: computed?.prayerName ?? "", at: entry.date)
   }
 
   var body: some View {
@@ -296,13 +299,13 @@ struct PrayerTimesLargeView: View {
 
         // Sağ: vakit ismi (üstte) + sayaç (altta) — kompakt iki satır
         VStack(alignment: .leading, spacing: 2) {
-          Text(entry.data?.prayerName ?? "--")
+          Text(computed?.prayerName ?? "--")
             .font(.system(size: 22, weight: .heavy, design: .rounded))
             .foregroundStyle(gradient.linear)
             .shadow(color: gradient.base.opacity(t == .light ? 0.40 : 0.0), radius: 5, x: 0, y: 1)
             .minimumScaleFactor(0.7).lineLimit(1)
 
-          if let end = endDate {
+          if let end = computed?.endDate {
             Text(timerInterval: Date.now...end, pauseTime: nil)
               .font(.system(size: 18, weight: .bold, design: .rounded).monospacedDigit())
               .foregroundColor(t.textPrimary).lineLimit(1).minimumScaleFactor(0.7)
@@ -461,12 +464,10 @@ struct NextPrayerLockView: View {
   let entry: PrayerTimesEntry
   @Environment(\.widgetFamily) var family
 
-  private var name: String { entry.data?.prayerName ?? "—" }
-  private var time: String { entry.data?.prayerTime ?? "--:--" }
-  private var target: Date? {
-    guard let ms = entry.data?.endTimeMs, ms > 0 else { return nil }
-    return Date(timeIntervalSince1970: ms / 1000)
-  }
+  private var computed: ComputedPrayerState? { computeNextPrayer(data: entry.data, at: entry.date) }
+  private var name: String { computed?.prayerName ?? "—" }
+  private var time: String { computed?.prayerTime ?? "--:--" }
+  private var target: Date? { computed?.endDate }
   private var iconName: String { prayerCompletedIcon(for: prayerKeyFromName(name)) }
 
   var body: some View {
@@ -484,7 +485,7 @@ struct NextPrayerLockView: View {
         Text(time)
           .font(.system(size: 14, weight: .black, design: .rounded))
         if let t = target {
-          Text(t, style: .timer)
+          Text(timerInterval: Date.now...t, pauseTime: nil, countsDown: true)
             .font(.system(size: 8, weight: .semibold, design: .monospaced))
             .foregroundStyle(.secondary)
         }
@@ -510,7 +511,7 @@ struct NextPrayerLockView: View {
             Image(systemName: "timer")
               .font(.system(size: 10))
               .foregroundStyle(.secondary)
-            Text(t, style: .timer)
+            Text(timerInterval: Date.now...t, pauseTime: nil, countsDown: true)
               .font(.system(size: 13, weight: .semibold, design: .monospaced))
               .foregroundStyle(.secondary)
           }

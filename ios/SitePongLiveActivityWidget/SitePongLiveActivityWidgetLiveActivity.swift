@@ -71,7 +71,7 @@ struct SalahLockScreenView: View {
   let isStale: Bool
   @Environment(\.colorScheme) private var colorScheme
 
-  private var endDate: Date { Date(timeIntervalSince1970: state.endTimeMs / 1000) }
+  private var endDate: Date { Date(timeIntervalSince1970: (state.endTimeMs / 1000).rounded(.down)) }
   private var prayerKey: String { prayerKeyFromName(state.prayerName) }
   private var nextKey: String { prayerKeyFromName(state.nextPrayer) }
   private var gradient: PrayerGradient { prayerGradient(for: prayerKey) }
@@ -167,7 +167,7 @@ struct SitePongLiveActivityWidgetLiveActivity: Widget {
         .activitySystemActionForegroundColor(.primary)
 
     } dynamicIsland: { context in
-      let endDate = Date(timeIntervalSince1970: context.state.endTimeMs / 1000)
+      let endDate = Date(timeIntervalSince1970: (context.state.endTimeMs / 1000).rounded(.down))
       let prayerKey = prayerKeyFromName(context.state.prayerName)
       let nextKey = prayerKeyFromName(context.state.nextPrayer)
       let gradient = prayerGradient(for: prayerKey)

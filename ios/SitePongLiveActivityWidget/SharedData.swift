@@ -35,6 +35,7 @@ struct TrackerData: Codable {
       let data = ud.data(forKey: "salah_tracker_data"),
       let obj = try? JSONDecoder().decode(TrackerData.self, from: data)
     else { return nil }
+    guard obj.date == todayDateString() else { return nil }
     return obj
   }
 }
@@ -50,6 +51,7 @@ struct AmelData: Codable {
       let data = ud.data(forKey: "salah_amel_data"),
       let obj = try? JSONDecoder().decode(AmelData.self, from: data)
     else { return nil }
+    guard obj.date == todayDateString() else { return nil }
     return obj
   }
 }
@@ -67,8 +69,66 @@ struct InspirationData: Codable {
       let data = ud.data(forKey: "salah_inspiration_data"),
       let obj = try? JSONDecoder().decode(InspirationData.self, from: data)
     else { return nil }
+    guard obj.date == todayDateString() else { return nil }
     return obj
   }
+}
+
+// MARK: - Date Helpers
+
+private func todayDateString() -> String {
+  let f = DateFormatter()
+  f.dateFormat = "yyyy-MM-dd"
+  return f.string(from: Date())
+}
+
+// MARK: - Dynamic Prayer Computation
+
+struct ComputedPrayerState {
+  let prayerName: String
+  let prayerTime: String
+  let endDate: Date
+  let nextPrayer: String
+}
+
+func computeNextPrayer(data: WidgetData?, at entryDate: Date) -> ComputedPrayerState? {
+  guard let data = data else { return nil }
+  let cal = Calendar.current
+
+  func toDate(_ timeStr: String) -> Date? {
+    guard !timeStr.isEmpty else { return nil }
+    let parts = timeStr.split(separator: ":").compactMap { Int($0) }
+    guard parts.count >= 2 else { return nil }
+    var c = cal.dateComponents([.year, .month, .day], from: entryDate)
+    c.hour = parts[0]; c.minute = parts[1]; c.second = 0
+    return cal.date(from: c)
+  }
+
+  let checkpoints: [(String, String)] = [
+    ("İmsak",  data.imsak),
+    ("Güneş",  data.gunes),
+    ("Öğle",   data.ogle),
+    ("İkindi", data.ikindi),
+    ("Akşam",  data.aksam),
+    ("Yatsı",  data.yatsi),
+  ]
+
+  for i in 0..<checkpoints.count {
+    let (name, timeStr) = checkpoints[i]
+    guard let checkDate = toDate(timeStr), checkDate > entryDate else { continue }
+    let nextName = checkpoints[(i + 1) % checkpoints.count].0
+    return ComputedPrayerState(prayerName: name, prayerTime: timeStr, endDate: checkDate, nextPrayer: nextName)
+  }
+
+  // All today's checkpoints have passed — show tomorrow's İmsak
+  let imsakStr = data.imsak
+  guard !imsakStr.isEmpty else { return nil }
+  let parts = imsakStr.split(separator: ":").compactMap { Int($0) }
+  guard parts.count >= 2, let tomorrow = cal.date(byAdding: .day, value: 1, to: entryDate) else { return nil }
+  var c = cal.dateComponents([.year, .month, .day], from: tomorrow)
+  c.hour = parts[0]; c.minute = parts[1]; c.second = 0
+  guard let tomorrowImsak = cal.date(from: c) else { return nil }
+  return ComputedPrayerState(prayerName: "İmsak", prayerTime: imsakStr, endDate: tomorrowImsak, nextPrayer: "Güneş")
 }
 
 // MARK: - Prayer ID Mapping (Widget ↔ Backend)
