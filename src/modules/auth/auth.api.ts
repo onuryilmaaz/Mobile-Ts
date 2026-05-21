@@ -24,6 +24,8 @@ const refreshClient = axios.create({
 export const authApi = {
   login: (payload: LoginPayload) => api.post<LoginResponse>('/auth/login', payload),
 
+  clerkLogin: (token: string) => api.post<LoginResponse>('/auth/clerk-login', { token }),
+
   register: (payload: RegisterPayload) => api.post<AuthResponse>('/auth/register', payload),
 
   refresh: (refreshToken: string) =>

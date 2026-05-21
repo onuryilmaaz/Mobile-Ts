@@ -167,6 +167,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     } catch {
     } finally {
+      try {
+        const { getClerkInstance } = await import('@clerk/clerk-expo');
+        const clerk = getClerkInstance();
+        if (clerk && typeof clerk.signOut === 'function') {
+          await clerk.signOut();
+        }
+      } catch (clerkErr) {
+        console.log('Clerk logout failed or not initialized:', clerkErr);
+      }
+
       await clearTokens();
       set({
         user: null,

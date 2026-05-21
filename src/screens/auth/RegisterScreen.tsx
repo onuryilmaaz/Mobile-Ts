@@ -9,6 +9,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { authApi } from '@/modules/auth/auth.api';
 import { useTheme } from '@/hooks/useTheme';
+import { SocialAuth } from '@/components/auth/SocialAuth';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
@@ -139,6 +140,8 @@ export default function RegisterScreen({ navigation }: Props) {
               loading={loading}
               className="mt-2"
             />
+
+            <SocialAuth onError={setError} />
 
             <View className="mt-6 flex-row justify-center">
               <Text className="text-slate-600 dark:text-slate-300">Zaten hesabın var mı? </Text>

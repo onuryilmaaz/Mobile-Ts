@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { SocialAuth } from '@/components/auth/SocialAuth';
 
 type Props = {
   navigation: NativeStackNavigationProp<AuthStackParamList>;
@@ -139,6 +140,8 @@ export default function LoginScreen({ navigation }: Props) {
               onPress={handleLogin}
               loading={loading}
             />
+
+            <SocialAuth onError={setError} />
 
             <View className="mt-6 flex-row justify-center">
               <Text className="text-slate-600 dark:text-slate-300">Hesabın yok mu? </Text>

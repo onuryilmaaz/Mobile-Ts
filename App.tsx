@@ -23,6 +23,36 @@ import { adhanService } from '@/services/adhan.service';
 import type { AdhanPrayerKey } from '@/services/adhan.service';
 import { useAdhanStore } from '@/services/adhan.store';
 import AdhanModal from '@/components/home/AdhanModal';
+import { ClerkProvider } from '@clerk/clerk-expo';
+import * as SecureStore from 'expo-secure-store';
+
+const tokenCache = {
+  async getToken(key: string) {
+    try {
+      const item = await SecureStore.getItemAsync(key);
+      if (item) {
+        console.log(`${key} was used 🔐`);
+      } else {
+        console.log('No values stored under key: ' + key);
+      }
+      return item;
+    } catch (error) {
+      console.error('SecureStore get item error: ', error);
+      await SecureStore.deleteItemAsync(key);
+      return null;
+    }
+  },
+  async saveToken(key: string, value: string) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
+    }
+  },
+};
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || '';
+
 
 const linking = {
   prefixes: ['com.onur6541.salah://', 'salah://'],
@@ -193,11 +223,13 @@ function App() {
   }, [logout]);
 
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <AppContent />
-      <ToastContainer />
-      <AlertDialog />
-    </SafeAreaProvider>
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <AppContent />
+        <ToastContainer />
+        <AlertDialog />
+      </SafeAreaProvider>
+    </ClerkProvider>
   );
 }
 
