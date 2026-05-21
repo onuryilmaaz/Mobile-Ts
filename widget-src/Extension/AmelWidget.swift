@@ -23,137 +23,162 @@ struct AmelProvider: TimelineProvider {
   }
 }
 
-// MARK: - Small Widget
+// MARK: - Circle Tile
 
-struct AmelSmallView: View {
-  let entry: AmelEntry
-  private var t: SalahTheme { entry.theme }
-  private var activeTypes: [String] { entry.data?.types ?? [] }
-  private var count: Int { entry.data?.totalCount ?? 0 }
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      HStack(spacing: 6) {
-        Image(systemName: "star.fill")
-          .foregroundStyle(
-            LinearGradient(
-              colors: [Color(red: 0.85, green: 0.55, blue: 1.00), Color(red: 0.50, green: 0.15, blue: 0.98)],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing
-            )
-          )
-          .font(.system(size: 15, weight: .bold))
-          .shadow(color: Color.salahPurple.opacity(t == .light ? 0.5 : 0.0), radius: 4, x: 0, y: 1)
-        Text("İBADET")
-          .font(.system(size: 12, weight: .black))
-          .foregroundColor(t.textPrimary)
-          .tracking(0.6)
-        Spacer()
-      }
-      Spacer()
-      HStack(alignment: .lastTextBaseline, spacing: 5) {
-        Text("\(count)")
-          .font(.system(size: 40, weight: .heavy, design: .rounded))
-          .foregroundColor(t.textPrimary)
-        Text("kayıt")
-          .font(.system(size: 13, weight: .bold))
-          .foregroundColor(t.textSecondary)
-      }
-      Spacer()
-      HStack(spacing: 9) {
-        ForEach(0..<5, id: \.self) { i in
-          if i < activeTypes.count {
-            let c = amelColor(for: activeTypes[i])
-            Circle()
-              .fill(amelGradient(for: activeTypes[i]))
-              .frame(width: 10, height: 10)
-              .shadow(color: c.opacity(t == .light ? 0.6 : 0.0), radius: 3)
-          } else {
-            Circle()
-              .strokeBorder(t.dotInactive, lineWidth: 1.5)
-              .frame(width: 10, height: 10)
-          }
-        }
-      }
-    }
-    .padding(16)
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-  }
-}
-
-// MARK: - Amel Tile (neon)
-
-struct AmelTile: View {
+private struct AmelCircleTile: View {
   let type: String
   let isActive: Bool
   let theme: SalahTheme
 
   var body: some View {
     Link(destination: URL(string: "salah://tracker/\(type)")!) {
-      content
+      tileContent
     }
   }
 
   @ViewBuilder
-  private var content: some View {
+  private var tileContent: some View {
     let color = amelColor(for: type)
     let gradient = amelGradient(for: type)
+    let icon = amelIcon(for: type)
 
-    VStack(spacing: 5) {
+    VStack(spacing: 4) {
       ZStack {
         if isActive {
-          // Dark için arkada güçlü neon glow
+          // Glow halo (dark mode only)
           if theme == .dark {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-              .fill(color.opacity(0.55))
+            Circle()
+              .fill(color.opacity(0.42))
+              .frame(width: 38, height: 38)
               .blur(radius: 8)
-              .frame(height: 34)
           }
-
-          Image(systemName: amelIcon(for: type))
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(gradient)
+          // Main circle
+          Circle()
+            .fill(gradient)
+            .frame(width: 32, height: 32)
             .shadow(
-              color: theme == .light ? color.opacity(0.65) : color.opacity(0.4),
-              radius: theme == .light ? 5 : 4,
-              x: 0, y: 1
+              color: color.opacity(theme == .light ? 0.38 : 0.0),
+              radius: 8, x: 0, y: 3
             )
+          // Top shine
+          Circle()
+            .fill(LinearGradient(
+              colors: [Color.white.opacity(0.28), Color.white.opacity(0)],
+              startPoint: .top,
+              endPoint: .center
+            ))
+            .frame(width: 32, height: 32)
+            .allowsHitTesting(false)
+          Image(systemName: icon)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(.white)
+            .shadow(color: color.opacity(0.45), radius: 2)
+
         } else {
-          Image(systemName: amelIcon(for: type))
-            .font(.system(size: 16, weight: .medium))
-            .foregroundColor(theme.dotInactive)
+          // Pasif: renk kimliği korunur, sadece soluk
+          Circle()
+            .fill(color.opacity(theme == .light ? 0.07 : 0.11))
+            .frame(width: 32, height: 32)
+          Circle()
+            .strokeBorder(
+              color.opacity(theme == .light ? 0.20 : 0.25),
+              lineWidth: 1.2
+            )
+            .frame(width: 32, height: 32)
+          Image(systemName: icon)
+            .font(.system(size: 13, weight: .medium))
+            .foregroundColor(color.opacity(theme == .light ? 0.38 : 0.48))
         }
       }
-      .frame(height: 22)
+      .frame(width: 38, height: 38)
 
       Text(amelLabel(for: type))
-        .font(.system(size: 9, weight: .bold))
-        .foregroundColor(isActive ? color : theme.textSecondary)
+        .font(.system(size: 8, weight: isActive ? .bold : .regular))
+        .foregroundColor(isActive
+          ? color.opacity(theme == .light ? 0.90 : 1.0)
+          : (theme == .light ? Color(red: 0.50, green: 0.54, blue: 0.62) : Color(red: 0.48, green: 0.52, blue: 0.62))
+        )
         .lineLimit(1)
-        .minimumScaleFactor(0.8)
+        .minimumScaleFactor(0.65)
     }
-    .frame(height: 50)
     .frame(maxWidth: .infinity)
-    .background(
-      ZStack {
-        RoundedRectangle(cornerRadius: 13, style: .continuous)
-          .fill(isActive ? AnyShapeStyle(
-            LinearGradient(
-              colors: [color.opacity(theme == .light ? 0.22 : 0.28), color.opacity(theme == .light ? 0.10 : 0.14)],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing
-            )
-          ) : AnyShapeStyle(theme.subtleBg))
+  }
+}
 
-        if isActive {
-          RoundedRectangle(cornerRadius: 13, style: .continuous)
-            .strokeBorder(color.opacity(theme == .light ? 0.50 : 0.45), lineWidth: 1.0)
-        } else {
-          RoundedRectangle(cornerRadius: 13, style: .continuous)
-            .strokeBorder(theme.subtleBorder, lineWidth: 0.6)
+// MARK: - Small Widget
+
+struct AmelSmallView: View {
+  let entry: AmelEntry
+  private var t: SalahTheme { entry.theme }
+  private var activeTypes: [String] { entry.data?.types ?? [] }
+  private var totalCount: Int { entry.data?.totalCount ?? 0 }
+  private var doneTypes: Int { activeTypes.count }
+
+  private var accentGrad: LinearGradient {
+    LinearGradient(
+      colors: [Color.salahPurple, Color.salahDarkPurple],
+      startPoint: .topLeading, endPoint: .bottomTrailing
+    )
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      // Header
+      HStack(spacing: 4) {
+        Image(systemName: "moon.stars.fill")
+          .font(.system(size: 12, weight: .semibold))
+          .foregroundStyle(accentGrad)
+          .shadow(color: Color.salahPurple.opacity(t == .light ? 0.38 : 0.0), radius: 3)
+        Text("İBADET")
+          .font(.system(size: 10, weight: .black))
+          .foregroundColor(t.textPrimary)
+          .tracking(0.4)
+        Spacer()
+      }
+
+      Spacer()
+
+      // Hero count
+      VStack(alignment: .leading, spacing: 0) {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+          Text("\(totalCount)")
+            .font(.system(size: 44, weight: .heavy, design: .rounded))
+            .foregroundColor(t.textPrimary)
+            .lineLimit(1)
+          Text("kayıt")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(t.textSecondary)
+            .padding(.bottom, 4)
+        }
+        if doneTypes > 0 {
+          Text("\(doneTypes) farklı ibadet")
+            .font(.system(size: 10, weight: .medium))
+            .foregroundColor(t.textSecondary)
         }
       }
-    )
+
+      Spacer()
+
+      // Renk kimlikli göstergeler — dairesel
+      HStack(spacing: 5) {
+        ForEach(allAmelTypes, id: \.self) { type in
+          let isActive = activeTypes.contains(type)
+          let color = amelColor(for: type)
+          Circle()
+            .fill(isActive
+              ? AnyShapeStyle(amelGradient(for: type))
+              : AnyShapeStyle(color.opacity(t == .light ? 0.12 : 0.18))
+            )
+            .frame(width: 10, height: 10)
+            .shadow(
+              color: isActive ? color.opacity(t == .light ? 0.45 : 0.0) : .clear,
+              radius: 2
+            )
+        }
+      }
+    }
+    .padding(14)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 }
 
@@ -163,49 +188,73 @@ struct AmelMediumView: View {
   let entry: AmelEntry
   private var t: SalahTheme { entry.theme }
   private var activeTypes: Set<String> { Set(entry.data?.types ?? []) }
+  private var doneCount: Int { activeTypes.count }
 
-  let cols = Array(repeating: GridItem(.flexible(), spacing: 9), count: 4)
+  private var accentGrad: LinearGradient {
+    LinearGradient(
+      colors: [Color.salahPurple, Color.salahDarkPurple],
+      startPoint: .topLeading, endPoint: .bottomTrailing
+    )
+  }
+
+  let cols = Array(repeating: GridItem(.flexible(), spacing: 6), count: 4)
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      HStack(alignment: .top) {
-        VStack(alignment: .leading, spacing: 3) {
-          Text("BUGÜNÜN İBADETLERİ")
-            .font(.system(size: 10, weight: .black))
-            .foregroundColor(t.textSecondary)
-            .tracking(0.7)
-          Text(activeTypes.isEmpty ? "Henüz kayıt yok" : "\(activeTypes.count) ibadet tamamlandı")
-            .font(.system(size: 13, weight: .bold))
-            .foregroundColor(t.textPrimary)
-        }
-        Spacer()
+    VStack(alignment: .leading, spacing: 8) {
+      // Header
+      HStack(alignment: .center, spacing: 6) {
         ZStack {
           if t == .dark {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-              .fill(Color.salahPurple.opacity(0.40))
-              .blur(radius: 7)
-              .frame(width: 32, height: 32)
+            Circle()
+              .fill(Color.salahPurple.opacity(0.28))
+              .frame(width: 24, height: 24)
+              .blur(radius: 6)
           }
-          Image(systemName: "star.fill")
-            .foregroundStyle(
-              LinearGradient(
-                colors: [Color(red: 0.90, green: 0.60, blue: 1.00), Color(red: 0.50, green: 0.15, blue: 0.98)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-              )
-            )
-            .font(.system(size: 19, weight: .semibold))
-            .shadow(
-              color: Color.salahPurple.opacity(t == .light ? 0.55 : 0.3),
-              radius: t == .light ? 5 : 4,
-              x: 0, y: 1
-            )
+          Image(systemName: "moon.stars.fill")
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(accentGrad)
+            .shadow(color: Color.salahPurple.opacity(t == .light ? 0.38 : 0.0), radius: 3)
+        }
+        .frame(width: 16, height: 16)
+
+        Text("BUGÜNÜN İBADETLERİ")
+          .font(.system(size: 10, weight: .black))
+          .foregroundColor(t.textSecondary)
+          .tracking(0.5)
+
+        Spacer()
+
+        HStack(alignment: .firstTextBaseline, spacing: 2) {
+          Text("\(doneCount)")
+            .font(.system(size: 18, weight: .heavy, design: .rounded))
+            .foregroundStyle(doneCount > 0 ? AnyShapeStyle(accentGrad) : AnyShapeStyle(t.textSecondary))
+          Text("/7")
+            .font(.system(size: 11, weight: .bold))
+            .foregroundColor(t.textSecondary)
         }
       }
 
-      LazyVGrid(columns: cols, spacing: 9) {
+      // Progress bar
+      GeometryReader { geo in
+        ZStack(alignment: .leading) {
+          Capsule()
+            .fill(t.ringTrack)
+            .frame(height: 3)
+          Capsule()
+            .fill(accentGrad)
+            .frame(
+              width: doneCount > 0 ? max(8, geo.size.width * CGFloat(doneCount) / 7.0) : 0,
+              height: 3
+            )
+            .shadow(color: Color.salahPurple.opacity(0.35), radius: 3)
+        }
+      }
+      .frame(height: 3)
+
+      // Dairesel ibadet tile grid
+      LazyVGrid(columns: cols, spacing: 7) {
         ForEach(allAmelTypes, id: \.self) { type in
-          AmelTile(
+          AmelCircleTile(
             type: type,
             isActive: activeTypes.contains(type),
             theme: t
@@ -213,7 +262,9 @@ struct AmelMediumView: View {
         }
       }
     }
-    .padding(16)
+    .padding(.horizontal, 14)
+    .padding(.top, 12)
+    .padding(.bottom, 10)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 }

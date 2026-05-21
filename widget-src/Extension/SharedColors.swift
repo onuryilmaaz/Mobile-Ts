@@ -4,21 +4,21 @@ import WidgetKit
 // MARK: - Brand Colors
 
 extension Color {
-  static let salahTeal       = Color(red: 0.00, green: 0.85, blue: 0.75)
-  static let salahTealDark   = Color(red: 0.00, green: 0.55, blue: 0.50)
-  static let salahTealBright = Color(red: 0.10, green: 0.95, blue: 0.85)
-  static let salahMint       = Color(red: 0.30, green: 1.00, blue: 0.85)
-  static let salahSky        = Color(red: 0.00, green: 0.70, blue: 1.00)
-  static let salahAmber      = Color(red: 1.00, green: 0.62, blue: 0.00)
-  static let salahPurple     = Color(red: 0.65, green: 0.30, blue: 1.00)
-  static let salahDarkPurple = Color(red: 0.50, green: 0.15, blue: 0.98)
+  static let salahTeal       = Color(red: 0.00, green: 0.60, blue: 0.55)
+  static let salahTealDark   = Color(red: 0.00, green: 0.42, blue: 0.38)
+  static let salahTealBright = Color(red: 0.10, green: 0.78, blue: 0.72)
+  static let salahMint       = Color(red: 0.20, green: 0.85, blue: 0.75)
+  static let salahSky        = Color(red: 0.10, green: 0.48, blue: 0.82)
+  static let salahAmber      = Color(red: 0.85, green: 0.52, blue: 0.00)
+  static let salahPurple     = Color(red: 0.45, green: 0.22, blue: 0.82)
+  static let salahDarkPurple = Color(red: 0.32, green: 0.10, blue: 0.70)
 
-  // Prayer base flat colors — neon parlak ana tonlar
-  static let prayerFajr    = Color(red: 0.00, green: 0.55, blue: 1.00)   // electric blue
-  static let prayerDhuhr   = Color(red: 0.00, green: 0.82, blue: 0.85)   // tropical cyan
-  static let prayerAsr     = Color(red: 1.00, green: 0.10, blue: 0.55)   // hot magenta
-  static let prayerMaghrib = Color(red: 1.00, green: 0.30, blue: 0.50)   // vivid coral pink
-  static let prayerIsha    = Color(red: 0.55, green: 0.25, blue: 1.00)   // electric purple
+  // Prayer base flat colors — doğal, mücevher tonlar
+  static let prayerFajr    = Color(red: 0.15, green: 0.32, blue: 0.82)   // cobalt blue
+  static let prayerDhuhr   = Color(red: 0.00, green: 0.52, blue: 0.80)   // sapphire
+  static let prayerAsr     = Color(red: 0.82, green: 0.50, blue: 0.05)   // amber gold
+  static let prayerMaghrib = Color(red: 0.80, green: 0.22, blue: 0.20)   // garnet
+  static let prayerIsha    = Color(red: 0.35, green: 0.18, blue: 0.72)   // amethyst
 }
 
 // MARK: - Prayer Gradient
@@ -28,7 +28,6 @@ struct PrayerGradient {
   let highlight: Color
   let glow: Color
 
-  // Daha dramatik açı + canlı iki ton geçiş
   var linear: LinearGradient {
     LinearGradient(
       colors: [highlight, base],
@@ -39,7 +38,7 @@ struct PrayerGradient {
 
   var softFill: LinearGradient {
     LinearGradient(
-      colors: [highlight.opacity(0.32), base.opacity(0.20)],
+      colors: [highlight.opacity(0.28), base.opacity(0.16)],
       startPoint: .topLeading,
       endPoint: .bottomTrailing
     )
@@ -49,39 +48,39 @@ struct PrayerGradient {
 func prayerGradient(for key: String) -> PrayerGradient {
   switch key.lowercased() {
   case "sabah", "fajr", "imsak":
-    // Electric ocean → cyan
+    // Gece mavisi → şafak cobalt — tan yeri öncesi derin gökyüzü
     return PrayerGradient(
-      base: Color(red: 0.00, green: 0.40, blue: 1.00),         // saf deep electric blue
-      highlight: Color(red: 0.10, green: 0.85, blue: 1.00),    // electric cyan
-      glow: Color(red: 0.00, green: 0.65, blue: 1.00)
+      base: Color(red: 0.08, green: 0.12, blue: 0.55),
+      highlight: Color(red: 0.42, green: 0.55, blue: 0.98),
+      glow: Color(red: 0.25, green: 0.38, blue: 0.88)
     )
   case "öğle", "ogle", "dhuhr":
-    // Tropical cyan → mint
+    // Safir → gökyüzü mavisi — açık öğle seması
     return PrayerGradient(
-      base: Color(red: 0.00, green: 0.70, blue: 0.80),         // deep cyan
-      highlight: Color(red: 0.10, green: 1.00, blue: 0.85),    // bright mint cyan
-      glow: Color(red: 0.00, green: 0.85, blue: 0.85)
+      base: Color(red: 0.00, green: 0.48, blue: 0.78),
+      highlight: Color(red: 0.15, green: 0.75, blue: 0.98),
+      glow: Color(red: 0.00, green: 0.60, blue: 0.90)
     )
   case "ikindi", "asr":
-    // Hot magenta → pink neon
+    // Kehribar → altın bal — altın saat ışığı
     return PrayerGradient(
-      base: Color(red: 0.92, green: 0.00, blue: 0.45),         // deep magenta
-      highlight: Color(red: 1.00, green: 0.35, blue: 0.75),    // hot pink neon
-      glow: Color(red: 1.00, green: 0.10, blue: 0.55)
+      base: Color(red: 0.72, green: 0.35, blue: 0.00),
+      highlight: Color(red: 0.98, green: 0.70, blue: 0.15),
+      glow: Color(red: 0.88, green: 0.52, blue: 0.05)
     )
   case "akşam", "aksam", "maghrib":
-    // Sunset coral — sıcak pembe-mercan ekseninde
+    // Garnet → mercan turuncu — gün batımı kızıllığı
     return PrayerGradient(
-      base: Color(red: 1.00, green: 0.18, blue: 0.42),         // hot coral pink
-      highlight: Color(red: 1.00, green: 0.55, blue: 0.55),    // bright coral
-      glow: Color(red: 1.00, green: 0.30, blue: 0.50)
+      base: Color(red: 0.72, green: 0.12, blue: 0.18),
+      highlight: Color(red: 0.98, green: 0.45, blue: 0.25),
+      glow: Color(red: 0.85, green: 0.28, blue: 0.22)
     )
   case "yatsı", "yatsi", "isha":
-    // Galaxy purple — derin neon mor
+    // Ametist → zengin mor — gece seması
     return PrayerGradient(
-      base: Color(red: 0.30, green: 0.10, blue: 0.95),         // deep electric purple
-      highlight: Color(red: 0.75, green: 0.35, blue: 1.00),    // bright magenta-purple
-      glow: Color(red: 0.55, green: 0.25, blue: 1.00)
+      base: Color(red: 0.15, green: 0.08, blue: 0.50),
+      highlight: Color(red: 0.50, green: 0.28, blue: 0.92),
+      glow: Color(red: 0.30, green: 0.16, blue: 0.75)
     )
   default:
     return PrayerGradient(
@@ -92,25 +91,25 @@ func prayerGradient(for key: String) -> PrayerGradient {
   }
 }
 
-// Kaza için ortak gradient — sıcak altın-turuncu, neon parlaklık
+// Kaza için ortak gradient — derin kehribar altın
 func kazaGradient() -> PrayerGradient {
   PrayerGradient(
-    base: Color(red: 1.00, green: 0.42, blue: 0.00),         // deep neon orange
-    highlight: Color(red: 1.00, green: 0.78, blue: 0.20),    // bright gold
-    glow: Color(red: 1.00, green: 0.55, blue: 0.10)
+    base: Color(red: 0.75, green: 0.38, blue: 0.00),
+    highlight: Color(red: 1.00, green: 0.72, blue: 0.15),
+    glow: Color(red: 0.90, green: 0.52, blue: 0.05)
   )
 }
 
-// MARK: - Premium Ring Gradient (canlı neon)
+// MARK: - Premium Ring Gradient
 
 extension AngularGradient {
   static let salahRing = AngularGradient(
     gradient: Gradient(colors: [
-      Color(red: 0.00, green: 0.78, blue: 0.70),
-      Color(red: 0.10, green: 0.95, blue: 0.82),
-      Color(red: 0.30, green: 1.00, blue: 0.90),
-      Color(red: 0.10, green: 0.95, blue: 0.82),
-      Color(red: 0.00, green: 0.78, blue: 0.70),
+      Color(red: 0.00, green: 0.55, blue: 0.50),
+      Color(red: 0.08, green: 0.72, blue: 0.65),
+      Color(red: 0.20, green: 0.85, blue: 0.75),
+      Color(red: 0.08, green: 0.72, blue: 0.65),
+      Color(red: 0.00, green: 0.55, blue: 0.50),
     ]),
     center: .center,
     startAngle: .degrees(-90),
@@ -119,11 +118,11 @@ extension AngularGradient {
 
   static let salahKazaRing = AngularGradient(
     gradient: Gradient(colors: [
-      Color(red: 1.00, green: 0.42, blue: 0.00),
-      Color(red: 1.00, green: 0.65, blue: 0.10),
-      Color(red: 1.00, green: 0.85, blue: 0.25),
-      Color(red: 1.00, green: 0.65, blue: 0.10),
-      Color(red: 1.00, green: 0.42, blue: 0.00),
+      Color(red: 0.75, green: 0.38, blue: 0.00),
+      Color(red: 0.92, green: 0.58, blue: 0.05),
+      Color(red: 1.00, green: 0.75, blue: 0.18),
+      Color(red: 0.92, green: 0.58, blue: 0.05),
+      Color(red: 0.75, green: 0.38, blue: 0.00),
     ]),
     center: .center,
     startAngle: .degrees(-90),
@@ -152,7 +151,6 @@ enum SalahTheme {
 
   var isLight: Bool { self == .light }
 
-  // Light: temiz, sade tek katman gradient — sis efekti yok
   var cardBgGradient: LinearGradient {
     switch self {
     case .light:
@@ -167,8 +165,8 @@ enum SalahTheme {
     case .dark:
       return LinearGradient(
         colors: [
-          Color(red: 0.095, green: 0.118, blue: 0.180),
-          Color(red: 0.055, green: 0.075, blue: 0.130),
+          Color(red: 0.085, green: 0.105, blue: 0.175),
+          Color(red: 0.050, green: 0.068, blue: 0.125),
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -188,7 +186,7 @@ enum SalahTheme {
     case .dark:
       return RadialGradient(
         colors: [
-          Color(red: 0.30, green: 0.50, blue: 0.95).opacity(0.12),
+          Color(red: 0.20, green: 0.38, blue: 0.80).opacity(0.10),
           Color.clear
         ],
         center: UnitPoint(x: 0.85, y: 0.15),
@@ -200,8 +198,8 @@ enum SalahTheme {
 
   var cardBg: Color {
     switch self {
-    case .light: return Color(red: 0.96, green: 0.965, blue: 0.98)
-    case .dark:  return Color(red: 0.067, green: 0.094, blue: 0.157)
+    case .light: return Color(red: 0.960, green: 0.965, blue: 0.980)
+    case .dark:  return Color(red: 0.065, green: 0.088, blue: 0.150)
     }
   }
 
@@ -264,17 +262,16 @@ enum SalahTheme {
       )
     case .dark:
       return LinearGradient(
-        colors: [Color.white.opacity(0.07), Color.white.opacity(0)],
+        colors: [Color.white.opacity(0.06), Color.white.opacity(0)],
         startPoint: .top,
         endPoint: .center
       )
     }
   }
 
-  // Renkli gölge — neon parlaklık için artırıldı
   var tileShadowOpacity: Double {
     switch self {
-    case .light: return 0.60
+    case .light: return 0.45
     case .dark:  return 0.0
     }
   }
@@ -286,11 +283,10 @@ enum SalahTheme {
     }
   }
 
-  // İç beyaz çerçeve — rengi yıkamasın diye düşürüldü
   var tileInnerBorderOpacity: Double {
     switch self {
-    case .light: return 0.22
-    case .dark:  return 0.14
+    case .light: return 0.20
+    case .dark:  return 0.12
     }
   }
 }
@@ -308,17 +304,17 @@ func prayerColor(for key: String) -> Color {
   }
 }
 
-// MARK: - Amel Helpers — neon canlı tonlar
+// MARK: - Amel Helpers — doğal mücevher tonlar
 
 func amelColor(for type: String) -> Color {
   switch type {
-  case "quran":        return Color(red: 0.00, green: 0.72, blue: 0.62)   // emerald teal
-  case "dhikr":        return Color(red: 0.00, green: 0.65, blue: 1.00)   // electric blue
-  case "nafile":       return Color(red: 1.00, green: 0.72, blue: 0.00)   // vivid gold
-  case "fasting":      return Color(red: 0.60, green: 0.32, blue: 1.00)   // electric purple
-  case "sadaka":       return Color(red: 0.10, green: 0.90, blue: 0.45)   // neon green
-  case "dua":          return Color(red: 0.95, green: 0.20, blue: 0.75)   // hot pink-purple
-  case "memorization": return Color(red: 1.00, green: 0.35, blue: 0.10)   // neon orange-red
+  case "quran":        return Color(red: 0.08, green: 0.55, blue: 0.42)   // zümrüt yeşil
+  case "dhikr":        return Color(red: 0.10, green: 0.42, blue: 0.78)   // safir mavi
+  case "nafile":       return Color(red: 0.72, green: 0.50, blue: 0.00)   // derin altın
+  case "fasting":      return Color(red: 0.42, green: 0.22, blue: 0.72)   // ametist mor
+  case "sadaka":       return Color(red: 0.12, green: 0.55, blue: 0.38)   // orman yeşili
+  case "dua":          return Color(red: 0.72, green: 0.18, blue: 0.45)   // gül kuvars kırmızısı
+  case "memorization": return Color(red: 0.75, green: 0.30, blue: 0.08)   // kehribar kiremit
   default:             return .salahTeal
   }
 }
@@ -327,13 +323,13 @@ func amelGradient(for type: String) -> LinearGradient {
   let base = amelColor(for: type)
   let highlight: Color
   switch type {
-  case "quran":        highlight = Color(red: 0.20, green: 0.95, blue: 0.85)
-  case "dhikr":        highlight = Color(red: 0.30, green: 0.90, blue: 1.00)
-  case "nafile":       highlight = Color(red: 1.00, green: 0.92, blue: 0.30)
-  case "fasting":      highlight = Color(red: 0.85, green: 0.55, blue: 1.00)
-  case "sadaka":       highlight = Color(red: 0.35, green: 1.00, blue: 0.65)
-  case "dua":          highlight = Color(red: 1.00, green: 0.50, blue: 0.95)
-  case "memorization": highlight = Color(red: 1.00, green: 0.65, blue: 0.25)
+  case "quran":        highlight = Color(red: 0.22, green: 0.82, blue: 0.65)
+  case "dhikr":        highlight = Color(red: 0.32, green: 0.68, blue: 0.98)
+  case "nafile":       highlight = Color(red: 0.98, green: 0.80, blue: 0.22)
+  case "fasting":      highlight = Color(red: 0.72, green: 0.48, blue: 0.95)
+  case "sadaka":       highlight = Color(red: 0.28, green: 0.82, blue: 0.58)
+  case "dua":          highlight = Color(red: 0.95, green: 0.45, blue: 0.68)
+  case "memorization": highlight = Color(red: 0.98, green: 0.60, blue: 0.25)
   default:             highlight = .salahTealBright
   }
   return LinearGradient(

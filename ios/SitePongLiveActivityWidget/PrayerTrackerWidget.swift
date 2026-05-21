@@ -78,7 +78,7 @@ func isPrayerAvailable(_ p: PrayerInfo, widget: WidgetData?) -> Bool {
   return nowMin >= pMin
 }
 
-// MARK: - Premium Progress Ring (daha güçlü neon glow)
+// MARK: - Progress Ring
 
 struct PremiumRing: View {
   let progress: CGFloat
@@ -91,16 +91,6 @@ struct PremiumRing: View {
       Circle()
         .stroke(trackColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
 
-      // Dış neon halka
-      Circle()
-        .trim(from: 0, to: progress)
-        .stroke(
-          (isKaza ? Color(red: 1.0, green: 0.55, blue: 0.10) : Color(red: 0.10, green: 0.95, blue: 0.82)).opacity(0.55),
-          style: StrokeStyle(lineWidth: lineWidth + 6, lineCap: .round)
-        )
-        .blur(radius: 6)
-        .rotationEffect(.degrees(-90))
-
       Circle()
         .trim(from: 0, to: progress)
         .stroke(
@@ -108,11 +98,15 @@ struct PremiumRing: View {
           style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
         )
         .rotationEffect(.degrees(-90))
+        .shadow(
+          color: (isKaza ? Color.salahAmber : Color.salahTeal).opacity(0.42),
+          radius: 4
+        )
     }
   }
 }
 
-// MARK: - Small Widget View
+// MARK: - Small Widget
 
 struct PrayerTrackerSmallView: View {
   let entry: PrayerTrackerEntry
@@ -121,31 +115,43 @@ struct PrayerTrackerSmallView: View {
   private var count: Int {
     allPrayers.filter { isPrayerCompleted($0.id, in: completed) }.count
   }
-
   private var hasKaza: Bool {
     completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
   }
+  private var allDone: Bool { count == 5 }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      HStack(spacing: 6) {
-        Image(systemName: "checkmark.seal.fill")
-          .foregroundStyle(
-            LinearGradient(
-              colors: hasKaza
-                ? [Color(red: 1.00, green: 0.78, blue: 0.20), Color(red: 1.00, green: 0.42, blue: 0.00)]
-                : [Color(red: 0.30, green: 1.00, blue: 0.85), Color(red: 0.00, green: 0.78, blue: 0.70)],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing
+      // Header
+      HStack(spacing: 5) {
+        ZStack {
+          if t == .dark {
+            Circle()
+              .fill((hasKaza ? Color.salahAmber : Color.salahTeal).opacity(0.35))
+              .frame(width: 22, height: 22)
+              .blur(radius: 6)
+          }
+          Image(systemName: allDone ? "checkmark.seal.fill" : "seal")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(
+              hasKaza
+                ? LinearGradient(colors: [Color.salahAmber, Color.salahAmber.opacity(0.7)], startPoint: .top, endPoint: .bottom)
+                : LinearGradient(colors: [Color.salahTeal, Color.salahTealDark], startPoint: .topLeading, endPoint: .bottomTrailing)
             )
-          )
-          .font(.system(size: 15, weight: .bold))
-        Text("Namaz")
-          .font(.system(size: 13, weight: .bold))
+            .shadow(color: (hasKaza ? Color.salahAmber : Color.salahTeal).opacity(t == .light ? 0.45 : 0.0), radius: 3)
+        }
+        .frame(width: 18, height: 18)
+
+        Text("NAMAZ")
+          .font(.system(size: 11, weight: .black))
           .foregroundColor(t.textPrimary)
+          .tracking(0.5)
         Spacer()
       }
+
       Spacer()
+
+      // Ring + Count
       HStack {
         Spacer()
         ZStack {
@@ -155,48 +161,46 @@ struct PrayerTrackerSmallView: View {
             isKaza: hasKaza,
             trackColor: t.ringTrack
           )
-          VStack(spacing: -2) {
+          VStack(spacing: -1) {
             Text("\(count)")
-              .font(.system(size: 28, weight: .heavy, design: .rounded))
+              .font(.system(size: 30, weight: .heavy, design: .rounded))
               .foregroundColor(t.textPrimary)
             Text("/ 5")
-              .font(.system(size: 12, weight: .semibold))
+              .font(.system(size: 11, weight: .bold))
               .foregroundColor(t.textSecondary)
           }
         }
-        .frame(width: 72, height: 72)
+        .frame(width: 76, height: 76)
         Spacer()
       }
+
       Spacer()
-      HStack(spacing: 8) {
+
+      // Prayer indicator pills
+      HStack(spacing: 6) {
         ForEach(allPrayers, id: \.id) { p in
           let done = isPrayerCompleted(p.id, in: completed)
           let kaza = done && isPrayerKaza(p.id, in: entry.tracker?.kazaPrayers ?? [])
-          if done && kaza {
-            Circle()
-              .fill(kazaGradient().linear)
-              .frame(width: 10, height: 10)
-              .shadow(color: kazaGradient().glow.opacity(t == .light ? 0.6 : 0.0), radius: 3)
-          } else if done {
-            let g = prayerGradient(for: p.id)
-            Circle()
+          if done {
+            let g = kaza ? kazaGradient() : prayerGradient(for: p.id)
+            RoundedRectangle(cornerRadius: 3)
               .fill(g.linear)
-              .frame(width: 10, height: 10)
-              .shadow(color: g.glow.opacity(t == .light ? 0.6 : 0.0), radius: 3)
+              .frame(width: 20, height: 8)
+              .shadow(color: g.glow.opacity(t == .light ? 0.50 : 0.0), radius: 3)
           } else {
-            Circle()
+            RoundedRectangle(cornerRadius: 3)
               .fill(t.dotInactive)
-              .frame(width: 10, height: 10)
+              .frame(width: 20, height: 8)
           }
         }
       }
     }
-    .padding(16)
+    .padding(15)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 }
 
-// MARK: - Prayer Tile (Neon Premium)
+// MARK: - Prayer Tile
 
 struct PrayerCircleView: View {
   let prayer: PrayerInfo
@@ -228,86 +232,86 @@ struct PrayerCircleView: View {
     VStack(spacing: 7) {
       ZStack {
         if isDone {
-          // Dark için güçlü blur glow — tile'ın etrafında belirgin neon hale
+          // Hale (sadece dark)
           if theme == .dark {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-              .fill(gradient.glow.opacity(0.65))
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+              .fill(gradient.glow.opacity(0.55))
               .frame(width: 52, height: 52)
               .blur(radius: 10)
               .offset(y: 2)
           }
 
-          // Ana doygun gradient body
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
+          // Gradient gövde
+          RoundedRectangle(cornerRadius: 15, style: .continuous)
             .fill(gradient.linear)
             .frame(width: 50, height: 50)
             .shadow(
               color: gradient.base.opacity(theme.tileShadowOpacity),
-              radius: theme.tileShadowRadius,
-              x: 0,
-              y: 4
+              radius: theme.tileShadowRadius, x: 0, y: 4
             )
 
-          // Üst parlaklık — sadece dark'ta, light'ta beyazlık rengi yıkıyordu
-          if theme == .dark {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-              .fill(
-                LinearGradient(
-                  colors: [Color.white.opacity(0.22), Color.white.opacity(0)],
-                  startPoint: .top,
-                  endPoint: .center
-                )
-              )
-              .frame(width: 50, height: 50)
-              .allowsHitTesting(false)
+          // Üst parlaklık
+          RoundedRectangle(cornerRadius: 15, style: .continuous)
+            .fill(LinearGradient(
+              colors: [Color.white.opacity(0.22), Color.white.opacity(0)],
+              startPoint: .top, endPoint: .center
+            ))
+            .frame(width: 50, height: 50)
+            .allowsHitTesting(false)
 
-            // İnce çerçeve — sadece dark'ta cam efekti için
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-              .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
+          if theme == .dark {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+              .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.7)
               .frame(width: 50, height: 50)
           }
 
-          // İkon — güçlü renkli shadow ile parlama
           Image(systemName: iconName)
-            .font(.system(size: 19, weight: .semibold))
+            .font(.system(size: 20, weight: .semibold))
             .foregroundColor(.white)
-            .shadow(color: gradient.base.opacity(0.85), radius: 4, x: 0, y: 1)
-            .shadow(color: gradient.glow.opacity(0.55), radius: 8, x: 0, y: 0)
+            .shadow(color: gradient.base.opacity(0.75), radius: 4, x: 0, y: 1)
+
         } else if !isAvailable {
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
+          // Henüz vakti gelmedi — minimal
+          RoundedRectangle(cornerRadius: 15, style: .continuous)
             .fill(theme.subtleBg)
             .frame(width: 50, height: 50)
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .strokeBorder(theme.subtleBorder, lineWidth: 0.8)
-            .frame(width: 50, height: 50)
-          Image(systemName: "lock.fill")
-            .font(.system(size: 13, weight: .semibold))
-            .foregroundColor(theme.dotInactive)
+          Image(systemName: iconName)
+            .font(.system(size: 16, weight: .light))
+            .foregroundColor(theme.dotInactive.opacity(0.50))
+
         } else {
-          // Available — boş slot, sadece renkli outline ile vakit belirtilir
-          // Done ile arasında dramatik kontrast olsun diye zemin nötr
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .fill(theme.subtleBg)
+          // Vakit girdi, kılınmadı — çerçeveli, tıklanabilir
+          RoundedRectangle(cornerRadius: 15, style: .continuous)
+            .fill(gradient.base.opacity(theme == .light ? 0.06 : 0.10))
             .frame(width: 50, height: 50)
-          RoundedRectangle(cornerRadius: 14, style: .continuous)
+          RoundedRectangle(cornerRadius: 15, style: .continuous)
             .strokeBorder(
-              gradient.glow.opacity(theme == .light ? 0.45 : 0.40),
-              style: StrokeStyle(lineWidth: 1.2, dash: [3, 2.5])
+              LinearGradient(
+                colors: [gradient.highlight, gradient.base],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+              ),
+              lineWidth: 1.5
             )
             .frame(width: 50, height: 50)
-          Image(systemName: "plus")
-            .font(.system(size: 16, weight: .bold))
-            .foregroundColor(gradient.glow.opacity(theme == .light ? 0.75 : 0.65))
+          Image(systemName: iconName)
+            .font(.system(size: 20, weight: .medium))
+            .foregroundStyle(gradient.linear)
+            .opacity(0.85)
         }
       }
+
       Text(prayer.label)
         .font(.system(size: 11, weight: .bold))
-        .foregroundColor(isDone ? gradient.glow : theme.textSecondary)
+        .foregroundColor(
+          isDone ? gradient.glow :
+          isAvailable ? theme.textPrimary :
+          theme.dotInactive
+        )
     }
   }
 }
 
-// MARK: - Medium Widget View
+// MARK: - Medium Widget
 
 struct PrayerTrackerMediumView: View {
   let entry: PrayerTrackerEntry
@@ -316,38 +320,59 @@ struct PrayerTrackerMediumView: View {
   private var count: Int {
     allPrayers.filter { isPrayerCompleted($0.id, in: completed) }.count
   }
-
   private var hasKaza: Bool {
     completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 14) {
+    VStack(alignment: .leading, spacing: 12) {
+      // Header
       HStack(alignment: .center) {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 2) {
           Text("GÜNLÜK NAMAZ TAKİBİ")
-            .font(.system(size: 10, weight: .black))
+            .font(.system(size: 9, weight: .black))
             .foregroundColor(t.textSecondary)
-            .tracking(0.7)
-          HStack(alignment: .firstTextBaseline, spacing: 4) {
+            .tracking(0.8)
+
+          HStack(alignment: .firstTextBaseline, spacing: 5) {
             Text("\(count)")
-              .font(.system(size: 28, weight: .heavy, design: .rounded))
+              .font(.system(size: 26, weight: .heavy, design: .rounded))
               .foregroundColor(t.textPrimary)
-            Text("/ 5 tamamlandı")
+            Text(count == 5 ? "Tamamlandı" : "/ 5 kılındı")
               .font(.system(size: 12, weight: .bold))
-              .foregroundColor(t.textSecondary)
+              .foregroundColor(count == 5 ? Color.salahTeal : t.textSecondary)
           }
         }
+
         Spacer()
+
         PremiumRing(
           progress: CGFloat(count) / 5.0,
           lineWidth: 3.5,
           isKaza: hasKaza,
           trackColor: t.ringTrack
         )
-        .frame(width: 34, height: 34)
+        .frame(width: 36, height: 36)
       }
 
+      // İnce progress çizgisi
+      GeometryReader { geo in
+        ZStack(alignment: .leading) {
+          Capsule()
+            .fill(t.ringTrack)
+            .frame(height: 3)
+          Capsule()
+            .fill(hasKaza ? AnyShapeStyle(AngularGradient.salahKazaRing) : AnyShapeStyle(AngularGradient.salahRing))
+            .frame(width: max(6, geo.size.width * CGFloat(count) / 5.0), height: 3)
+            .shadow(
+              color: (hasKaza ? Color.salahAmber : Color.salahTeal).opacity(0.40),
+              radius: 3
+            )
+        }
+      }
+      .frame(height: 3)
+
+      // Prayer tiles
       HStack(spacing: 0) {
         ForEach(allPrayers, id: \.id) { prayer in
           let done = isPrayerCompleted(prayer.id, in: completed)
@@ -364,7 +389,7 @@ struct PrayerTrackerMediumView: View {
         }
       }
     }
-    .padding(16)
+    .padding(15)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 }

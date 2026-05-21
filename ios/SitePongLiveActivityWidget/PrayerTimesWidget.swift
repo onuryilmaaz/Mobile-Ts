@@ -64,7 +64,7 @@ private struct PrayerSlot {
   let isPast: Bool       // geçti
 }
 
-private func buildDaySlots(widget: WidgetData?, activePrayerName: String, at date: Date) -> [PrayerSlot] {
+private func buildDaySlots(widget: WidgetData?, at date: Date) -> [PrayerSlot] {
   guard let w = widget else { return [] }
   let entries: [(String, String, String)] = [
     ("sabah",  "Sabah",  w.imsak),
@@ -73,13 +73,21 @@ private func buildDaySlots(widget: WidgetData?, activePrayerName: String, at dat
     ("aksam",  "Akşam",  w.aksam),
     ("yatsi",  "Yatsı",  w.yatsi),
   ]
-  let activeKey = prayerKeyFromName(activePrayerName)
   let nowComp = Calendar.current.dateComponents([.hour, .minute], from: date)
   let nowMin = (nowComp.hour ?? 0) * 60 + (nowComp.minute ?? 0)
 
+  // Aktif vakit = başlama saati geçmiş en son vakit (şu an içinde olduğumuz pencere)
+  var activePrayerKey: String? = nil
+  for (id, _, time) in entries {
+    let startMin = timeToMinutes(time)
+    if startMin > 0 && nowMin >= startMin {
+      activePrayerKey = id
+    }
+  }
+
   return entries.map { (id, label, time) in
     let startMin = timeToMinutes(time)
-    let isActive = (id == activeKey)
+    let isActive = (id == activePrayerKey)
     let isPast = startMin > 0 && nowMin >= startMin && !isActive
     return PrayerSlot(id: id, label: label, time: time, isActive: isActive, isPast: isPast)
   }
@@ -261,7 +269,7 @@ struct PrayerTimesLargeView: View {
   private var iconName: String { prayerCompletedIcon(for: prayerKey) }
 
   private var slots: [PrayerSlot] {
-    buildDaySlots(widget: entry.data, activePrayerName: computed?.prayerName ?? "", at: entry.date)
+    buildDaySlots(widget: entry.data, at: entry.date)
   }
 
   var body: some View {
