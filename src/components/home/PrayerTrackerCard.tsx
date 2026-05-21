@@ -224,6 +224,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
   const [isComponentReady, setIsComponentReady] = useState(false);
 
   const isMounted = useRef(true);
+  const prevTrackerRef = useRef<{ prayers: string[]; kaza: string[] } | null>(null);
 
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationStreak, setCelebrationStreak] = useState(0);
@@ -272,6 +273,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
   useEffect(() => {
     if (!isComponentReady || focusNonce === undefined) return;
     loadPrayerTimes();
+    if (isAuthenticated) fetchStats();
   }, [focusNonce]);
 
   useEffect(() => {
@@ -282,9 +284,20 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
 
   useEffect(() => {
     if (!stats) return;
+    const prayers = stats.today_prayers ?? [];
+    const kaza = stats.kaza_prayers ?? [];
+    const prev = prevTrackerRef.current;
+    if (
+      prev &&
+      prev.prayers.length === prayers.length &&
+      prev.kaza.length === kaza.length &&
+      prev.prayers.every((p, i) => p === prayers[i]) &&
+      prev.kaza.every((p, i) => p === kaza[i])
+    ) return;
+    prevTrackerRef.current = { prayers, kaza };
     liveActivityService.updatePrayerTrackerData({
-      completedPrayers: stats.today_prayers ?? [],
-      kazaPrayers: stats.kaza_prayers ?? [],
+      completedPrayers: prayers,
+      kazaPrayers: kaza,
       date: new Date().toISOString().slice(0, 10),
     });
   }, [stats]);

@@ -113,6 +113,7 @@ class SalahLiveActivityModule: NSObject {
     if let data = try? JSONSerialization.data(withJSONObject: dict) {
       ud.set(data, forKey: "salah_widget_data")
     }
+    ud.synchronize()
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahPrayerTimesWidget")
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahPrayerTimesWidgetLight")
   }
@@ -127,8 +128,10 @@ class SalahLiveActivityModule: NSObject {
     if let data = try? JSONSerialization.data(withJSONObject: dict) {
       ud.set(data, forKey: "salah_tracker_data")
     }
+    ud.synchronize()
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidget")
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidgetLight")
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerLockWidget")
   }
 
   @objc func updateAmelData(_ params: NSDictionary) {
@@ -141,6 +144,7 @@ class SalahLiveActivityModule: NSObject {
     if let data = try? JSONSerialization.data(withJSONObject: dict) {
       ud.set(data, forKey: "salah_amel_data")
     }
+    ud.synchronize()
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahAmelWidget")
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahAmelWidgetLight")
   }
@@ -157,6 +161,7 @@ class SalahLiveActivityModule: NSObject {
     if let data = try? JSONSerialization.data(withJSONObject: dict) {
       ud.set(data, forKey: "salah_inspiration_data")
     }
+    ud.synchronize()
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahInspirationWidget")
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahInspirationWidgetLight")
   }
