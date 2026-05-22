@@ -371,15 +371,12 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
       isKaza ? Haptics.NotificationFeedbackType.Warning : Haptics.NotificationFeedbackType.Success
     );
 
-    // Capture streak BEFORE the API call — the store will overwrite stats via fetchStats inside trackPrayer
-    const prevStreak = Number(stats?.current_streak ?? 0);
-
     try {
       const result = await trackPrayer(prayer.id as any, isKaza);
       const newStreak = Number(result?.stats?.current_streak ?? 0);
       const todayCount = Number(result?.stats?.today_prayers_count ?? 0);
 
-      if (todayCount >= 5 && newStreak > prevStreak) {
+      if (result?.streakIncremented && todayCount >= 5 && newStreak > 0) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setCelebrationStreak(newStreak);
         setShowCelebration(true);
