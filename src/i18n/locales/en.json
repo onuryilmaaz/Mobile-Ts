@@ -1,0 +1,85 @@
+{
+  "common": {
+    "error": "Error",
+    "permissionRequired": "Permission Required",
+    "cancel": "Cancel",
+    "stop": "Stop",
+    "sent": "Sent"
+  },
+  "prayers": {
+    "imsak": "Imsak",
+    "gunes": "Sunrise",
+    "ogle": "Dhuhr",
+    "ikindi": "Asr",
+    "aksam": "Maghrib",
+    "yatsi": "Isha"
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "location": "Location",
+      "notifications": "Notifications",
+      "adhanSound": "Adhan Sound",
+      "appearance": "Appearance",
+      "language": "Language",
+      "application": "Application"
+    },
+    "location": {
+      "title": "Prayer Time Location",
+      "noLocation": "Location not selected",
+      "autoDetect": "Auto Detect",
+      "autoDetectSub": "Find your city automatically with GPS",
+      "detecting": "Detecting location...",
+      "permissionDenied": "Location permission not granted.",
+      "notFound": "Not Found",
+      "notFoundSub": "Your location could not be recognized, please select manually.",
+      "errorLoading": "Could not retrieve location."
+    },
+    "notifications": {
+      "title": "Prayer Time Notifications",
+      "subtitle": "Get reminders at prayer times",
+      "offsetTitle": "How many minutes before to remind?",
+      "onTime": "On Time",
+      "minutes": "{{count}} min",
+      "prayersTitle": "For which prayers?",
+      "testTitle": "Send Test Notification",
+      "testSub": "Test if notifications are working on your device",
+      "testPermissionError": "Please allow notifications from Settings > Notifications.",
+      "testSuccess": "Test notification will arrive in a few seconds."
+    },
+    "adhan": {
+      "title": "Adhan Sound at Prayer Time",
+      "subtitle": "Adhan plays when application is open, you can stop with \"Turn off Adhan\"",
+      "prayersTitle": "At which times should the Adhan play?",
+      "testTitle": "Test Adhan Sound",
+      "testSub": "Admin — different adhan plays for each time",
+      "testModalTitle": "Adhan Test",
+      "testModalSub": "Which prayer's adhan do you want to test?"
+    },
+    "appearance": {
+      "theme": "Theme",
+      "darkActive": "Dark mode active",
+      "lightActive": "Light mode active"
+    },
+    "language": {
+      "title": "App Language",
+      "sub": "Change application language",
+      "tr": "Türkçe",
+      "en": "English"
+    },
+    "app": {
+      "version": "Version",
+      "developer": "Developer",
+      "devSub": "Made for good deeds 🤲"
+    }
+  },
+  "home": {
+    "quickActions": {
+      "kaza": "Missed Prayers",
+      "mosques": "Mosque Map",
+      "stats": "Statistics",
+      "dua": "Supplications"
+    },
+    "go": "Go"
+  }
+}

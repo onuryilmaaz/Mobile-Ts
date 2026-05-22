@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
@@ -54,6 +55,7 @@ const QUICK_ACTIONS = [
 ];
 
 export default function HomeScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const setUser = useAuthStore((s) => s.setUser);
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -133,12 +135,12 @@ export default function HomeScreen({ navigation }: Props) {
                     <Text
                       className="mb-1.5 text-center text-[13px] font-black text-slate-900 dark:text-slate-100"
                       numberOfLines={2}>
-                      {action.label}
+                      {t(`home.quickActions.${action.key}`)}
                     </Text>
 
                     <View className="flex-row items-center gap-1">
                       <Text className="text-[10px] font-bold" style={{ color: action.color }}>
-                        Git
+                        {t('home.go')}
                       </Text>
                       <Ionicons name="arrow-forward" size={10} color={action.color} />
                     </View>

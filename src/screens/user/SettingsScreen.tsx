@@ -18,6 +18,8 @@ import {
   getDefaultDistrictForState,
 } from '@/constants/locations';
 import { rootNavigate } from '@/navigation/rootNavigation';
+import { useTranslation } from 'react-i18next';
+import { useLanguageStore } from '@/store/language.store';
 
 const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
@@ -34,6 +36,8 @@ const PRAYERS = [
 const OFFSETS = [0, 5, 10, 15, 30];
 
 export default function SettingsScreen() {
+  const { t } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
   const { isDark } = useTheme();
   const { toggleTheme } = useThemeStore();
   const user = useAuthStore((s) => s.user);
@@ -81,7 +85,7 @@ export default function SettingsScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('İzin Gerekli', 'Konum izni verilmedi.');
+        Alert.alert(t('common.permissionRequired'), t('settings.location.permissionDenied'));
         return;
       }
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
@@ -101,7 +105,7 @@ export default function SettingsScreen() {
           (s: any) => normalize(s.name) === normRegion || normalize(s.name_en) === normRegion
         );
       })();
-      if (!found) { Alert.alert('Bulunamadı', 'Konumunuz tanınamadı, lütfen elle seçin.'); return; }
+      if (!found) { Alert.alert(t('settings.location.notFound'), t('settings.location.notFoundSub')); return; }
       const d = getDefaultDistrictForState(found._id);
       if (!d) return;
       await AsyncStorage.setItem(STORAGE_STATE_ID_KEY, found._id);
@@ -109,7 +113,7 @@ export default function SettingsScreen() {
       setStateId(found._id);
       setDistrictId(d._id);
     } catch {
-      Alert.alert('Hata', 'Konum alınamadı.');
+      Alert.alert(t('common.error'), t('settings.location.errorLoading'));
     } finally {
       setDetectingLocation(false);
     }
@@ -120,7 +124,7 @@ export default function SettingsScreen() {
     if (val) {
       const granted = await notificationService.requestPermissions();
       if (!granted) {
-        Alert.alert('İzin Gerekli', 'Lütfen Ayarlar > Bildirimler\'den izin verin.');
+        Alert.alert(t('common.permissionRequired'), t('settings.notifications.testPermissionError'));
         return;
       }
       await notificationService.enableNotifications();
@@ -150,7 +154,7 @@ export default function SettingsScreen() {
 
   const testNotif = async () => {
     const sent = await notificationService.sendTestNotification();
-    if (sent) Alert.alert('Gönderildi', 'Test bildirimi birkaç saniye içinde gelecek.');
+    if (sent) Alert.alert(t('common.sent'), t('settings.notifications.testSuccess'));
   };
 
   const sub = isDark ? '#64748b' : '#94a3b8';
@@ -197,16 +201,16 @@ export default function SettingsScreen() {
     <ScrollView className="flex-1 bg-slate-50 dark:bg-slate-950" contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
 
       {/* Konum */}
-      <Section title="Konum" />
+      <Section title={t('settings.sections.location')} />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon="location-outline"
           iconColor={teal}
-          label="Namaz Vakti Konumu"
+          label={t('settings.location.title')}
           sublabel={
             state && district
               ? `${state.name} — ${district.name}`
-              : district?.name ?? 'Konum seçilmedi'
+              : district?.name ?? t('settings.location.noLocation')
           }
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -217,8 +221,8 @@ export default function SettingsScreen() {
         <Row
           icon="navigate-outline"
           iconColor="#3b82f6"
-          label="Otomatik Algıla"
-          sublabel={detectingLocation ? 'Konum alınıyor…' : 'GPS ile şehrini otomatik bul'}
+          label={t('settings.location.autoDetect')}
+          sublabel={detectingLocation ? t('settings.location.detecting') : t('settings.location.autoDetectSub')}
           onPress={detectingLocation ? undefined : autoDetect}
           right={
             detectingLocation
@@ -229,13 +233,13 @@ export default function SettingsScreen() {
       </View>
 
       {/* Bildirimler */}
-      <Section title="Bildirimler" />
+      <Section title={t('settings.sections.notifications')} />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon="notifications-outline"
           iconColor={teal}
-          label="Namaz Vakti Bildirimleri"
-          sublabel="Namaz vakitlerinde hatırlatma al"
+          label={t('settings.notifications.title')}
+          sublabel={t('settings.notifications.subtitle')}
           right={
             <Switch
               value={notifEnabled}
@@ -250,7 +254,7 @@ export default function SettingsScreen() {
           <>
             <View className="px-4 pt-3 pb-1">
               <Text className="mb-2 text-xs font-bold text-slate-400 dark:text-slate-500">
-                Kaç dakika önce hatırlatılsın?
+                {t('settings.notifications.offsetTitle')}
               </Text>
               <View className="flex-row gap-2">
                 {OFFSETS.map((min) => (
@@ -264,7 +268,7 @@ export default function SettingsScreen() {
                     <Text
                       className="text-xs font-black"
                       style={{ color: offset === min ? '#fff' : sub }}>
-                      {min === 0 ? 'Tam Vakit' : `${min} dk`}
+                      {min === 0 ? t('settings.notifications.onTime') : t('settings.notifications.minutes', { count: min })}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -273,7 +277,7 @@ export default function SettingsScreen() {
 
             <View className="mt-2 px-4 pb-2">
               <Text className="mb-2 text-xs font-bold text-slate-400 dark:text-slate-500">
-                Hangi namazlar için?
+                {t('settings.notifications.prayersTitle')}
               </Text>
               <View className="flex-row flex-wrap gap-2">
                 {PRAYERS.map((p) => (
@@ -296,7 +300,7 @@ export default function SettingsScreen() {
                     <Text
                       className="text-xs font-bold"
                       style={{ color: prayerEnabled[p.key] ? teal : sub }}>
-                      {p.label}
+                      {t(`prayers.${p.key}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -306,8 +310,8 @@ export default function SettingsScreen() {
             <Row
               icon="flask-outline"
               iconColor="#8b5cf6"
-              label="Test Bildirimi Gönder"
-              sublabel="Bildirimlerin çalışıp çalışmadığını test et"
+              label={t('settings.notifications.testTitle')}
+              sublabel={t('settings.notifications.testSub')}
               onPress={testNotif}
               right={<Ionicons name="chevron-forward" size={16} color={sub} />}
             />
@@ -316,7 +320,7 @@ export default function SettingsScreen() {
       </View>
 
       {/* Ezan Sesi */}
-      <Section title="Ezan Sesi" />
+      <Section title={t('settings.sections.adhanSound')} />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <View className="border-b border-slate-100 px-4 py-3.5 dark:border-white/[7%]">
           <View className="flex-row items-center gap-3">
@@ -324,9 +328,9 @@ export default function SettingsScreen() {
               <Ionicons name="volume-high-outline" size={18} color="#f59e0b" />
             </View>
             <View className="flex-1">
-              <Text className="text-sm font-bold text-slate-950 dark:text-slate-100">Namaz Vaktinde Ezan Sesi</Text>
+              <Text className="text-sm font-bold text-slate-950 dark:text-slate-100">{t('settings.adhan.title')}</Text>
               <Text className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
-                Uygulama açıkken ezan çalar, "Ezanı Kapat" ile durdurabilirsin
+                {t('settings.adhan.subtitle')}
               </Text>
             </View>
           </View>
@@ -334,7 +338,7 @@ export default function SettingsScreen() {
 
         <View className="px-4 pt-3 pb-4">
           <Text className="mb-2 text-xs font-bold text-slate-400 dark:text-slate-500">
-            Hangi vakitlerde ezan çalsın?
+            {t('settings.adhan.prayersTitle')}
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {PRAYERS.map((p) => (
@@ -357,7 +361,7 @@ export default function SettingsScreen() {
                 <Text
                   className="text-xs font-bold"
                   style={{ color: adhanPrayers[p.key as AdhanPrayerKey] ? '#f59e0b' : sub }}>
-                  {p.label}
+                  {t(`prayers.${p.key}`)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -368,18 +372,18 @@ export default function SettingsScreen() {
           <Row
             icon="flask-outline"
             iconColor="#8b5cf6"
-            label="Ezan Sesini Test Et"
-            sublabel="Admin — her vakit farklı ezan çalar"
+            label={t('settings.adhan.testTitle')}
+            sublabel={t('settings.adhan.testSub')}
             onPress={async () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              Alert.alert('Ezan Testi', 'Hangi vaktin ezanını test etmek istiyorsun?', [
-                { text: 'İmsak', onPress: async () => { await adhanService.playAdhan('imsak'); showAdhan('imsak', 'İmsak'); } },
-                { text: 'Öğle', onPress: async () => { await adhanService.playAdhan('ogle'); showAdhan('ogle', 'Öğle'); } },
-                { text: 'İkindi', onPress: async () => { await adhanService.playAdhan('ikindi'); showAdhan('ikindi', 'İkindi'); } },
-                { text: 'Akşam', onPress: async () => { await adhanService.playAdhan('aksam'); showAdhan('aksam', 'Akşam'); } },
-                { text: 'Yatsı', onPress: async () => { await adhanService.playAdhan('yatsi'); showAdhan('yatsi', 'Yatsı'); } },
-                { text: 'Durdur', style: 'destructive', onPress: () => adhanService.stop() },
-                { text: 'İptal', style: 'cancel' },
+              Alert.alert(t('settings.adhan.testModalTitle'), t('settings.adhan.testModalSub'), [
+                { text: t('prayers.imsak'), onPress: async () => { await adhanService.playAdhan('imsak'); showAdhan('imsak', t('prayers.imsak')); } },
+                { text: t('prayers.ogle'), onPress: async () => { await adhanService.playAdhan('ogle'); showAdhan('ogle', t('prayers.ogle')); } },
+                { text: t('prayers.ikindi'), onPress: async () => { await adhanService.playAdhan('ikindi'); showAdhan('ikindi', t('prayers.ikindi')); } },
+                { text: t('prayers.aksam'), onPress: async () => { await adhanService.playAdhan('aksam'); showAdhan('aksam', t('prayers.aksam')); } },
+                { text: t('prayers.yatsi'), onPress: async () => { await adhanService.playAdhan('yatsi'); showAdhan('yatsi', t('prayers.yatsi')); } },
+                { text: t('common.stop'), style: 'destructive', onPress: () => adhanService.stop() },
+                { text: t('common.cancel'), style: 'cancel' },
               ]);
             }}
             right={<Ionicons name="chevron-forward" size={16} color={sub} />}
@@ -388,13 +392,13 @@ export default function SettingsScreen() {
       </View>
 
       {/* Görünüm */}
-      <Section title="Görünüm" />
+      <Section title={t('settings.sections.appearance')} />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon={isDark ? 'moon' : 'sunny'}
           iconColor="#f59e0b"
-          label="Tema"
-          sublabel={isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif'}
+          label={t('settings.appearance.theme')}
+          sublabel={isDark ? t('settings.appearance.darkActive') : t('settings.appearance.lightActive')}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             toggleTheme();
@@ -410,20 +414,65 @@ export default function SettingsScreen() {
         />
       </View>
 
+      {/* Dil Seçimi */}
+      <Section title={t('settings.sections.language')} />
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+        <Row
+          icon="language-outline"
+          iconColor="#8b5cf6"
+          label={t('settings.language.title')}
+          sublabel={t('settings.language.sub')}
+          right={
+            <View className="flex-row gap-2 mr-2">
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setLanguage('tr');
+                }}
+                className="rounded-xl px-3 py-1.5"
+                style={{
+                  backgroundColor: language === 'tr' ? teal : (isDark ? '#0f172a' : '#f1f5f9'),
+                }}>
+                <Text
+                  className="text-xs font-bold"
+                  style={{ color: language === 'tr' ? '#fff' : sub }}>
+                  {t('settings.language.tr')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setLanguage('en');
+                }}
+                className="rounded-xl px-3 py-1.5"
+                style={{
+                  backgroundColor: language === 'en' ? teal : (isDark ? '#0f172a' : '#f1f5f9'),
+                }}>
+                <Text
+                  className="text-xs font-bold"
+                  style={{ color: language === 'en' ? '#fff' : sub }}>
+                  {t('settings.language.en')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          }
+        />
+      </View>
+
       {/* Uygulama */}
-      <Section title="Uygulama" />
+      <Section title={t('settings.sections.application')} />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
           icon="information-circle-outline"
           iconColor="#3b82f6"
-          label="Sürüm"
+          label={t('settings.app.version')}
           sublabel="Salah v1.0.0"
         />
         <Row
           icon="heart-outline"
           iconColor="#ef4444"
-          label="Geliştirici"
-          sublabel="Hayırlı işler için yapıldı 🤲"
+          label={t('settings.app.developer')}
+          sublabel={t('settings.app.devSub')}
         />
       </View>
     </ScrollView>

@@ -25,6 +25,8 @@ import { useAdhanStore } from '@/services/adhan.store';
 import AdhanModal from '@/components/home/AdhanModal';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import * as SecureStore from 'expo-secure-store';
+import '@/i18n';
+import { useLanguageStore } from '@/store/language.store';
 
 const tokenCache = {
   async getToken(key: string) {
@@ -212,11 +214,13 @@ function AppContent() {
 
 function App() {
   const logout = useAuthStore((s) => s.logout);
-  const hydrate = useThemeStore((s) => s.hydrate);
+  const hydrateTheme = useThemeStore((s) => s.hydrate);
+  const hydrateLanguage = useLanguageStore((s) => s.hydrate);
 
   useEffect(() => {
-    hydrate();
-  }, [hydrate]);
+    hydrateTheme();
+    hydrateLanguage();
+  }, [hydrateTheme, hydrateLanguage]);
 
   useEffect(() => {
     setLogoutCallback(logout);

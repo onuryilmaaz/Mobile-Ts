@@ -51,7 +51,8 @@
       "expo-audio",
       "./plugins/removeApsEnvironment",
       "./plugins/withSalahWidgets",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-localization"
     ],
     "extra": {
       "expo-navigation-bar": {},

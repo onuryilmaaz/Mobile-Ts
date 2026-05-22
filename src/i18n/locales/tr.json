@@ -1,0 +1,85 @@
+{
+  "common": {
+    "error": "Hata",
+    "permissionRequired": "İzin Gerekli",
+    "cancel": "İptal",
+    "stop": "Durdur",
+    "sent": "Gönderildi"
+  },
+  "prayers": {
+    "imsak": "İmsak",
+    "gunes": "Güneş",
+    "ogle": "Öğle",
+    "ikindi": "İkindi",
+    "aksam": "Akşam",
+    "yatsi": "Yatsı"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "sections": {
+      "location": "Konum",
+      "notifications": "Bildirimler",
+      "adhanSound": "Ezan Sesi",
+      "appearance": "Görünüm",
+      "language": "Dil",
+      "application": "Uygulama"
+    },
+    "location": {
+      "title": "Namaz Vakti Konumu",
+      "noLocation": "Konum seçilmedi",
+      "autoDetect": "Otomatik Algıla",
+      "autoDetectSub": "GPS ile şehrini otomatik bul",
+      "detecting": "Konum alınıyor…",
+      "permissionDenied": "Konum izni verilmedi.",
+      "notFound": "Bulunamadı",
+      "notFoundSub": "Konumunuz tanınamadı, lütfen elle seçin.",
+      "errorLoading": "Konum alınamadı."
+    },
+    "notifications": {
+      "title": "Namaz Vakti Bildirimleri",
+      "subtitle": "Namaz vakitlerinde hatırlatma al",
+      "offsetTitle": "Kaç dakika önce hatırlatılsın?",
+      "onTime": "Tam Vakit",
+      "minutes": "{{count}} dk",
+      "prayersTitle": "Hangi namazlar için?",
+      "testTitle": "Test Bildirimi Gönder",
+      "testSub": "Bildirimlerin çalışıp çalışmadığını test et",
+      "testPermissionError": "Lütfen Ayarlar > Bildirimler'den izin verin.",
+      "testSuccess": "Test bildirimi birkaç saniye içinde gelecek."
+    },
+    "adhan": {
+      "title": "Namaz Vaktinde Ezan Sesi",
+      "subtitle": "Uygulama açıkken ezan çalar, \"Ezanı Kapat\" ile durdurabilirsin",
+      "prayersTitle": "Hangi vakitlerde ezan çalsın?",
+      "testTitle": "Ezan Sesini Test Et",
+      "testSub": "Admin — her vakit farklı ezan çalar",
+      "testModalTitle": "Ezan Testi",
+      "testModalSub": "Hangi vaktin ezanını test etmek istiyorsun?"
+    },
+    "appearance": {
+      "theme": "Tema",
+      "darkActive": "Karanlık mod aktif",
+      "lightActive": "Aydınlık mod aktif"
+    },
+    "language": {
+      "title": "Uygulama Dili",
+      "sub": "Uygulamanın dilini değiştirin",
+      "tr": "Türkçe",
+      "en": "English"
+    },
+    "app": {
+      "version": "Sürüm",
+      "developer": "Geliştirici",
+      "devSub": "Hayırlı işler için yapıldı 🤲"
+    }
+  },
+  "home": {
+    "quickActions": {
+      "kaza": "Kaza Takip",
+      "mosques": "Cami Atlası",
+      "stats": "İstatistikler",
+      "dua": "Dualar"
+    },
+    "go": "Git"
+  }
+}
