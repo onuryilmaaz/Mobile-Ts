@@ -26,6 +26,16 @@ import AdhanModal from '@/components/home/AdhanModal';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import * as SecureStore from 'expo-secure-store';
 
+const _warn = console.warn;
+console.warn = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('Clerk has been loaded with development keys')
+  )
+    return;
+  _warn(...args);
+};
+
 const tokenCache = {
   async getToken(key: string) {
     try {
