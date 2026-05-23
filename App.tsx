@@ -25,8 +25,6 @@ import { useAdhanStore } from '@/services/adhan.store';
 import AdhanModal from '@/components/home/AdhanModal';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import * as SecureStore from 'expo-secure-store';
-import '@/i18n';
-import { useLanguageStore } from '@/store/language.store';
 
 const tokenCache = {
   async getToken(key: string) {
@@ -48,13 +46,13 @@ const tokenCache = {
     try {
       return SecureStore.setItemAsync(key, value);
     } catch (err) {
+      console.error('SecureStore save item error: ', err);
       return;
     }
   },
 };
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || '';
-
 
 const linking = {
   prefixes: ['com.onur6541.salah://', 'salah://'],
@@ -115,7 +113,6 @@ function AppContent() {
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
-    // Sync API URL and any existing tokens to App Group so widget can call backend directly
     NativeModules.SalahLiveActivityModule?.updateAuthData?.({ apiUrl: API_BASE_URL });
     (async () => {
       const [accessToken, refreshToken] = await Promise.all([getAccessToken(), getRefreshToken()]);
@@ -134,7 +131,6 @@ function AppContent() {
       const { isAuthenticated } = useAuthStore.getState();
       if (!isAuthenticated) return;
 
-      // Process any prayers the widget queued as fallback
       const raw = await liveActivityService.getPendingWidgetPrayers();
       if (raw) {
         for (const entry of raw.split(',').filter(Boolean)) {
@@ -142,12 +138,11 @@ function AppContent() {
           try {
             await gamificationApi.trackPrayer(id as any, flag === 'kaza');
           } catch {
-            // Silently ignore — prayer may already be tracked by widget's direct call
+            console.warn('Failed to track prayer for live activity widget:', id);
           }
         }
       }
 
-      // Always refresh stats when app comes to foreground — widget may have written directly to DB
       useGamificationStore.getState().fetchStats();
     };
     onForeground();
@@ -172,12 +167,10 @@ function AppContent() {
       }
     };
 
-    // Uygulama açıkken gelen bildirim
     const receivedSub = Notifications.addNotificationReceivedListener((notification) => {
       playIfEnabled(notification.request.content.data);
     });
 
-    // Uygulama arka plandayken bildirime dokunulduğunda
     const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
       playIfEnabled(response.notification.request.content.data);
     });
@@ -214,13 +207,11 @@ function AppContent() {
 
 function App() {
   const logout = useAuthStore((s) => s.logout);
-  const hydrateTheme = useThemeStore((s) => s.hydrate);
-  const hydrateLanguage = useLanguageStore((s) => s.hydrate);
+  const hydrate = useThemeStore((s) => s.hydrate);
 
   useEffect(() => {
-    hydrateTheme();
-    hydrateLanguage();
-  }, [hydrateTheme, hydrateLanguage]);
+    hydrate();
+  }, [hydrate]);
 
   useEffect(() => {
     setLogoutCallback(logout);
