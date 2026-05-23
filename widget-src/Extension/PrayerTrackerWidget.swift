@@ -330,18 +330,9 @@ struct PrayerTrackerMediumView: View {
       HStack(alignment: .center) {
         VStack(alignment: .leading, spacing: 2) {
           Text("GÜNLÜK NAMAZ TAKİBİ")
-            .font(.system(size: 9, weight: .black))
+            .font(.system(size: 12, weight: .black))
             .foregroundColor(t.textSecondary)
             .tracking(0.8)
-
-          HStack(alignment: .firstTextBaseline, spacing: 5) {
-            Text("\(count)")
-              .font(.system(size: 26, weight: .heavy, design: .rounded))
-              .foregroundColor(t.textPrimary)
-            Text(count == 5 ? "Tamamlandı" : "/ 5 kılındı")
-              .font(.system(size: 12, weight: .bold))
-              .foregroundColor(count == 5 ? Color.salahTeal : t.textSecondary)
-          }
         }
 
         Spacer()

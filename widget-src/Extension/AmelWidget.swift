@@ -229,7 +229,7 @@ struct AmelMediumView: View {
             .font(.system(size: 18, weight: .heavy, design: .rounded))
             .foregroundStyle(doneCount > 0 ? AnyShapeStyle(accentGrad) : AnyShapeStyle(t.textSecondary))
           Text("/7")
-            .font(.system(size: 18, weight: .bold))
+            .font(.system(size: 18, weight: .heavy, design: .rounded))
             .foregroundColor(t.textSecondary)
         }
       }

@@ -13,12 +13,16 @@ extension Color {
   static let salahPurple     = Color(red: 0.45, green: 0.22, blue: 0.82)
   static let salahDarkPurple = Color(red: 0.32, green: 0.10, blue: 0.70)
 
-  // Prayer base flat colors — doğal, mücevher tonlar
-  static let prayerFajr    = Color(red: 0.15, green: 0.32, blue: 0.82)   // cobalt blue
-  static let prayerDhuhr   = Color(red: 0.00, green: 0.52, blue: 0.80)   // sapphire
-  static let prayerAsr     = Color(red: 0.82, green: 0.50, blue: 0.05)   // amber gold
-  static let prayerMaghrib = Color(red: 0.80, green: 0.22, blue: 0.20)   // garnet
-  static let prayerIsha    = Color(red: 0.35, green: 0.18, blue: 0.72)   // amethyst
+  // Prayer base flat colors — doğal mücevher tonlar (Seçenek A)
+  static let prayerFajr    = Color(red: 0.14, green: 0.15, blue: 0.42)   // lacivert şafak
+  static let prayerDhuhr   = Color(red: 0.06, green: 0.42, blue: 0.62)   // turkuaz sema
+  static let prayerAsr     = Color(red: 0.78, green: 0.42, blue: 0.06)   // altın saat
+  static let prayerMaghrib = Color(red: 0.56, green: 0.12, blue: 0.35)   // mercan + fuşya
+  static let prayerIsha    = Color(red: 0.08, green: 0.10, blue: 0.32)   // derin gece moru
+
+  // Widget canvas backgrounds
+  static let widgetCanvasLight = Color(red: 0.961, green: 0.941, blue: 0.902)  // #F5F0E6 — krem/parşömen
+  static let widgetCanvasDark  = Color(red: 0.008, green: 0.024, blue: 0.090)  // #020617 — slate-950
 }
 
 // MARK: - Prayer Gradient
@@ -48,39 +52,39 @@ struct PrayerGradient {
 func prayerGradient(for key: String) -> PrayerGradient {
   switch key.lowercased() {
   case "sabah", "fajr", "imsak":
-    // Gece mavisi → şafak cobalt — tan yeri öncesi derin gökyüzü
+    // Lacivert şafak — mor tona kayarak Öğle'den net ayrışıyor
     return PrayerGradient(
-      base: Color(red: 0.08, green: 0.12, blue: 0.55),
-      highlight: Color(red: 0.42, green: 0.55, blue: 0.98),
-      glow: Color(red: 0.25, green: 0.38, blue: 0.88)
+      base: Color(red: 0.14, green: 0.15, blue: 0.42),
+      highlight: Color(red: 0.48, green: 0.54, blue: 0.92),
+      glow: Color(red: 0.30, green: 0.35, blue: 0.78)
     )
   case "öğle", "ogle", "dhuhr":
-    // Safir → gökyüzü mavisi — açık öğle seması
+    // Turkuaz sema — saf maviden turkuaza kayarak Sabah'tan ayrılıyor
     return PrayerGradient(
-      base: Color(red: 0.00, green: 0.48, blue: 0.78),
-      highlight: Color(red: 0.15, green: 0.75, blue: 0.98),
-      glow: Color(red: 0.00, green: 0.60, blue: 0.90)
+      base: Color(red: 0.06, green: 0.42, blue: 0.62),
+      highlight: Color(red: 0.22, green: 0.78, blue: 0.88),
+      glow: Color(red: 0.10, green: 0.62, blue: 0.78)
     )
   case "ikindi", "asr":
-    // Kehribar → altın bal — altın saat ışığı
+    // Altın saat — daha az doygun (Kaza ile karışmasın diye)
     return PrayerGradient(
-      base: Color(red: 0.72, green: 0.35, blue: 0.00),
-      highlight: Color(red: 0.98, green: 0.70, blue: 0.15),
-      glow: Color(red: 0.88, green: 0.52, blue: 0.05)
+      base: Color(red: 0.78, green: 0.42, blue: 0.06),
+      highlight: Color(red: 0.98, green: 0.75, blue: 0.28),
+      glow: Color(red: 0.88, green: 0.58, blue: 0.12)
     )
   case "akşam", "aksam", "maghrib":
-    // Garnet → mercan turuncu — gün batımı kızıllığı
+    // Mercan + fuşya — kırmızıdan fuşyaya kayarak İkindi'den uzaklaşıyor
     return PrayerGradient(
-      base: Color(red: 0.72, green: 0.12, blue: 0.18),
-      highlight: Color(red: 0.98, green: 0.45, blue: 0.25),
-      glow: Color(red: 0.85, green: 0.28, blue: 0.22)
+      base: Color(red: 0.56, green: 0.12, blue: 0.35),
+      highlight: Color(red: 0.98, green: 0.42, blue: 0.32),
+      glow: Color(red: 0.82, green: 0.25, blue: 0.32)
     )
   case "yatsı", "yatsi", "isha":
-    // Ametist → zengin mor — gece seması
+    // Derin gece moru — daha karanlık, "gece" hissi güçlü
     return PrayerGradient(
-      base: Color(red: 0.15, green: 0.08, blue: 0.50),
-      highlight: Color(red: 0.50, green: 0.28, blue: 0.92),
-      glow: Color(red: 0.30, green: 0.16, blue: 0.75)
+      base: Color(red: 0.10, green: 0.08, blue: 0.32),
+      highlight: Color(red: 0.40, green: 0.24, blue: 0.74),
+      glow: Color(red: 0.24, green: 0.15, blue: 0.55)
     )
   default:
     return PrayerGradient(
@@ -91,12 +95,12 @@ func prayerGradient(for key: String) -> PrayerGradient {
   }
 }
 
-// Kaza için ortak gradient — derin kehribar altın
+// Kaza için — bakır kırmızı, hiçbir vakitle karışmıyor
 func kazaGradient() -> PrayerGradient {
   PrayerGradient(
-    base: Color(red: 0.75, green: 0.38, blue: 0.00),
-    highlight: Color(red: 1.00, green: 0.72, blue: 0.15),
-    glow: Color(red: 0.90, green: 0.52, blue: 0.05)
+    base: Color(red: 0.55, green: 0.20, blue: 0.05),
+    highlight: Color(red: 0.92, green: 0.52, blue: 0.18),
+    glow: Color(red: 0.75, green: 0.35, blue: 0.10)
   )
 }
 
@@ -116,13 +120,14 @@ extension AngularGradient {
     endAngle: .degrees(270)
   )
 
+  // Kaza ring — bakır kırmızı tonlarıyla uyumlu
   static let salahKazaRing = AngularGradient(
     gradient: Gradient(colors: [
-      Color(red: 0.75, green: 0.38, blue: 0.00),
-      Color(red: 0.92, green: 0.58, blue: 0.05),
-      Color(red: 1.00, green: 0.75, blue: 0.18),
-      Color(red: 0.92, green: 0.58, blue: 0.05),
-      Color(red: 0.75, green: 0.38, blue: 0.00),
+      Color(red: 0.55, green: 0.20, blue: 0.05),
+      Color(red: 0.75, green: 0.35, blue: 0.10),
+      Color(red: 0.92, green: 0.52, blue: 0.18),
+      Color(red: 0.75, green: 0.35, blue: 0.10),
+      Color(red: 0.55, green: 0.20, blue: 0.05),
     ]),
     center: .center,
     startAngle: .degrees(-90),
@@ -151,55 +156,11 @@ enum SalahTheme {
 
   var isLight: Bool { self == .light }
 
-  var cardBgGradient: LinearGradient {
-    switch self {
-    case .light:
-      return LinearGradient(
-        colors: [
-          Color(red: 0.975, green: 0.980, blue: 0.990),
-          Color(red: 0.945, green: 0.952, blue: 0.968),
-        ],
-        startPoint: .top,
-        endPoint: .bottom
-      )
-    case .dark:
-      return LinearGradient(
-        colors: [
-          Color(red: 0.085, green: 0.105, blue: 0.175),
-          Color(red: 0.050, green: 0.068, blue: 0.125),
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-    }
-  }
-
-  var cardWarmth: RadialGradient {
-    switch self {
-    case .light:
-      return RadialGradient(
-        colors: [Color.clear, Color.clear],
-        center: .center,
-        startRadius: 0,
-        endRadius: 1
-      )
-    case .dark:
-      return RadialGradient(
-        colors: [
-          Color(red: 0.20, green: 0.38, blue: 0.80).opacity(0.10),
-          Color.clear
-        ],
-        center: UnitPoint(x: 0.85, y: 0.15),
-        startRadius: 5,
-        endRadius: 180
-      )
-    }
-  }
-
+  // Düz arka plan rengi
   var cardBg: Color {
     switch self {
-    case .light: return Color(red: 0.960, green: 0.965, blue: 0.980)
-    case .dark:  return Color(red: 0.065, green: 0.088, blue: 0.150)
+    case .light: return .widgetCanvasLight  // #F5F0E6 krem/parşömen
+    case .dark:  return .widgetCanvasDark   // #020617 slate-950
     }
   }
 
@@ -249,23 +210,6 @@ enum SalahTheme {
     switch self {
     case .light: return Color.black.opacity(0.14)
     case .dark:  return Color.white.opacity(0.16)
-    }
-  }
-
-  var topHighlight: LinearGradient {
-    switch self {
-    case .light:
-      return LinearGradient(
-        colors: [Color.clear, Color.clear],
-        startPoint: .top,
-        endPoint: .center
-      )
-    case .dark:
-      return LinearGradient(
-        colors: [Color.white.opacity(0.06), Color.white.opacity(0)],
-        startPoint: .top,
-        endPoint: .center
-      )
     }
   }
 
@@ -374,34 +318,10 @@ extension View {
   func salahWidgetBackground(_ theme: SalahTheme) -> some View {
     if #available(iOS 17.0, *) {
       containerBackground(for: .widget) {
-        if theme == .light {
-          theme.cardBgGradient
-        } else {
-          ZStack {
-            theme.cardBgGradient
-            theme.cardWarmth
-              .allowsHitTesting(false)
-            theme.topHighlight
-              .allowsHitTesting(false)
-          }
-        }
+        theme.cardBg
       }
     } else {
-      Group {
-        if theme == .light {
-          background(theme.cardBgGradient)
-        } else {
-          background(
-            ZStack {
-              theme.cardBgGradient
-              theme.cardWarmth
-                .allowsHitTesting(false)
-              theme.topHighlight
-                .allowsHitTesting(false)
-            }
-          )
-        }
-      }
+      background(theme.cardBg)
     }
   }
 
