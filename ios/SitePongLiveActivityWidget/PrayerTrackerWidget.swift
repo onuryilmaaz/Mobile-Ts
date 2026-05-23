@@ -200,7 +200,7 @@ struct PrayerTrackerSmallView: View {
   }
 }
 
-// MARK: - Prayer Tile
+// MARK: - Prayer Tile (Amel circle tile yapısı birebir — sadece şekil rounded rect ve büyük)
 
 struct PrayerCircleView: View {
   let prayer: PrayerInfo
@@ -228,60 +228,68 @@ struct PrayerCircleView: View {
   private var tileContent: some View {
     let gradient: PrayerGradient = isKaza ? kazaGradient() : prayerGradient(for: prayer.id)
     let iconName = isKaza ? "exclamationmark.arrow.circlepath" : prayerCompletedIcon(for: prayer.id)
+    let baseColor = gradient.base
 
-    VStack(spacing: 7) {
+    VStack(spacing: 5) {
       ZStack {
         if isDone {
-          // Hale (sadece dark)
+          // ----- AKTİF: amel tile birebir kopyası, sadece şekil RoundedRect + boyut büyütülmüş -----
+
+          // 1) Glow halo (dark only) — amel: 38 frame, base+6. Burada: 50 frame, tile+6
           if theme == .dark {
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-              .fill(gradient.glow.opacity(0.55))
-              .frame(width: 52, height: 52)
-              .blur(radius: 10)
-              .offset(y: 2)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+              .fill(baseColor.opacity(0.42))
+              .frame(width: 50, height: 50)
+              .blur(radius: 8)
           }
 
-          // Gradient gövde
-          RoundedRectangle(cornerRadius: 15, style: .continuous)
+          // 2) Gradient gövde — amel ile birebir aynı shadow değerleri (0.38 / radius 8 / y:3)
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
             .fill(gradient.linear)
-            .frame(width: 50, height: 50)
+            .frame(width: 44, height: 44)
             .shadow(
-              color: gradient.base.opacity(theme.tileShadowOpacity),
-              radius: theme.tileShadowRadius, x: 0, y: 4
+              color: baseColor.opacity(theme == .light ? 0.38 : 0.0),
+              radius: 8, x: 0, y: 3
             )
 
-          // Üst parlaklık
-          RoundedRectangle(cornerRadius: 15, style: .continuous)
+          // 3) Üst parlaklık — amel ile BİREBİR aynı: white 0.28 → 0, top → center
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
             .fill(LinearGradient(
-              colors: [Color.white.opacity(0.22), Color.white.opacity(0)],
-              startPoint: .top, endPoint: .center
+              colors: [Color.white.opacity(0.28), Color.white.opacity(0)],
+              startPoint: .top,
+              endPoint: .center
             ))
-            .frame(width: 50, height: 50)
+            .frame(width: 44, height: 44)
             .allowsHitTesting(false)
 
-          if theme == .dark {
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-              .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.7)
-              .frame(width: 50, height: 50)
-          }
-
+          // 4) İkon — amel ile aynı: beyaz, .semibold, base shadow 0.45 radius 2
           Image(systemName: iconName)
-            .font(.system(size: 20, weight: .semibold))
+            .font(.system(size: 18, weight: .semibold))
             .foregroundColor(.white)
-            .shadow(color: gradient.base.opacity(0.75), radius: 4, x: 0, y: 1)
+            .shadow(color: baseColor.opacity(0.45), radius: 2)
 
         } else if !isAvailable {
-          // Henüz vakti gelmedi — minimal, hafif silik
-          RoundedRectangle(cornerRadius: 15, style: .continuous)
-            .fill(theme.subtleBg)
-            .frame(width: 50, height: 50)
+          // ----- PASİF (vakit gelmedi): dark'ta highlight rengi kullan (base çok koyu) -----
+          let passiveDarkColor = gradient.highlight
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
+            .fill(theme == .light ? baseColor.opacity(0.07) : passiveDarkColor.opacity(0.20))
+            .frame(width: 44, height: 44)
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
+            .strokeBorder(
+              theme == .light ? baseColor.opacity(0.20) : passiveDarkColor.opacity(0.65),
+              lineWidth: 1.2
+            )
+            .frame(width: 44, height: 44)
           Image(systemName: iconName)
-            .font(.system(size: 16, weight: .light))
-            .foregroundColor(theme.dotInactive.opacity(0.50))
+            .font(.system(size: 18, weight: .medium))
+            .foregroundColor(theme == .light ? baseColor.opacity(0.38) : passiveDarkColor.opacity(0.85))
 
         } else {
-          // Vakit girdi, kılınmadı — içi boş, çerçeve ve ikon renkli (opacity yok)
-          RoundedRectangle(cornerRadius: 15, style: .continuous)
+          // ----- BEKLİYOR (vakit girdi, kılınmadı): outline + renkli ikon -----
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
+            .fill(baseColor.opacity(theme == .light ? 0.10 : 0.14))
+            .frame(width: 44, height: 44)
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
             .strokeBorder(
               LinearGradient(
                 colors: [gradient.highlight, gradient.base],
@@ -289,23 +297,34 @@ struct PrayerCircleView: View {
               ),
               lineWidth: 1.5
             )
-            .frame(width: 50, height: 50)
+            .frame(width: 44, height: 44)
           Image(systemName: iconName)
-            .font(.system(size: 20, weight: .medium))
+            .font(.system(size: 18, weight: .semibold))
             .foregroundStyle(gradient.linear)
         }
       }
+      .frame(width: 50, height: 50)
 
       Text(prayer.label)
-        .font(.system(size: 11, weight: .bold))
-        .foregroundColor(
-          isDone ? gradient.glow :
-          isAvailable ? theme.textPrimary :
-          theme.dotInactive
-        )
+        .font(.system(size: 10, weight: isDone ? .bold : .semibold))
+        .foregroundColor(labelColor(gradient: gradient))
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
     }
   }
-}
+
+  private func labelColor(gradient: PrayerGradient) -> Color {
+    if isDone {
+      return theme == .light ? gradient.base.opacity(0.90) : gradient.highlight
+    }
+    if isAvailable {
+      return theme == .light ? theme.textPrimary : gradient.highlight.opacity(0.95)
+    }
+    // pasif (vakti gelmedi)
+    return theme == .light ? theme.dotInactive : gradient.highlight.opacity(0.75)
+    }
+  }
+
 
 // MARK: - Medium Widget
 
