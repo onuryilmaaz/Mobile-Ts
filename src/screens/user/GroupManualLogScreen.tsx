@@ -4,11 +4,11 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   TextInput,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { groupApi } from '@/modules/group/group.api';
@@ -40,10 +40,10 @@ export default function GroupManualLogScreen({ navigation, route }: Props) {
   );
 
   async function handleLog() {
-    if (!selectedType) return Alert.alert('Hata', 'Bir aktivite tipi seçin.');
+    if (!selectedType) return alert.error('Hata', 'Bir aktivite tipi seçin.');
     const num = parseFloat(value);
     if (!value || isNaN(num) || num <= 0) {
-      return Alert.alert('Hata', 'Geçerli bir değer girin.');
+      return alert.error('Hata', 'Geçerli bir değer girin.');
     }
 
     try {
@@ -53,11 +53,14 @@ export default function GroupManualLogScreen({ navigation, route }: Props) {
         value: num,
       });
       await fetchFeed(groupId);
-      Alert.alert('Başarılı', 'Aktivite gruba kaydedildi.', [
-        { text: 'Tamam', onPress: () => navigation.goBack() },
-      ]);
+      alert.show({
+        type: 'success',
+        title: 'Başarılı',
+        message: 'Aktivite gruba kaydedildi.',
+        buttons: [{ text: 'Tamam', onPress: () => navigation.goBack(), style: 'default' }],
+      });
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message ?? 'Kaydedilemedi.');
+      alert.error('Hata', e?.response?.data?.message ?? 'Kaydedilemedi.');
     } finally {
       setLoading(false);
     }

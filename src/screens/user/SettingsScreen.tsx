@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
@@ -94,7 +95,7 @@ export default function SettingsScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('İzin Gerekli', 'Konum izni verilmedi.');
+        alert.warning('İzin Gerekli', 'Konum izni verilmedi.');
         return;
       }
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
@@ -122,7 +123,7 @@ export default function SettingsScreen() {
           );
         })();
       if (!found) {
-        Alert.alert('Bulunamadı', 'Konumunuz tanınamadı, lütfen elle seçin.');
+        alert.warning('Bulunamadı', 'Konumunuz tanınamadı, lütfen elle seçin.');
         return;
       }
       const d = getDefaultDistrictForState(found._id);
@@ -132,7 +133,7 @@ export default function SettingsScreen() {
       setStateId(found._id);
       setDistrictId(d._id);
     } catch {
-      Alert.alert('Hata', 'Konum alınamadı.');
+      alert.error('Hata', 'Konum alınamadı.');
     } finally {
       setDetectingLocation(false);
     }
@@ -143,7 +144,7 @@ export default function SettingsScreen() {
     if (val) {
       const granted = await notificationService.requestPermissions();
       if (!granted) {
-        Alert.alert('İzin Gerekli', "Lütfen Ayarlar > Bildirimler'den izin verin.");
+        alert.warning('İzin Gerekli', "Lütfen Ayarlar > Bildirimler'den izin verin.");
         return;
       }
       await notificationService.enableNotifications();
@@ -173,7 +174,7 @@ export default function SettingsScreen() {
 
   const testNotif = async () => {
     const sent = await notificationService.sendTestNotification();
-    if (sent) Alert.alert('Gönderildi', 'Test bildirimi birkaç saniye içinde gelecek.');
+    if (sent) alert.success('Gönderildi', 'Test bildirimi birkaç saniye içinde gelecek.');
   };
 
   const sub = isDark ? '#64748b' : '#94a3b8';
@@ -422,45 +423,40 @@ export default function SettingsScreen() {
             sublabel="Admin — her vakit farklı ezan çalar"
             onPress={async () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              Alert.alert('Ezan Testi', 'Hangi vaktin ezanını test etmek istiyorsun?', [
-                {
-                  text: 'İmsak',
-                  onPress: async () => {
-                    await adhanService.playAdhan('imsak');
-                    showAdhan('imsak', 'İmsak');
+              alert.show({
+                type: 'info',
+                title: 'Ezan Testi',
+                message: 'Hangi vaktin ezanını test etmek istiyorsun?',
+                buttons: [
+                  {
+                    text: 'İmsak',
+                    style: 'default',
+                    onPress: async () => { await adhanService.playAdhan('imsak'); showAdhan('imsak', 'İmsak'); },
                   },
-                },
-                {
-                  text: 'Öğle',
-                  onPress: async () => {
-                    await adhanService.playAdhan('ogle');
-                    showAdhan('ogle', 'Öğle');
+                  {
+                    text: 'Öğle',
+                    style: 'default',
+                    onPress: async () => { await adhanService.playAdhan('ogle'); showAdhan('ogle', 'Öğle'); },
                   },
-                },
-                {
-                  text: 'İkindi',
-                  onPress: async () => {
-                    await adhanService.playAdhan('ikindi');
-                    showAdhan('ikindi', 'İkindi');
+                  {
+                    text: 'İkindi',
+                    style: 'default',
+                    onPress: async () => { await adhanService.playAdhan('ikindi'); showAdhan('ikindi', 'İkindi'); },
                   },
-                },
-                {
-                  text: 'Akşam',
-                  onPress: async () => {
-                    await adhanService.playAdhan('aksam');
-                    showAdhan('aksam', 'Akşam');
+                  {
+                    text: 'Akşam',
+                    style: 'default',
+                    onPress: async () => { await adhanService.playAdhan('aksam'); showAdhan('aksam', 'Akşam'); },
                   },
-                },
-                {
-                  text: 'Yatsı',
-                  onPress: async () => {
-                    await adhanService.playAdhan('yatsi');
-                    showAdhan('yatsi', 'Yatsı');
+                  {
+                    text: 'Yatsı',
+                    style: 'default',
+                    onPress: async () => { await adhanService.playAdhan('yatsi'); showAdhan('yatsi', 'Yatsı'); },
                   },
-                },
-                { text: 'Durdur', style: 'destructive', onPress: () => adhanService.stop() },
-                { text: 'İptal', style: 'cancel' },
-              ]);
+                  { text: 'Durdur', style: 'destructive', onPress: () => adhanService.stop() },
+                  { text: 'İptal', style: 'cancel' },
+                ],
+              });
             }}
             right={<Ionicons name="chevron-forward" size={16} color={sub} />}
           />

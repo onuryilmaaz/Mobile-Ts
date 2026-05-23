@@ -9,8 +9,8 @@ import {
   TextInput,
   Modal,
   Image,
-  Alert,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import { useGroupStore } from '@/modules/group/group.store';
@@ -38,7 +38,7 @@ export default function GroupListScreen({ navigation }: Props) {
   const handleJoin = async () => {
     const code = inviteCode.trim().toUpperCase();
     if (code.length < 6) {
-      Alert.alert('Hata', 'Geçerli bir davet kodu girin.');
+      alert.error('Hata', 'Geçerli bir davet kodu girin.');
       return;
     }
     try {
@@ -48,7 +48,7 @@ export default function GroupListScreen({ navigation }: Props) {
       setInviteCode('');
       navigation.navigate('GroupDetail', { groupId: group.id });
     } catch (e: any) {
-      Alert.alert('Katılım Başarısız', e.message);
+      alert.error('Katılım Başarısız', e.message);
     } finally {
       setJoining(false);
     }

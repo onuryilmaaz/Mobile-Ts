@@ -4,10 +4,10 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -49,10 +49,10 @@ export default function GoalSuggestScreen({ navigation, route }: Props) {
   const activityTypes: GroupActivityType[] = currentGroup?.activity_types ?? [];
 
   async function handleSuggest() {
-    if (!title.trim()) return Alert.alert('Hata', 'Hedef başlığı gerekli.');
+    if (!title.trim()) return alert.error('Hata', 'Hedef başlığı gerekli.');
     const target = parseFloat(targetValue);
     if (!targetValue || isNaN(target) || target <= 0) {
-      return Alert.alert('Hata', 'Geçerli bir hedef değeri girin.');
+      return alert.error('Hata', 'Geçerli bir hedef değeri girin.');
     }
 
     try {
@@ -66,11 +66,14 @@ export default function GoalSuggestScreen({ navigation, route }: Props) {
         end_date: endDate || undefined,
         note: note.trim() || undefined,
       });
-      Alert.alert('Gönderildi', 'Hedef öneriniz yöneticilere iletildi.', [
-        { text: 'Tamam', onPress: () => navigation.goBack() },
-      ]);
+      alert.show({
+        type: 'success',
+        title: 'Gönderildi',
+        message: 'Hedef öneriniz yöneticilere iletildi.',
+        buttons: [{ text: 'Tamam', onPress: () => navigation.goBack(), style: 'default' }],
+      });
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message ?? 'Öneri gönderilemedi.');
+      alert.error('Hata', e?.response?.data?.message ?? 'Öneri gönderilemedi.');
     } finally {
       setLoading(false);
     }

@@ -8,9 +8,9 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -90,7 +90,7 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
   async function handleAvatarUpload() {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted)
-      return Alert.alert('İzin Gerekli', 'Fotoğraf kütüphanesine erişim izni verin.');
+      return alert.warning('İzin Gerekli', 'Fotoğraf kütüphanesine erişim izni verin.');
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -112,28 +112,28 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
       await groupApi.uploadAvatar(groupId, formData);
       await fetchGroup(groupId);
     } catch (e: any) {
-      Alert.alert('Hata', 'Fotoğraf yüklenemedi.');
+      alert.error('Hata', 'Fotoğraf yüklenemedi.');
     } finally {
       setAvatarUploading(false);
     }
   }
 
   function confirmLeave() {
-    Alert.alert('Gruptan Ayrıl', 'Bu gruptan ayrılmak istediğinizden emin misiniz?', [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Ayrıl',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await leaveGroup(groupId);
-            navigation.goBack();
-          } catch (e: any) {
-            Alert.alert('Hata', e.message);
-          }
-        },
+    alert.confirm(
+      'Gruptan Ayrıl',
+      'Bu gruptan ayrılmak istediğinizden emin misiniz?',
+      async () => {
+        try {
+          await leaveGroup(groupId);
+          navigation.goBack();
+        } catch (e: any) {
+          alert.error('Hata', e.message);
+        }
       },
-    ]);
+      'Ayrıl',
+      'İptal',
+      true,
+    );
   }
 
   if (isLoadingDetail && !currentGroup) {
@@ -334,7 +334,7 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
                   await groupApi.updateMemberRole(groupId, memberId, role);
                   fetchGroup(groupId);
                 } catch (e: any) {
-                  Alert.alert('Hata', e?.response?.data?.message ?? 'Rol değiştirilemedi.');
+                  alert.error('Hata', e?.response?.data?.message ?? 'Rol değiştirilemedi.');
                 }
               }}
             />
@@ -626,26 +626,25 @@ function MembersTab({
   };
 
   function confirmKick(member: any) {
-    Alert.alert(
+    alert.confirm(
       'Üyeyi Çıkar',
       `${member.first_name} ${member.last_name} adlı üyeyi gruptan çıkarmak istiyor musunuz?`,
-      [
-        { text: 'İptal', style: 'cancel' },
-        { text: 'Çıkar', style: 'destructive', onPress: () => onKick(member.user_id) },
-      ]
+      () => onKick(member.user_id),
+      'Çıkar',
+      'İptal',
+      true,
     );
   }
 
   function confirmRoleChange(member: any) {
     const newRole = member.role === 'moderator' ? 'member' : 'moderator';
     const action = newRole === 'moderator' ? 'Moderatör Yap' : 'Üye Yap';
-    Alert.alert(
+    alert.confirm(
       action,
       `${member.first_name} ${member.last_name} adlı kişiyi ${newRole === 'moderator' ? 'moderatör' : 'normal üye'} yapmak istiyor musunuz?`,
-      [
-        { text: 'İptal', style: 'cancel' },
-        { text: action, onPress: () => onRoleChange(member.user_id, newRole) },
-      ]
+      () => onRoleChange(member.user_id, newRole),
+      action,
+      'İptal',
     );
   }
 

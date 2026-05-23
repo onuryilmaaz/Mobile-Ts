@@ -8,10 +8,10 @@ import {
   ScrollView,
   Modal,
   TextInput,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
@@ -75,7 +75,7 @@ function AddPresetModal({
   const handleAdd = () => {
     const t = parseInt(target);
     if (!name.trim() || isNaN(t) || t < 1) {
-      Alert.alert('Hata', 'Geçerli bir isim ve hedef sayı girin.');
+      alert.error('Hata', 'Geçerli bir isim ve hedef sayı girin.');
       return;
     }
     onAdd({ name: name.trim(), target: t, isCustom: true });
@@ -337,21 +337,21 @@ export default function DhikrScreen() {
 
   const deleteCustomPreset = async (idx: number) => {
     if (!presets[idx].isCustom) return;
-    Alert.alert('Sil', `"${presets[idx].name}" zikrini silmek istiyor musun?`, [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Sil',
-        style: 'destructive',
-        onPress: async () => {
-          const newAll = presets.filter((_, i) => i !== idx);
-          const newCustoms = newAll.filter((p) => p.isCustom);
-          setPresets(newAll);
-          setActivePreset(0);
-          setCount(0);
-          await saveCustoms(newCustoms);
-        },
+    alert.confirm(
+      'Sil',
+      `"${presets[idx].name}" zikrini silmek istiyor musun?`,
+      async () => {
+        const newAll = presets.filter((_, i) => i !== idx);
+        const newCustoms = newAll.filter((p) => p.isCustom);
+        setPresets(newAll);
+        setActivePreset(0);
+        setCount(0);
+        await saveCustoms(newCustoms);
       },
-    ]);
+      'Sil',
+      'İptal',
+      true,
+    );
   };
 
   const shareProgress = async () => {

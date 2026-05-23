@@ -6,12 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Alert,
   Modal,
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -346,7 +346,7 @@ export default function KazaTrackerScreen() {
       setShowModal(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e) {
-      Alert.alert('Hata', 'Kaza eklenirken bir hata oluştu');
+      alert.error('Hata', 'Kaza eklenirken bir hata oluştu');
     }
   };
 
@@ -355,9 +355,9 @@ export default function KazaTrackerScreen() {
       await batchAddKaza(prayers, count);
       setShowWizard(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert('Başarılı', `${count} günlük kaza borcu başarıyla eklendi.`);
+      alert.success('Başarılı', `${count} günlük kaza borcu başarıyla eklendi.`);
     } catch (e) {
-      Alert.alert('Hata', 'Toplu ekleme sırasında bir hata oluştu');
+      alert.error('Hata', 'Toplu ekleme sırasında bir hata oluştu');
     }
   };
 
@@ -369,7 +369,7 @@ export default function KazaTrackerScreen() {
         // Opsiyonel: Puan kazandın bildirimi
       }
     } catch (e) {
-      Alert.alert('Bilgi', 'Bu vakit için bekleyen kaza namazınız bulunmuyor.');
+      alert.info('Bilgi', 'Bu vakit için bekleyen kaza namazınız bulunmuyor.');
     }
   };
 
@@ -377,9 +377,9 @@ export default function KazaTrackerScreen() {
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const pts = await completeKaza(id);
-      Alert.alert('MaşAllah! 🎉', `${prayerLabel} kazası kılındı. +${pts} puan kazandın!`);
+      alert.success('MaşAllah! 🎉', `${prayerLabel} kazası kılındı. +${pts} puan kazandın!`);
     } catch {
-      Alert.alert('Hata', 'Kaza tamamlanamadı.');
+      alert.error('Hata', 'Kaza tamamlanamadı.');
     }
   };
 

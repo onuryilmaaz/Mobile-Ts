@@ -8,9 +8,9 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
-  Alert,
   Platform,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { DraggableBottomSheet } from '@/components/layout/DraggableBottomSheet';
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import { cssInterop } from 'nativewind';
@@ -113,7 +113,7 @@ const MosqueMapScreen = () => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('İzin Gerekli', 'Harita özelliğini kullanmak için konum izni vermeniz gerekiyor.');
+        alert.warning('İzin Gerekli', 'Harita özelliğini kullanmak için konum izni vermeniz gerekiyor.');
         return;
       }
       const currentLocation = await Location.getCurrentPositionAsync({});
@@ -152,7 +152,7 @@ const MosqueMapScreen = () => {
         }));
       }
     } catch (error) {
-      Alert.alert('Hata', 'Görsel yüklenemedi');
+      alert.error('Hata', 'Görsel yüklenemedi');
     } finally {
       setIsUploading(false);
     }
@@ -182,7 +182,7 @@ const MosqueMapScreen = () => {
 
   const handleSave = async () => {
     if (!form.name) {
-      Alert.alert('Hata', 'Lütfen cami adını girin');
+      alert.error('Hata', 'Lütfen cami adını girin');
       return;
     }
     setIsSaving(true);
@@ -210,27 +210,27 @@ const MosqueMapScreen = () => {
       setShowFormSheet(false);
       setForm(EMPTY_FORM);
     } else {
-      Alert.alert('Hata', 'Kaydedilemedi');
+      alert.error('Hata', 'Kaydedilemedi');
     }
   };
 
   const handleDelete = (mosque: Mosque) => {
-    Alert.alert('Camiyi Sil', `"${mosque.name}" silinecek. Emin misin?`, [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Sil',
-        style: 'destructive',
-        onPress: async () => {
-          const success = await deleteMosque(mosque.id);
-          if (success) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            setShowManageSheet(false);
-          } else {
-            Alert.alert('Hata', 'Silinemedi');
-          }
-        },
+    alert.confirm(
+      'Camiyi Sil',
+      `"${mosque.name}" silinecek. Emin misin?`,
+      async () => {
+        const success = await deleteMosque(mosque.id);
+        if (success) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          setShowManageSheet(false);
+        } else {
+          alert.error('Hata', 'Silinemedi');
+        }
       },
-    ]);
+      'Sil',
+      'İptal',
+      true,
+    );
   };
 
   const onMapLongPress = (e: any) => {

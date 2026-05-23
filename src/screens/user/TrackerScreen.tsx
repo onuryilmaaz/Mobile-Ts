@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TrackerStackParamList } from '@/navigation/types';
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   Text,
@@ -12,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -169,14 +169,14 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
     let value: Record<string, any> = {};
     switch (type) {
       case 'quran':
-        if (!pages || Number(pages) < 1) return Alert.alert('Hata', 'Sayfa sayısı giriniz');
+        if (!pages || Number(pages) < 1) return alert.error('Hata', 'Sayfa sayısı giriniz');
         value = { pages: Number(pages), ...(minutes ? { minutes: Number(minutes) } : {}) };
         break;
       case 'dhikr':
         if (!dhikrCount || Number(dhikrCount) < 1)
-          return Alert.alert('Hata', 'Zikir sayısı giriniz');
+          return alert.error('Hata', 'Zikir sayısı giriniz');
         if (dhikrType === 'custom' && !dhikrCustomName)
-          return Alert.alert('Hata', 'Zikir adı giriniz');
+          return alert.error('Hata', 'Zikir adı giriniz');
         value = {
           type: dhikrType,
           count: Number(dhikrCount),
@@ -184,25 +184,25 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
         };
         break;
       case 'nafile':
-        if (!rakaat || Number(rakaat) < 1) return Alert.alert('Hata', 'Rekat sayısı giriniz');
+        if (!rakaat || Number(rakaat) < 1) return alert.error('Hata', 'Rekat sayısı giriniz');
         value = { type: nafileType, rakaat: Number(rakaat) };
         break;
       case 'fasting':
         value = { type: fastingType };
         break;
       case 'sadaka':
-        if (!sadakaAmount || Number(sadakaAmount) < 0) return Alert.alert('Hata', 'Miktar giriniz');
+        if (!sadakaAmount || Number(sadakaAmount) < 0) return alert.error('Hata', 'Miktar giriniz');
         value = {
           amount: Number(sadakaAmount),
           ...(sadakaDesc ? { description: sadakaDesc } : {}),
         };
         break;
       case 'dua':
-        if (!duaMinutes || Number(duaMinutes) < 1) return Alert.alert('Hata', 'Dakika giriniz');
+        if (!duaMinutes || Number(duaMinutes) < 1) return alert.error('Hata', 'Dakika giriniz');
         value = { minutes: Number(duaMinutes) };
         break;
       case 'memorization':
-        if (!newAyets && !revisionAyets) return Alert.alert('Hata', 'En az bir alan doldurunuz');
+        if (!newAyets && !revisionAyets) return alert.error('Hata', 'En az bir alan doldurunuz');
         value = {
           new_ayets: Number(newAyets) || 0,
           ...(revisionAyets ? { revision_ayets: Number(revisionAyets) } : {}),
@@ -937,22 +937,22 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       closeSheet();
     } catch {
-      Alert.alert('Hata', 'Kayıt eklenirken bir sorun oluştu.');
+      alert.error('Hata', 'Kayıt eklenirken bir sorun oluştu.');
     }
   };
 
   const handleDelete = (log: TrackerLog) => {
-    Alert.alert('Kaydı Sil', 'Bu kaydı silmek istediğinize emin misiniz?', [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Sil',
-        style: 'destructive',
-        onPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          deleteLog(log.id);
-        },
+    alert.confirm(
+      'Kaydı Sil',
+      'Bu kaydı silmek istediğinize emin misiniz?',
+      () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        deleteLog(log.id);
       },
-    ]);
+      'Sil',
+      'İptal',
+      true,
+    );
   };
 
   const types = Object.keys(ACTIVITY_META) as ActivityType[];

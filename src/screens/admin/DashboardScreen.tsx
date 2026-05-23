@@ -109,12 +109,10 @@ export default function DashboardScreen({ navigation }: Props) {
               Özet İstatistikler
             </Text>
             <View className="flex-row flex-wrap gap-3">
-              <View
-                className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
+              <View className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="people" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
-                  <Text
-                    className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">
                     Toplam Kullanıcı
                   </Text>
                 </View>
@@ -122,46 +120,37 @@ export default function DashboardScreen({ navigation }: Props) {
                   {stats.users.total || 0}
                 </Text>
               </View>
-              <View
-                className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-green-50 p-3 dark:border-green-500/20 dark:bg-green-500/10">
+              <View className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-green-50 p-3 dark:border-green-500/20 dark:bg-green-500/10">
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="person" size={16} color="#16a34a" />
-                  <Text
-                    className="text-xs font-bold text-slate-500 dark:text-green-500/70">
+                  <Text className="text-xs font-bold text-slate-500 dark:text-green-500/70">
                     Aktif
                   </Text>
                 </View>
-                <Text
-                  className="text-xl font-black text-green-700 dark:text-green-500">
+                <Text className="text-xl font-black text-green-700 dark:text-green-500">
                   {stats.users.active || 0}
                 </Text>
               </View>
-              <View
-                className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-slate-100 p-3 dark:border-slate-800 dark:bg-slate-850">
+              <View className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-slate-100 p-3 dark:border-slate-800 dark:bg-gray-700">
                 <View className="mb-1 flex-row items-center gap-2">
                   <Ionicons name="person-outline" size={16} color="#64748b" />
-                  <Text
-                    className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">
                     Pasif
                   </Text>
                 </View>
-                <Text
-                  className="text-xl font-black text-slate-600 dark:text-slate-400">
+                <Text className="text-xl font-black text-slate-600 dark:text-slate-400">
                   {stats.users.inactive || 0}
                 </Text>
               </View>
               {stats.sessions && (
-                <View
-                  className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-purple-50 p-3 dark:border-purple-500/20 dark:bg-purple-500/10">
+                <View className="min-w-[45%] flex-1 rounded-xl border border-transparent bg-purple-50 p-3 dark:border-purple-500/20 dark:bg-purple-500/10">
                   <View className="mb-1 flex-row items-center gap-2">
                     <Ionicons name="time" size={16} color="#9333ea" />
-                    <Text
-                      className="text-xs font-bold text-slate-500 dark:text-purple-400">
+                    <Text className="text-xs font-bold text-slate-500 dark:text-purple-400">
                       Aktif Oturum
                     </Text>
                   </View>
-                  <Text
-                    className="text-xl font-black text-purple-700 dark:text-purple-400">
+                  <Text className="text-xl font-black text-purple-700 dark:text-purple-400">
                     {stats.sessions.active || 0}
                   </Text>
                 </View>
@@ -186,9 +175,7 @@ export default function DashboardScreen({ navigation }: Props) {
                     <Ionicons name={item.icon} size={20} color={item.iconColor} />
                   </View>
                   <View className="flex-1">
-                    <Text className="font-bold text-slate-900 dark:text-white">
-                      {item.title}
-                    </Text>
+                    <Text className="font-bold text-slate-900 dark:text-white">{item.title}</Text>
                     <Text className="text-xs text-slate-500 dark:text-slate-400">
                       {item.subtitle}
                     </Text>

@@ -4,12 +4,12 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
   Image,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -54,10 +54,10 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
   }, [currentGroup]);
 
   async function handleSave() {
-    if (!name.trim()) return Alert.alert('Hata', 'Grup adı boş olamaz.');
+    if (!name.trim()) return alert.error('Hata', 'Grup adı boş olamaz.');
     const max = parseInt(maxMembers, 10);
     if (isNaN(max) || max < 2 || max > 100) {
-      return Alert.alert('Hata', 'Maksimum üye sayısı 2–100 arasında olmalı.');
+      return alert.error('Hata', 'Maksimum üye sayısı 2–100 arasında olmalı.');
     }
 
     try {
@@ -68,9 +68,9 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
         max_members: max,
       });
       await fetchGroup(groupId);
-      Alert.alert('Kaydedildi', 'Grup bilgileri güncellendi.');
+      alert.success('Kaydedildi', 'Grup bilgileri güncellendi.');
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message ?? 'Kaydedilemedi.');
+      alert.error('Hata', e?.response?.data?.message ?? 'Kaydedilemedi.');
     } finally {
       setSaving(false);
     }
@@ -78,7 +78,7 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
 
   async function handleAvatarUpload() {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) return Alert.alert('İzin Gerekli', 'Fotoğraf kütüphanesine erişim izni verin.');
+    if (!perm.granted) return alert.warning('İzin Gerekli', 'Fotoğraf kütüphanesine erişim izni verin.');
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -100,36 +100,32 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
       await groupApi.uploadAvatar(groupId, formData);
       await fetchGroup(groupId);
     } catch {
-      Alert.alert('Hata', 'Fotoğraf yüklenemedi.');
+      alert.error('Hata', 'Fotoğraf yüklenemedi.');
     } finally {
       setAvatarUploading(false);
     }
   }
 
   function confirmDelete() {
-    Alert.alert(
+    alert.confirm(
       'Grubu Sil',
       `"${currentGroup?.name ?? 'bu grubu'}" kalıcı olarak silmek istediğinizden emin misiniz? Tüm üyeler, aktiviteler ve hedefler silinir.`,
-      [
-        { text: 'İptal', style: 'cancel' },
-        {
-          text: 'Sil',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setDeleting(true);
-              await groupApi.remove(groupId);
-              clearCurrent();
-              await fetchMyGroups();
-              navigation.reset({ index: 0, routes: [{ name: 'GroupList' }] });
-            } catch (e: any) {
-              Alert.alert('Hata', e?.response?.data?.message ?? 'Grup silinemedi.');
-            } finally {
-              setDeleting(false);
-            }
-          },
-        },
-      ],
+      async () => {
+        try {
+          setDeleting(true);
+          await groupApi.remove(groupId);
+          clearCurrent();
+          await fetchMyGroups();
+          navigation.reset({ index: 0, routes: [{ name: 'GroupList' }] });
+        } catch (e: any) {
+          alert.error('Hata', e?.response?.data?.message ?? 'Grup silinemedi.');
+        } finally {
+          setDeleting(false);
+        }
+      },
+      'Sil',
+      'İptal',
+      true,
     );
   }
 

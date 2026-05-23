@@ -4,10 +4,10 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -48,13 +48,13 @@ export default function GoalCreateScreen({ navigation, route }: Props) {
   const activityTypes: GroupActivityType[] = currentGroup?.activity_types ?? [];
 
   async function handleCreate() {
-    if (!title.trim()) return Alert.alert('Hata', 'Hedef başlığı gerekli.');
+    if (!title.trim()) return alert.error('Hata', 'Hedef başlığı gerekli.');
     const target = parseFloat(targetValue);
     if (!targetValue || isNaN(target) || target <= 0) {
-      return Alert.alert('Hata', 'Geçerli bir hedef değeri girin.');
+      return alert.error('Hata', 'Geçerli bir hedef değeri girin.');
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
-      return Alert.alert('Hata', 'Başlangıç tarihi YYYY-AA-GG formatında olmalı.');
+      return alert.error('Hata', 'Başlangıç tarihi YYYY-AA-GG formatında olmalı.');
     }
 
     try {
@@ -70,7 +70,7 @@ export default function GoalCreateScreen({ navigation, route }: Props) {
       await fetchGoals(groupId);
       navigation.goBack();
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message ?? 'Hedef oluşturulamadı.');
+      alert.error('Hata', e?.response?.data?.message ?? 'Hedef oluşturulamadı.');
     } finally {
       setLoading(false);
     }

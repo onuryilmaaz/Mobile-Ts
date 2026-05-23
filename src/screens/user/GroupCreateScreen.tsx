@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -43,7 +44,7 @@ export default function GroupCreateScreen({ navigation }: Props) {
         inviteCode: group.invite_code,
       });
     } catch (e: any) {
-      Alert.alert('Hata', e.message ?? 'Grup oluşturulamadı.');
+      alert.error('Hata', e.message ?? 'Grup oluşturulamadı.');
     } finally {
       setLoading(false);
     }
