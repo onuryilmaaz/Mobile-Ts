@@ -271,7 +271,7 @@ struct PrayerCircleView: View {
             .shadow(color: gradient.base.opacity(0.75), radius: 4, x: 0, y: 1)
 
         } else if !isAvailable {
-          // Henüz vakti gelmedi — minimal
+          // Henüz vakti gelmedi — minimal, hafif silik
           RoundedRectangle(cornerRadius: 15, style: .continuous)
             .fill(theme.subtleBg)
             .frame(width: 50, height: 50)
@@ -280,10 +280,7 @@ struct PrayerCircleView: View {
             .foregroundColor(theme.dotInactive.opacity(0.50))
 
         } else {
-          // Vakit girdi, kılınmadı — çerçeveli, tıklanabilir
-          RoundedRectangle(cornerRadius: 15, style: .continuous)
-            .fill(gradient.base.opacity(theme == .light ? 0.06 : 0.10))
-            .frame(width: 50, height: 50)
+          // Vakit girdi, kılınmadı — içi boş, çerçeve ve ikon renkli (opacity yok)
           RoundedRectangle(cornerRadius: 15, style: .continuous)
             .strokeBorder(
               LinearGradient(
@@ -296,7 +293,6 @@ struct PrayerCircleView: View {
           Image(systemName: iconName)
             .font(.system(size: 20, weight: .medium))
             .foregroundStyle(gradient.linear)
-            .opacity(0.85)
         }
       }
 
