@@ -106,13 +106,16 @@ export function DailyInspirationCard() {
     <View className="mx-4 mb-6">
       <Animated.View
         layout={Layout.springify()}
-        className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-
+        className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl shadow-black/5 dark:border-slate-800 dark:bg-slate-950 dark:shadow-none">
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 pt-6">
           <View className="flex-row items-center gap-2">
             <View className="h-8 w-8 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/15">
-              <Ionicons name={current.icon as any} size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
+              <Ionicons
+                name={current.icon as any}
+                size={16}
+                color={isDark ? '#14b8a6' : '#0f766e'}
+              />
             </View>
             <Text className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
               {current.type}
@@ -122,22 +125,36 @@ export function DailyInspirationCard() {
             <TouchableOpacity
               onPress={shareInspiration}
               className="h-8 w-8 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/5">
-              <Ionicons name="share-outline" size={16} color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+              <Ionicons
+                name="share-outline"
+                size={16}
+                color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleRefresh}
               className="h-8 w-8 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/5">
               {loading ? (
-                <ActivityIndicator size="small" color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+                <ActivityIndicator
+                  size="small"
+                  color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                />
               ) : (
-                <Ionicons name="refresh-outline" size={16} color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'} />
+                <Ionicons
+                  name="refresh-outline"
+                  size={16}
+                  color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                />
               )}
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Content */}
-        <Animated.View key={current.text} entering={FadeIn.duration(600)} className="px-6 pb-4 pt-5">
+        <Animated.View
+          key={current.text}
+          entering={FadeIn.duration(600)}
+          className="px-6 pb-4 pt-5">
           {/* Arabic text — sadece Ayet için */}
           {!!current.arabic && (
             <View className="mb-4 rounded-2xl bg-teal-50/70 px-4 py-3 dark:bg-teal-500/10">
@@ -164,7 +181,9 @@ export function DailyInspirationCard() {
                 setExpanded((v) => !v);
               }}
               className="mt-2 flex-row items-center justify-center gap-1">
-              <Text className="text-xs font-black" style={{ color: isDark ? '#14b8a6' : '#0f766e' }}>
+              <Text
+                className="text-xs font-black"
+                style={{ color: isDark ? '#14b8a6' : '#0f766e' }}>
                 {expanded ? 'Daha Az' : 'Daha Fazla'}
               </Text>
               <Ionicons

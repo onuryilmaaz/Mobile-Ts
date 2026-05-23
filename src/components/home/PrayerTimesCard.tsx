@@ -281,7 +281,8 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
       const pointMinutes = ph * 60 + pm;
       if (pointMinutes > currentMinutes) {
         const diffMins = pointMinutes - currentMinutes;
-        targetTimeRef.current = Math.floor((now.getTime() + diffMins * 60_000 - currentSeconds * 1000) / 1000) * 1000;
+        targetTimeRef.current =
+          Math.floor((now.getTime() + diffMins * 60_000 - currentSeconds * 1000) / 1000) * 1000;
         setNextPrayerName(point.key);
         const prev = checkpoints[i === 0 ? checkpoints.length - 1 : i - 1];
         if (prev.val) {
@@ -301,7 +302,8 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
     if (!foundNext && times.imsak) {
       const [ph, pm] = times.imsak.split(':').map(Number);
       const diffMins = 1440 - currentMinutes + ph * 60 + pm;
-      targetTimeRef.current = Math.floor((now.getTime() + diffMins * 60_000 - currentSeconds * 1000) / 1000) * 1000;
+      targetTimeRef.current =
+        Math.floor((now.getTime() + diffMins * 60_000 - currentSeconds * 1000) / 1000) * 1000;
       setNextPrayerName('İmsak');
       const [sph, spm] = times.yatsi.split(':').map(Number);
       const start = new Date(now);
@@ -330,7 +332,9 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         dataRef.current = prayerData;
         setData(prayerData);
         calculateNextPrayer(prayerData);
-        notificationService.schedulePrayerNotifications(prayerData.times as unknown as Record<string, string>);
+        notificationService.schedulePrayerNotifications(
+          prayerData.times as unknown as Record<string, string>
+        );
       }
     } catch (e) {
       console.error('Error fetching prayer times:', e);
@@ -342,7 +346,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   useEffect(() => {
     if (isDistrictLoaded && selectedDistrictId) fetchPrayerTimes(selectedDistrictId);
   }, [selectedDistrictId, isDistrictLoaded]);
-
 
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -378,7 +381,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
   return (
     <View className="mx-4 mb-4 mt-3">
-      <View className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+      <View className="mb-3 overflow-hidden rounded-[28px] border border-black/5 bg-teal-700 shadow-2xl shadow-teal-700/30 dark:border-slate-800 dark:bg-slate-950 dark:shadow-none">
         <View className="absolute -right-[50px] -top-[50px] h-[180px] w-[180px] rounded-full bg-teal-700/15 dark:bg-teal-500/10" />
         <View className="absolute -bottom-[40px] -left-[40px] h-[130px] w-[130px] rounded-full bg-white/15 dark:bg-indigo-400/10" />
 
@@ -436,7 +439,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         </View>
       </View>
 
-      <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
+      <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-950">
         {loading && !data ? (
           <View className="items-center py-7">
             <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
@@ -454,7 +457,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                   className={`w-[31%] items-center rounded-2xl border py-3 shadow-sm ${
                     isNext
                       ? 'border-teal-600/40 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/15'
-                      : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/60'
+                      : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950/30'
                   }`}>
                   <Ionicons
                     name={PRAYER_ICONS[item.label]}
@@ -486,7 +489,6 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
           </View>
         )}
       </View>
-
     </View>
   );
 }

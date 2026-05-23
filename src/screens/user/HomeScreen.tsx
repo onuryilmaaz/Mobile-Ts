@@ -36,12 +36,12 @@ const QUICK_ACTIONS = [
     screen: 'MosqueMap' as const,
   },
   {
-    key: 'stats',
-    label: 'İstatistikler',
-    icon: 'bar-chart-outline' as const,
-    color: '#14b8a6',
-    glow: 'rgba(20,184,166,0.18)',
-    screen: 'Stats' as const,
+    key: 'dhikr',
+    label: 'Zikir',
+    icon: 'apps-outline' as const,
+    color: '#f59e0b',
+    glow: 'rgba(245,158,11,0.18)',
+    screen: 'Dhikr' as const,
   },
   {
     key: 'dua',
@@ -50,6 +50,14 @@ const QUICK_ACTIONS = [
     color: '#ec4899',
     glow: 'rgba(236,72,153,0.18)',
     screen: 'Dua' as const,
+  },
+  {
+    key: 'stats',
+    label: 'İstatistikler',
+    icon: 'bar-chart-outline' as const,
+    color: '#14b8a6',
+    glow: 'rgba(20,184,166,0.18)',
+    screen: 'Stats' as const,
   },
 ];
 
@@ -106,7 +114,7 @@ export default function HomeScreen({ navigation }: Props) {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ gap: 12, paddingRight: 16 }}>
+              contentContainerStyle={{ gap: 17, paddingRight: 17 }}>
               {QUICK_ACTIONS.map((action) => {
                 return (
                   <TouchableOpacity
@@ -115,7 +123,7 @@ export default function HomeScreen({ navigation }: Props) {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       navigation.navigate(action.screen as any);
                     }}
-                    className="relative h-[116px] w-[116px] items-center overflow-hidden rounded-[22px] border border-slate-200 bg-white p-[10px] shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900">
+                    className="relative h-[110px] w-[110px] items-center overflow-hidden rounded-[22px] border border-slate-200 bg-white p-[10px] shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-950">
                     <View
                       className="absolute -right-5 -top-5 h-[70px] w-[70px] rounded-full"
                       style={{ backgroundColor: action.glow }}

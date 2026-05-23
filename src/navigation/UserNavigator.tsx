@@ -7,6 +7,7 @@ import AdminNavigator from './AdminNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
 import TrackerNavigator from './TrackerNavigator';
+import GroupNavigator from './GroupNavigator';
 import type { UserTabParamList } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -117,21 +118,6 @@ export default function UserNavigator() {
         />
 
         <Tab.Screen
-          name="Dhikr"
-          component={DhikrScreen}
-          options={{
-            tabBarLabel: 'Zikir',
-            headerShown: true,
-            header: ({ navigation }) => (
-              <StandardHeader navigation={navigation} title="Zikir" showBackButton={false} />
-            ),
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="apps-outline" size={size} color={color} />
-            ),
-          }}
-        />
-
-        <Tab.Screen
           name="Tracker"
           component={TrackerNavigator}
           listeners={{
@@ -147,6 +133,26 @@ export default function UserNavigator() {
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="stats-chart-outline" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Groups"
+          component={GroupNavigator}
+          listeners={{
+            tabPress: (e) =>
+              handleTabPress(
+                e,
+                'Gruplar İçin Giriş Yapın',
+                'İbadet gruplarına katılmak ve grup hedeflerini takip etmek için lütfen oturum açın.'
+              ),
+          }}
+          options={{
+            tabBarLabel: 'Gruplar',
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="people-outline" size={size} color={color} />
             ),
           }}
         />

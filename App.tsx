@@ -13,6 +13,7 @@ import { useAuthStore } from '@/modules/auth/auth.store';
 import { useThemeStore } from '@/store/theme.store';
 import { setLogoutCallback, API_BASE_URL } from '@/services/api';
 import { getAccessToken, getRefreshToken } from '@/services/token.service';
+import { userApi } from '@/modules/user/user.api';
 import { useColorScheme } from 'nativewind';
 import { rootNavigationRef } from '@/navigation/rootNavigation';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
@@ -120,6 +121,23 @@ function AppContent() {
   const adhanPrayer = useAdhanStore((s) => s.activePrayer);
   const showAdhan = useAdhanStore((s) => s.show);
   const hideAdhan = useAdhanStore((s) => s.hide);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  useEffect(() => {
+    if (!isAuthenticated || Platform.OS === 'web') return;
+    (async () => {
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== 'granted') return;
+        const tokenData = await Notifications.getExpoPushTokenAsync({
+          projectId: '25385d71-03c1-4862-aeda-a8899b6d35d8',
+        });
+        await userApi.savePushToken(tokenData.data);
+      } catch {
+        // Push token kaydı başarısız olsa uygulama çalışmaya devam eder
+      }
+    })();
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;

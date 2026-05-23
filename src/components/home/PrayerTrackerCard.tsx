@@ -45,7 +45,7 @@ function StreakCelebration({
       overlayOpacity.value = withTiming(1, { duration: 160 });
       cardScale.value = withSequence(
         withSpring(1.03, { damping: 12, stiffness: 260 }),
-        withSpring(1, { damping: 18 }),
+        withSpring(1, { damping: 18 })
       );
       cardOpacity.value = withTiming(1, { duration: 140 });
       ringScale.value = withDelay(80, withSpring(1, { damping: 14, stiffness: 240 }));
@@ -156,8 +156,7 @@ function StreakCelebration({
                 },
                 ringStyle,
               ]}>
-              <Text
-                style={{ fontSize: 34, fontWeight: '900', color: '#14b8a6', lineHeight: 38 }}>
+              <Text style={{ fontSize: 34, fontWeight: '900', color: '#14b8a6', lineHeight: 38 }}>
                 {streak}
               </Text>
               <Text
@@ -180,9 +179,8 @@ function StreakCelebration({
                 textAlign: 'center',
                 lineHeight: 21,
               }}>
-              Serini{' '}
-              <Text style={{ fontWeight: '900', color: '#f59e0b' }}>{streak}</Text>{' '}
-              güne taşıdın. Mâşâllah!
+              Serini <Text style={{ fontWeight: '900', color: '#f59e0b' }}>{streak}</Text> güne
+              taşıdın. Mâşâllah!
             </Animated.Text>
 
             <Animated.Text
@@ -293,7 +291,8 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
       prev.kaza.length === kaza.length &&
       prev.prayers.every((p, i) => p === prayers[i]) &&
       prev.kaza.every((p, i) => p === kaza[i])
-    ) return;
+    )
+      return;
     prevTrackerRef.current = { prayers, kaza };
     liveActivityService.updatePrayerTrackerData({
       completedPrayers: prayers,
@@ -313,8 +312,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
 
   if (!isComponentReady) {
     return (
-      <View
-        className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
+      <View className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-950">
         <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
         <Text className="mt-3 text-center text-slate-500 dark:text-slate-400">Yükleniyor...</Text>
       </View>
@@ -331,7 +329,6 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
     };
 
     const imsakMin = prayerTimes['imsak'] ? parse(prayerTimes['imsak']) : null;
-    // Gece yarısı ile İmsak arası: bir önceki İslami günün köprü dönemi
     const inIslamicBridge = imsakMin !== null && nowMin < imsakMin;
 
     if (prayer.id === 'isha') {
@@ -340,7 +337,6 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
       return 'upcoming';
     }
 
-    // Köprü döneminde (gece yarısı–İmsak arası) tüm diğer namazlar geçmiş sayılır
     if (inIslamicBridge) return 'expired';
 
     const start = parse(prayerTimes[prayer.timeKey]);
@@ -359,7 +355,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
       return;
     }
 
-    if (!isMounted.current) return; // Component unmount olduysa yapma
+    if (!isMounted.current) return;
 
     const state = getPrayerState(prayer);
     if (state === 'upcoming' || stats?.today_prayers?.includes(prayer.id) || isLoading) {
@@ -389,8 +385,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
   };
 
   return (
-    <View
-      className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900">
+    <View className="mx-4 mb-4 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-950">
       <StreakCelebration
         visible={showCelebration}
         streak={celebrationStreak}
@@ -419,8 +414,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
 
           <View className="mb-3.5 flex-row items-center justify-between">
             <View>
-              <Text
-                className="text-[9px] font-black uppercase tracking-widest text-teal-100 dark:text-teal-400">
+              <Text className="text-[9px] font-black uppercase tracking-widest text-teal-100 dark:text-teal-400">
                 Günlük İlerleme
               </Text>
               <Text className="mt-0.5 text-[22px] font-black text-white">Namaz Takibi</Text>
@@ -473,7 +467,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
                         ? isKazaLog
                           ? 'border-orange-500/50 bg-orange-500/10 shadow-sm shadow-orange-500/30'
                           : 'border-teal-500/50 bg-teal-500/10 shadow-sm shadow-teal-500/30'
-                        : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-700/30'
+                        : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/30'
                     }`}>
                     {(isKazaLog || (isAuthenticated && !isTracked && isExpired)) && (
                       <View

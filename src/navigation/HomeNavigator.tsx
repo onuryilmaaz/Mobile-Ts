@@ -22,6 +22,7 @@ import {
   MosqueMapScreen,
   DuaScreen,
   SettingsScreen,
+  DhikrScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
@@ -214,6 +215,18 @@ export default function HomeNavigator() {
             headerShown: true,
             header: undefined,
             title: 'Dua Koleksiyonu',
+            headerStyle: { backgroundColor: headerColor },
+            headerTintColor: headerTintColor,
+            headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="Dhikr"
+          component={DhikrScreen}
+          options={{
+            headerShown: true,
+            header: undefined,
+            title: 'Zikir',
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',

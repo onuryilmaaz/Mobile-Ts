@@ -47,7 +47,7 @@ export function StreakCard() {
 
   return (
     <Animated.View entering={FadeInUp.duration(400)} className="mx-4 mb-4">
-      <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
         {/* Header */}
         <View className="flex-row items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
           <View className="flex-row items-center gap-2">

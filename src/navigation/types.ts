@@ -34,6 +34,7 @@ export type HomeStackParamList = {
   Challenges: undefined;
   MosqueMap: undefined;
   Dua: undefined;
+  Dhikr: undefined;
   HijriCalendar: undefined;
   Settings: undefined;
   Ramadan: undefined;
@@ -53,11 +54,23 @@ export type TrackerStackParamList = {
   Challenges: undefined;
 };
 
+export type GroupStackParamList = {
+  GroupList: undefined;
+  GroupDetail: { groupId: string };
+  GroupCreate: undefined;
+  GroupInvite: { groupId: string; inviteCode: string };
+  GroupSettings: { groupId: string };
+  GoalCreate: { groupId: string };
+  GoalSuggest: { groupId: string };
+  GroupManualLog: { groupId: string };
+};
+
 export type UserTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
   Surahs: NavigatorScreenParams<SurahsStackParamList>;
   Dhikr: undefined;
   Tracker: NavigatorScreenParams<TrackerStackParamList>;
+  Groups: NavigatorScreenParams<GroupStackParamList>;
   AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };
 

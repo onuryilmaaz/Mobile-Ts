@@ -57,15 +57,24 @@ const AudioPlayer = React.forwardRef<
   const barWidthRef = useRef(0);
   const isMountedRef = useRef(true);
 
-  useEffect(() => { versesRef.current = verses; }, [verses]);
-  useEffect(() => { reciterIdxRef.current = reciterIdx; }, [reciterIdx]);
-  useEffect(() => { durationRef.current = duration; }, [duration]);
+  useEffect(() => {
+    versesRef.current = verses;
+  }, [verses]);
+  useEffect(() => {
+    reciterIdxRef.current = reciterIdx;
+  }, [reciterIdx]);
+  useEffect(() => {
+    durationRef.current = duration;
+  }, [duration]);
 
-  const setActiveBoth = useCallback((idx: number) => {
-    activeIdxRef.current = idx;
-    setActiveIdx(idx);
-    onActiveVerseChange(idx);
-  }, [onActiveVerseChange]);
+  const setActiveBoth = useCallback(
+    (idx: number) => {
+      activeIdxRef.current = idx;
+      setActiveIdx(idx);
+      onActiveVerseChange(idx);
+    },
+    [onActiveVerseChange]
+  );
 
   useEffect(() => {
     setAudioModeAsync({ playsInSilentMode: true });
@@ -121,7 +130,10 @@ const AudioPlayer = React.forwardRef<
       });
 
       player.play();
-      if (!isMountedRef.current) { player.remove(); return; }
+      if (!isMountedRef.current) {
+        player.remove();
+        return;
+      }
       soundRef.current = player;
       setPlayState('playing');
     } catch {
@@ -131,11 +143,17 @@ const AudioPlayer = React.forwardRef<
 
   // playVerseAt ref — useImperativeHandle her zaman güncel versiyonu çağırsın
   const playVerseAtRef = useRef(playVerseAt);
-  useEffect(() => { playVerseAtRef.current = playVerseAt; });
+  useEffect(() => {
+    playVerseAtRef.current = playVerseAt;
+  });
 
-  useImperativeHandle(ref, () => ({
-    playFromIndex: (idx: number) => playVerseAtRef.current(idx),
-  }), []);
+  useImperativeHandle(
+    ref,
+    () => ({
+      playFromIndex: (idx: number) => playVerseAtRef.current(idx),
+    }),
+    []
+  );
 
   useEffect(() => {
     unload();
@@ -146,7 +164,6 @@ const AudioPlayer = React.forwardRef<
     setDuration(0);
   }, [reciterIdx]);
 
-  // Seek bar — PanResponder refs ile stale closure olmadan çalışır
   const seekBarResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => durationRef.current > 0,
@@ -197,7 +214,7 @@ const AudioPlayer = React.forwardRef<
   const isActive = playState === 'playing' || playState === 'paused';
 
   return (
-    <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
       <View className="flex-row items-center p-4">
         <TouchableOpacity
           onPress={handlePlayPause}
@@ -243,7 +260,9 @@ const AudioPlayer = React.forwardRef<
 
           {/* Seek bar — geniş dokunma alanı için py-3 wrapper */}
           <View
-            onLayout={(e) => { barWidthRef.current = e.nativeEvent.layout.width; }}
+            onLayout={(e) => {
+              barWidthRef.current = e.nativeEvent.layout.width;
+            }}
             className="py-3"
             {...seekBarResponder.panHandlers}>
             <View className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -383,7 +402,7 @@ export default function SurahDetailScreen({ route }: Props) {
                   className={`mx-4 mb-6 overflow-hidden rounded-3xl border shadow-sm shadow-black/5 dark:shadow-none ${
                     isActive
                       ? 'border-teal-500/60 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/10'
-                      : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                      : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950'
                   }`}>
                   {isActive && (
                     <View className="absolute left-0 top-0 h-full w-1 rounded-l-3xl bg-teal-500" />
@@ -393,7 +412,7 @@ export default function SurahDetailScreen({ route }: Props) {
                     className={`flex-row items-center justify-between border-b px-6 py-3 ${
                       isActive
                         ? 'border-teal-200 bg-teal-100/60 dark:border-teal-500/30 dark:bg-teal-500/15'
-                        : 'border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
+                        : 'border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950'
                     }`}>
                     <View
                       className={`h-6 w-6 items-center justify-center rounded-full ${
