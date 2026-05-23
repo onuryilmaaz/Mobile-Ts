@@ -7,6 +7,7 @@ export const groupApi = {
   uploadAvatar: (id: string, formData: FormData) =>
     api.post(`/groups/${id}/avatar`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
     }),
   myGroups: () => api.get('/groups/me'),
   getById:  (id: string) => api.get(`/groups/${id}`),

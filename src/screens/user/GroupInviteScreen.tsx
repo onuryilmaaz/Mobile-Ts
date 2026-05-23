@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Share, Clipboard } from 'react-native';
+import { View, Text, TouchableOpacity, Share } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,7 +19,7 @@ export default function GroupInviteScreen({ navigation, route }: Props) {
   const { isDark } = useTheme();
 
   function handleCopy() {
-    Clipboard.setString(inviteCode);
+    Clipboard.setStringAsync(inviteCode);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     alert.success('Kopyalandı', 'Davet kodu panoya kopyalandı.');
   }

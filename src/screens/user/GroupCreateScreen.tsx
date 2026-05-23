@@ -59,7 +59,6 @@ export default function GroupCreateScreen({ navigation }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled">
-
           <Text className="mb-1 text-2xl font-black text-slate-900 dark:text-white">
             Grup Oluştur
           </Text>
@@ -82,7 +81,6 @@ export default function GroupCreateScreen({ navigation }: Props) {
             onChangeText={setDescription}
             placeholder="Grubun hakkında kısa bir açıklama..."
             maxLength={500}
-            multiline
             numberOfLines={3}
           />
 

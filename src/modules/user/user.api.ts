@@ -12,6 +12,7 @@ export const userApi = {
   uploadAvatar: (formData: FormData) =>
     api.post('/user/avatar', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
     }),
 
   deactivate: () => api.post('/user/deactivate'),

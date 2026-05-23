@@ -257,7 +257,7 @@ struct AmelMediumView: View {
 struct AmelWidgetEntryView: View {
   @Environment(\.widgetFamily) var family
   let entry: AmelEntry
-
+ 
   var body: some View {
     switch family {
     case .systemSmall:
