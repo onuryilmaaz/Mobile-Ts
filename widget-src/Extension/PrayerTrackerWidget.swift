@@ -315,11 +315,26 @@ struct PrayerCircleView: View {
       .frame(width: 50, height: 50)
 
       Text(prayer.label)
-        .font(.system(size: 12, weight: isDone ? .bold : .semibold))
+        .font(.system(size: 13, weight: .heavy))
         .foregroundColor(labelColor(gradient: gradient))
+        .shadow(
+          color: labelGlowColor(gradient: gradient),
+          radius: 3, x: 0, y: 0
+        )
         .lineLimit(1)
-        .minimumScaleFactor(0.7)
+        .minimumScaleFactor(0.75)
     }
+  }
+
+  private func labelGlowColor(gradient: PrayerGradient) -> Color {
+    if isDone {
+      return gradient.glow.opacity(theme == .light ? 0.30 : 0.55)
+    }
+    if isAvailable {
+      return gradient.glow.opacity(theme == .light ? 0.22 : 0.45)
+    }
+    // kilitli — çok hafif
+    return gradient.glow.opacity(theme == .light ? 0.0 : 0.15)
   }
 
   private func labelColor(gradient: PrayerGradient) -> Color {
@@ -333,9 +348,8 @@ struct PrayerCircleView: View {
     }
     // DURUM 1: kilitli — sönük
     return theme == .light ? gradient.base.opacity(0.40) : gradient.highlight.opacity(0.55)
-    }
   }
-
+}
 
 // MARK: - Medium Widget
 
