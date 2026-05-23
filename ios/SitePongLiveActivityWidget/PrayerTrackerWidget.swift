@@ -355,23 +355,6 @@ struct PrayerTrackerMediumView: View {
         .frame(width: 36, height: 36)
       }
 
-      // İnce progress çizgisi
-      GeometryReader { geo in
-        ZStack(alignment: .leading) {
-          Capsule()
-            .fill(t.ringTrack)
-            .frame(height: 3)
-          Capsule()
-            .fill(hasKaza ? AnyShapeStyle(AngularGradient.salahKazaRing) : AnyShapeStyle(AngularGradient.salahRing))
-            .frame(width: max(6, geo.size.width * CGFloat(count) / 5.0), height: 3)
-            .shadow(
-              color: (hasKaza ? Color.salahAmber : Color.salahTeal).opacity(0.40),
-              radius: 3
-            )
-        }
-      }
-      .frame(height: 3)
-
       // Prayer tiles
       HStack(spacing: 0) {
         ForEach(allPrayers, id: \.id) { prayer in

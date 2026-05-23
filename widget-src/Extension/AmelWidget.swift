@@ -229,27 +229,10 @@ struct AmelMediumView: View {
             .font(.system(size: 18, weight: .heavy, design: .rounded))
             .foregroundStyle(doneCount > 0 ? AnyShapeStyle(accentGrad) : AnyShapeStyle(t.textSecondary))
           Text("/7")
-            .font(.system(size: 11, weight: .bold))
+            .font(.system(size: 18, weight: .bold))
             .foregroundColor(t.textSecondary)
         }
       }
-
-      // Progress bar
-      GeometryReader { geo in
-        ZStack(alignment: .leading) {
-          Capsule()
-            .fill(t.ringTrack)
-            .frame(height: 3)
-          Capsule()
-            .fill(accentGrad)
-            .frame(
-              width: doneCount > 0 ? max(8, geo.size.width * CGFloat(doneCount) / 7.0) : 0,
-              height: 3
-            )
-            .shadow(color: Color.salahPurple.opacity(0.35), radius: 3)
-        }
-      }
-      .frame(height: 3)
 
       // Dairesel ibadet tile grid
       LazyVGrid(columns: cols, spacing: 7) {

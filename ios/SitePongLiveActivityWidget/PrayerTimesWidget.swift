@@ -147,28 +147,9 @@ struct PrayerTimesSmallView: View {
       }
 
       Spacer()
-      nextPrayerChip
     }
     .padding(14)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-  }
-
-  @ViewBuilder
-  private var nextPrayerChip: some View {
-    let nextKey = prayerKeyFromName(computed?.nextPrayer ?? "")
-    let nextGrad = prayerGradient(for: nextKey)
-    HStack(spacing: 5) {
-      Image(systemName: "arrow.right")
-        .font(.system(size: 9, weight: .bold))
-        .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.75))
-      Text(computed?.nextPrayer ?? "--")
-        .font(.system(size: 11, weight: .bold))
-        .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.80))
-        .lineLimit(1)
-    }
-    .padding(.horizontal, 8).padding(.vertical, 4)
-    .background(Capsule().fill(nextGrad.base.opacity(t == .light ? 0.10 : 0.18)))
-    .overlay(Capsule().strokeBorder(nextGrad.glow.opacity(t == .light ? 0.35 : 0.30), lineWidth: 0.8))
   }
 }
 
@@ -230,30 +211,11 @@ struct PrayerTimesMediumView: View {
         }
 
         Spacer(minLength: 4)
-        nextPrayerChip
       }
       Spacer(minLength: 0)
     }
     .padding(16)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-  }
-
-  @ViewBuilder
-  private var nextPrayerChip: some View {
-    let nextKey = prayerKeyFromName(computed?.nextPrayer ?? "")
-    let nextGrad = prayerGradient(for: nextKey)
-    HStack(spacing: 5) {
-      Image(systemName: "arrow.right")
-        .font(.system(size: 10, weight: .bold))
-        .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.85 : 0.75))
-      Text(computed?.nextPrayer ?? "--")
-        .font(.system(size: 12, weight: .bold))
-        .foregroundColor(nextGrad.glow.opacity(t == .light ? 0.90 : 0.85))
-        .lineLimit(1)
-    }
-    .padding(.horizontal, 10).padding(.vertical, 5)
-    .background(Capsule().fill(nextGrad.base.opacity(t == .light ? 0.10 : 0.18)))
-    .overlay(Capsule().strokeBorder(nextGrad.glow.opacity(t == .light ? 0.40 : 0.30), lineWidth: 0.8))
   }
 }
 
@@ -274,9 +236,7 @@ struct PrayerTimesLargeView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
-      // === ÜST: Kompakt aktif vakit header ===
       HStack(spacing: 12) {
-        // Küçük ikon kutusu (60 → 48)
         ZStack {
           if t == .dark {
             RoundedRectangle(cornerRadius: 13, style: .continuous)
@@ -322,12 +282,10 @@ struct PrayerTimesLargeView: View {
         Spacer(minLength: 0)
       }
 
-      // Divider — daha ince padding
       Rectangle()
         .fill(t.subtleBorder)
         .frame(height: 1)
 
-      // === ALT: 5 vakit listesi — daha sıkı spacing ===
       VStack(spacing: 4) {
         ForEach(slots, id: \.id) { slot in
           PrayerSlotRow(slot: slot, theme: t)
