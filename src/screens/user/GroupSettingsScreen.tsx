@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import {
   View,
@@ -78,7 +79,8 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
 
   async function handleAvatarUpload() {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) return alert.warning('İzin Gerekli', 'Fotoğraf kütüphanesine erişim izni verin.');
+    if (!perm.granted)
+      return alert.warning('İzin Gerekli', 'Fotoğraf kütüphanesine erişim izni verin.');
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -125,7 +127,7 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
       },
       'Sil',
       'İptal',
-      true,
+      true
     );
   }
 
@@ -148,7 +150,6 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
           keyboardShouldPersistTaps="handled">
-
           {/* Avatar */}
           <View className="mb-8 items-center">
             <TouchableOpacity
@@ -193,7 +194,6 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
             onChangeText={setDescription}
             placeholder="Grup hakkında kısa bir açıklama"
             maxLength={500}
-            multiline
             numberOfLines={3}
           />
 
@@ -207,12 +207,7 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
           />
 
           <View className="mt-2">
-            <Button
-              title="Kaydet"
-              onPress={handleSave}
-              loading={saving}
-              disabled={!name.trim()}
-            />
+            <Button title="Kaydet" onPress={handleSave} loading={saving} disabled={!name.trim()} />
           </View>
 
           {/* Divider */}
@@ -223,8 +218,8 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
             Tehlikeli Bölge
           </Text>
           <Text className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            Grubu sildiğinizde tüm üyeler, aktiviteler ve hedefler kalıcı olarak silinir.
-            Bu işlem geri alınamaz.
+            Grubu sildiğinizde tüm üyeler, aktiviteler ve hedefler kalıcı olarak silinir. Bu işlem
+            geri alınamaz.
           </Text>
 
           <TouchableOpacity
@@ -242,7 +237,6 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
               </>
             )}
           </TouchableOpacity>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
