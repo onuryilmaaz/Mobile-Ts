@@ -223,6 +223,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
 
   const isMounted = useRef(true);
   const prevTrackerRef = useRef<{ prayers: string[]; kaza: string[] } | null>(null);
+  const celebrationHandledRef = useRef(false);
 
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationStreak, setCelebrationStreak] = useState(0);
@@ -285,6 +286,19 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
     const prayers = stats.today_prayers ?? [];
     const kaza = stats.kaza_prayers ?? [];
     const prev = prevTrackerRef.current;
+
+    // Show celebration when prayer count transitions to 5 (widget-triggered path)
+    if (prev !== null && prev.prayers.length < 5 && prayers.length >= 5) {
+      if (!celebrationHandledRef.current) {
+        const streak = Number(stats.current_streak ?? 0);
+        if (streak > 0) {
+          setCelebrationStreak(streak);
+          setShowCelebration(true);
+        }
+      }
+      celebrationHandledRef.current = false;
+    }
+
     if (
       prev &&
       prev.prayers.length === prayers.length &&
@@ -373,6 +387,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
       const todayCount = Number(result?.stats?.today_prayers_count ?? 0);
 
       if (result?.streakIncremented && todayCount >= 5 && newStreak > 0) {
+        celebrationHandledRef.current = true;
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setCelebrationStreak(newStreak);
         setShowCelebration(true);
