@@ -269,44 +269,53 @@ struct PrayerCircleView: View {
             .shadow(color: baseColor.opacity(0.45), radius: 2)
 
         } else if !isAvailable {
-          // ----- PASİF (vakit gelmedi): dark'ta highlight rengi kullan (base çok koyu) -----
-          let passiveDarkColor = gradient.highlight
+          // ----- DURUM 1: KİLİTLİ (vakit girmemiş) — çok sönük, kilit ikonu -----
+          let lockColor = gradient.highlight
           RoundedRectangle(cornerRadius: 13, style: .continuous)
-            .fill(theme == .light ? baseColor.opacity(0.07) : passiveDarkColor.opacity(0.20))
+            .fill(theme == .light ? baseColor.opacity(0.05) : lockColor.opacity(0.10))
             .frame(width: 44, height: 44)
           RoundedRectangle(cornerRadius: 13, style: .continuous)
-            .strokeBorder(
-              theme == .light ? baseColor.opacity(0.20) : passiveDarkColor.opacity(0.65),
-              lineWidth: 1.2
+            .stroke(
+              theme == .light ? baseColor.opacity(0.22) : lockColor.opacity(0.40),
+              style: StrokeStyle(lineWidth: 1.0, dash: [3, 2])
             )
             .frame(width: 44, height: 44)
-          Image(systemName: iconName)
-            .font(.system(size: 18, weight: .medium))
-            .foregroundColor(theme == .light ? baseColor.opacity(0.38) : passiveDarkColor.opacity(0.85))
+          Image(systemName: "lock.fill")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(theme == .light ? baseColor.opacity(0.32) : lockColor.opacity(0.55))
 
         } else {
-          // ----- BEKLİYOR (vakit girdi, kılınmadı): outline + renkli ikon -----
+          // ----- DURUM 2: BEKLİYOR (vakit girdi, kılınmadı) — dikkat çekici, eyleme çağırır -----
+          let waitColor = theme == .light ? gradient.base : gradient.highlight
+          // Renkli iç dolgu — durum 1'den ayırt edilebilir olsun
           RoundedRectangle(cornerRadius: 13, style: .continuous)
-            .fill(baseColor.opacity(theme == .light ? 0.10 : 0.14))
+            .fill(LinearGradient(
+              colors: [gradient.highlight.opacity(theme == .light ? 0.18 : 0.28),
+                       gradient.base.opacity(theme == .light ? 0.10 : 0.18)],
+              startPoint: .topLeading, endPoint: .bottomTrailing
+            ))
             .frame(width: 44, height: 44)
+          // Kalın, kesintisiz, doygun renkli border
           RoundedRectangle(cornerRadius: 13, style: .continuous)
             .strokeBorder(
               LinearGradient(
                 colors: [gradient.highlight, gradient.base],
                 startPoint: .topLeading, endPoint: .bottomTrailing
               ),
-              lineWidth: 1.5
+              lineWidth: 2.0
             )
             .frame(width: 44, height: 44)
+          // İkon dolu ve doygun renkli
           Image(systemName: iconName)
-            .font(.system(size: 18, weight: .semibold))
-            .foregroundStyle(gradient.linear)
+            .font(.system(size: 18, weight: .bold))
+            .foregroundColor(waitColor)
+            .shadow(color: gradient.glow.opacity(theme == .light ? 0.25 : 0.45), radius: 3)
         }
       }
       .frame(width: 50, height: 50)
 
       Text(prayer.label)
-        .font(.system(size: 10, weight: isDone ? .bold : .semibold))
+        .font(.system(size: 12, weight: isDone ? .bold : .semibold))
         .foregroundColor(labelColor(gradient: gradient))
         .lineLimit(1)
         .minimumScaleFactor(0.7)
@@ -315,13 +324,15 @@ struct PrayerCircleView: View {
 
   private func labelColor(gradient: PrayerGradient) -> Color {
     if isDone {
+      // DURUM 3 & 4: işaretlenmiş (kaza veya vaktinde)
       return theme == .light ? gradient.base.opacity(0.90) : gradient.highlight
     }
     if isAvailable {
-      return theme == .light ? theme.textPrimary : gradient.highlight.opacity(0.95)
+      // DURUM 2: bekliyor — parlak ve dikkat çekici
+      return theme == .light ? gradient.base : gradient.highlight
     }
-    // pasif (vakti gelmedi)
-    return theme == .light ? theme.dotInactive : gradient.highlight.opacity(0.75)
+    // DURUM 1: kilitli — sönük
+    return theme == .light ? gradient.base.opacity(0.40) : gradient.highlight.opacity(0.55)
     }
   }
 
