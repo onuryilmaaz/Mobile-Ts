@@ -4,13 +4,13 @@ import WidgetKit
 @main
 struct SitePongLiveActivityWidgetBundle: WidgetBundle {
   var body: some Widget {
-    // Dark theme widgets (varsayılan)
+    // Home screen widgets
     PrayerTimesWidget()
     PrayerTrackerWidget()
     AmelWidget()
     InspirationWidget()
 
-    // Light theme widgets
+    // Light theme variants
     PrayerTimesLightWidget()
     PrayerTrackerLightWidget()
     AmelLightWidget()

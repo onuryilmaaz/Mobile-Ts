@@ -11,6 +11,8 @@ struct PrayerTrackerEntry: TimelineEntry {
   let theme: SalahTheme
 }
 
+// MARK: - Provider
+
 struct PrayerTrackerProvider: TimelineProvider {
   let theme: SalahTheme
 
@@ -21,25 +23,31 @@ struct PrayerTrackerProvider: TimelineProvider {
     completion(PrayerTrackerEntry(date: Date(), tracker: TrackerData.load(), widget: WidgetData.load(), theme: theme))
   }
   func getTimeline(in _: Context, completion: @escaping (Timeline<PrayerTrackerEntry>) -> Void) {
-    let widget = WidgetData.load()
-    let tracker = TrackerData.load()
-    let cal = Calendar.current
-    let now = Date()
-    var entries: [PrayerTrackerEntry] = [PrayerTrackerEntry(date: now, tracker: tracker, widget: widget, theme: theme)]
-
-    for timeStr in [widget?.imsak, widget?.gunes, widget?.ogle, widget?.ikindi, widget?.aksam, widget?.yatsi].compactMap({ $0 }) {
-      let parts = timeStr.split(separator: ":").compactMap { Int($0) }
-      guard parts.count >= 2 else { continue }
-      var c = cal.dateComponents([.year, .month, .day], from: now)
-      c.hour = parts[0]; c.minute = parts[1]; c.second = 1
-      if let d = cal.date(from: c), d > now {
-        entries.append(PrayerTrackerEntry(date: d, tracker: tracker, widget: widget, theme: theme))
-      }
-    }
-
-    let midnight = cal.startOfDay(for: cal.date(byAdding: .day, value: 1, to: now)!)
-    completion(Timeline(entries: entries, policy: .after(midnight)))
+    completion(buildTrackerTimeline(theme: theme))
   }
+}
+
+// MARK: - Shared timeline builder
+
+private func buildTrackerTimeline(theme: SalahTheme) -> Timeline<PrayerTrackerEntry> {
+  let widget = WidgetData.load()
+  let tracker = TrackerData.load()
+  let cal = Calendar.current
+  let now = Date()
+  var entries: [PrayerTrackerEntry] = [PrayerTrackerEntry(date: now, tracker: tracker, widget: widget, theme: theme)]
+
+  for timeStr in [widget?.imsak, widget?.gunes, widget?.ogle, widget?.ikindi, widget?.aksam, widget?.yatsi].compactMap({ $0 }) {
+    let parts = timeStr.split(separator: ":").compactMap { Int($0) }
+    guard parts.count >= 2 else { continue }
+    var c = cal.dateComponents([.year, .month, .day], from: now)
+    c.hour = parts[0]; c.minute = parts[1]; c.second = 1
+    if let d = cal.date(from: c), d > now {
+      entries.append(PrayerTrackerEntry(date: d, tracker: tracker, widget: widget, theme: theme))
+    }
+  }
+
+  let midnight = cal.startOfDay(for: cal.date(byAdding: .day, value: 1, to: now)!)
+  return Timeline(entries: entries, policy: .after(midnight))
 }
 
 // MARK: - Prayer Definitions

@@ -25,9 +25,9 @@ struct MarkPrayerIntent: AppIntent {
 
     // Optimistic local update so widget refreshes instantly
     applyLocalUpdate(ud: ud, backendId: backendId, isKaza: isKaza)
+    ud.synchronize()
 
-    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidget")
-    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidgetLight")
+    WidgetCenter.shared.reloadAllTimelines()
 
     // Try direct API call — no need to open the app
     let apiSuccess = await trackOnBackend(ud: ud, prayerTime: backendId, isKaza: isKaza)
@@ -38,6 +38,9 @@ struct MarkPrayerIntent: AppIntent {
       let entry = isKaza ? "\(backendId):kaza" : backendId
       ud.set(existing.isEmpty ? entry : "\(existing),\(entry)", forKey: "salah_pending_prayers")
     }
+
+    // Second reload after API completes to sync any widgets that missed the first
+    WidgetCenter.shared.reloadAllTimelines()
 
     return .result()
   }

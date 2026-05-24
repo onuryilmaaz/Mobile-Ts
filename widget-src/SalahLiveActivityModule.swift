@@ -129,9 +129,7 @@ class SalahLiveActivityModule: NSObject {
       ud.set(data, forKey: "salah_tracker_data")
     }
     ud.synchronize()
-    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidget")
-    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerWidgetLight")
-    WidgetCenter.shared.reloadTimelines(ofKind: "SalahTrackerLockWidget")
+    WidgetCenter.shared.reloadAllTimelines()
   }
 
   @objc func updateAmelData(_ params: NSDictionary) {

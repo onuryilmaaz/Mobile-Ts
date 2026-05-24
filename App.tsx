@@ -165,8 +165,11 @@ function AppContent() {
           const [id, flag] = entry.split(':');
           try {
             await gamificationApi.trackPrayer(id as any, flag === 'kaza');
-          } catch {
-            console.warn('Failed to track prayer for live activity widget:', id);
+          } catch (e: any) {
+            // 400 = already tracked (widget optimistic update was correct), not an error
+            if (e?.response?.status !== 400) {
+              console.warn('Failed to track prayer for live activity widget:', id);
+            }
           }
         }
       }
