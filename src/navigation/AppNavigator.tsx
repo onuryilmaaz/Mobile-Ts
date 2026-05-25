@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthNavigator from './AuthNavigator';
 import UserNavigator from './UserNavigator';
+import ChildNavigator from './ChildNavigator';
 import type { RootStackParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { useFamilyStore } from '@/modules/family/family.store';
 import { SplashScreen } from '@/components/SplashScreen';
 import { useOnboardingStore } from '@/store/onboarding.store';
 import OnboardingScreen from '@/screens/onboarding/OnboardingScreen';
@@ -12,6 +14,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   const { isAuthenticated, hydrated, hydrate } = useAuthStore();
+  const { childSession, hydrated: familyHydrated, hydrate: hydrateFamily } = useFamilyStore();
   const {
     done: onboardingDone,
     hydrated: onboardingHydrated,
@@ -26,8 +29,20 @@ export default function AppNavigator() {
     if (!onboardingHydrated) hydrateOnboarding();
   }, [onboardingHydrated, hydrateOnboarding]);
 
-  if (!hydrated || !onboardingHydrated) {
+  useEffect(() => {
+    if (!familyHydrated) hydrateFamily();
+  }, [familyHydrated, hydrateFamily]);
+
+  if (!hydrated || !onboardingHydrated || !familyHydrated) {
     return <SplashScreen />;
+  }
+
+  if (childSession) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
+        <Stack.Screen name="ChildMode" component={ChildNavigator} />
+      </Stack.Navigator>
+    );
   }
 
   return (

@@ -25,6 +25,7 @@ import {
   DhikrScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
+import FamilyNavigator from './FamilyNavigator';
 import type { HomeStackParamList, UserTabParamList } from './types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { HEADER_CONFIG } from './header.config';
@@ -247,6 +248,13 @@ export default function HomeNavigator() {
         <Stack.Screen
           name="Profile"
           component={ProfileNavigator}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Family"
+          component={FamilyNavigator}
           options={{
             headerShown: false,
           }}

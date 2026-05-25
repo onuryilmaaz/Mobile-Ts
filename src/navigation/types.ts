@@ -25,6 +25,23 @@ export type ProfileStackParamList = {
   AppSettings: undefined;
 };
 
+export type FamilyStackParamList = {
+  FamilyDashboard: undefined;
+  AddChild: undefined;
+  ChildDetail: { childId: string };
+  CreateTask: { childId: string };
+  EditTask: { childId: string; taskId: string };
+  PendingApprovals: undefined;
+  CompletionDetail: { completionId: string };
+  RewardCatalog: { childId: string };
+  ChildReport: { childId: string };
+};
+
+export type ChildTabParamList = {
+  ChildTasks: undefined;
+  ChildRewards: undefined;
+};
+
 export type HomeStackParamList = {
   HomeMain: undefined;
   QiblaFinder: undefined;
@@ -39,6 +56,7 @@ export type HomeStackParamList = {
   Settings: undefined;
   Ramadan: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
+  Family: NavigatorScreenParams<FamilyStackParamList>;
 };
 
 export type SurahsStackParamList = {
@@ -78,6 +96,7 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList>;
   UserTabs: NavigatorScreenParams<UserTabParamList>;
+  ChildMode: NavigatorScreenParams<ChildTabParamList>;
 };
 
 declare global {

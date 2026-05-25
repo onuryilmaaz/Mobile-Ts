@@ -59,6 +59,14 @@ const QUICK_ACTIONS = [
     glow: 'rgba(20,184,166,0.18)',
     screen: 'Stats' as const,
   },
+  {
+    key: 'family',
+    label: 'Aile',
+    icon: 'people-outline' as const,
+    color: '#10b981',
+    glow: 'rgba(16,185,129,0.18)',
+    screen: 'Family' as const,
+  },
 ];
 
 export default function HomeScreen({ navigation }: Props) {
