@@ -34,6 +34,7 @@ export type FamilyStackParamList = {
   PendingApprovals: undefined;
   CompletionDetail: { completionId: string };
   RewardCatalog: { childId: string };
+  EditChild: { childId: string };
   ChildReport: { childId: string };
 };
 

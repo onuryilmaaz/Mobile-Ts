@@ -10,6 +10,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,6 +24,33 @@ import { familyApi } from '@/modules/family/family.api';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
 import { TASK_TYPE_META } from '@/modules/family/family.types';
+
+type Gender = 'erkek' | 'kız' | null | undefined;
+
+function genderAccent(gender: Gender, isDark: boolean) {
+  if (gender === 'erkek') {
+    return {
+      avatarBg: isDark ? '#022c22' : '#ecfdf5',
+      primary: isDark ? '#10b981' : '#059669',
+      primaryBorder: isDark ? '#065f46' : '#6ee7b7',
+      progressBg: isDark ? '#064e3b' : '#d1fae5',
+    };
+  }
+  if (gender === 'kız') {
+    return {
+      avatarBg: isDark ? '#1e1b4b' : '#f5f3ff',
+      primary: isDark ? '#a78bfa' : '#7c3aed',
+      primaryBorder: isDark ? '#3730a3' : '#c4b5fd',
+      progressBg: isDark ? '#2e1065' : '#ede9fe',
+    };
+  }
+  return {
+    avatarBg: isDark ? '#042f2e' : '#f0fdfa',
+    primary: isDark ? '#2dd4bf' : '#0d9488',
+    primaryBorder: isDark ? '#134e4a' : '#99f6e4',
+    progressBg: isDark ? '#042f2e' : '#ccfbf1',
+  };
+}
 
 type Nav = NativeStackNavigationProp<FamilyStackParamList>;
 type Route = RouteProp<FamilyStackParamList, 'ChildDetail'>;
@@ -41,9 +69,10 @@ export default function ChildDetailScreen() {
   const { childId } = route.params;
   const { isDark } = useTheme();
 
-  const { children, tasks, childStats, fetchTasks, fetchChildStats, openChildMode } =
+  const { children, tasks, childStats, fetchTasks, fetchChildStats, openChildMode, deleteChild } =
     useFamilyStore();
   const child = children.find((c) => c.id === childId);
+  const a = genderAccent(child?.gender, isDark);
 
   const [activeTab, setActiveTab] = useState<'tasks' | 'stats'>('tasks');
 
@@ -152,7 +181,9 @@ export default function ChildDetailScreen() {
         {/* Profil Header */}
         <View className="border-b border-slate-200 bg-white px-4 pb-5 pt-4 dark:border-slate-800 dark:bg-slate-900">
           <Animated.View entering={FadeInDown.duration(300)} className="items-center gap-3">
-            <View className="h-20 w-20 items-center justify-center rounded-[24px] bg-teal-50 dark:bg-teal-500/10">
+            <View
+              className="h-20 w-20 items-center justify-center rounded-[24px]"
+              style={{ backgroundColor: a.avatarBg, borderWidth: 1, borderColor: a.primaryBorder }}>
               <Text style={{ fontSize: 40 }}>{child.avatar_emoji}</Text>
             </View>
             <View className="items-center gap-1">
@@ -170,33 +201,32 @@ export default function ChildDetailScreen() {
                     🔥 {child.current_streak ?? 0} gün
                   </Text>
                 </View>
-                <View className="rounded-full bg-teal-50 px-2.5 py-1 dark:bg-teal-500/15">
-                  <Text className="text-xs font-bold text-teal-700 dark:text-teal-400">
+                <View
+                  className="rounded-full px-2.5 py-1"
+                  style={{ backgroundColor: `${a.primary}18` }}>
+                  <Text className="text-xs font-bold" style={{ color: a.primary }}>
                     Lv.{child.level ?? 1}
                   </Text>
                 </View>
               </View>
             </View>
 
-            {/* Aksiyon butonları */}
+            {/* Ana aksiyon butonları */}
             <View className="flex-row gap-2">
               <TouchableOpacity
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   setEnterPinOpen(true);
                 }}
-                className="flex-row items-center gap-1.5 rounded-2xl bg-teal-600 px-4 py-2.5 dark:bg-teal-500">
+                className="flex-row items-center gap-1.5 rounded-2xl px-4 py-2.5"
+                style={{ backgroundColor: a.primary }}>
                 <Ionicons name="play" size={14} color="white" />
                 <Text className="text-sm font-black text-white">Çocuk Modu</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ChildReport', { childId })}
                 className="flex-row items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-slate-700 dark:bg-slate-800">
-                <Ionicons
-                  name="bar-chart-outline"
-                  size={14}
-                  color={isDark ? '#94a3b8' : '#64748b'}
-                />
+                <Ionicons name="bar-chart-outline" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
                 <Text className="text-sm font-semibold text-slate-600 dark:text-slate-300">
                   Rapor
                 </Text>
@@ -211,19 +241,55 @@ export default function ChildDetailScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* PIN ayarla */}
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setChangePinOpen(true);
-                setTimeout(() => newPinRef.current?.focus(), 300);
-              }}
-              className="flex-row items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 dark:border-slate-700">
-              <Ionicons name="key-outline" size={13} color={isDark ? '#94a3b8' : '#64748b'} />
-              <Text className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                PIN Ayarla / Değiştir
-              </Text>
-            </TouchableOpacity>
+            {/* İkincil butonlar: düzenle, PIN, sil */}
+            <View className="flex-row gap-2">
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  navigation.navigate('EditChild', { childId });
+                }}
+                className="flex-row items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 dark:border-slate-700">
+                <Ionicons name="pencil-outline" size={13} color={isDark ? '#94a3b8' : '#64748b'} />
+                <Text className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Düzenle
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setChangePinOpen(true);
+                  setTimeout(() => newPinRef.current?.focus(), 300);
+                }}
+                className="flex-row items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 dark:border-slate-700">
+                <Ionicons name="key-outline" size={13} color={isDark ? '#94a3b8' : '#64748b'} />
+                <Text className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  PIN Ayarla
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                  Alert.alert(
+                    'Profili Sil',
+                    `${child.name} profilini silmek istediğine emin misin? Tüm görevler ve veriler kaybolacak.`,
+                    [
+                      { text: 'İptal', style: 'cancel' },
+                      {
+                        text: 'Sil',
+                        style: 'destructive',
+                        onPress: async () => {
+                          await deleteChild(childId);
+                          navigation.goBack();
+                        },
+                      },
+                    ],
+                  );
+                }}
+                className="flex-row items-center gap-1.5 rounded-xl border border-red-200 px-3 py-2 dark:border-red-500/30">
+                <Ionicons name="trash-outline" size={13} color={isDark ? '#f87171' : '#ef4444'} />
+                <Text className="text-xs font-semibold text-red-500 dark:text-red-400">Sil</Text>
+              </TouchableOpacity>
+            </View>
           </Animated.View>
         </View>
 
@@ -233,15 +299,11 @@ export default function ChildDetailScreen() {
             <TouchableOpacity
               key={tab}
               onPress={() => setActiveTab(tab)}
-              className={`flex-1 items-center border-b-2 py-3 ${
-                activeTab === tab ? 'border-teal-600 dark:border-teal-400' : 'border-transparent'
-              }`}>
+              className={`flex-1 items-center border-b-2 py-3 border-transparent`}
+              style={activeTab === tab ? { borderBottomColor: a.primary } : undefined}>
               <Text
-                className={`text-sm font-bold ${
-                  activeTab === tab
-                    ? 'text-teal-700 dark:text-teal-400'
-                    : 'text-slate-500 dark:text-slate-400'
-                }`}>
+                className={`text-sm font-bold ${activeTab !== tab ? 'text-slate-500 dark:text-slate-400' : ''}`}
+                style={activeTab === tab ? { color: a.primary } : undefined}>
                 {tab === 'tasks' ? 'Görevler' : 'İstatistik'}
               </Text>
             </TouchableOpacity>
@@ -376,15 +438,16 @@ export default function ChildDetailScreen() {
                         Lv.{childStats.level} — {childStats.level_name}
                       </Text>
                       {childStats.next_level_stars && (
-                        <Text className="text-xs font-bold text-teal-600 dark:text-teal-400">
+                        <Text className="text-xs font-bold" style={{ color: a.primary }}>
                           {childStats.next_level_stars - childStats.total_stars} ⭐ kaldı
                         </Text>
                       )}
                     </View>
-                    <View className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                    <View className="h-2 overflow-hidden rounded-full" style={{ backgroundColor: a.progressBg }}>
                       <View
-                        className="h-full rounded-full bg-teal-500"
+                        className="h-full rounded-full"
                         style={{
+                          backgroundColor: a.primary,
                           width: `${childStats.next_level_stars ? Math.min(100, (childStats.total_stars / childStats.next_level_stars) * 100) : 100}%`,
                         }}
                       />

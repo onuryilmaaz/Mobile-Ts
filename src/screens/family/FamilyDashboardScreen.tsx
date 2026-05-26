@@ -104,7 +104,24 @@ export default function FamilyDashboardScreen() {
             </TouchableOpacity>
           </Animated.View>
         ) : (
-          children.map((child, i) => (
+          children.map((child, i) => {
+            const avatarBg = child.gender === 'erkek'
+              ? (isDark ? '#022c22' : '#ecfdf5')
+              : child.gender === 'kız'
+                ? (isDark ? '#1e1b4b' : '#f5f3ff')
+                : (isDark ? '#042f2e' : '#f0fdfa');
+            const avatarBorder = child.gender === 'erkek'
+              ? (isDark ? '#065f46' : '#6ee7b7')
+              : child.gender === 'kız'
+                ? (isDark ? '#3730a3' : '#c4b5fd')
+                : (isDark ? '#134e4a' : '#99f6e4');
+            const levelColor = child.gender === 'erkek'
+              ? (isDark ? '#10b981' : '#059669')
+              : child.gender === 'kız'
+                ? (isDark ? '#a78bfa' : '#7c3aed')
+                : (isDark ? '#2dd4bf' : '#0d9488');
+
+            return (
             <Animated.View key={child.id} entering={FadeInDown.delay(i * 80).duration(350)}>
               <TouchableOpacity
                 onPress={() => {
@@ -113,7 +130,9 @@ export default function FamilyDashboardScreen() {
                 }}
                 className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
                 <View className="flex-row items-center gap-3">
-                  <View className="h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/10">
+                  <View
+                    className="h-14 w-14 items-center justify-center rounded-2xl"
+                    style={{ backgroundColor: avatarBg, borderWidth: 1, borderColor: avatarBorder }}>
                     <Text style={{ fontSize: 28 }}>{child.avatar_emoji}</Text>
                   </View>
                   <View className="flex-1">
@@ -140,8 +159,10 @@ export default function FamilyDashboardScreen() {
                           🔥 {child.current_streak ?? 0} gün
                         </Text>
                       </View>
-                      <View className="rounded-full bg-teal-50 px-2 py-0.5 dark:bg-teal-500/15">
-                        <Text className="text-[11px] font-bold text-teal-700 dark:text-teal-400">
+                      <View
+                        className="rounded-full px-2 py-0.5"
+                        style={{ backgroundColor: `${levelColor}18` }}>
+                        <Text className="text-[11px] font-bold" style={{ color: levelColor }}>
                           Lv.{child.level ?? 1}
                         </Text>
                       </View>
@@ -155,7 +176,8 @@ export default function FamilyDashboardScreen() {
                 </View>
               </TouchableOpacity>
             </Animated.View>
-          ))
+            );
+          })
         )}
       </ScrollView>
     </Screen>

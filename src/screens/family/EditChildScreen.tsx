@@ -1,63 +1,91 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
+import type { RouteProp } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
 import { useFamilyStore } from '@/modules/family/family.store';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
-import { Input } from '@/components/ui/Input';
 
 type Nav = NativeStackNavigationProp<FamilyStackParamList>;
+type Route = RouteProp<FamilyStackParamList, 'EditChild'>;
 
-const EMOJIS = ['🌙', '⭐', '🌟', '☀️', '🌸', '🦋', '🐬', '🦁', '🐧', '🍀', '🎈'];
+const EMOJIS = ['🌙', '⭐', '🌟', '☀️', '🌸', '🦋', '🐬', '🦁', '🐧', '🍀', '🎈', '🌺', '🦅', '🐉', '🌴'];
 
 function Label({ children }: { children: string }) {
   return (
-    <Text className="mb-2 text-xs font-bold tracking-widest text-slate-500 dark:text-slate-400">
+    <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
       {children}
     </Text>
   );
 }
 
-export default function AddChildScreen() {
+export default function EditChildScreen() {
   const navigation = useNavigation<Nav>();
-  const { createChild } = useFamilyStore();
+  const route = useRoute<Route>();
+  const { childId } = route.params;
+  const { children, updateChild } = useFamilyStore();
   const { isDark } = useTheme();
 
-  const [name, setName] = useState('');
-  const [birthYear, setBirthYear] = useState('');
-  const [gender, setGender] = useState<'erkek' | 'kız' | null>(null);
-  const [selectedEmoji, setSelectedEmoji] = useState('🌙');
-  const [pin, setPin] = useState('');
+  const child = children.find((c) => c.id === childId);
+
+  const [name, setName] = useState(child?.name ?? '');
+  const [birthYear, setBirthYear] = useState(child?.birth_year?.toString() ?? '');
+  const [gender, setGender] = useState<'erkek' | 'kız' | null>(child?.gender ?? null);
+  const [selectedEmoji, setSelectedEmoji] = useState(child?.avatar_emoji ?? '🌙');
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async () => {
+  useEffect(() => {
+    if (!child) navigation.goBack();
+  }, [child]);
+
+  if (!child) return null;
+
+  const hasChanges =
+    name !== child.name ||
+    birthYear !== (child.birth_year?.toString() ?? '') ||
+    gender !== child.gender ||
+    selectedEmoji !== child.avatar_emoji;
+
+  const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Hata', 'Çocuğun adını girin');
-      return;
-    }
-    if (pin && pin.length !== 4) {
-      Alert.alert('Hata', 'PIN 4 haneli olmalıdır');
+      Alert.alert('Hata', 'İsim boş bırakılamaz');
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setLoading(true);
     try {
-      const child = await createChild({
+      await updateChild(childId, {
         name: name.trim(),
-        birth_year: birthYear ? Number(birthYear) : undefined,
-        gender: gender ?? undefined,
+        birth_year: birthYear ? Number(birthYear) : null,
+        gender: gender ?? null,
         avatar_emoji: selectedEmoji,
-        pin_code: pin || undefined,
       });
-      if (child) navigation.goBack();
+      navigation.goBack();
     } finally {
       setLoading(false);
     }
   };
+
+  const genderBorder = gender === 'erkek'
+    ? 'border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-500/15'
+    : gender === 'kız'
+      ? 'border-violet-600 bg-violet-50 dark:border-violet-500 dark:bg-violet-500/15'
+      : '';
+
+  const genderText = gender === 'erkek'
+    ? 'text-emerald-700 dark:text-emerald-400'
+    : gender === 'kız'
+      ? 'text-violet-700 dark:text-violet-400'
+      : '';
+
+  const avatarBg = gender === 'erkek'
+    ? 'bg-emerald-50 dark:bg-emerald-500/10'
+    : gender === 'kız'
+      ? 'bg-violet-50 dark:bg-violet-500/10'
+      : 'bg-teal-50 dark:bg-teal-500/10';
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
@@ -66,9 +94,10 @@ export default function AddChildScreen() {
         contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
+
         {/* Avatar seçici */}
         <View className="items-center gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-          <View className="h-20 w-20 items-center justify-center rounded-[24px] bg-teal-50 dark:bg-teal-500/10">
+          <View className={`h-20 w-20 items-center justify-center rounded-[24px] ${avatarBg}`}>
             <Text style={{ fontSize: 40 }}>{selectedEmoji}</Text>
           </View>
           <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -96,10 +125,11 @@ export default function AddChildScreen() {
         {/* İsim */}
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Label>İsim</Label>
-          <Input
+          <TextInput
             value={name}
             onChangeText={setName}
             placeholder="Çocuğun adı"
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
             autoCapitalize="words"
           />
@@ -108,12 +138,13 @@ export default function AddChildScreen() {
         {/* Doğum yılı & Cinsiyet */}
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Label>Doğum Yılı</Label>
-          <Input
+          <TextInput
             value={birthYear}
             onChangeText={setBirthYear}
             placeholder="ör. 2016"
             keyboardType="numeric"
             maxLength={4}
+            className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
           />
           <Label>Cinsiyet</Label>
@@ -127,13 +158,17 @@ export default function AddChildScreen() {
                 }}
                 className={`flex-1 items-center rounded-2xl border py-3 ${
                   gender === g
-                    ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
+                    ? (g === 'erkek'
+                        ? 'border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-500/15'
+                        : 'border-violet-600 bg-violet-50 dark:border-violet-500 dark:bg-violet-500/15')
                     : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                 }`}>
                 <Text
                   className={`font-bold ${
                     gender === g
-                      ? 'text-teal-700 dark:text-teal-400'
+                      ? (g === 'erkek'
+                          ? 'text-emerald-700 dark:text-emerald-400'
+                          : 'text-violet-700 dark:text-violet-400')
                       : 'text-slate-600 dark:text-slate-300'
                   }`}>
                   {g === 'erkek' ? '👦 Erkek' : '👧 Kız'}
@@ -143,43 +178,22 @@ export default function AddChildScreen() {
           </View>
         </View>
 
-        {/* PIN */}
-        <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-          <Label>PIN Kodu (Opsiyonel)</Label>
-          <Input
-            value={pin}
-            onChangeText={(t) => setPin(t.replace(/\D/g, '').slice(0, 4))}
-            placeholder="4 haneli PIN"
-            keyboardType="numeric"
-            maxLength={4}
-            secureTextEntry
-            placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
-          />
-          <View className="mt-2 flex-row items-center gap-2">
-            <Ionicons
-              name="information-circle-outline"
-              size={14}
-              color={isDark ? '#475569' : '#94a3b8'}
-            />
-            <Text className="text-[11px] text-slate-400 dark:text-slate-500">
-              PIN ile çocuk modu açılır. Boş bırakılabilir.
-            </Text>
-          </View>
-        </View>
-
+        {/* Kaydet */}
         <TouchableOpacity
-          onPress={handleCreate}
-          disabled={loading || !name.trim()}
+          onPress={handleSave}
+          disabled={loading || !name.trim() || !hasChanges}
           className={`items-center rounded-2xl py-4 ${
-            loading || !name.trim()
+            loading || !name.trim() || !hasChanges
               ? 'bg-slate-200 dark:bg-slate-800'
               : 'bg-teal-600 dark:bg-teal-500'
           }`}>
           <Text
             className={`text-base font-black ${
-              loading || !name.trim() ? 'text-slate-400 dark:text-slate-600' : 'text-white'
+              loading || !name.trim() || !hasChanges
+                ? 'text-slate-400 dark:text-slate-600'
+                : 'text-white'
             }`}>
-            {loading ? 'Oluşturuluyor...' : 'Profil Oluştur'}
+            {loading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
           </Text>
         </TouchableOpacity>
       </ScrollView>

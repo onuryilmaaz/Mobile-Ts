@@ -4,6 +4,7 @@ import { useTheme } from '@/hooks/useTheme';
 
 import FamilyDashboardScreen from '@/screens/family/FamilyDashboardScreen';
 import AddChildScreen from '@/screens/family/AddChildScreen';
+import EditChildScreen from '@/screens/family/EditChildScreen';
 import ChildDetailScreen from '@/screens/family/ChildDetailScreen';
 import CreateTaskScreen from '@/screens/family/CreateTaskScreen';
 import EditTaskScreen from '@/screens/family/EditTaskScreen';
@@ -29,6 +30,7 @@ export default function FamilyNavigator() {
       }}>
       <Stack.Screen name="FamilyDashboard" component={FamilyDashboardScreen} options={{ title: 'Aile' }} />
       <Stack.Screen name="AddChild" component={AddChildScreen} options={{ title: 'Çocuk Ekle' }} />
+      <Stack.Screen name="EditChild" component={EditChildScreen} options={{ title: 'Profili Düzenle' }} />
       <Stack.Screen name="ChildDetail" component={ChildDetailScreen} options={{ title: '' }} />
       <Stack.Screen name="CreateTask" component={CreateTaskScreen} options={{ title: 'Görev Oluştur' }} />
       <Stack.Screen name="EditTask" component={EditTaskScreen} options={{ title: 'Görevi Düzenle' }} />
