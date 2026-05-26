@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
 import { useFamilyStore } from '@/modules/family/family.store';
+import { alert } from '@/store/alert.store';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
 import { Input } from '@/components/ui/Input';
@@ -36,11 +37,11 @@ export default function AddChildScreen() {
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      Alert.alert('Hata', 'Çocuğun adını girin');
+      alert.error('Hata', 'Çocuğun adını girin');
       return;
     }
     if (pin && pin.length !== 4) {
-      Alert.alert('Hata', 'PIN 4 haneli olmalıdır');
+      alert.error('Hata', 'PIN 4 haneli olmalıdır');
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

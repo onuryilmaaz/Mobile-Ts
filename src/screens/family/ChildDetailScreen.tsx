@@ -10,7 +10,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,6 +19,7 @@ import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Screen } from '@/components/layout/Screen';
 import { useFamilyStore } from '@/modules/family/family.store';
+import { alert } from '@/store/alert.store';
 import { familyApi } from '@/modules/family/family.api';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
@@ -269,20 +269,16 @@ export default function ChildDetailScreen() {
               <TouchableOpacity
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  Alert.alert(
+                  alert.confirm(
                     'Profili Sil',
                     `${child.name} profilini silmek istediğine emin misin? Tüm görevler ve veriler kaybolacak.`,
-                    [
-                      { text: 'İptal', style: 'cancel' },
-                      {
-                        text: 'Sil',
-                        style: 'destructive',
-                        onPress: async () => {
-                          await deleteChild(childId);
-                          navigation.goBack();
-                        },
-                      },
-                    ],
+                    async () => {
+                      await deleteChild(childId);
+                      navigation.goBack();
+                    },
+                    'Sil',
+                    'İptal',
+                    true,
                   );
                 }}
                 className="flex-row items-center gap-1.5 rounded-xl border border-red-200 px-3 py-2 dark:border-red-500/30">

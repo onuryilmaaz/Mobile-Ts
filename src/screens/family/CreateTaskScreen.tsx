@@ -19,7 +19,7 @@ type Route = RouteProp<FamilyStackParamList, 'CreateTask'>;
 
 function SectionLabel({ children }: { children: string }) {
   return (
-    <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+    <Text className="mb-2 text-xs font-bold tracking-widest text-slate-500 dark:text-slate-400">
       {children}
     </Text>
   );
@@ -69,7 +69,7 @@ export default function CreateTaskScreen() {
   const toggleDay = (day: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setScheduledDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
@@ -83,7 +83,8 @@ export default function CreateTaskScreen() {
         title: title.trim(),
         description: description.trim() || undefined,
         recurrence,
-        scheduled_days: recurrence === 'weekly' && scheduledDays.length > 0 ? scheduledDays : undefined,
+        scheduled_days:
+          recurrence === 'weekly' && scheduledDays.length > 0 ? scheduledDays : undefined,
         reward_stars: rewardStars,
         requires_approval: requiresApproval,
         requires_proof: false,
@@ -263,9 +264,12 @@ export default function CreateTaskScreen() {
                               ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
                               : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                           }`}>
-                          <Text className={`text-[11px] font-black ${
-                            active ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-slate-600'
-                          }`}>
+                          <Text
+                            className={`text-[11px] font-black ${
+                              active
+                                ? 'text-teal-700 dark:text-teal-400'
+                                : 'text-slate-400 dark:text-slate-600'
+                            }`}>
                             {d.label}
                           </Text>
                         </TouchableOpacity>

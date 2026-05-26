@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, Alert,
+  View, Text, TextInput, TouchableOpacity, ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
 import { useFamilyStore } from '@/modules/family/family.store';
+import { alert } from '@/store/alert.store';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -70,17 +71,18 @@ export default function EditTaskScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert('Görevi Sil', 'Bu görevi silmek istediğine emin misin?', [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Sil', style: 'destructive',
-        onPress: async () => {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          await deleteTask(childId, taskId);
-          navigation.goBack();
-        },
+    alert.confirm(
+      'Görevi Sil',
+      'Bu görevi silmek istediğine emin misin?',
+      async () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        await deleteTask(childId, taskId);
+        navigation.goBack();
       },
-    ]);
+      'Sil',
+      'İptal',
+      true,
+    );
   };
 
   return (

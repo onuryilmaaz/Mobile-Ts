@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, RefreshControl, Alert, Modal,
+  View, Text, ScrollView, TouchableOpacity, RefreshControl, Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useFamilyStore } from '@/modules/family/family.store';
+import { alert } from '@/store/alert.store';
 import { TASK_TYPE_META } from '@/modules/family/family.types';
 import type { TaskType } from '@/modules/family/family.types';
 import { useTheme } from '@/hooks/useTheme';
@@ -82,7 +83,7 @@ export default function ChildTasksScreen() {
       setTimeout(() => setCelebrateTask(null), 2000);
     } catch (e: any) {
       const msg = e?.response?.data?.message ?? 'Bir hata oluştu';
-      Alert.alert('Hata', msg);
+      alert.error('Hata', msg);
     } finally {
       setCompleting(null);
     }

@@ -1,22 +1,41 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
 import { useFamilyStore } from '@/modules/family/family.store';
+import { alert } from '@/store/alert.store';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
+import { Input } from '@/components/ui/Input';
 
 type Nav = NativeStackNavigationProp<FamilyStackParamList>;
 type Route = RouteProp<FamilyStackParamList, 'EditChild'>;
 
-const EMOJIS = ['🌙', '⭐', '🌟', '☀️', '🌸', '🦋', '🐬', '🦁', '🐧', '🍀', '🎈', '🌺', '🦅', '🐉', '🌴'];
+const EMOJIS = [
+  '🌙',
+  '⭐',
+  '🌟',
+  '☀️',
+  '🌸',
+  '🦋',
+  '🐬',
+  '🦁',
+  '🐧',
+  '🍀',
+  '🎈',
+  '🌺',
+  '🦅',
+  '🐉',
+  '🌴',
+];
 
 function Label({ children }: { children: string }) {
   return (
-    <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+    <Text className="mb-2 text-xs font-bold tracking-widest text-slate-500 dark:text-slate-400">
       {children}
     </Text>
   );
@@ -51,7 +70,7 @@ export default function EditChildScreen() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Hata', 'İsim boş bırakılamaz');
+      alert.error('Hata', 'İsim boş bırakılamaz');
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -69,23 +88,12 @@ export default function EditChildScreen() {
     }
   };
 
-  const genderBorder = gender === 'erkek'
-    ? 'border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-500/15'
-    : gender === 'kız'
-      ? 'border-violet-600 bg-violet-50 dark:border-violet-500 dark:bg-violet-500/15'
-      : '';
-
-  const genderText = gender === 'erkek'
-    ? 'text-emerald-700 dark:text-emerald-400'
-    : gender === 'kız'
-      ? 'text-violet-700 dark:text-violet-400'
-      : '';
-
-  const avatarBg = gender === 'erkek'
-    ? 'bg-emerald-50 dark:bg-emerald-500/10'
-    : gender === 'kız'
-      ? 'bg-violet-50 dark:bg-violet-500/10'
-      : 'bg-teal-50 dark:bg-teal-500/10';
+  const avatarBg =
+    gender === 'erkek'
+      ? 'bg-emerald-50 dark:bg-emerald-500/10'
+      : gender === 'kız'
+        ? 'bg-violet-50 dark:bg-violet-500/10'
+        : 'bg-teal-50 dark:bg-teal-500/10';
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
@@ -94,7 +102,6 @@ export default function EditChildScreen() {
         contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-
         {/* Avatar seçici */}
         <View className="items-center gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <View className={`h-20 w-20 items-center justify-center rounded-[24px] ${avatarBg}`}>
@@ -125,11 +132,10 @@ export default function EditChildScreen() {
         {/* İsim */}
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Label>İsim</Label>
-          <TextInput
+          <Input
             value={name}
             onChangeText={setName}
             placeholder="Çocuğun adı"
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
             autoCapitalize="words"
           />
@@ -138,13 +144,12 @@ export default function EditChildScreen() {
         {/* Doğum yılı & Cinsiyet */}
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Label>Doğum Yılı</Label>
-          <TextInput
+          <Input
             value={birthYear}
             onChangeText={setBirthYear}
             placeholder="ör. 2016"
             keyboardType="numeric"
             maxLength={4}
-            className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
           />
           <Label>Cinsiyet</Label>
@@ -158,17 +163,17 @@ export default function EditChildScreen() {
                 }}
                 className={`flex-1 items-center rounded-2xl border py-3 ${
                   gender === g
-                    ? (g === 'erkek'
-                        ? 'border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-500/15'
-                        : 'border-violet-600 bg-violet-50 dark:border-violet-500 dark:bg-violet-500/15')
+                    ? g === 'erkek'
+                      ? 'border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-500/15'
+                      : 'border-violet-600 bg-violet-50 dark:border-violet-500 dark:bg-violet-500/15'
                     : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                 }`}>
                 <Text
                   className={`font-bold ${
                     gender === g
-                      ? (g === 'erkek'
-                          ? 'text-emerald-700 dark:text-emerald-400'
-                          : 'text-violet-700 dark:text-violet-400')
+                      ? g === 'erkek'
+                        ? 'text-emerald-700 dark:text-emerald-400'
+                        : 'text-violet-700 dark:text-violet-400'
                       : 'text-slate-600 dark:text-slate-300'
                   }`}>
                   {g === 'erkek' ? '👦 Erkek' : '👧 Kız'}
