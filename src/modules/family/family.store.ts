@@ -7,6 +7,7 @@ import type {
 } from './family.types';
 
 const CHILD_SESSION_KEY = 'child_session_data';
+const PARENT_MODE_KEY = 'parent_mode_active';
 
 interface FamilyState {
   children: ChildProfile[];
@@ -46,9 +47,15 @@ interface FamilyState {
   deleteReward: (rewardId: string) => Promise<void>;
   fetchTemplates: () => Promise<void>;
 
+  // Profile selection
+  parentModeActive: boolean;
+  selectParentMode: () => Promise<void>;
+  resetParentMode: () => Promise<void>;
+
   // Child session actions
   openChildMode: (childId: string, pinCode: string) => Promise<void>;
   exitChildMode: () => Promise<void>;
+  verifyChildPin: (childId: string, pin: string) => Promise<boolean>;
   fetchTodayTasks: () => Promise<void>;
   completeTask: (taskId: string, evidenceUrl?: string) => Promise<void>;
   redeemReward: (rewardId: string) => Promise<void>;
@@ -65,15 +72,22 @@ export const useFamilyStore = create<FamilyState>((set, get) => ({
   rewards: [],
   templates: [],
   childSession: null,
+  parentModeActive: false,
   isLoading: false,
   hydrated: false,
 
   hydrate: async () => {
     try {
-      const raw = await AsyncStorage.getItem(CHILD_SESSION_KEY);
-      if (raw) {
-        const session: ChildSession = JSON.parse(raw);
+      const [sessionRaw, parentMode] = await AsyncStorage.multiGet([
+        CHILD_SESSION_KEY,
+        PARENT_MODE_KEY,
+      ]);
+      if (sessionRaw[1]) {
+        const session: ChildSession = JSON.parse(sessionRaw[1]);
         set({ childSession: session });
+      }
+      if (parentMode[1]) {
+        set({ parentModeActive: true });
       }
     } catch {}
     set({ hydrated: true });
@@ -244,6 +258,16 @@ export const useFamilyStore = create<FamilyState>((set, get) => ({
     }
   },
 
+  selectParentMode: async () => {
+    await AsyncStorage.setItem(PARENT_MODE_KEY, '1');
+    set({ parentModeActive: true });
+  },
+
+  resetParentMode: async () => {
+    await AsyncStorage.removeItem(PARENT_MODE_KEY);
+    set({ parentModeActive: false });
+  },
+
   openChildMode: async (childId, pinCode) => {
     const { data } = await familyApi.createChildSession(childId, pinCode);
     if (!data.success) throw new Error('PIN hatalı');
@@ -257,17 +281,27 @@ export const useFamilyStore = create<FamilyState>((set, get) => ({
       parentId: '',
       childName: child?.name ?? '',
       avatarEmoji: child?.avatar_emoji ?? '🌙',
+      gender: child?.gender ?? null,
     };
 
     await setChildToken(data.token);
     await AsyncStorage.setItem(CHILD_SESSION_KEY, JSON.stringify(session));
-    set({ childSession: session });
+    set({ childSession: session, parentModeActive: false });
   },
 
   exitChildMode: async () => {
     await clearChildToken();
     await AsyncStorage.removeItem(CHILD_SESSION_KEY);
-    set({ childSession: null, todayTasks: [] });
+    set({ childSession: null, todayTasks: [], parentModeActive: false });
+  },
+
+  verifyChildPin: async (childId, pin) => {
+    try {
+      const { data } = await familyApi.createChildSession(childId, pin);
+      return data.success === true;
+    } catch {
+      return false;
+    }
   },
 
   fetchTodayTasks: async () => {

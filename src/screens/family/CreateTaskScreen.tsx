@@ -1,7 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, ScrollView,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
@@ -13,6 +12,7 @@ import type { FamilyStackParamList } from '@/navigation/types';
 import type { TaskType } from '@/modules/family/family.types';
 import { TASK_TYPE_META } from '@/modules/family/family.types';
 import { useTheme } from '@/hooks/useTheme';
+import { Input } from '@/components/ui/Input';
 
 type Nav = NativeStackNavigationProp<FamilyStackParamList>;
 type Route = RouteProp<FamilyStackParamList, 'CreateTask'>;
@@ -37,6 +37,7 @@ export default function CreateTaskScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [recurrence, setRecurrence] = useState<'daily' | 'weekly' | 'once'>('daily');
+  const [scheduledDays, setScheduledDays] = useState<number[]>([]);
   const [rewardStars, setRewardStars] = useState(1);
   const [requiresApproval, setRequiresApproval] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,16 +56,37 @@ export default function CreateTaskScreen() {
     setTab('custom');
   };
 
+  const DAYS = [
+    { label: 'Paz', value: 0 },
+    { label: 'Pzt', value: 1 },
+    { label: 'Sal', value: 2 },
+    { label: 'Çar', value: 3 },
+    { label: 'Per', value: 4 },
+    { label: 'Cum', value: 5 },
+    { label: 'Cmt', value: 6 },
+  ];
+
+  const toggleDay = (day: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setScheduledDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
+
   const handleCreate = async () => {
     if (!title.trim()) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setLoading(true);
     try {
       await createTask(childId, {
-        task_type: taskType, title: title.trim(),
+        task_type: taskType,
+        title: title.trim(),
         description: description.trim() || undefined,
-        recurrence, reward_stars: rewardStars,
-        requires_approval: requiresApproval, requires_proof: false,
+        recurrence,
+        scheduled_days: recurrence === 'weekly' && scheduledDays.length > 0 ? scheduledDays : undefined,
+        reward_stars: rewardStars,
+        requires_approval: requiresApproval,
+        requires_proof: false,
       });
       navigation.goBack();
     } finally {
@@ -81,12 +103,15 @@ export default function CreateTaskScreen() {
             <TouchableOpacity
               key={t}
               onPress={() => setTab(t)}
-              className={`flex-1 py-3.5 items-center border-b-2 ${
+              className={`flex-1 items-center border-b-2 py-3.5 ${
                 tab === t ? 'border-teal-600 dark:border-teal-400' : 'border-transparent'
               }`}>
-              <Text className={`text-sm font-bold ${
-                tab === t ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'
-              }`}>
+              <Text
+                className={`text-sm font-bold ${
+                  tab === t
+                    ? 'text-teal-700 dark:text-teal-400'
+                    : 'text-slate-500 dark:text-slate-400'
+                }`}>
                 {t === 'template' ? 'Şablonlar' : 'Özel Görev'}
               </Text>
             </TouchableOpacity>
@@ -117,7 +142,9 @@ export default function CreateTaskScreen() {
                   </View>
                   <View className="flex-1">
                     <Text className="font-bold text-slate-900 dark:text-white">{t.title}</Text>
-                    <Text className="mt-0.5 text-xs text-slate-500 dark:text-slate-400" numberOfLines={1}>
+                    <Text
+                      className="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                      numberOfLines={1}>
                       {t.description}
                     </Text>
                   </View>
@@ -135,7 +162,6 @@ export default function CreateTaskScreen() {
             contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
-
             {/* Görev tipi */}
             <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
               <SectionLabel>Görev Tipi</SectionLabel>
@@ -157,9 +183,12 @@ export default function CreateTaskScreen() {
                             : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                         }`}>
                         <Text style={{ fontSize: 15 }}>{meta.emoji}</Text>
-                        <Text className={`text-sm font-bold ${
-                          active ? 'text-teal-700 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300'
-                        }`}>
+                        <Text
+                          className={`text-sm font-bold ${
+                            active
+                              ? 'text-teal-700 dark:text-teal-400'
+                              : 'text-slate-600 dark:text-slate-300'
+                          }`}>
                           {meta.label}
                         </Text>
                       </TouchableOpacity>
@@ -172,21 +201,18 @@ export default function CreateTaskScreen() {
             {/* Başlık + Açıklama */}
             <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
               <SectionLabel>Başlık</SectionLabel>
-              <TextInput
+              <Input
                 value={title}
                 onChangeText={setTitle}
                 placeholder="Görev başlığı"
-                className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
               />
               <SectionLabel>Açıklama</SectionLabel>
-              <TextInput
+              <Input
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Opsiyonel açıklama"
-                multiline
                 numberOfLines={2}
-                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
               />
             </View>
@@ -201,20 +227,53 @@ export default function CreateTaskScreen() {
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       setRecurrence(r);
+                      if (r !== 'weekly') setScheduledDays([]);
                     }}
-                    className={`flex-1 rounded-2xl border py-3 items-center ${
+                    className={`flex-1 items-center rounded-2xl border py-3 ${
                       recurrence === r
                         ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
                         : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                     }`}>
-                    <Text className={`text-sm font-bold ${
-                      recurrence === r ? 'text-teal-700 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300'
-                    }`}>
+                    <Text
+                      className={`text-sm font-bold ${
+                        recurrence === r
+                          ? 'text-teal-700 dark:text-teal-400'
+                          : 'text-slate-600 dark:text-slate-300'
+                      }`}>
                       {r === 'daily' ? 'Her Gün' : r === 'weekly' ? 'Haftalık' : 'Bir Kez'}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
+
+              {recurrence === 'weekly' && (
+                <View className="mt-3">
+                  <Text className="mb-2 text-xs font-bold text-slate-400 dark:text-slate-500">
+                    Günler (boş = her gün)
+                  </Text>
+                  <View className="flex-row gap-1.5">
+                    {DAYS.map((d) => {
+                      const active = scheduledDays.includes(d.value);
+                      return (
+                        <TouchableOpacity
+                          key={d.value}
+                          onPress={() => toggleDay(d.value)}
+                          className={`flex-1 items-center rounded-xl border py-2 ${
+                            active
+                              ? 'border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-500/15'
+                              : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
+                          }`}>
+                          <Text className={`text-[11px] font-black ${
+                            active ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-slate-600'
+                          }`}>
+                            {d.label}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
             </View>
 
             {/* Yıldız + Onay */}
@@ -228,14 +287,17 @@ export default function CreateTaskScreen() {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       setRewardStars(n);
                     }}
-                    className={`flex-1 rounded-2xl border py-3 items-center ${
+                    className={`flex-1 items-center rounded-2xl border py-3 ${
                       rewardStars === n
                         ? 'border-amber-400 bg-amber-50 dark:border-amber-500/60 dark:bg-amber-500/10'
                         : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                     }`}>
-                    <Text className={`font-black ${
-                      rewardStars === n ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-600'
-                    }`}>
+                    <Text
+                      className={`font-black ${
+                        rewardStars === n
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-slate-400 dark:text-slate-600'
+                      }`}>
                       {'⭐'.repeat(n)}
                     </Text>
                   </TouchableOpacity>
@@ -252,13 +314,18 @@ export default function CreateTaskScreen() {
                     ? 'border-teal-600/30 bg-teal-50 dark:border-teal-500/30 dark:bg-teal-500/10'
                     : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                 }`}>
-                <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${
-                  requiresApproval ? 'border-teal-600 bg-teal-600 dark:border-teal-500 dark:bg-teal-500' : 'border-slate-300 dark:border-slate-600'
-                }`}>
+                <View
+                  className={`h-5 w-5 items-center justify-center rounded-full border-2 ${
+                    requiresApproval
+                      ? 'border-teal-600 bg-teal-600 dark:border-teal-500 dark:bg-teal-500'
+                      : 'border-slate-300 dark:border-slate-600'
+                  }`}>
                   {requiresApproval && <Ionicons name="checkmark" size={11} color="white" />}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-sm font-bold text-slate-900 dark:text-white">Ebeveyn onayı gereksin</Text>
+                  <Text className="text-sm font-bold text-slate-900 dark:text-white">
+                    Ebeveyn onayı gereksin
+                  </Text>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">
                     Onay verilene kadar yıldız verilmez
                   </Text>
@@ -269,12 +336,15 @@ export default function CreateTaskScreen() {
             <TouchableOpacity
               onPress={handleCreate}
               disabled={loading || !title.trim()}
-              className={`rounded-2xl py-4 items-center ${
-                loading || !title.trim() ? 'bg-slate-200 dark:bg-slate-800' : 'bg-teal-600 dark:bg-teal-500'
+              className={`items-center rounded-2xl py-4 ${
+                loading || !title.trim()
+                  ? 'bg-slate-200 dark:bg-slate-800'
+                  : 'bg-teal-600 dark:bg-teal-500'
               }`}>
-              <Text className={`text-base font-black ${
-                loading || !title.trim() ? 'text-slate-400 dark:text-slate-600' : 'text-white'
-              }`}>
+              <Text
+                className={`text-base font-black ${
+                  loading || !title.trim() ? 'text-slate-400 dark:text-slate-600' : 'text-white'
+                }`}>
                 {loading ? 'Oluşturuluyor...' : 'Görevi Oluştur'}
               </Text>
             </TouchableOpacity>

@@ -97,6 +97,7 @@ export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   UserTabs: NavigatorScreenParams<UserTabParamList>;
   ChildMode: NavigatorScreenParams<ChildTabParamList>;
+  ProfileSelection: undefined;
 };
 
 declare global {

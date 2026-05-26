@@ -112,6 +112,7 @@ export interface ChildSession {
   parentId: string;
   childName: string;
   avatarEmoji: string;
+  gender?: 'erkek' | 'kız' | null;
 }
 
 export const TASK_TYPE_META: Record<TaskType, { label: string; emoji: string; color: string }> = {

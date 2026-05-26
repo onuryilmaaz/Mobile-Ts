@@ -63,8 +63,8 @@ const QUICK_ACTIONS = [
     key: 'family',
     label: 'Aile',
     icon: 'people-outline' as const,
-    color: '#10b981',
-    glow: 'rgba(16,185,129,0.18)',
+    color: '#b91c1c',
+    glow: 'rgba(185,28,28,0.18)',
     screen: 'Family' as const,
   },
 ];
