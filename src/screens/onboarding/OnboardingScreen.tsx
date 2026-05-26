@@ -67,10 +67,37 @@ const SLIDES: Slide[] = [
   },
   {
     id: '5',
+    icon: 'bar-chart-outline',
+    title: 'İbadet Takibi',
+    description:
+      'Namaz, Kur\'an, nafile, oruç, sadaka, dua ve ezber ibadetlerinizi kaydedin. Günlük ve haftalık istatistiklerinizi takip edin.',
+    accent: '#0ea5e9',
+    accentDim: 'rgba(14,165,233,0.12)',
+  },
+  {
+    id: '6',
+    icon: 'people-outline',
+    title: 'Topluluk & Gruplar',
+    description:
+      'Arkadaşlarınızla gruplar kurun, birlikte hedefler belirleyin ve liderlik tablosunda yarışın. Manevi yolculuğunuzda yalnız değilsiniz.',
+    accent: '#8b5cf6',
+    accentDim: 'rgba(139,92,246,0.12)',
+  },
+  {
+    id: '7',
+    icon: 'home-outline',
+    title: 'Aile Modu',
+    description:
+      'Çocuklarınız için profil oluşturun, ibadet görevleri atayın. Görevleri tamamlayan çocuklarınız yıldız kazanarak ödüllerini seçebilir.',
+    accent: '#f97316',
+    accentDim: 'rgba(249,115,22,0.12)',
+  },
+  {
+    id: '8',
     icon: 'trophy-outline',
     title: 'Hedefler & Başarılar',
     description:
-      'Kaza namazlarınızı takip edin, zikir sayacı ile tesbih çekin. Puan ve rozetler kazanın.',
+      'Kaza namazlarınızı takip edin, zikir sayacı ile tesbih çekin. Puan ve rozetler kazanarak manevi ilerlemenizi görün.',
     accent: '#ec4899',
     accentDim: 'rgba(236,72,153,0.12)',
   },

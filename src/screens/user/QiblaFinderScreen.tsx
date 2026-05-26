@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, ActivityIndicator } from 'react-native';
-import { Magnetometer } from 'expo-sensors';
 import * as Location from 'expo-location';
 import { Screen } from '@/components/layout/Screen';
 import { qiblaService } from '@/services/qibla.service';
@@ -11,72 +9,56 @@ import { useTheme } from '@/hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
-const smoothAngle = (prev: number, specific: number) => {
-  let diff = specific - prev;
+const smoothAngle = (prev: number, next: number) => {
+  let diff = next - prev;
   if (diff > 180) diff -= 360;
   if (diff < -180) diff += 360;
   return prev + diff * 0.15;
 };
 
 export default function QiblaFinderScreen() {
-  const [subscription, setSubscription] = useState<any>(null);
-  const [magHeading, setMagHeading] = useState(0);
+  const headingSubRef = useRef<Location.LocationSubscription | null>(null);
+  const [heading, setHeading] = useState(0);
   const [qiblaBearing, setQiblaBearing] = useState(0);
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { isDark } = useTheme();
 
   useEffect(() => {
+    let sub: Location.LocationSubscription | null = null;
+
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Konum izni reddedildi. Kıbleyi bulmak için izne ihtiyacımız var.');
         setLoading(false);
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-
-      const bearing = qiblaService.calculateBearing(
-        location.coords.latitude,
-        location.coords.longitude
-      );
+      const loc = await Location.getCurrentPositionAsync({});
+      const bearing = qiblaService.calculateBearing(loc.coords.latitude, loc.coords.longitude);
       setQiblaBearing(bearing);
       setLoading(false);
+
+      // watchHeadingAsync: OS-seviyesi sensör füzyonu (ivmeölçer + manyetometre + jiroskop).
+      // trueHeading coğrafi kuzeyi verir (manyetik sapma otomatik düzeltilir).
+      sub = await Location.watchHeadingAsync((data) => {
+        const raw = data.trueHeading >= 0 ? data.trueHeading : data.magHeading;
+        setHeading((prev) => smoothAngle(prev, raw));
+      });
+      headingSubRef.current = sub;
     })();
+
+    return () => {
+      sub?.remove();
+    };
   }, []);
 
-  useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
-  }, []);
-
-  const _subscribe = () => {
-    setSubscription(
-      Magnetometer.addListener((result) => {
-        let { x, y } = result;
-        let angle = Math.atan2(y, x) * (180 / Math.PI);
-        angle -= 90;
-
-        if (angle < 0) {
-          angle += 360;
-        }
-
-        setMagHeading((prev) => smoothAngle(prev, angle));
-      })
-    );
-    Magnetometer.setUpdateInterval(50);
-  };
-
-  const _unsubscribe = () => {
-    subscription && subscription.remove();
-    setSubscription(null);
-  };
-
-  const arrowRotation = qiblaBearing - magHeading;
-  const isAligned = Math.abs((arrowRotation + 360) % 360) < 5 || Math.abs(arrowRotation % 360) < 5;
+  const arrowRotation = qiblaBearing - heading;
+  // ((x % 360) + 360) % 360 her zaman [0, 360) aralığına normalize eder;
+  // min(n, 360-n) ile her iki kenardaki sarma durumunu yakalar (örn. 357° = 3° uzakta).
+  const normalizedRotation = ((arrowRotation % 360) + 360) % 360;
+  const isAligned = Math.min(normalizedRotation, 360 - normalizedRotation) < 5;
 
   if (loading) {
     return (
