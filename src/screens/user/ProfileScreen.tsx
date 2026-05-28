@@ -88,6 +88,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const [lastName, setLastName] = useState(user?.lastName ?? '');
   const [username, setUsername] = useState(user?.username ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
+  const [gender, setGender] = useState<'erkek' | 'kadin' | undefined>(user?.gender);
   const [localAvatarUri, setLocalAvatarUri] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -116,6 +117,7 @@ export default function ProfileScreen({ navigation }: Props) {
         setLastName(profileData.lastName ?? '');
         setUsername(profileData.username ?? '');
         setPhone(profileData.phone ?? '');
+        setGender(profileData.gender ?? undefined);
 
         if (profileData.roles) {
           setUser(profileData);
@@ -133,7 +135,13 @@ export default function ProfileScreen({ navigation }: Props) {
   async function handleUpdateProfile() {
     try {
       setUpdateLoading(true);
-      const { data } = await userApi.updateProfile({ firstName, lastName, phone, username });
+      const { data } = await userApi.updateProfile({
+        firstName,
+        lastName,
+        phone,
+        username,
+        gender,
+      });
       const profileData = (data as any).user ? (data as any).user : data;
       setProfile(profileData);
       await refreshUser();
@@ -301,6 +309,61 @@ export default function ProfileScreen({ navigation }: Props) {
                 placeholder="+90 555 123 45 67"
               />
 
+              <View className="mb-4">
+                <Text className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Cinsiyet
+                </Text>
+                <View className="flex-row gap-3">
+                  {(
+                    [
+                      { value: 'erkek', label: 'Erkek' },
+                      { value: 'kadin', label: 'Kadın' },
+                    ] as const
+                  ).map((g) => {
+                    const selected = gender === g.value;
+                    const activeColor = isDark ? '#2dd4bf' : '#0f766e';
+                    const inactiveColor = isDark ? '#475569' : '#94a3b8';
+                    return (
+                      <TouchableOpacity
+                        key={g.value}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          setGender(selected ? undefined : g.value);
+                        }}
+                        activeOpacity={0.75}
+                        className="flex-1 items-center rounded-2xl py-4"
+                        style={{
+                          backgroundColor: selected
+                            ? isDark
+                              ? 'rgba(20,184,166,0.14)'
+                              : 'rgba(15,118,110,0.07)'
+                            : isDark
+                              ? '#0f172a'
+                              : '#f1f5f9',
+                          borderWidth: 1.5,
+                          borderColor: selected ? activeColor : 'transparent',
+                        }}>
+                        <Text
+                          className="text-sm font-bold"
+                          style={{ color: selected ? activeColor : inactiveColor }}>
+                          {g.label}
+                        </Text>
+                        {selected && (
+                          <View className="mt-1.5">
+                            <Ionicons name="checkmark-circle" size={14} color={activeColor} />
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+                {gender === 'kadin' && (
+                  <Text className="mt-2 text-[11px] text-pink-500 dark:text-pink-400">
+                    Özel gün (hayız) seri dondurma özelliği aktif olacak.
+                  </Text>
+                )}
+              </View>
+
               <View className="mt-2 flex-row gap-3">
                 <View className="flex-1">
                   <Button
@@ -311,6 +374,7 @@ export default function ProfileScreen({ navigation }: Props) {
                       setLastName(profile?.lastName ?? '');
                       setUsername(profile?.username ?? '');
                       setPhone(profile?.phone ?? '');
+                      setGender(profile?.gender ?? undefined);
                     }}
                     variant="outline"
                   />
@@ -362,6 +426,19 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
+              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+                <Ionicons name="person-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
+                <View>
+                  <Text className="text-xs text-slate-500 dark:text-slate-400">Cinsiyet</Text>
+                  <Text className="text-sm font-medium text-slate-900 dark:text-white">
+                    {profile?.gender === 'erkek'
+                      ? 'Erkek'
+                      : profile?.gender === 'kadin'
+                        ? 'Kadın'
+                        : '—'}
+                  </Text>
+                </View>
+              </View>
             </View>
           )}
         </Card>
@@ -370,7 +447,11 @@ export default function ProfileScreen({ navigation }: Props) {
           <Card className="mx-4 mb-4 gap-3">
             <View className="flex-row items-center gap-3">
               <View className="h-10 w-10 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-500/20">
-                <Ionicons name="shield-checkmark-outline" size={20} color={isDark ? '#a78bfa' : '#7c3aed'} />
+                <Ionicons
+                  name="shield-checkmark-outline"
+                  size={20}
+                  color={isDark ? '#a78bfa' : '#7c3aed'}
+                />
               </View>
               <View className="flex-1">
                 <Text className="font-bold text-slate-900 dark:text-white">Admin Paneli</Text>
@@ -393,7 +474,11 @@ export default function ProfileScreen({ navigation }: Props) {
               className="flex-row items-center gap-3 rounded-2xl bg-slate-50 p-3 dark:bg-slate-900"
               activeOpacity={0.8}>
               <View className="h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-slate-800">
-                <Ionicons name="notifications-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
+                <Ionicons
+                  name="notifications-outline"
+                  size={20}
+                  color={isDark ? '#4b5563' : '#64748b'}
+                />
               </View>
               <View className="flex-1">
                 <Text className="font-bold text-slate-900 dark:text-white">Bildirim Testi</Text>
@@ -426,16 +511,14 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
 
             <View className="flex-row items-center gap-0.5 rounded-full border border-slate-200 bg-slate-100 p-1 dark:border-teal-500/30 dark:bg-teal-500/20">
-              <View
-                className="h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm dark:bg-transparent">
+              <View className="h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm dark:bg-transparent">
                 <Ionicons
                   name="sunny"
                   size={16}
                   color={!isDark ? '#d97706' : 'rgba(255,255,255,0.30)'}
                 />
               </View>
-              <View
-                className="h-8 w-8 items-center justify-center rounded-full bg-transparent dark:bg-teal-500 dark:shadow-sm dark:shadow-teal-500/40">
+              <View className="h-8 w-8 items-center justify-center rounded-full bg-transparent dark:bg-teal-500 dark:shadow-sm dark:shadow-teal-500/40">
                 <Ionicons name="moon" size={16} color={isDark ? '#ffffff' : 'rgba(0,0,0,0.25)'} />
               </View>
             </View>

@@ -2,9 +2,11 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
+import { useOzelGunStore } from '@/modules/ozel_gun/ozel_gun.store';
 import { useEffect, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { alert } from '@/store/alert.store';
 import { prayerService } from '@/services/prayer.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthWallModal } from '@/components/layout/AuthWallModal';
@@ -251,6 +253,8 @@ const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpaci
 export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
   const { stats, fetchStats, trackPrayer, isLoading } = useGamificationStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const gender = useAuthStore((s) => s.user?.gender);
+  const { isActive: isOzelGun, isLoading: ozelGunLoading, fetch: fetchOzelGun, start: startOzelGun, end: endOzelGun } = useOzelGunStore();
   const [prayerTimes, setPrayerTimes] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { isDark } = useTheme();
@@ -296,6 +300,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
         await loadPrayerTimes();
         if (isAuthenticated && isMounted.current) {
           await fetchStats();
+          if (gender === 'kadin') fetchOzelGun();
         }
       } catch (error) {
         console.error('Failed to load data:', error);
@@ -303,7 +308,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
     };
 
     loadData();
-  }, [isComponentReady, isAuthenticated, fetchStats]);
+  }, [isComponentReady, isAuthenticated, fetchStats, gender, fetchOzelGun]);
 
   useEffect(() => {
     if (!isComponentReady || focusNonce === undefined) return;
@@ -495,6 +500,42 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
         </View>
 
         <View className="p-3.5">
+          {/* Özel gün banner */}
+          {isAuthenticated && isOzelGun && (
+            <View className="mb-3 flex-row items-center justify-between rounded-2xl border border-pink-200 bg-pink-50 px-3.5 py-2.5 dark:border-pink-900/50 dark:bg-pink-950/40">
+              <View className="flex-row items-center gap-2">
+                <Ionicons name="snow-outline" size={15} color={isDark ? '#f9a8d4' : '#db2777'} />
+                <View>
+                  <Text className="text-xs font-black text-pink-700 dark:text-pink-300">
+                    Özel Gün Modu
+                  </Text>
+                  <Text className="text-[10px] text-pink-500 dark:text-pink-400">
+                    Seriniz korunuyor
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() =>
+                  alert.confirm(
+                    'Özel Günleri Bitir',
+                    'Özel gün modunu kapatmak istediğinize emin misiniz?',
+                    async () => {
+                      await endOzelGun();
+                    },
+                    'Bitir',
+                    'İptal',
+                    false
+                  )
+                }
+                disabled={ozelGunLoading}
+                className="rounded-xl bg-pink-100 px-2.5 py-1 dark:bg-pink-900/60">
+                <Text className="text-[11px] font-bold text-pink-600 dark:text-pink-300">
+                  Bitir
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <View className="flex-row flex-wrap justify-between">
             {PRAYERS.map((prayer) => {
               const isTracked = isAuthenticated && stats?.today_prayers?.includes(prayer.id);
@@ -508,10 +549,10 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
                 <AnimatedTouchableOpacity
                   key={prayer.id}
                   layout={LinearTransition.springify()}
-                  disabled={isTracked || (isAuthenticated && isUpcoming) || isLoading}
+                  disabled={isTracked || (isAuthenticated && isUpcoming) || isLoading || isOzelGun}
                   onPress={() => handleTrack(prayer)}
                   activeOpacity={0.7}
-                  className={`mb-2.5 w-[48%] ${isAuthenticated && isUpcoming ? 'opacity-40' : 'opacity-100'}`}>
+                  className={`mb-2.5 w-[48%] ${(isAuthenticated && isUpcoming) || isOzelGun ? 'opacity-40' : 'opacity-100'}`}>
                   <View
                     className={`relative flex-row items-center justify-between rounded-[18px] border p-3.5 ${
                       isTracked
@@ -607,6 +648,31 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
               );
             })}
           </View>
+
+          {/* Özel gün başlatma butonu — sadece kadin kullanıcılara */}
+          {isAuthenticated && gender === 'kadin' && !isOzelGun && (
+            <TouchableOpacity
+              onPress={() =>
+                alert.confirm(
+                  'Özel Gün Modunu Başlat',
+                  'Özel günlerinizde seri sayınız donacak ve namazlar devre dışı kalacak.',
+                  async () => {
+                    await startOzelGun();
+                  },
+                  'Başlat',
+                  'İptal',
+                  false
+                )
+              }
+              disabled={ozelGunLoading}
+              activeOpacity={0.75}
+              className="mt-1 flex-row items-center justify-center gap-1.5 rounded-2xl border border-pink-200 bg-pink-50 py-2.5 dark:border-pink-900/40 dark:bg-pink-950/30">
+              <Ionicons name="snow-outline" size={13} color={isDark ? '#f9a8d4' : '#db2777'} />
+              <Text className="text-xs font-bold text-pink-600 dark:text-pink-300">
+                Özel Günlerim
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </TouchableOpacity>
     </View>

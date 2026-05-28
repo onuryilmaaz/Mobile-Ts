@@ -42,6 +42,7 @@ export type AuthUser = {
   lastName?: string;
   phone?: string;
   avatarUrl?: string;
+  gender?: 'erkek' | 'kadin';
 };
 
 export type LoginResponse = {

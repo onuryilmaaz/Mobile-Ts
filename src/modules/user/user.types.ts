@@ -8,6 +8,7 @@ export type UserProfile = {
   lastName?: string;
   phone?: string;
   avatarUrl?: string;
+  gender?: 'erkek' | 'kadin';
 };
 
 export type UpdateProfilePayload = {
@@ -15,6 +16,7 @@ export type UpdateProfilePayload = {
   lastName?: string;
   phone?: string;
   username?: string;
+  gender?: 'erkek' | 'kadin';
 };
 
 export type ChangePasswordPayload = {
