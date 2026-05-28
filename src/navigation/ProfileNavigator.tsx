@@ -9,6 +9,7 @@ import {
   AccountScreen,
   SettingsScreen,
 } from '@/screens/user';
+import AdminNavigator from './AdminNavigator';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -83,6 +84,11 @@ export default function ProfileNavigator() {
               <StandardHeader navigation={navigation} title="Ayarlar" />
             ),
           }}
+        />
+        <Stack.Screen
+          name="Admin"
+          component={AdminNavigator}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </>

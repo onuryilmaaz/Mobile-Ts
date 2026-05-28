@@ -23,6 +23,7 @@ export type ProfileStackParamList = {
   Sessions: undefined;
   Account: undefined;
   AppSettings: undefined;
+  Admin: NavigatorScreenParams<AdminStackParamList>;
 };
 
 export type FamilyStackParamList = {
@@ -90,7 +91,6 @@ export type UserTabParamList = {
   Dhikr: undefined;
   Tracker: NavigatorScreenParams<TrackerStackParamList>;
   Groups: NavigatorScreenParams<GroupStackParamList>;
-  AdminStack: NavigatorScreenParams<AdminStackParamList>;
 };
 
 export type RootStackParamList = {

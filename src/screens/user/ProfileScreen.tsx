@@ -32,7 +32,7 @@ interface SettingsItem {
   title: string;
   subtitle: string;
   icon: keyof typeof Ionicons.glyphMap;
-  screen: keyof ProfileStackParamList;
+  screen: 'AppSettings' | 'ChangePassword' | 'ChangeEmail' | 'Sessions' | 'Account';
   danger?: boolean;
 }
 
@@ -366,27 +366,43 @@ export default function ProfileScreen({ navigation }: Props) {
           )}
         </Card>
 
-        {user?.roles.includes('admin') && (
-          <Card className="mx-4 mb-4">
-            <View className="flex-row items-center justify-between">
-              <View className="flex-1 pr-2">
-                <Text className="mb-1 text-base font-bold text-slate-900 dark:text-white">
-                  Bildirim Testi
+        {roles.includes('admin') && (
+          <Card className="mx-4 mb-4 gap-3">
+            <View className="flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-500/20">
+                <Ionicons name="shield-checkmark-outline" size={20} color={isDark ? '#a78bfa' : '#7c3aed'} />
+              </View>
+              <View className="flex-1">
+                <Text className="font-bold text-slate-900 dark:text-white">Admin Paneli</Text>
+                <Text className="text-xs text-slate-500 dark:text-slate-400">
+                  Kullanıcı ve rol yönetimi
                 </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  navigation.navigate('Admin', { screen: 'Dashboard' });
+                }}
+                className="rounded-full bg-violet-600 px-4 py-2 dark:bg-violet-500"
+                activeOpacity={0.8}>
+                <Text className="text-sm font-semibold text-white">Aç</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              onPress={handleTestNotification}
+              className="flex-row items-center gap-3 rounded-2xl bg-slate-50 p-3 dark:bg-slate-900"
+              activeOpacity={0.8}>
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-slate-800">
+                <Ionicons name="notifications-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
+              </View>
+              <View className="flex-1">
+                <Text className="font-bold text-slate-900 dark:text-white">Bildirim Testi</Text>
                 <Text className="text-xs text-slate-500 dark:text-slate-400">
                   Bildirimlerin çalışıp çalışmadığını test edin
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={handleTestNotification}
-                className="rounded-full bg-teal-600 px-4 py-2.5 active:opacity-80 dark:bg-teal-500"
-                activeOpacity={0.8}>
-                <View className="flex-row items-center gap-2">
-                  <Ionicons name="notifications" size={16} color="#fff" />
-                  <Text className="text-sm font-semibold text-white">Test Et</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+              <Ionicons name="chevron-forward" size={18} color={isDark ? '#4b5563' : '#94a3b8'} />
+            </TouchableOpacity>
           </Card>
         )}
 

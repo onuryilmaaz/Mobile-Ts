@@ -27,7 +27,7 @@ export default function AdminNavigator() {
           component={DashboardScreen}
           options={{
             header: ({ navigation }) => (
-              <StandardHeader navigation={navigation} title="Admin Paneli" showBackButton={false} />
+              <StandardHeader navigation={navigation} title="Admin Paneli" />
             ),
           }}
         />

@@ -3,7 +3,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AdminNavigator from './AdminNavigator';
 import HomeNavigator from './HomeNavigator';
 import SurahsNavigator from './SurahsNavigator';
 import TrackerNavigator from './TrackerNavigator';
@@ -20,7 +19,7 @@ import { DhikrScreen } from '@/screens';
 const Tab = createBottomTabNavigator<UserTabParamList>();
 
 export default function UserNavigator() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   let insets;
   try {
     insets = useSafeAreaInsets();
@@ -30,12 +29,6 @@ export default function UserNavigator() {
   const { isDark } = useTheme();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', description: '' });
-
-  const isAdmin =
-    user?.roles?.some((role: any) => {
-      const r = typeof role === 'string' ? role : role?.name;
-      return r === 'admin' || r === 'superadmin';
-    }) ?? false;
 
   const handleTabPress = (e: any, title: string, description: string) => {
     if (!isAuthenticated) {
@@ -157,19 +150,6 @@ export default function UserNavigator() {
           }}
         />
 
-        {isAdmin && (
-          <Tab.Screen
-            name="AdminStack"
-            component={AdminNavigator}
-            options={{
-              tabBarLabel: 'Admin',
-              headerShown: false,
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="shield-checkmark-outline" size={size} color={color} />
-              ),
-            }}
-          />
-        )}
       </Tab.Navigator>
     </View>
   );
