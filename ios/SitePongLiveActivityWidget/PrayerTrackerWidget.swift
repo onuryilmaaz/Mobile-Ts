@@ -371,27 +371,29 @@ struct PrayerTrackerMediumView: View {
   private var hasKaza: Bool {
     completed.contains { isPrayerKaza($0, in: entry.tracker?.kazaPrayers ?? []) }
   }
+  private var allDone: Bool { count == 5 }
+  private var progress: CGFloat { CGFloat(count) / 5.0 }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       // Header
       HStack(alignment: .center) {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 3) {
           Text("GÜNLÜK NAMAZ TAKİBİ")
             .font(.system(size: 12, weight: .black))
             .foregroundColor(t.textSecondary)
             .tracking(0.8)
+
+          // Dinamik alt başlık — duruma göre değişir
+          Text(subtitleText)
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(subtitleColor)
+            .lineLimit(1)
         }
 
         Spacer()
 
-        PremiumRing(
-          progress: CGFloat(count) / 5.0,
-          lineWidth: 3.5,
-          isKaza: hasKaza,
-          trackColor: t.ringTrack
-        )
-        .frame(width: 36, height: 36)
+        premiumCounterRing
       }
 
       // Prayer tiles
@@ -413,6 +415,99 @@ struct PrayerTrackerMediumView: View {
     }
     .padding(15)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+  }
+
+  // MARK: - Premium Counter Ring
+
+  private var premiumCounterRing: some View {
+    let accentColor: Color = hasKaza ? .salahAmber : .salahTeal
+    let accentBright: Color = hasKaza
+      ? Color(red: 0.92, green: 0.52, blue: 0.18)
+      : .salahTealBright
+
+    return ZStack {
+      // 1) Dış glow halo — dark'ta belirgin, light'ta hafif
+      Circle()
+        .fill(accentColor.opacity(t == .dark ? 0.32 : 0.18))
+        .frame(width: 56, height: 56)
+        .blur(radius: t == .dark ? 10 : 6)
+
+      // 2) Track ring (arka plan)
+      Circle()
+        .stroke(t.ringTrack, style: StrokeStyle(lineWidth: 4.5, lineCap: .round))
+        .frame(width: 46, height: 46)
+
+      // 3) Progress arc — gradient + glow shadow
+      Circle()
+        .trim(from: 0, to: progress)
+        .stroke(
+          hasKaza ? AngularGradient.salahKazaRing : AngularGradient.salahRing,
+          style: StrokeStyle(lineWidth: 4.5, lineCap: .round)
+        )
+        .rotationEffect(.degrees(-90))
+        .frame(width: 46, height: 46)
+        .shadow(color: accentBright.opacity(0.55), radius: 4)
+        .shadow(color: accentColor.opacity(t == .light ? 0.35 : 0.0), radius: 2)
+
+      // 4) İçerik — tamamlandıysa seal, değilse sayı
+      if allDone {
+        ZStack {
+          // İkon arkası soft glow
+          Circle()
+            .fill(accentColor.opacity(t == .dark ? 0.45 : 0.0))
+            .frame(width: 24, height: 24)
+            .blur(radius: 5)
+
+          Image(systemName: "checkmark.seal.fill")
+            .font(.system(size: 22, weight: .bold))
+            .foregroundStyle(
+              LinearGradient(
+                colors: [accentBright, accentColor],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+              )
+            )
+            .shadow(color: accentColor.opacity(0.5), radius: 3)
+        }
+      } else {
+        VStack(spacing: -2) {
+          Text("\(count)")
+            .font(.system(size: 19, weight: .heavy, design: .rounded))
+            .foregroundStyle(
+              LinearGradient(
+                colors: [t.textPrimary, t.textPrimary.opacity(0.85)],
+                startPoint: .top,
+                endPoint: .bottom
+              )
+            )
+          Text("/ 5")
+            .font(.system(size: 8.5, weight: .black, design: .rounded))
+            .foregroundColor(t.textSecondary)
+            .tracking(0.3)
+        }
+      }
+    }
+    .frame(width: 56, height: 56)
+  }
+
+  // MARK: - Dynamic Subtitle
+
+  private var subtitleText: String {
+    if allDone {
+      return hasKaza ? "Tamamlandı • kazalı" : "Bugün tamamlandı ✓"
+    }
+    let remaining = 5 - count
+    if count == 0 {
+      return "5 vakit bekliyor"
+    }
+    return "\(remaining) vakit kaldı"
+  }
+
+  private var subtitleColor: Color {
+    if allDone {
+      return hasKaza ? .salahAmber : .salahTeal
+    }
+    return t.textTertiary
   }
 }
 
