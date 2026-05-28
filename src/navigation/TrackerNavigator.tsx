@@ -46,7 +46,7 @@ export default function TrackerNavigator() {
           component={GamificationScreen}
           options={{
             header: ({ navigation }) => (
-              <StandardHeader navigation={navigation} title="Başarılar" backTitle="Defterim" />
+              <StandardHeader navigation={navigation} title="Başarılar" backTitle="Geri" />
             ),
           }}
         />
