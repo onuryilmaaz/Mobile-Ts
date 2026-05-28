@@ -10,6 +10,15 @@ const NOTIFICATION_ENABLED_KEY = 'PRAYER_NOTIFICATIONS_ENABLED';
 const NOTIFICATION_OFFSET_KEY = 'PRAYER_NOTIFICATION_OFFSET'; // dakika: 0 | 5 | 10 | 15 | 30
 const NOTIFICATION_PRAYERS_KEY = 'PRAYER_NOTIFICATION_EACH'; // JSON: {imsak, gunes, ogle, ikindi, aksam, yatsi}
 
+const REMINDER_ENABLED_KEY = 'REMINDER_ENABLED';
+const REMINDER_INTERVAL_KEY = 'REMINDER_INTERVAL'; // saat: 1 | 2 | 3 | 4 | 6
+const REMINDER_BLACKOUT_START_KEY = 'REMINDER_BLACKOUT_START'; // 0-23
+const REMINDER_BLACKOUT_END_KEY = 'REMINDER_BLACKOUT_END'; // 0-23
+
+export const DEFAULT_REMINDER_INTERVAL = 2;
+export const DEFAULT_BLACKOUT_START = 23;
+export const DEFAULT_BLACKOUT_END = 7;
+
 const DEFAULT_PRAYER_ENABLED = {
   imsak: true,
   gunes: false,
@@ -152,12 +161,56 @@ export const notificationService = {
     }
   },
 
+  async getReminderEnabled(): Promise<boolean> {
+    const val = await AsyncStorage.getItem(REMINDER_ENABLED_KEY);
+    return val === null ? true : val === 'true';
+  },
+
+  async setReminderEnabled(value: boolean): Promise<void> {
+    await AsyncStorage.setItem(REMINDER_ENABLED_KEY, String(value));
+  },
+
+  async getReminderInterval(): Promise<number> {
+    const val = await AsyncStorage.getItem(REMINDER_INTERVAL_KEY);
+    return val ? parseInt(val) : DEFAULT_REMINDER_INTERVAL;
+  },
+
+  async setReminderInterval(hours: number): Promise<void> {
+    await AsyncStorage.setItem(REMINDER_INTERVAL_KEY, String(hours));
+  },
+
+  async getReminderBlackout(): Promise<{ start: number; end: number }> {
+    const [s, e] = await Promise.all([
+      AsyncStorage.getItem(REMINDER_BLACKOUT_START_KEY),
+      AsyncStorage.getItem(REMINDER_BLACKOUT_END_KEY),
+    ]);
+    return {
+      start: s !== null ? parseInt(s) : DEFAULT_BLACKOUT_START,
+      end: e !== null ? parseInt(e) : DEFAULT_BLACKOUT_END,
+    };
+  },
+
+  async setReminderBlackout(start: number, end: number): Promise<void> {
+    await Promise.all([
+      AsyncStorage.setItem(REMINDER_BLACKOUT_START_KEY, String(start)),
+      AsyncStorage.setItem(REMINDER_BLACKOUT_END_KEY, String(end)),
+    ]);
+  },
+
   async scheduleHourlyReminders() {
     try {
       if (Platform.OS === 'android' && isExpoGo) return;
 
-      const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
-      if (enabled !== 'true') return;
+      const [masterEnabled, reminderEnabled] = await Promise.all([
+        AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY),
+        this.getReminderEnabled(),
+      ]);
+      if (masterEnabled !== 'true' || !reminderEnabled) return;
+
+      const [interval, blackout] = await Promise.all([
+        this.getReminderInterval(),
+        this.getReminderBlackout(),
+      ]);
 
       // Pre-fetch content so network failures don't silently drop slots
       const [verseResult, hadithResult] = await Promise.allSettled([
@@ -168,22 +221,28 @@ export const notificationService = {
       const verse = verseResult.status === 'fulfilled' ? verseResult.value : null;
       const hadith = hadithResult.status === 'fulfilled' ? hadithResult.value : null;
 
-      // 48 hours keeps us well under iOS's 64 scheduled notification limit
-      // (prayer slots use at most 12, leaving 52 for reminders)
+      // Stay under iOS's 64 limit (prayer slots use at most 12)
       const HOURS_AHEAD = 48;
       const now = new Date();
+      let slotIndex = 0;
 
-      for (let i = 1; i <= HOURS_AHEAD; i++) {
+      for (let i = interval; i <= HOURS_AHEAD; i += interval) {
         const scheduleTime = new Date(now.getTime() + i * 60 * 60 * 1000);
         scheduleTime.setMinutes(0, 0, 0);
 
-        const useAyet = i % 2 === 0;
+        const hour = scheduleTime.getHours();
+        const { start, end } = blackout;
+        const inBlackout =
+          start <= end ? hour >= start && hour < end : hour >= start || hour < end;
+        if (inBlackout) continue;
+
+        const useAyet = slotIndex % 2 === 0;
+        slotIndex++;
 
         let title = '';
         let subtitle = '';
         let body = '';
 
-        // Prefer the intended type, fall back to the other if unavailable
         if (useAyet && verse) {
           title = '📖 İlahi Kelam';
           subtitle = `${verse.surah.name}, ${verse.verse.verse_number}. Ayet`;
@@ -193,18 +252,16 @@ export const notificationService = {
           subtitle = hadith.bookName;
           body = hadith.hadith.text;
         } else if (hadith) {
-          // verse unavailable, fall back to hadith
           title = '✨ Nurdan Damlalar';
           subtitle = hadith.bookName;
           body = hadith.hadith.text;
         } else if (verse) {
-          // hadith unavailable, fall back to verse
           title = '📖 İlahi Kelam';
           subtitle = `${verse.surah.name}, ${verse.verse.verse_number}. Ayet`;
           body = verse.verse.translation.text;
         }
 
-        if (!body) continue; // both sources unavailable — skip
+        if (!body) continue;
 
         await Notifications.scheduleNotificationAsync({
           content: {
@@ -225,7 +282,7 @@ export const notificationService = {
         });
       }
 
-      console.log(`Hourly spiritual reminders scheduled for ${HOURS_AHEAD}h`);
+      console.log(`Spiritual reminders scheduled: every ${interval}h, blackout ${blackout.start}:00-${blackout.end}:00`);
     } catch (error) {
       console.error('Error scheduling hourly reminders:', error);
     }

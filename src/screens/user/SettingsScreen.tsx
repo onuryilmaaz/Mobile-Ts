@@ -4,9 +4,13 @@ import { View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
-import { useThemeStore } from '@/store/theme.store';
 import { useAuthStore } from '@/modules/auth/auth.store';
-import { notificationService } from '@/services/notification.service';
+import {
+  notificationService,
+  DEFAULT_REMINDER_INTERVAL,
+  DEFAULT_BLACKOUT_START,
+  DEFAULT_BLACKOUT_END,
+} from '@/services/notification.service';
 import { adhanService } from '@/services/adhan.service';
 import type { AdhanPrayerKey } from '@/services/adhan.service';
 import { useAdhanStore } from '@/services/adhan.store';
@@ -37,7 +41,6 @@ const OFFSETS = [0, 5, 10, 15, 30];
 
 export default function SettingsScreen() {
   const { isDark } = useTheme();
-  const { toggleTheme } = useThemeStore();
   const user = useAuthStore((s) => s.user);
   const isAdmin = user?.roles?.includes('admin') ?? false;
   const showAdhan = useAdhanStore((s) => s.show);
@@ -62,6 +65,11 @@ export default function SettingsScreen() {
     yatsi: true,
   });
 
+  const [reminderEnabled, setReminderEnabled] = useState(true);
+  const [reminderInterval, setReminderInterval] = useState(DEFAULT_REMINDER_INTERVAL);
+  const [blackoutStart, setBlackoutStart] = useState(DEFAULT_BLACKOUT_START);
+  const [blackoutEnd, setBlackoutEnd] = useState(DEFAULT_BLACKOUT_END);
+
   const [districtId, setDistrictId] = useState<string | null>(null);
   const [stateId, setStateId] = useState<string | null>(null);
   const [detectingLocation, setDetectingLocation] = useState(false);
@@ -70,20 +78,28 @@ export default function SettingsScreen() {
   const state = stateId ? getStateById(stateId) : null;
 
   const load = useCallback(async () => {
-    const [en, off, prayers, adhan, savedStateId, savedDistrictId] = await Promise.all([
-      notificationService.isEnabled(),
-      notificationService.getOffset(),
-      notificationService.getPrayerEnabled(),
-      adhanService.getAdhanPrayers(),
-      AsyncStorage.getItem(STORAGE_STATE_ID_KEY),
-      AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY),
-    ]);
+    const [en, off, prayers, adhan, savedStateId, savedDistrictId, remEn, remInt, blackout] =
+      await Promise.all([
+        notificationService.isEnabled(),
+        notificationService.getOffset(),
+        notificationService.getPrayerEnabled(),
+        adhanService.getAdhanPrayers(),
+        AsyncStorage.getItem(STORAGE_STATE_ID_KEY),
+        AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY),
+        notificationService.getReminderEnabled(),
+        notificationService.getReminderInterval(),
+        notificationService.getReminderBlackout(),
+      ]);
     setNotifEnabled(en);
     setOffset(off);
     setPrayerEnabled(prayers);
     setAdhanPrayers(adhan);
     if (savedStateId) setStateId(savedStateId);
     if (savedDistrictId) setDistrictId(savedDistrictId);
+    setReminderEnabled(remEn);
+    setReminderInterval(remInt);
+    setBlackoutStart(blackout.start);
+    setBlackoutEnd(blackout.end);
   }, []);
 
   useEffect(() => {
@@ -175,6 +191,34 @@ export default function SettingsScreen() {
   const testNotif = async () => {
     const sent = await notificationService.sendTestNotification();
     if (sent) alert.success('Gönderildi', 'Test bildirimi birkaç saniye içinde gelecek.');
+  };
+
+  const toggleReminder = async (val: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await notificationService.setReminderEnabled(val);
+    setReminderEnabled(val);
+  };
+
+  const changeReminderInterval = async (hours: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await notificationService.setReminderInterval(hours);
+    setReminderInterval(hours);
+  };
+
+  const changeBlackoutHour = async (
+    type: 'start' | 'end',
+    delta: number,
+    current: number,
+  ) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const next = (current + delta + 24) % 24;
+    if (type === 'start') {
+      setBlackoutStart(next);
+      await notificationService.setReminderBlackout(next, blackoutEnd);
+    } else {
+      setBlackoutEnd(next);
+      await notificationService.setReminderBlackout(blackoutStart, next);
+    }
   };
 
   const sub = isDark ? '#64748b' : '#94a3b8';
@@ -356,6 +400,118 @@ export default function SettingsScreen() {
         )}
       </View>
 
+      {/* Ayet & Hadis Bildirimleri */}
+      <Section title="Ayet & Hadis Bildirimleri" />
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+        <Row
+          icon="book-outline"
+          iconColor="#a855f7"
+          label="Ayet & Hadis Bildirimleri"
+          sublabel="Gün boyunca manevi hatırlatmalar al"
+          right={
+            <Switch
+              value={reminderEnabled}
+              onValueChange={toggleReminder}
+              trackColor={{ false: '#334155', true: '#a855f7' }}
+              thumbColor="#fff"
+            />
+          }
+        />
+
+        {reminderEnabled && (
+          <>
+            {/* Interval */}
+            <View className="border-t border-slate-100 px-4 pb-3 pt-3 dark:border-white/[7%]">
+              <Text className="mb-2.5 text-xs font-bold text-slate-400 dark:text-slate-500">
+                Kaç saatte bir gönderilsin?
+              </Text>
+              <View className="flex-row gap-2">
+                {[1, 2, 3, 4, 6].map((h) => (
+                  <TouchableOpacity
+                    key={h}
+                    onPress={() => changeReminderInterval(h)}
+                    className="rounded-xl px-3.5 py-2"
+                    style={{
+                      backgroundColor:
+                        reminderInterval === h ? '#a855f7' : isDark ? '#0f172a' : '#f1f5f9',
+                    }}>
+                    <Text
+                      className="text-xs font-black"
+                      style={{ color: reminderInterval === h ? '#fff' : sub }}>
+                      {h === 1 ? 'Her saat' : `${h} saatte`}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Blackout */}
+            <View className="border-t border-slate-100 px-4 pb-4 pt-3 dark:border-white/[7%]">
+              <Text className="mb-3 text-xs font-bold text-slate-400 dark:text-slate-500">
+                Bu saatler arasında gönderme
+              </Text>
+              <View className="flex-row items-center gap-3">
+                {/* Start */}
+                <View className="flex-1 items-center gap-1.5">
+                  <Text className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Başlangıç
+                  </Text>
+                  <View
+                    className="flex-row items-center gap-2 rounded-2xl px-3 py-2.5"
+                    style={{ backgroundColor: isDark ? '#0f172a' : '#f1f5f9' }}>
+                    <TouchableOpacity
+                      onPress={() => changeBlackoutHour('start', -1, blackoutStart)}
+                      hitSlop={8}>
+                      <Ionicons name="chevron-back" size={16} color={sub} />
+                    </TouchableOpacity>
+                    <Text className="w-12 text-center text-sm font-black text-slate-900 dark:text-white">
+                      {String(blackoutStart).padStart(2, '0')}:00
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => changeBlackoutHour('start', 1, blackoutStart)}
+                      hitSlop={8}>
+                      <Ionicons name="chevron-forward" size={16} color={sub} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <Ionicons name="arrow-forward" size={14} color={sub} />
+
+                {/* End */}
+                <View className="flex-1 items-center gap-1.5">
+                  <Text className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Bitiş
+                  </Text>
+                  <View
+                    className="flex-row items-center gap-2 rounded-2xl px-3 py-2.5"
+                    style={{ backgroundColor: isDark ? '#0f172a' : '#f1f5f9' }}>
+                    <TouchableOpacity
+                      onPress={() => changeBlackoutHour('end', -1, blackoutEnd)}
+                      hitSlop={8}>
+                      <Ionicons name="chevron-back" size={16} color={sub} />
+                    </TouchableOpacity>
+                    <Text className="w-12 text-center text-sm font-black text-slate-900 dark:text-white">
+                      {String(blackoutEnd).padStart(2, '0')}:00
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => changeBlackoutHour('end', 1, blackoutEnd)}
+                      hitSlop={8}>
+                      <Ionicons name="chevron-forward" size={16} color={sub} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              {/* Özet */}
+              <Text className="mt-2.5 text-center text-[11px] text-slate-400 dark:text-slate-500">
+                {String(blackoutStart).padStart(2, '0')}:00 –{' '}
+                {String(blackoutEnd).padStart(2, '0')}:00 arası bildirim gönderilmez
+              </Text>
+            </View>
+          </>
+        )}
+      </View>
+
       {/* Ezan Sesi */}
       <Section title="Ezan Sesi" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
@@ -431,27 +587,42 @@ export default function SettingsScreen() {
                   {
                     text: 'İmsak',
                     style: 'default',
-                    onPress: async () => { await adhanService.playAdhan('imsak'); showAdhan('imsak', 'İmsak'); },
+                    onPress: async () => {
+                      await adhanService.playAdhan('imsak');
+                      showAdhan('imsak', 'İmsak');
+                    },
                   },
                   {
                     text: 'Öğle',
                     style: 'default',
-                    onPress: async () => { await adhanService.playAdhan('ogle'); showAdhan('ogle', 'Öğle'); },
+                    onPress: async () => {
+                      await adhanService.playAdhan('ogle');
+                      showAdhan('ogle', 'Öğle');
+                    },
                   },
                   {
                     text: 'İkindi',
                     style: 'default',
-                    onPress: async () => { await adhanService.playAdhan('ikindi'); showAdhan('ikindi', 'İkindi'); },
+                    onPress: async () => {
+                      await adhanService.playAdhan('ikindi');
+                      showAdhan('ikindi', 'İkindi');
+                    },
                   },
                   {
                     text: 'Akşam',
                     style: 'default',
-                    onPress: async () => { await adhanService.playAdhan('aksam'); showAdhan('aksam', 'Akşam'); },
+                    onPress: async () => {
+                      await adhanService.playAdhan('aksam');
+                      showAdhan('aksam', 'Akşam');
+                    },
                   },
                   {
                     text: 'Yatsı',
                     style: 'default',
-                    onPress: async () => { await adhanService.playAdhan('yatsi'); showAdhan('yatsi', 'Yatsı'); },
+                    onPress: async () => {
+                      await adhanService.playAdhan('yatsi');
+                      showAdhan('yatsi', 'Yatsı');
+                    },
                   },
                   { text: 'Durdur', style: 'destructive', onPress: () => adhanService.stop() },
                   { text: 'İptal', style: 'cancel' },
@@ -461,29 +632,6 @@ export default function SettingsScreen() {
             right={<Ionicons name="chevron-forward" size={16} color={sub} />}
           />
         )}
-      </View>
-
-      {/* Görünüm */}
-      <Section title="Görünüm" />
-      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
-        <Row
-          icon={isDark ? 'moon' : 'sunny'}
-          iconColor="#f59e0b"
-          label="Tema"
-          sublabel={isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif'}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            toggleTheme();
-          }}
-          right={
-            <Switch
-              value={isDark}
-              onValueChange={() => toggleTheme()}
-              trackColor={{ false: '#334155', true: '#475569' }}
-              thumbColor={isDark ? '#f59e0b' : '#cbd5e1'}
-            />
-          }
-        />
       </View>
 
       {/* Dil Seçimi */}

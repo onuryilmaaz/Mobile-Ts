@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { notificationService } from '@/services/notification.service';
 import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -11,7 +10,6 @@ import { Screen } from '@/components/layout/Screen';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { UploadOverlay } from '@/components/feedback/UploadOverlay';
 import { userApi } from '@/modules/user/user.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
@@ -95,15 +93,6 @@ export default function ProfileScreen({ navigation }: Props) {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
-  const handleTestNotification = async () => {
-    const success = await notificationService.sendTestNotification();
-    if (success) {
-      alert.success('Test Bildirimi', 'Bildirim 1 saniye içinde gelecek!');
-    } else {
-      alert.error('Hata', 'Bildirim gönderilemedi');
-    }
-  };
 
   const loadProfile = useCallback(
     async (isRefresh = false) => {
@@ -251,21 +240,10 @@ export default function ProfileScreen({ navigation }: Props) {
             {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
           </Text>
           {(profile?.username || user?.username) && (
-            <Text className="text-sm font-medium text-teal-600 dark:text-teal-400">
+            <Text className="text-lg font-medium text-teal-600 dark:text-teal-400">
               @{profile?.username || user?.username}
             </Text>
           )}
-          <Text className="text-slate-500 dark:text-slate-400">
-            {profile?.email ?? user?.email}
-          </Text>
-
-          <View className="mt-4 flex-row flex-wrap gap-2">
-            {roles.map((role) => (
-              <Badge key={role} variant="primary" size="sm">
-                {role}
-              </Badge>
-            ))}
-          </View>
         </View>
 
         <Card className="mx-4 mb-4">
@@ -469,25 +447,6 @@ export default function ProfileScreen({ navigation }: Props) {
                 <Text className="text-sm font-semibold text-white">Aç</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={handleTestNotification}
-              className="flex-row items-center gap-3 rounded-2xl bg-slate-50 p-3 dark:bg-slate-900"
-              activeOpacity={0.8}>
-              <View className="h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-slate-800">
-                <Ionicons
-                  name="notifications-outline"
-                  size={20}
-                  color={isDark ? '#4b5563' : '#64748b'}
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="font-bold text-slate-900 dark:text-white">Bildirim Testi</Text>
-                <Text className="text-xs text-slate-500 dark:text-slate-400">
-                  Bildirimlerin çalışıp çalışmadığını test edin
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={isDark ? '#4b5563' : '#94a3b8'} />
-            </TouchableOpacity>
           </Card>
         )}
 

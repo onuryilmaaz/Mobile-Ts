@@ -75,7 +75,7 @@ export default function GroupListScreen({ navigation }: Props) {
             <TouchableOpacity
               onPress={() => setJoinModalVisible(true)}
               className="h-10 w-10 items-center justify-center rounded-2xl border border-teal-500/30 bg-teal-500/10">
-              <Ionicons name="enter-outline" size={20} color={isDark ? '#2dd4bf' : '#0f766e'} />
+              <Ionicons name="journal" size={20} color={isDark ? '#2dd4bf' : '#0f766e'} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('GroupCreate')}
