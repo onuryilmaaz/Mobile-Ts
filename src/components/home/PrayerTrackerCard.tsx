@@ -212,49 +212,19 @@ const PRAYERS = [
   { id: 'isha', name: 'Yatsı', icon: 'star', timeKey: 'yatsi', nextTimeKey: 'imsak_next' },
 ] as const;
 
-const PRAYER_COLORS: Record<
-  string,
-  { bg: string; darkBg: string; border: string; darkBorder: string }
-> = {
-  fajr: {
-    bg: 'rgba(99,102,241,0.06)',
-    darkBg: 'rgba(99,102,241,0.11)',
-    border: 'rgba(99,102,241,0.20)',
-    darkBorder: 'rgba(99,102,241,0.30)',
-  },
-  dhuhr: {
-    bg: 'rgba(245,158,11,0.06)',
-    darkBg: 'rgba(245,158,11,0.11)',
-    border: 'rgba(245,158,11,0.22)',
-    darkBorder: 'rgba(245,158,11,0.32)',
-  },
-  asr: {
-    bg: 'rgba(249,115,22,0.06)',
-    darkBg: 'rgba(249,115,22,0.11)',
-    border: 'rgba(249,115,22,0.20)',
-    darkBorder: 'rgba(249,115,22,0.30)',
-  },
-  maghrib: {
-    bg: 'rgba(244,63,94,0.06)',
-    darkBg: 'rgba(244,63,94,0.11)',
-    border: 'rgba(244,63,94,0.20)',
-    darkBorder: 'rgba(244,63,94,0.30)',
-  },
-  isha: {
-    bg: 'rgba(139,92,246,0.06)',
-    darkBg: 'rgba(139,92,246,0.11)',
-    border: 'rgba(139,92,246,0.20)',
-    darkBorder: 'rgba(139,92,246,0.30)',
-  },
-};
-
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
   const { stats, fetchStats, trackPrayer, isLoading } = useGamificationStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const gender = useAuthStore((s) => s.user?.gender);
-  const { isActive: isOzelGun, isLoading: ozelGunLoading, fetch: fetchOzelGun, start: startOzelGun, end: endOzelGun } = useOzelGunStore();
+  const {
+    isActive: isOzelGun,
+    isLoading: ozelGunLoading,
+    fetch: fetchOzelGun,
+    start: startOzelGun,
+    end: endOzelGun,
+  } = useOzelGunStore();
   const [prayerTimes, setPrayerTimes] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { isDark } = useTheme();
@@ -559,20 +529,8 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
                         ? isKazaLog
                           ? 'border-orange-500/50 bg-orange-500/10 shadow-sm shadow-orange-500/30'
                           : 'border-teal-500/50 bg-teal-500/10 shadow-sm shadow-teal-500/30'
-                        : ''
-                    }`}
-                    style={
-                      !isTracked
-                        ? {
-                            backgroundColor: isDark
-                              ? PRAYER_COLORS[prayer.id].darkBg
-                              : PRAYER_COLORS[prayer.id].bg,
-                            borderColor: isDark
-                              ? PRAYER_COLORS[prayer.id].darkBorder
-                              : PRAYER_COLORS[prayer.id].border,
-                          }
-                        : undefined
-                    }>
+                        : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/30'
+                    }`}> 
                     {(isKazaLog || (isAuthenticated && !isTracked && isExpired)) && (
                       <View
                         className={`absolute -right-1.5 -top-1.5 z-10 rounded-full px-1.5 py-0.5 ${isKazaLog ? 'bg-orange-500' : 'bg-white/25'}`}>
