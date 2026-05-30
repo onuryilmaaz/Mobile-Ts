@@ -28,6 +28,8 @@
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F82D7C0161D14B5C91AB5C1E /* SitePongActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF2A17FE6FF40D7BCFE5398 /* SitePongActivityAttributes.swift */; };
 		FE9AD7512F4D4D66ABD8D467 /* SitePongLiveActivityWidget.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = A671890171FA42BC828537F3 /* SitePongLiveActivityWidget.appex */; };
+		FF052449B78E400A9CD65DD5 /* GoalsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */; };
+		2CCE03DED4814E9193314F26 /* MarkGoalIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -73,6 +75,8 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Salah/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Salah-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Salah-Bridging-Header.h"; path = "Salah/Salah-Bridging-Header.h"; sourceTree = "<group>"; };
+		2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GoalsWidget.swift"; path = "GoalsWidget.swift"; sourceTree = "<group>"; };
+		80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MarkGoalIntent.swift"; path = "MarkGoalIntent.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +148,8 @@
 				1F05DCD1A9F1406389DA942B /* SharedColors.swift */,
 				D88CD69BFDEC4E519770B4A7 /* MarkPrayerIntent.swift */,
 				881B01E9B01E44EFA11D7EDC /* Info.plist */,
+				2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */,
+				80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */,
 			);
 			name = SitePongLiveActivityWidget;
 			path = SitePongLiveActivityWidget;
@@ -457,6 +463,8 @@
 				8C9CE95F2DF34721B2590BF5 /* SharedData.swift in Sources */,
 				E70D0EA2DB554AC8B6898F30 /* SharedColors.swift in Sources */,
 				DA3047B1F73A4D7599A07CFC /* MarkPrayerIntent.swift in Sources */,
+				FF052449B78E400A9CD65DD5 /* GoalsWidget.swift in Sources */,
+				2CCE03DED4814E9193314F26 /* MarkGoalIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,7 +499,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onur6541.salah;
-				PRODUCT_NAME = Salah;
+				PRODUCT_NAME = "Salah";
 				SWIFT_OBJC_BRIDGING_HEADER = "Salah/Salah-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -523,7 +531,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onur6541.salah;
-				PRODUCT_NAME = Salah;
+				PRODUCT_NAME = "Salah";
 				SWIFT_OBJC_BRIDGING_HEADER = "Salah/Salah-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

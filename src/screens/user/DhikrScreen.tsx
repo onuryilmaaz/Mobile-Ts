@@ -27,6 +27,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/hooks/useTheme';
+import { trackerApi } from '@/modules/tracker/tracker.api';
+import { useAuthStore } from '@/modules/auth/auth.store';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.72;
@@ -215,6 +217,7 @@ function HistoryModal({
 }
 
 export default function DhikrScreen() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [count, setCount] = useState(0);
   const [activePreset, setActivePreset] = useState(0);
   const [presets, setPresets] = useState<Preset[]>(DEFAULT_PRESETS);
@@ -303,6 +306,14 @@ export default function DhikrScreen() {
       if (round === 1) showMilestoneToast('🎉 Tur tamamlandı!');
       else if (round === 3) showMilestoneToast('🔥 3 tur! Devam et!');
       else showMilestoneToast(`✨ ${round}. tur tamamlandı!`);
+      if (isAuthenticated) {
+        trackerApi
+          .logActivity({
+            activity_type: 'dhikr',
+            value: { subtype: presets[activePreset]?.name ?? 'Özel', count: target },
+          })
+          .catch(() => {});
+      }
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }

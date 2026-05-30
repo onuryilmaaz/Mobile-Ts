@@ -74,6 +74,36 @@ struct InspirationData: Codable {
   }
 }
 
+struct GoalItem: Codable {
+  var activity: String
+  var label: String
+  var target: Int
+  var progress: Int
+  var unit: String
+  var colorHex: String
+  var sfSymbol: String
+
+  var pct: Double { target > 0 ? min(1.0, Double(progress) / Double(target)) : 0 }
+  var isDone: Bool { progress >= target }
+}
+
+struct GoalsData: Codable {
+  var goals: [GoalItem]
+  var completedCount: Int
+  var totalCount: Int
+  var date: String
+
+  static func load() -> GoalsData? {
+    guard
+      let ud = UserDefaults(suiteName: appGroupID),
+      let data = ud.data(forKey: "salah_goals_data"),
+      let obj = try? JSONDecoder().decode(GoalsData.self, from: data)
+    else { return nil }
+    guard obj.date == todayDateString() else { return nil }
+    return obj
+  }
+}
+
 // MARK: - Date Helpers
 
 private func todayDateString() -> String {

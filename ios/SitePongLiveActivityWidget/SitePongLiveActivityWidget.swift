@@ -9,12 +9,14 @@ struct SitePongLiveActivityWidgetBundle: WidgetBundle {
     PrayerTrackerWidget()
     AmelWidget()
     InspirationWidget()
+    GoalsWidget()
 
     // Light theme variants
     PrayerTimesLightWidget()
     PrayerTrackerLightWidget()
     AmelLightWidget()
     InspirationLightWidget()
+    GoalsLightWidget()
 
     // Kilit ekranı widget'ları (iOS 16+)
     SalahNextPrayerLockWidget()

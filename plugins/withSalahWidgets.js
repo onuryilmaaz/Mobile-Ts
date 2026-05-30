@@ -19,6 +19,8 @@ const EXTENSION_SWIFT_FILES = [
   'PrayerTrackerWidget.swift',
   'AmelWidget.swift',
   'InspirationWidget.swift',
+  'GoalsWidget.swift',
+  'MarkGoalIntent.swift',
   'SharedData.swift',
   'SharedColors.swift',
   'MarkPrayerIntent.swift',
@@ -64,6 +66,83 @@ function copyFiles(iosPath) {
 
 // ---- pbxproj manipulation ----
 
+function _addMissingFilesToExistingTarget(project, iosPath) {
+  const nativeTargets = project.pbxNativeTargetSection();
+  const targetEntry = Object.entries(nativeTargets).find(
+    ([k, v]) => !k.endsWith('_comment') && v && v.name && v.name.replace(/"/g, '') === WIDGET_TARGET_NAME
+  );
+  if (!targetEntry) return;
+  const targetUUID = targetEntry[0];
+
+  // Find the Sources build phase for this target
+  const sourcesSection = project.hash.project.objects['PBXSourcesBuildPhase'] || {};
+  const targetObj = nativeTargets[targetUUID];
+  const sourcesPhaseRef = (targetObj.buildPhases || []).find((p) => {
+    const val = typeof p === 'object' ? p.value : p;
+    return !!sourcesSection[val];
+  });
+  if (!sourcesPhaseRef) return;
+  const sourcesPhaseUUID = typeof sourcesPhaseRef === 'object' ? sourcesPhaseRef.value : sourcesPhaseRef;
+  const sourcesPhase = sourcesSection[sourcesPhaseUUID];
+  if (!sourcesPhase) return;
+
+  const fileRefs = project.pbxFileReferenceSection();
+  const buildFiles = project.hash.project.objects['PBXBuildFile'] || {};
+
+  // Collect files already in the Sources phase (by fileRef path)
+  const existingPaths = new Set(
+    Object.values(fileRefs)
+      .filter((r) => r && r.path)
+      .map((r) => r.path.replace(/"/g, ''))
+  );
+
+  for (const file of EXTENSION_SWIFT_FILES) {
+    if (existingPaths.has(file)) continue; // already in project
+
+    const widgetDir = path.join(iosPath, WIDGET_TARGET_NAME);
+    const fullPath = path.join(widgetDir, file);
+    if (!fs.existsSync(fullPath)) continue; // file not on disk yet
+
+    // Create file reference
+    const fileRefUUID = project.generateUuid();
+    const buildFileUUID = project.generateUuid();
+
+    project.hash.project.objects['PBXFileReference'][fileRefUUID] = {
+      isa: 'PBXFileReference',
+      fileEncoding: 4,
+      lastKnownFileType: 'sourcecode.swift',
+      name: `"${file}"`,
+      path: `"${file}"`,
+      sourceTree: '"<group>"',
+    };
+    project.hash.project.objects['PBXFileReference'][`${fileRefUUID}_comment`] = file;
+
+    // Create build file
+    buildFiles[buildFileUUID] = {
+      isa: 'PBXBuildFile',
+      fileRef: fileRefUUID,
+      fileRef_comment: file,
+    };
+    buildFiles[`${buildFileUUID}_comment`] = `${file} in Sources`;
+
+    // Add to Sources phase
+    sourcesPhase.files = sourcesPhase.files || [];
+    sourcesPhase.files.push({ value: buildFileUUID, comment: `${file} in Sources` });
+
+    // Add to widget's PBXGroup
+    const pbxGroups = project.hash.project.objects['PBXGroup'] || {};
+    const widgetGroup = Object.entries(pbxGroups).find(
+      ([k, v]) => !k.endsWith('_comment') && v && v.name && v.name.replace(/"/g, '') === WIDGET_TARGET_NAME
+    );
+    if (widgetGroup) {
+      pbxGroups[widgetGroup[0]].children = pbxGroups[widgetGroup[0]].children || [];
+      pbxGroups[widgetGroup[0]].children.push({ value: fileRefUUID, comment: file });
+    }
+
+    console.log(`[withSalahWidgets] Added missing file to target: ${file}`);
+  }
+}
+
 function addWidgetTarget(project, iosPath) {
   // Guard: skip if already added
   const nativeTargets = project.pbxNativeTargetSection();
@@ -71,7 +150,8 @@ function addWidgetTarget(project, iosPath) {
     (t) => t && t.name && t.name.replace(/"/g, '') === WIDGET_TARGET_NAME
   );
   if (alreadyAdded) {
-    console.log(`[withSalahWidgets] ${WIDGET_TARGET_NAME} already exists, skipping.`);
+    console.log(`[withSalahWidgets] ${WIDGET_TARGET_NAME} already exists — checking for new files.`);
+    _addMissingFilesToExistingTarget(project, iosPath);
     return;
   }
 

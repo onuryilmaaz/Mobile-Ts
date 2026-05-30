@@ -44,6 +44,23 @@ export interface InspirationDataParams {
   date: string;
 }
 
+export interface GoalItem {
+  activity: string;
+  label: string;
+  target: number;
+  progress: number;
+  unit: string;
+  colorHex: string;
+  sfSymbol: string;
+}
+
+export interface GoalsDataParams {
+  goals: GoalItem[];
+  completedCount: number;
+  totalCount: number;
+  date: string;
+}
+
 export const liveActivityService = {
   get isSupported() {
     return isSupported;
@@ -98,6 +115,15 @@ export const liveActivityService = {
     if (!isSupported) return;
     try {
       Native.updateInspirationData(params);
+    } catch {
+      // silent
+    }
+  },
+
+  updateGoalsData(params: GoalsDataParams): void {
+    if (!isSupported) return;
+    try {
+      Native.updateGoalsData(params);
     } catch {
       // silent
     }

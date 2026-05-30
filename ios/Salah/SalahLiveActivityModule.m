@@ -21,6 +21,8 @@ RCT_EXTERN_METHOD(updateAmelData:(NSDictionary *)params)
 
 RCT_EXTERN_METHOD(updateInspirationData:(NSDictionary *)params)
 
+RCT_EXTERN_METHOD(updateGoalsData:(NSDictionary *)params)
+
 RCT_EXTERN_METHOD(getPendingWidgetPrayers:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 

@@ -164,6 +164,34 @@ class SalahLiveActivityModule: NSObject {
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahInspirationWidgetLight")
   }
 
+  @objc func updateGoalsData(_ params: NSDictionary) {
+    guard let ud = defaults() else { return }
+    let rawGoals = params["goals"] as? [[String: Any]] ?? []
+    let goals: [[String: Any]] = rawGoals.map { g in
+      [
+        "activity":  g["activity"]  as? String ?? "",
+        "label":     g["label"]     as? String ?? "",
+        "target":    g["target"]    as? Int    ?? 0,
+        "progress":  g["progress"]  as? Int    ?? 0,
+        "unit":      g["unit"]      as? String ?? "",
+        "colorHex":  g["colorHex"]  as? String ?? "#14b8a6",
+        "sfSymbol":  g["sfSymbol"]  as? String ?? "flag.fill",
+      ]
+    }
+    let dict: [String: Any] = [
+      "goals":          goals,
+      "completedCount": params["completedCount"] as? Int    ?? 0,
+      "totalCount":     params["totalCount"]     as? Int    ?? 0,
+      "date":           params["date"]           as? String ?? "",
+    ]
+    if let data = try? JSONSerialization.data(withJSONObject: dict) {
+      ud.set(data, forKey: "salah_goals_data")
+    }
+    ud.synchronize()
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahGoalsWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "SalahGoalsWidgetLight")
+  }
+
   @objc func getPendingWidgetPrayers(
     _ resolve: @escaping RCTPromiseResolveBlock,
     reject _: @escaping RCTPromiseRejectBlock

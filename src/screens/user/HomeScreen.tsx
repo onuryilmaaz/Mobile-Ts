@@ -12,6 +12,7 @@ import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { StreakCard } from '@/components/home/StreakCard';
 import { TodayTrackerCard } from '@/components/home/TodayTrackerCard';
 import { RamadanBannerCard } from '@/components/home/RamadanBannerCard';
+import { PersonalGoalsCard } from '@/components/home/PersonalGoalsCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
@@ -125,6 +126,7 @@ export default function HomeScreen({ navigation }: Props) {
         <RamadanBannerCard onPress={() => navigation.navigate('Ramadan')} />
         <PrayerTrackerCard focusNonce={focusNonce} />
         <StreakCard />
+        <PersonalGoalsCard />
         <TodayTrackerCard />
 
         {isAuthenticated && (
