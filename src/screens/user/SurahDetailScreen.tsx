@@ -56,6 +56,7 @@ const AudioPlayer = React.forwardRef<
   const durationRef = useRef(0);
   const barWidthRef = useRef(0);
   const isMountedRef = useRef(true);
+  const playIdRef = useRef(0);
 
   useEffect(() => {
     versesRef.current = verses;
@@ -81,6 +82,7 @@ const AudioPlayer = React.forwardRef<
     return () => {
       isMountedRef.current = false;
       statusSubRef.current?.remove();
+      try { soundRef.current?.pause(); } catch {}
       soundRef.current?.remove();
     };
   }, []);
@@ -89,6 +91,7 @@ const AudioPlayer = React.forwardRef<
     statusSubRef.current?.remove();
     statusSubRef.current = null;
     if (soundRef.current) {
+      try { soundRef.current.pause(); } catch {}
       soundRef.current.remove();
       soundRef.current = null;
     }
@@ -96,10 +99,11 @@ const AudioPlayer = React.forwardRef<
 
   const playVerseAt = async (idx: number) => {
     if (!isMountedRef.current) return;
+    const myId = ++playIdRef.current;
     const vList = versesRef.current;
 
     if (idx >= vList.length || idx < 0) {
-      await unload();
+      unload();
       if (!isMountedRef.current) return;
       setPlayState('idle');
       setActiveBoth(-1);
@@ -115,13 +119,13 @@ const AudioPlayer = React.forwardRef<
 
     try {
       unload();
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current || myId !== playIdRef.current) return;
 
       const url = `https://cdn.islamic.network/quran/audio/128/${RECITERS[reciterIdxRef.current].id}/${vList[idx].id}.mp3`;
       const player = createAudioPlayer({ uri: url });
 
       statusSubRef.current = player.addListener('playbackStatusUpdate', (status) => {
-        if (!isMountedRef.current || !status.isLoaded) return;
+        if (!isMountedRef.current || myId !== playIdRef.current || !status.isLoaded) return;
         setPosition((status.currentTime || 0) * 1000);
         setDuration((status.duration || 0) * 1000);
         if (status.didJustFinish) {
@@ -130,7 +134,7 @@ const AudioPlayer = React.forwardRef<
       });
 
       player.play();
-      if (!isMountedRef.current) {
+      if (!isMountedRef.current || myId !== playIdRef.current) {
         player.remove();
         return;
       }
