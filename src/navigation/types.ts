@@ -63,7 +63,8 @@ export type HomeStackParamList = {
 
 export type SurahsStackParamList = {
   SurahsMain: undefined;
-  SurahDetail: { surahId: number; surahName: string };
+  SurahDetail: { surahId: number; surahName: string; focusVerse?: number };
+  Bookmarks: undefined;
 };
 
 export type TrackerStackParamList = {

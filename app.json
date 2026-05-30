@@ -26,7 +26,8 @@
       "appleTeamId": "R5A33U3B5Q",
       "infoPlist": {
         "NSSupportsLiveActivities": true,
-        "NSSupportsLiveActivitiesFrequentUpdates": true
+        "NSSupportsLiveActivitiesFrequentUpdates": true,
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {

@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
+import { useQuranStore } from '@/store/quran.store';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahsMain'>;
 
@@ -23,9 +24,11 @@ export default function SurahBrowserScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const { isDark } = useTheme();
+  const { lastRead, bookmarks, load: loadQuran } = useQuranStore();
 
   useEffect(() => {
     fetchSurahs();
+    loadQuran();
   }, []);
 
   const fetchSurahs = async () => {
@@ -92,6 +95,58 @@ export default function SurahBrowserScreen({ navigation }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}>
+          {/* Quick access: Last Read + Bookmarks */}
+          {!searchQuery && (lastRead || bookmarks.length > 0) && (
+            <View className="mb-4 flex-row gap-3">
+              {lastRead && (
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    navigation.navigate('SurahDetail', {
+                      surahId: lastRead.surahId,
+                      surahName: lastRead.surahName,
+                      focusVerse: lastRead.verseNumber,
+                    } as any);
+                  }}
+                  className="flex-1 overflow-hidden rounded-3xl border border-teal-200 bg-teal-50 p-3.5 dark:border-teal-500/30 dark:bg-teal-500/10">
+                  <View className="flex-row items-center gap-2">
+                    <Ionicons name="play-circle" size={18} color={isDark ? '#14b8a6' : '#0f766e'} />
+                    <Text className="text-[10px] font-black uppercase tracking-widest text-teal-700 dark:text-teal-400">
+                      Devam Et
+                    </Text>
+                  </View>
+                  <Text className="mt-1.5 text-sm font-black text-slate-900 dark:text-white" numberOfLines={1}>
+                    {lastRead.surahName}
+                  </Text>
+                  <Text className="text-xs font-bold text-teal-600 dark:text-teal-400">
+                    {lastRead.verseNumber}. ayet
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  navigation.navigate('Bookmarks' as any);
+                }}
+                className="flex-1 overflow-hidden rounded-3xl border border-amber-200 bg-amber-50 p-3.5 dark:border-amber-500/30 dark:bg-amber-500/10">
+                <View className="flex-row items-center gap-2">
+                  <Ionicons name="bookmark" size={18} color="#f59e0b" />
+                  <Text className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                    Yer İmleri
+                  </Text>
+                </View>
+                <Text className="mt-1.5 text-sm font-black text-slate-900 dark:text-white" numberOfLines={1}>
+                  {bookmarks.length > 0 ? `${bookmarks.length} ayet` : 'Henüz yok'}
+                </Text>
+                <Text className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                  {bookmarks.length > 0 ? 'Listeyi gör' : 'Eklemek için bir ayete dokun'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {filteredSurahs.map((surah, index) => (
             <Animated.View
               key={surah.id}
