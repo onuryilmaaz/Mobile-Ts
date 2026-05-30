@@ -23,6 +23,13 @@ RCT_EXTERN_METHOD(updateInspirationData:(NSDictionary *)params)
 
 RCT_EXTERN_METHOD(updateGoalsData:(NSDictionary *)params)
 
+RCT_EXTERN_METHOD(setApiCredentials:(NSDictionary *)params)
+
+RCT_EXTERN_METHOD(getPendingGoals:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(clearPendingGoals)
+
 RCT_EXTERN_METHOD(getPendingWidgetPrayers:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 

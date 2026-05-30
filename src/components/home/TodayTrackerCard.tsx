@@ -7,8 +7,9 @@ import { ACTIVITY_META } from '@/modules/tracker/tracker.types';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from '@react-navigation/native';
+import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 
-const SUMMARY_TYPES = ['quran', 'dhikr', 'nafile', 'fasting', 'sadaka', 'dua'] as const;
+const SUMMARY_TYPES = ['quran', 'dhikr', 'nafile', 'fasting', 'sadaka', 'dua', 'memorization'] as const;
 
 function getTotal(type: string, logs: any[]): number {
   const entries = logs.filter((l) => l.activity_type === type);
@@ -26,6 +27,11 @@ function getTotal(type: string, logs: any[]): number {
       return entries.reduce((s, l) => s + (l.value?.amount || 0), 0);
     case 'dua':
       return entries.reduce((s, l) => s + (l.value?.minutes || 0), 0);
+    case 'memorization':
+      return entries.reduce(
+        (s, l) => s + (l.value?.new_ayets || 0) + (l.value?.revision_ayets || 0),
+        0,
+      );
     default:
       return entries.length;
   }
@@ -40,6 +46,17 @@ export function TodayTrackerCard() {
   useEffect(() => {
     if (isAuthenticated) fetchTodayLogs();
   }, [isAuthenticated]);
+
+  // Sync iBADET widget with current todayLogs
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const types = [...new Set(todayLogs.map((l) => l.activity_type))];
+    liveActivityService.updateAmelData({
+      types,
+      totalCount: todayLogs.length,
+      date: new Date().toISOString().slice(0, 10),
+    });
+  }, [todayLogs, isAuthenticated]);
 
   if (!isAuthenticated) return null;
 

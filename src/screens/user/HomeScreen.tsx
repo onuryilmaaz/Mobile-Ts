@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTrackerStore } from '@/modules/tracker/tracker.store';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
@@ -83,6 +84,7 @@ export default function HomeScreen({ navigation }: Props) {
   const setUser = useAuthStore((s) => s.setUser);
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const fetchTodayLogs = useTrackerStore((s) => s.fetchTodayLogs);
   const [loading, setLoading] = useState(false);
   const [focusNonce, setFocusNonce] = useState(0);
   const { isDark } = useTheme();
@@ -105,7 +107,11 @@ export default function HomeScreen({ navigation }: Props) {
         fetchData();
       }
       setFocusNonce((n) => n + 1);
-    }, [isAuthenticated, user?.firstName, fetchData])
+      // Widget'tan yapılan işlemler DB'ye yazılıyor; uygulamaya dönünce taze veri çek
+      if (isAuthenticated) {
+        fetchTodayLogs();
+      }
+    }, [isAuthenticated, user?.firstName, fetchData, fetchTodayLogs])
   );
 
   return (

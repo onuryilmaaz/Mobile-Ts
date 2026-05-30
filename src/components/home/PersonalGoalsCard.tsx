@@ -213,6 +213,7 @@ export function PersonalGoalsCard() {
   const { goals, loaded, load, updateGoal } = useGoalsStore();
   const todayLogs = useTrackerStore((s) => s.todayLogs);
   const logActivity = useTrackerStore((s) => s.logActivity);
+  const fetchTodayLogs = useTrackerStore((s) => s.fetchTodayLogs);
   const [editVisible, setEditVisible] = useState(false);
   const [completing, setCompleting] = useState<GoalActivity | null>(null);
 
@@ -235,6 +236,8 @@ export function PersonalGoalsCard() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
       await logActivity(activity, buildCompleteValue(activity, remaining));
+      // Fetch fresh data so TodayTrackerCard + goals card both sync
+      await fetchTodayLogs();
       toast.success('Kaydedildi', 'İbadet tamamlandı olarak işaretlendi.');
     } catch {
       toast.error('Hata', 'Kayıt yapılamadı.');

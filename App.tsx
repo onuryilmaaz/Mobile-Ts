@@ -19,6 +19,8 @@ import { rootNavigationRef } from '@/navigation/rootNavigation';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { gamificationApi } from '@/modules/gamification/gamification.api';
+import { useTrackerStore } from '@/modules/tracker/tracker.store';
+import { trackerApi } from '@/modules/tracker/tracker.api';
 import * as Notifications from 'expo-notifications';
 import { adhanService } from '@/services/adhan.service';
 import type { AdhanPrayerKey } from '@/services/adhan.service';
@@ -64,6 +66,18 @@ const tokenCache = {
 };
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || '';
+
+function buildGoalCompleteValue(activity: string, target: number): Record<string, any> {
+  switch (activity) {
+    case 'quran':        return { pages: target };
+    case 'dhikr':        return { subtype: 'Genel', count: target };
+    case 'nafile':       return { type: 'diger', rakaat: target };
+    case 'fasting':      return { type: 'nafile' };
+    case 'dua':          return { type: 'Genel', minutes: target };
+    case 'memorization': return { new_ayets: target, revision_ayets: 0 };
+    default:             return { count: target };
+  }
+}
 
 const linking = {
   prefixes: ['com.onur6541.salah://', 'salah://'],
@@ -141,17 +155,15 @@ function AppContent() {
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
-    NativeModules.SalahLiveActivityModule?.updateAuthData?.({ apiUrl: API_BASE_URL });
     (async () => {
       const [accessToken, refreshToken] = await Promise.all([getAccessToken(), getRefreshToken()]);
-      if (accessToken || refreshToken) {
-        NativeModules.SalahLiveActivityModule?.updateAuthData?.({
-          accessToken: accessToken ?? '',
-          refreshToken: refreshToken ?? '',
-        });
-      }
+      liveActivityService.setApiCredentials({
+        apiUrl: API_BASE_URL,
+        accessToken: accessToken ?? '',
+        refreshToken: refreshToken ?? '',
+      });
     })();
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
@@ -159,14 +171,22 @@ function AppContent() {
       const { isAuthenticated } = useAuthStore.getState();
       if (!isAuthenticated) return;
 
-      const raw = await liveActivityService.getPendingWidgetPrayers();
-      if (raw) {
-        for (const entry of raw.split(',').filter(Boolean)) {
+      // Refresh credentials on every foreground (token may have been refreshed)
+      const [accessToken, refreshToken] = await Promise.all([getAccessToken(), getRefreshToken()]);
+      liveActivityService.setApiCredentials({
+        apiUrl: API_BASE_URL,
+        accessToken: accessToken ?? '',
+        refreshToken: refreshToken ?? '',
+      });
+
+      // 1. Pending prayers (Live Activity widget)
+      const prayerRaw = await liveActivityService.getPendingWidgetPrayers();
+      if (prayerRaw) {
+        for (const entry of prayerRaw.split(',').filter(Boolean)) {
           const [id, flag] = entry.split(':');
           try {
             await gamificationApi.trackPrayer(id as any, flag === 'kaza');
           } catch (e: any) {
-            // 400 = already tracked (widget optimistic update was correct), not an error
             if (e?.response?.status !== 400) {
               console.warn('Failed to track prayer for live activity widget:', id);
             }
@@ -174,6 +194,27 @@ function AppContent() {
         }
       }
 
+      // 2. Pending goals (Goals widget) — widget'tan eklenen ama API'ye yetişemeyen kayıtlar
+      const goalsRaw = await liveActivityService.getPendingGoals();
+      if (goalsRaw) {
+        for (const entry of goalsRaw.split(',').filter(Boolean)) {
+          const [activity, targetStr] = entry.split(':');
+          const target = parseInt(targetStr ?? '0');
+          if (!activity || !target) continue;
+          try {
+            await trackerApi.logActivity({
+              activity_type: activity as any,
+              value: buildGoalCompleteValue(activity, target),
+            });
+          } catch (e: any) {
+            console.warn('Failed to sync pending goal:', activity, e?.message);
+          }
+        }
+        liveActivityService.clearPendingGoals();
+      }
+
+      // 3. Refresh tracker logs (reflects both pending sync + any widget-fast-path success)
+      await useTrackerStore.getState().fetchTodayLogs();
       useGamificationStore.getState().fetchStats();
     };
     onForeground();

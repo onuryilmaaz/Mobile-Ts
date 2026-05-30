@@ -129,6 +129,33 @@ export const liveActivityService = {
     }
   },
 
+  setApiCredentials(params: { apiUrl: string; accessToken: string; refreshToken: string }): void {
+    if (!isSupported) return;
+    try {
+      Native.setApiCredentials(params);
+    } catch {
+      // silent
+    }
+  },
+
+  async getPendingGoals(): Promise<string> {
+    if (!isSupported) return '';
+    try {
+      return (await Native.getPendingGoals()) ?? '';
+    } catch {
+      return '';
+    }
+  },
+
+  clearPendingGoals(): void {
+    if (!isSupported) return;
+    try {
+      Native.clearPendingGoals();
+    } catch {
+      // silent
+    }
+  },
+
   async getPendingWidgetPrayers(): Promise<string> {
     if (!isSupported) return '';
     try {

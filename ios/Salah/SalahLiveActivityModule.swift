@@ -192,6 +192,38 @@ class SalahLiveActivityModule: NSObject {
     WidgetCenter.shared.reloadTimelines(ofKind: "SalahGoalsWidgetLight")
   }
 
+  // MARK: - API Credentials (for widget Intents to call backend)
+
+  @objc func setApiCredentials(_ params: NSDictionary) {
+    guard let ud = defaults() else { return }
+    if let url = params["apiUrl"] as? String, !url.isEmpty {
+      ud.set(url, forKey: "salah_api_url")
+    }
+    if let token = params["accessToken"] as? String {
+      ud.set(token, forKey: "salah_access_token")
+    }
+    if let refresh = params["refreshToken"] as? String {
+      ud.set(refresh, forKey: "salah_refresh_token")
+    }
+    ud.synchronize()
+  }
+
+  // MARK: - Pending Goals (widget → app sync)
+
+  @objc func getPendingGoals(
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    reject _: @escaping RCTPromiseRejectBlock
+  ) {
+    let ud = defaults()
+    resolve(ud?.string(forKey: "salah_pending_goals") ?? "")
+  }
+
+  @objc func clearPendingGoals() {
+    guard let ud = defaults() else { return }
+    ud.removeObject(forKey: "salah_pending_goals")
+    ud.synchronize()
+  }
+
   @objc func getPendingWidgetPrayers(
     _ resolve: @escaping RCTPromiseResolveBlock,
     reject _: @escaping RCTPromiseRejectBlock
