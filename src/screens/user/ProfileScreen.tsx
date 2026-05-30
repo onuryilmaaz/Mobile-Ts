@@ -364,7 +364,7 @@ export default function ProfileScreen({ navigation }: Props) {
             </>
           ) : (
             <View className="gap-3">
-              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+              <View className="flex-row items-center gap-3 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
                 <Ionicons name="person-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Ad Soyad</Text>
@@ -373,7 +373,7 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+              <View className="flex-row items-center gap-3 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
                 <Ionicons
                   name="at-circle-outline"
                   size={20}
@@ -386,7 +386,7 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+              <View className="flex-row items-center gap-3 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
                 <Ionicons name="call-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Telefon</Text>
@@ -395,7 +395,7 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+              <View className="flex-row items-center gap-3 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
                 <Ionicons name="mail-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">E-posta</Text>
@@ -404,7 +404,7 @@ export default function ProfileScreen({ navigation }: Props) {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-3 rounded-xl border-slate-800 bg-slate-50 p-3 dark:border dark:bg-slate-900">
+              <View className="flex-row items-center gap-3 rounded-xl border border-transparent bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
                 <Ionicons name="person-outline" size={20} color={isDark ? '#4b5563' : '#64748b'} />
                 <View>
                   <Text className="text-xs text-slate-500 dark:text-slate-400">Cinsiyet</Text>
@@ -486,7 +486,6 @@ export default function ProfileScreen({ navigation }: Props) {
 
         <Card className="mx-4 mb-8">
           <Text className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Ayarlar</Text>
-
           <View className="gap-2">
             {settingsItems.map((item) => (
               <TouchableOpacity
