@@ -24,6 +24,7 @@ import {
   SettingsScreen,
   DhikrScreen,
   RamadanScreen,
+  HijriCalendarScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import FamilyNavigator from './FamilyNavigator';
@@ -249,9 +250,12 @@ export default function HomeNavigator() {
         <Stack.Screen
           name="Ramadan"
           component={RamadanScreen}
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HijriCalendar"
+          component={HijriCalendarScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Profile"

@@ -17,6 +17,7 @@ export { default as DuaScreen } from './DuaScreen';
 export { default as TrackerScreen } from './TrackerScreen';
 export { default as SettingsScreen } from './SettingsScreen';
 export { default as RamadanScreen } from './RamadanScreen';
+export { default as HijriCalendarScreen } from './HijriCalendarScreen';
 export { default as GroupListScreen } from './GroupListScreen';
 export { default as GroupDetailScreen } from './GroupDetailScreen';
 export { default as GroupCreateScreen } from './GroupCreateScreen';

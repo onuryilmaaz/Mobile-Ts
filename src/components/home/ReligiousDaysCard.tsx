@@ -2,10 +2,17 @@ import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as Haptics from 'expo-haptics';
 import { calendarService, type ReligiousDay } from '@/services/calendar.service';
 import { useTheme } from '@/hooks/useTheme';
+import type { HomeStackParamList } from '@/navigation/types';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
 export function ReligiousDaysCard() {
+  const navigation = useNavigation<Nav>();
   const [nextDay, setNextDay] = useState<ReligiousDay | null>(null);
   const [todayHijri, setTodayHijri] = useState<string>('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -89,11 +96,14 @@ export function ReligiousDaysCard() {
           </View>
 
           <TouchableOpacity
-            onPress={() => setModalVisible(true)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate('HijriCalendar');
+            }}
             activeOpacity={0.7}
             className="mt-6 flex-row items-center justify-center gap-2 rounded-2xl bg-teal-50 py-3 dark:bg-teal-500/10">
             <Text className="text-sm font-bold text-teal-700 dark:text-teal-400">
-              Tüm Dini Günleri Gör
+              Hicri Takvimi Aç
             </Text>
             <Ionicons name="arrow-forward" size={16} color={isDark ? '#14b8a6' : '#0f766e'} />
           </TouchableOpacity>
