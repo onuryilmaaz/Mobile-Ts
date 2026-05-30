@@ -41,4 +41,30 @@ export const prayerService = {
       return null;
     }
   },
+
+  getWeeklyPrayerTimes: async (
+    districtId: string
+  ): Promise<{ today: PrayerTimeData | null; week: PrayerTimeData[] }> => {
+    try {
+      const response = await prayerService.getPrayerTimes(districtId, 'weekly');
+      if (!response.success || !response.data || response.data.length === 0) {
+        return { today: null, week: [] };
+      }
+
+      const todayMidnight = new Date();
+      todayMidnight.setHours(0, 0, 0, 0);
+
+      const today =
+        response.data.find((item) => {
+          const d = new Date(item.date);
+          d.setHours(0, 0, 0, 0);
+          return d.getTime() === todayMidnight.getTime();
+        }) || response.data[0];
+
+      return { today: today ?? null, week: response.data };
+    } catch (error) {
+      console.error('Error fetching weekly prayer times:', error);
+      return { today: null, week: [] };
+    }
+  },
 };

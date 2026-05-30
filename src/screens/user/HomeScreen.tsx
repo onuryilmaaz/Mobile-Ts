@@ -11,6 +11,7 @@ import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
 import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { StreakCard } from '@/components/home/StreakCard';
 import { TodayTrackerCard } from '@/components/home/TodayTrackerCard';
+import { RamadanBannerCard } from '@/components/home/RamadanBannerCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
@@ -67,6 +68,14 @@ const QUICK_ACTIONS = [
     glow: 'rgba(185,28,28,0.18)',
     screen: 'Family' as const,
   },
+  {
+    key: 'ramadan',
+    label: 'Ramazan',
+    icon: 'moon-outline' as const,
+    color: '#a78bfa',
+    glow: 'rgba(167,139,250,0.18)',
+    screen: 'Ramadan' as const,
+  },
 ];
 
 export default function HomeScreen({ navigation }: Props) {
@@ -113,6 +122,7 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
+        <RamadanBannerCard onPress={() => navigation.navigate('Ramadan')} />
         <PrayerTrackerCard focusNonce={focusNonce} />
         <StreakCard />
         <TodayTrackerCard />

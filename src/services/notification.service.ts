@@ -95,7 +95,9 @@ export const notificationService = {
     await AsyncStorage.setItem(NOTIFICATION_PRAYERS_KEY, JSON.stringify(current));
   },
 
-  async schedulePrayerNotifications(prayerTimes: Record<string, string>) {
+  async schedulePrayerNotifications(
+    days: Array<{ date: string; times: Record<string, string> }>
+  ) {
     try {
       if (Platform.OS === 'android' && isExpoGo) return;
 
@@ -108,53 +110,68 @@ export const notificationService = {
       const prayerEnabled = await this.getPrayerEnabled();
       const now = new Date();
 
-      const prayers = [
-        { key: 'imsak', name: 'İmsak', time: prayerTimes.imsak },
-        { key: 'gunes', name: 'Güneş', time: prayerTimes.gunes },
-        { key: 'ogle', name: 'Öğle', time: prayerTimes.ogle },
-        { key: 'ikindi', name: 'İkindi', time: prayerTimes.ikindi },
-        { key: 'aksam', name: 'Akşam', time: prayerTimes.aksam },
-        { key: 'yatsi', name: 'Yatsı', time: prayerTimes.yatsi },
-      ] as { key: keyof typeof DEFAULT_PRAYER_ENABLED; name: string; time: string }[];
+      const PRAYERS: { key: keyof typeof DEFAULT_PRAYER_ENABLED; name: string }[] = [
+        { key: 'imsak', name: 'İmsak' },
+        { key: 'gunes', name: 'Güneş' },
+        { key: 'ogle', name: 'Öğle' },
+        { key: 'ikindi', name: 'İkindi' },
+        { key: 'aksam', name: 'Akşam' },
+        { key: 'yatsi', name: 'Yatsı' },
+      ];
 
-      for (const prayer of prayers) {
-        if (!prayer.time || !prayerEnabled[prayer.key]) continue;
+      // iOS allows 64 scheduled notifications total.
+      // Reserve ~14 slots for hourly reminders → 50 for prayer notifications.
+      // 6 prayers × 2 (exact + offset) = 12/day → covers 4 days comfortably.
+      const MAX_PRAYER_SLOTS = 50;
+      let scheduled = 0;
 
-        const [hours, minutes] = prayer.time.split(':').map(Number);
+      for (const day of days) {
+        if (scheduled >= MAX_PRAYER_SLOTS) break;
 
-        const exactTime = new Date();
-        exactTime.setHours(hours, minutes, 0, 0);
+        for (const prayer of PRAYERS) {
+          if (!day.times[prayer.key] || !prayerEnabled[prayer.key]) continue;
 
-        if (exactTime > now) {
-          const title = `${prayer.name} Vakti Girdi 🕌`;
-          const body = `${prayer.name} namazı vakti girmiştir. Hayırlı namazlar dileriz.`;
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title,
-              subtitle: 'Namaz Vakti',
-              body,
-              sound: 'default',
-              data: { type: 'prayer_time', prayerKey: prayer.key, prayerName: prayer.name },
-            } as any,
-            trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: exactTime },
-          });
-        }
+          const [hours, minutes] = day.times[prayer.key].split(':').map(Number);
 
-        if (offset > 0) {
-          const beforeTime = new Date();
-          beforeTime.setHours(hours, minutes - offset, 0, 0);
-          if (beforeTime > now) {
-            const title = `${prayer.name} Vaktine ${offset} Dakika Kaldı ⏰`;
-            const body = `${prayer.name} namazı için hazırlanma vakti.`;
+          const exactTime = new Date(day.date);
+          exactTime.setHours(hours, minutes, 0, 0);
+
+          if (exactTime > now && scheduled < MAX_PRAYER_SLOTS) {
             await Notifications.scheduleNotificationAsync({
-              content: { title, subtitle: 'Vakit Yaklaşıyor', body, sound: 'default' } as any,
-              trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: beforeTime },
+              content: {
+                title: `${prayer.name} Vakti Girdi 🕌`,
+                subtitle: 'Namaz Vakti',
+                body: `${prayer.name} namazı vakti girmiştir. Hayırlı namazlar dileriz.`,
+                sound: 'default',
+                data: { type: 'prayer_time', prayerKey: prayer.key, prayerName: prayer.name },
+              } as any,
+              trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: exactTime },
             });
+            scheduled++;
+          }
+
+          if (offset > 0 && scheduled < MAX_PRAYER_SLOTS) {
+            const beforeTime = new Date(exactTime.getTime() - offset * 60 * 1000);
+            if (beforeTime > now) {
+              await Notifications.scheduleNotificationAsync({
+                content: {
+                  title: `${prayer.name} Vaktine ${offset} Dakika Kaldı ⏰`,
+                  subtitle: 'Vakit Yaklaşıyor',
+                  body: `${prayer.name} namazı için hazırlanma vakti.`,
+                  sound: 'default',
+                } as any,
+                trigger: {
+                  type: Notifications.SchedulableTriggerInputTypes.DATE,
+                  date: beforeTime,
+                },
+              });
+              scheduled++;
+            }
           }
         }
       }
 
-      console.log('Prayer notifications scheduled successfully');
+      console.log(`Prayer notifications scheduled: ${scheduled} slots used`);
       await this.scheduleHourlyReminders();
     } catch (error) {
       console.error('Error scheduling notifications:', error);

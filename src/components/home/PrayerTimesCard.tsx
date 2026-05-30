@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { prayerService } from '@/services/prayer.service';
 import { notificationService } from '@/services/notification.service';
+import { usePrayerTimesStore } from '@/store/prayerTimes.store';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { useTheme } from '@/hooks/useTheme';
 import { useThemeStore } from '@/store/theme.store';
@@ -148,6 +149,7 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const lastActivityPrayerRef = useRef<string>('');
   const dataRef = useRef<PrayerTimeData | null>(null);
   const setHeaderColor = useThemeStore((s) => s.setHeaderColor);
+  const setTodayTimes = usePrayerTimesStore((s) => s.setTodayTimes);
 
   const selectedDistrict = selectedDistrictId ? getDistrictById(selectedDistrictId) : null;
   const selectedState = selectedStateId ? getStateById(selectedStateId) : null;
@@ -336,13 +338,16 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
   const fetchPrayerTimes = async (districtId: string) => {
     try {
       setLoading(true);
-      const prayerData = await prayerService.getTodayPrayerTimes(districtId);
+      const { today: prayerData, week } = await prayerService.getWeeklyPrayerTimes(districtId);
       if (prayerData) {
         dataRef.current = prayerData;
         setData(prayerData);
         calculateNextPrayer(prayerData);
+        setTodayTimes(prayerData.times.imsak, prayerData.times.aksam);
+      }
+      if (week.length > 0) {
         notificationService.schedulePrayerNotifications(
-          prayerData.times as unknown as Record<string, string>
+          week.map((d) => ({ date: d.date, times: d.times as unknown as Record<string, string> }))
         );
       }
     } catch (e) {

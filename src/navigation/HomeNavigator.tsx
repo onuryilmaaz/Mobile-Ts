@@ -23,6 +23,7 @@ import {
   DuaScreen,
   SettingsScreen,
   DhikrScreen,
+  RamadanScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import FamilyNavigator from './FamilyNavigator';
@@ -243,6 +244,13 @@ export default function HomeNavigator() {
             headerStyle: { backgroundColor: headerColor },
             headerTintColor: headerTintColor,
             headerBackTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="Ramadan"
+          component={RamadanScreen}
+          options={{
+            headerShown: false,
           }}
         />
         <Stack.Screen
