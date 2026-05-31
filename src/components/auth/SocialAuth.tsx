@@ -40,7 +40,7 @@ const GoogleIcon = ({ size = 18 }: { size?: number }) => (
 export function SocialAuth({ onError }: SocialAuthProps) {
   const { isDark } = useTheme();
   const { startSSOFlow } = useSSO();
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn, signOut } = useAuth();
   const login = useAuthStore((s) => s.login);
   const [loading, setLoading] = useState<SocialProvider | null>(null);
 
@@ -51,9 +51,28 @@ export function SocialAuth({ onError }: SocialAuthProps) {
     };
   }, []);
 
+  const exchangeClerkTokenForBackend = async () => {
+    const sessionToken = await getToken();
+    if (!sessionToken) throw new Error('Clerk oturum tokenı alınamadı.');
+    const { data } = await authApi.clerkLogin(sessionToken);
+    await login(data.user, data.accessToken, data.refreshToken);
+  };
+
   const handleSocialLogin = async (strategy: SocialProvider) => {
     try {
       setLoading(strategy);
+
+      // Edge case: Clerk session active but app tokens lost (e.g. after logout/reload).
+      // Use the existing Clerk session instead of starting a new SSO flow.
+      if (isSignedIn) {
+        try {
+          await exchangeClerkTokenForBackend();
+          return;
+        } catch (e) {
+          // Stale Clerk session — clear it and fall back to a fresh SSO flow
+          try { await signOut(); } catch {}
+        }
+      }
 
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy,
@@ -61,21 +80,8 @@ export function SocialAuth({ onError }: SocialAuthProps) {
       });
 
       if (createdSessionId && setActive) {
-        // Set the session active in Clerk
         await setActive({ session: createdSessionId });
-
-        // Retrieve Clerk session token (JWT)
-        const sessionToken = await getToken();
-
-        if (!sessionToken) {
-          throw new Error('Clerk oturum tokenı alınamadı.');
-        }
-
-        // Send token to backend to log in / register and get backend JWTs
-        const { data } = await authApi.clerkLogin(sessionToken);
-
-        // Login inside local auth store
-        await login(data.user, data.accessToken, data.refreshToken);
+        await exchangeClerkTokenForBackend();
       } else {
         throw new Error('Giriş başarısız oldu.');
       }

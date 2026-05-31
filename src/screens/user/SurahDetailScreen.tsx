@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, useCallback, useImperativeHandle } from 'react';
 import {
@@ -34,7 +33,6 @@ const RECITERS = [
   { id: 'ar.abdullahbasfar', label: 'Basfar' },
 ];
 
-const SPEEDS = [0.75, 1.0, 1.25, 1.5, 2.0];
 type RepeatMode = 'off' | 'single' | 'surah';
 
 type AudioPlayerRef = {
@@ -45,7 +43,6 @@ const AudioPlayer = React.forwardRef<
   AudioPlayerRef,
   { verses: Verse[]; onActiveVerseChange: (idx: number) => void }
 >(function AudioPlayer({ verses, onActiveVerseChange }, ref) {
-  const { isDark } = useTheme();
   const soundRef = useRef<ExpoAudioPlayer | null>(null);
   const statusSubRef = useRef<{ remove: () => void } | null>(null);
   const [playState, setPlayState] = useState<'idle' | 'loading' | 'playing' | 'paused'>('idle');
@@ -53,9 +50,6 @@ const AudioPlayer = React.forwardRef<
   const [activeIdx, setActiveIdx] = useState(-1);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [speed, setSpeed] = useState(1.0);
-  const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
-  const [expanded, setExpanded] = useState(false);
 
   const activeIdxRef = useRef(-1);
   const reciterIdxRef = useRef(0);
@@ -70,22 +64,14 @@ const AudioPlayer = React.forwardRef<
   useEffect(() => {
     versesRef.current = verses;
   }, [verses]);
+
   useEffect(() => {
     reciterIdxRef.current = reciterIdx;
   }, [reciterIdx]);
+
   useEffect(() => {
     durationRef.current = duration;
   }, [duration]);
-  useEffect(() => {
-    speedRef.current = speed;
-    // Apply speed to live player
-    if (soundRef.current) {
-      try { (soundRef.current as any).playbackRate = speed; } catch {}
-    }
-  }, [speed]);
-  useEffect(() => {
-    repeatModeRef.current = repeatMode;
-  }, [repeatMode]);
 
   const setActiveBoth = useCallback(
     (idx: number) => {
@@ -101,7 +87,9 @@ const AudioPlayer = React.forwardRef<
     return () => {
       isMountedRef.current = false;
       statusSubRef.current?.remove();
-      try { soundRef.current?.pause(); } catch {}
+      try {
+        soundRef.current?.pause();
+      } catch {}
       soundRef.current?.remove();
     };
   }, []);
@@ -110,7 +98,9 @@ const AudioPlayer = React.forwardRef<
     statusSubRef.current?.remove();
     statusSubRef.current = null;
     if (soundRef.current) {
-      try { soundRef.current.pause(); } catch {}
+      try {
+        soundRef.current.pause();
+      } catch {}
       soundRef.current.remove();
       soundRef.current = null;
     }
@@ -162,7 +152,9 @@ const AudioPlayer = React.forwardRef<
       });
 
       player.play();
-      try { (player as any).playbackRate = speedRef.current; } catch {}
+      try {
+        (player as any).setPlaybackRate(speedRef.current, 'high');
+      } catch {}
       if (!isMountedRef.current || myId !== playIdRef.current) {
         player.remove();
         return;
@@ -229,43 +221,12 @@ const AudioPlayer = React.forwardRef<
     }
   };
 
-  const handleStop = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    unload();
-    setPlayState('idle');
-    setActiveBoth(-1);
-    setPosition(0);
-    setDuration(0);
-  };
-
-  const handlePrev = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const target = Math.max(0, (activeIdxRef.current >= 0 ? activeIdxRef.current : 0) - 1);
-    playVerseAt(target);
-  };
-
-  const handleNext = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const target = Math.min(
-      versesRef.current.length - 1,
-      (activeIdxRef.current >= 0 ? activeIdxRef.current : 0) + 1,
-    );
-    playVerseAt(target);
-  };
-
-  const cycleRepeat = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const next: RepeatMode = repeatMode === 'off' ? 'single' : repeatMode === 'single' ? 'surah' : 'off';
-    setRepeatMode(next);
-  };
-
   const formatTime = (ms: number) => {
     const s = Math.floor(ms / 1000);
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   };
 
   const progress = duration > 0 ? position / duration : 0;
-  const isActive = playState === 'playing' || playState === 'paused';
 
   return (
     <View className="mx-4 mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
@@ -336,102 +297,7 @@ const AudioPlayer = React.forwardRef<
             <Text className="text-[10px] text-slate-400">{verses.length} ayet</Text>
           )}
         </View>
-
-        <TouchableOpacity
-          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setExpanded((v) => !v); }}
-          className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-          <Ionicons name={expanded ? 'chevron-up' : 'options-outline'} size={16} color={isDark ? '#94a3b8' : '#475569'} />
-        </TouchableOpacity>
       </View>
-
-      {/* Expanded controls */}
-      {expanded && (
-        <View className="border-t border-slate-100 px-4 py-3 dark:border-slate-800">
-          {/* Transport controls */}
-          <View className="flex-row items-center justify-center gap-4 pb-3">
-            <TouchableOpacity
-              onPress={handlePrev}
-              className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-              <Ionicons name="play-skip-back" size={16} color={isDark ? '#cbd5e1' : '#475569'} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={cycleRepeat}
-              className="h-10 w-10 items-center justify-center rounded-full"
-              style={{
-                backgroundColor:
-                  repeatMode === 'off'
-                    ? isDark ? '#1e293b' : '#f1f5f9'
-                    : repeatMode === 'single' ? '#14b8a620' : '#a78bfa20',
-              }}>
-              <View>
-                <Ionicons
-                  name={repeatMode === 'single' ? 'repeat' : repeatMode === 'surah' ? 'repeat' : 'repeat-outline'}
-                  size={16}
-                  color={repeatMode === 'off' ? (isDark ? '#94a3b8' : '#475569') : repeatMode === 'single' ? '#14b8a6' : '#a78bfa'}
-                />
-                {repeatMode === 'single' && (
-                  <View className="absolute -bottom-1 -right-1 rounded-full bg-teal-500 px-1">
-                    <Text className="text-[7px] font-black text-white">1</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleStop}
-              disabled={!isActive}
-              className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
-              style={{ opacity: isActive ? 1 : 0.4 }}>
-              <Ionicons name="stop" size={16} color={isDark ? '#94a3b8' : '#475569'} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleNext}
-              className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-              <Ionicons name="play-skip-forward" size={16} color={isDark ? '#cbd5e1' : '#475569'} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Speed control */}
-          <View>
-            <Text className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-              Hız
-            </Text>
-            <View className="flex-row gap-2">
-              {SPEEDS.map((s) => (
-                <TouchableOpacity
-                  key={s}
-                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setSpeed(s); }}
-                  className={`flex-1 items-center rounded-xl border px-2 py-1.5 ${
-                    speed === s
-                      ? 'border-teal-500 bg-teal-50 dark:border-teal-500/60 dark:bg-teal-500/15'
-                      : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
-                  }`}>
-                  <Text
-                    className={`text-[11px] font-black ${
-                      speed === s ? 'text-teal-700 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400'
-                    }`}>
-                    {s === 1.0 ? '1x' : `${s}x`}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {repeatMode !== 'off' && (
-            <View className="mt-3 flex-row items-center gap-1.5 self-start rounded-lg bg-slate-100 px-2 py-1 dark:bg-slate-800">
-              <Ionicons
-                name="repeat"
-                size={11}
-                color={repeatMode === 'single' ? '#14b8a6' : '#a78bfa'}
-              />
-              <Text
-                className="text-[10px] font-bold"
-                style={{ color: repeatMode === 'single' ? '#14b8a6' : '#a78bfa' }}>
-                {repeatMode === 'single' ? 'Tek ayet tekrarı' : 'Sure tekrarı'}
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
     </View>
   );
 });
@@ -444,7 +310,13 @@ export default function SurahDetailScreen({ route }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchVisible, setSearchVisible] = useState(false);
   const { isDark } = useTheme();
-  const { addBookmark, removeBookmark, isBookmarked, setLastRead, load: loadQuran } = useQuranStore();
+  const {
+    addBookmark,
+    removeBookmark,
+    isBookmarked,
+    setLastRead,
+    load: loadQuran,
+  } = useQuranStore();
 
   const scrollViewRef = useRef<ScrollView>(null);
   const audioPlayerRef = useRef<AudioPlayerRef>(null);
@@ -584,10 +456,15 @@ export default function SurahDetailScreen({ route }: Props) {
           <View className="mx-4 mb-4">
             {!searchVisible ? (
               <TouchableOpacity
-                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setSearchVisible(true); }}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSearchVisible(true);
+                }}
                 className="flex-row items-center gap-2 self-start rounded-2xl border border-slate-200 bg-white px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
                 <Ionicons name="search" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
-                <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">Ayet ara</Text>
+                <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  Ayet ara
+                </Text>
               </TouchableOpacity>
             ) : (
               <View className="flex-row items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
@@ -601,7 +478,10 @@ export default function SurahDetailScreen({ route }: Props) {
                   className="flex-1 text-sm text-slate-900 dark:text-white"
                 />
                 <TouchableOpacity
-                  onPress={() => { setSearchQuery(''); setSearchVisible(false); }}
+                  onPress={() => {
+                    setSearchQuery('');
+                    setSearchVisible(false);
+                  }}
                   hitSlop={8}>
                   <Ionicons name="close-circle" size={18} color={isDark ? '#475569' : '#94a3b8'} />
                 </TouchableOpacity>
@@ -617,7 +497,9 @@ export default function SurahDetailScreen({ route }: Props) {
           {displayedVerses.length === 0 && searchQuery && (
             <View className="mx-4 items-center py-8">
               <Ionicons name="search-outline" size={32} color={isDark ? '#475569' : '#94a3b8'} />
-              <Text className="mt-2 text-sm text-slate-500 dark:text-slate-400">Eşleşen ayet yok</Text>
+              <Text className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                Eşleşen ayet yok
+              </Text>
             </View>
           )}
 
@@ -661,7 +543,11 @@ export default function SurahDetailScreen({ route }: Props) {
                     <View className="flex-row items-center gap-4">
                       <TouchableOpacity onPress={() => toggleBookmark(verse)}>
                         <Ionicons
-                          name={isBookmarked(surahId, verse.verse_number) ? 'bookmark' : 'bookmark-outline'}
+                          name={
+                            isBookmarked(surahId, verse.verse_number)
+                              ? 'bookmark'
+                              : 'bookmark-outline'
+                          }
                           size={18}
                           color={
                             isBookmarked(surahId, verse.verse_number)

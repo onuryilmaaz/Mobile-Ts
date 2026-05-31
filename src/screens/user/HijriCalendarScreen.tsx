@@ -47,8 +47,7 @@ function jdnToGregorian(jdn: number): { year: number; month: number; day: number
 
 function daysInHijriMonth(month: number, year: number): number {
   if (month % 2 === 1) return 30;
-  if (month === 12)
-    return [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29].includes(year % 30) ? 30 : 29;
+  if (month === 12) return [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29].includes(year % 30) ? 30 : 29;
   return 29;
 }
 
@@ -94,19 +93,25 @@ function gregorianForHijri(year: number, month: number, day: number): Date {
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const HIJRI_MONTHS = [
-  'Muharrem', 'Safer', 'Rebiulevvel', 'Rebiulahir',
-  'Cemaziyelevvel', 'Cemaziyelahir', 'Receb', 'Şaban',
-  'Ramazan', 'Şevval', 'Zilkade', 'Zilhicce',
+  'Muharrem',
+  'Safer',
+  'Rebiulevvel',
+  'Rebiulahir',
+  'Cemaziyelevvel',
+  'Cemaziyelahir',
+  'Receb',
+  'Şaban',
+  'Ramazan',
+  'Şevval',
+  'Zilkade',
+  'Zilhicce',
 ];
 const WEEKDAYS = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz'];
 
 function buildSpecialDayMap(): Map<string, string> {
   const map = new Map<string, string>();
   for (const d of calendarService.getReligiousDays()) {
-    map.set(
-      `${d.date.getFullYear()}-${d.date.getMonth() + 1}-${d.date.getDate()}`,
-      d.name,
-    );
+    map.set(`${d.date.getFullYear()}-${d.date.getMonth() + 1}-${d.date.getDate()}`, d.name);
   }
   return map;
 }
@@ -138,13 +143,17 @@ export default function HijriCalendarScreen() {
 
   const prevMonth = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (viewMonth === 1) { setViewMonth(12); setViewYear(y => y - 1); }
-    else setViewMonth(m => m - 1);
+    if (viewMonth === 1) {
+      setViewMonth(12);
+      setViewYear((y) => y - 1);
+    } else setViewMonth((m) => m - 1);
   };
   const nextMonth = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (viewMonth === 12) { setViewMonth(1); setViewYear(y => y + 1); }
-    else setViewMonth(m => m + 1);
+    if (viewMonth === 12) {
+      setViewMonth(1);
+      setViewYear((y) => y + 1);
+    } else setViewMonth((m) => m + 1);
   };
   const goToday = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -174,7 +183,6 @@ export default function HijriCalendarScreen() {
         className="flex-1"
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}>
-
         {/* Today chip */}
         <View className="flex-row items-center justify-between">
           <View className="rounded-2xl border border-teal-200 bg-teal-50 px-4 py-2.5 dark:border-teal-500/30 dark:bg-teal-500/10">
@@ -189,17 +197,20 @@ export default function HijriCalendarScreen() {
             <TouchableOpacity
               onPress={goToday}
               className="rounded-xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
-              <Text className="text-xs font-bold text-slate-600 dark:text-slate-300">Bugüne Dön</Text>
+              <Text className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                Bugüne Dön
+              </Text>
             </TouchableOpacity>
           )}
         </View>
 
         {/* Calendar card */}
         <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-
           {/* Month nav */}
           <View className="flex-row items-center justify-between border-b border-slate-100 px-4 py-4 dark:border-slate-800">
-            <TouchableOpacity onPress={prevMonth} hitSlop={12}
+            <TouchableOpacity
+              onPress={prevMonth}
+              hitSlop={12}
               className="h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700">
               <Ionicons name="chevron-back" size={18} color={isDark ? '#94a3b8' : '#475569'} />
             </TouchableOpacity>
@@ -209,7 +220,9 @@ export default function HijriCalendarScreen() {
               </Text>
               <Text className="text-[11px] text-slate-400 dark:text-slate-500">{viewGStr}</Text>
             </View>
-            <TouchableOpacity onPress={nextMonth} hitSlop={12}
+            <TouchableOpacity
+              onPress={nextMonth}
+              hitSlop={12}
               className="h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700">
               <Ionicons name="chevron-forward" size={18} color={isDark ? '#94a3b8' : '#475569'} />
             </TouchableOpacity>
@@ -218,9 +231,12 @@ export default function HijriCalendarScreen() {
           {/* Weekdays */}
           <View className="flex-row px-3 pt-3">
             {WEEKDAYS.map((wd, i) => (
-              <Text key={wd}
+              <Text
+                key={wd}
                 className={`flex-1 text-center text-[11px] font-black uppercase tracking-wider ${
-                  i === 4 ? 'text-teal-600 dark:text-teal-400' : 'text-slate-400 dark:text-slate-500'
+                  i === 4
+                    ? 'text-teal-600 dark:text-teal-400'
+                    : 'text-slate-400 dark:text-slate-500'
                 }`}>
                 {wd}
               </Text>
@@ -240,16 +256,26 @@ export default function HijriCalendarScreen() {
                   const isFriday = col === 4;
                   return (
                     <View key={col} className="flex-1 items-center py-1">
-                      <View className={`h-9 w-9 items-center justify-center rounded-full ${
-                        itIsToday ? 'bg-teal-600 dark:bg-teal-500'
-                          : specialName ? 'bg-amber-50 dark:bg-amber-500/10' : ''
-                      }`}>
-                        <Text className={`text-sm font-bold ${
-                          itIsToday ? 'text-white'
-                            : specialName ? 'text-amber-600 dark:text-amber-400'
-                            : isFriday ? 'text-teal-600 dark:text-teal-400'
-                            : 'text-slate-700 dark:text-slate-300'
-                        }`}>{day}</Text>
+                      <View
+                        className={`h-9 w-9 items-center justify-center rounded-full ${
+                          itIsToday
+                            ? 'bg-teal-600 dark:bg-teal-500'
+                            : specialName
+                              ? 'bg-amber-50 dark:bg-amber-500/10'
+                              : ''
+                        }`}>
+                        <Text
+                          className={`text-sm font-bold ${
+                            itIsToday
+                              ? 'text-white'
+                              : specialName
+                                ? 'text-amber-600 dark:text-amber-400'
+                                : isFriday
+                                  ? 'text-teal-600 dark:text-teal-400'
+                                  : 'text-slate-700 dark:text-slate-300'
+                          }`}>
+                          {day}
+                        </Text>
                       </View>
                       {specialName && !itIsToday && (
                         <View className="mt-0.5 h-1 w-1 rounded-full bg-amber-400" />
@@ -271,10 +297,6 @@ export default function HijriCalendarScreen() {
               <View className="h-1.5 w-1.5 rounded-full bg-amber-400" />
               <Text className="text-[10px] font-bold text-slate-400">Önemli Gün</Text>
             </View>
-            <View className="flex-row items-center gap-1.5">
-              <Text className="text-[10px] font-black text-teal-600 dark:text-teal-400">Cu</Text>
-              <Text className="text-[10px] font-bold text-slate-400">Cuma</Text>
-            </View>
           </View>
         </View>
 
@@ -290,15 +312,21 @@ export default function HijriCalendarScreen() {
                 const isPast = gd < new Date(new Date().setHours(0, 0, 0, 0));
                 const daysLeft = Math.ceil((gd.getTime() - Date.now()) / 86_400_000);
                 return (
-                  <View key={i}
+                  <View
+                    key={i}
                     className={`flex-row items-center border-b border-slate-100 px-4 py-3.5 last:border-0 dark:border-slate-800 ${isPast ? 'opacity-50' : ''}`}>
                     <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10">
-                      <Text className="text-sm font-black text-amber-600 dark:text-amber-400">{ev.day}</Text>
+                      <Text className="text-sm font-black text-amber-600 dark:text-amber-400">
+                        {ev.day}
+                      </Text>
                     </View>
                     <View className="flex-1">
-                      <Text className="text-sm font-bold text-slate-900 dark:text-white">{ev.name}</Text>
+                      <Text className="text-sm font-bold text-slate-900 dark:text-white">
+                        {ev.name}
+                      </Text>
                       <Text className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
-                        {ev.day} {HIJRI_MONTHS[viewMonth - 1]} · {gd.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
+                        {ev.day} {HIJRI_MONTHS[viewMonth - 1]} ·{' '}
+                        {gd.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
                       </Text>
                     </View>
                     {!isPast && (
@@ -322,30 +350,39 @@ export default function HijriCalendarScreen() {
               .filter((d) => d.date >= new Date(new Date().setHours(0, 0, 0, 0)))
               .slice(0, 6)
               .map((d) => {
-                const h = jdnToHijri(gregorianToJDN(d.date.getFullYear(), d.date.getMonth() + 1, d.date.getDate()));
+                const h = jdnToHijri(
+                  gregorianToJDN(d.date.getFullYear(), d.date.getMonth() + 1, d.date.getDate())
+                );
                 const daysLeft = Math.ceil((d.date.getTime() - Date.now()) / 86_400_000);
                 return (
-                  <View key={d.id}
+                  <View
+                    key={d.id}
                     className="flex-row items-center border-b border-slate-100 px-4 py-3.5 last:border-0 dark:border-slate-800">
                     <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl border border-teal-200 bg-teal-50 dark:border-teal-500/30 dark:bg-teal-500/10">
                       <Ionicons name="star-outline" size={18} color={teal} />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-sm font-bold text-slate-900 dark:text-white">{d.name}</Text>
+                      <Text className="text-sm font-bold text-slate-900 dark:text-white">
+                        {d.name}
+                      </Text>
                       <Text className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
-                        {h.day} {HIJRI_MONTHS[h.month - 1]} {h.year} · {d.date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
+                        {h.day} {HIJRI_MONTHS[h.month - 1]} {h.year} ·{' '}
+                        {d.date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
                       </Text>
                     </View>
                     <View className="items-end">
-                      <Text className="text-lg font-black text-teal-600 dark:text-teal-400">{daysLeft}</Text>
-                      <Text className="text-[9px] font-bold uppercase text-slate-400">gün kaldı</Text>
+                      <Text className="text-lg font-black text-teal-600 dark:text-teal-400">
+                        {daysLeft}
+                      </Text>
+                      <Text className="text-[9px] font-bold uppercase text-slate-400">
+                        gün kaldı
+                      </Text>
                     </View>
                   </View>
                 );
               })}
           </View>
         </View>
-
       </ScrollView>
     </Screen>
   );
