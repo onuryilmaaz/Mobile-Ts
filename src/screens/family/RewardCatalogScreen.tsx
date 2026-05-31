@@ -56,7 +56,7 @@ export default function RewardCatalogScreen() {
       },
       'Sil',
       'İptal',
-      true,
+      true
     );
   };
 
@@ -69,7 +69,6 @@ export default function RewardCatalogScreen() {
         className="flex-1 bg-slate-50 dark:bg-slate-950"
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}>
-        {/* Yıldız özeti */}
         <View className="overflow-hidden rounded-3xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-500/20 dark:bg-amber-500/10">
           <View className="flex-row items-center justify-between">
             <View>
@@ -91,7 +90,6 @@ export default function RewardCatalogScreen() {
           </View>
         </View>
 
-        {/* Yeni ödül ekle */}
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -19,7 +20,9 @@ export default function BookmarksScreen() {
   const { isDark } = useTheme();
   const { bookmarks, load, removeBookmark } = useQuranStore();
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const open = (surahId: number, surahName: string, verseNumber: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -31,10 +34,12 @@ export default function BookmarksScreen() {
     alert.confirm(
       'Yer İmini Kaldır',
       'Bu ayeti yer imlerinden çıkarmak istiyor musun?',
-      async () => { await removeBookmark(id); },
+      async () => {
+        await removeBookmark(id);
+      },
       'Kaldır',
       'İptal',
-      true,
+      true
     );
   };
 
@@ -47,7 +52,9 @@ export default function BookmarksScreen() {
           <View className="h-20 w-20 items-center justify-center rounded-3xl bg-teal-50 dark:bg-teal-500/10">
             <Ionicons name="bookmark-outline" size={36} color={isDark ? '#14b8a6' : '#0f766e'} />
           </View>
-          <Text className="mt-5 text-lg font-black text-slate-900 dark:text-white">Henüz yer imi yok</Text>
+          <Text className="mt-5 text-lg font-black text-slate-900 dark:text-white">
+            Henüz yer imi yok
+          </Text>
           <Text className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
             Sure detayında ayetin yanındaki yer imi simgesine dokunarak burayı doldurabilirsin.
           </Text>
@@ -83,7 +90,11 @@ export default function BookmarksScreen() {
                     onPress={() => confirmRemove(b.id)}
                     hitSlop={8}
                     className="h-8 w-8 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
-                    <Ionicons name="trash-outline" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
+                    <Ionicons
+                      name="trash-outline"
+                      size={14}
+                      color={isDark ? '#94a3b8' : '#64748b'}
+                    />
                   </TouchableOpacity>
                 </View>
                 {b.preview && (

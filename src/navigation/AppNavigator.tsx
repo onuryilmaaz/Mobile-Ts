@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthNavigator from './AuthNavigator';
@@ -22,13 +23,22 @@ export default function AppNavigator() {
     hydrate: hydrateFamily,
     resetParentMode,
   } = useFamilyStore();
-  const { done: onboardingDone, hydrated: onboardingHydrated, hydrate: hydrateOnboarding } = useOnboardingStore();
+  const {
+    done: onboardingDone,
+    hydrated: onboardingHydrated,
+    hydrate: hydrateOnboarding,
+  } = useOnboardingStore();
 
-  useEffect(() => { if (!hydrated) hydrate(); }, [hydrate, hydrated]);
-  useEffect(() => { if (!onboardingHydrated) hydrateOnboarding(); }, [onboardingHydrated, hydrateOnboarding]);
-  useEffect(() => { if (!familyHydrated) hydrateFamily(); }, [familyHydrated, hydrateFamily]);
+  useEffect(() => {
+    if (!hydrated) hydrate();
+  }, [hydrate, hydrated]);
+  useEffect(() => {
+    if (!onboardingHydrated) hydrateOnboarding();
+  }, [onboardingHydrated, hydrateOnboarding]);
+  useEffect(() => {
+    if (!familyHydrated) hydrateFamily();
+  }, [familyHydrated, hydrateFamily]);
 
-  // Oturum kapanınca aile durumunu temizle
   useEffect(() => {
     if (hydrated && !isAuthenticated) {
       const store = useFamilyStore.getState();
@@ -41,7 +51,6 @@ export default function AppNavigator() {
     return <SplashScreen />;
   }
 
-  // 1. Çocuk oturumu aktif
   if (childSession) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
@@ -50,7 +59,6 @@ export default function AppNavigator() {
     );
   }
 
-  // 2. İlk açılış — onboarding (sadece bir kez)
   if (!onboardingDone) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
@@ -59,7 +67,6 @@ export default function AppNavigator() {
     );
   }
 
-  // 3. Giriş yapılmamış → auth
   if (!isAuthenticated) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
@@ -68,8 +75,6 @@ export default function AppNavigator() {
     );
   }
 
-  // 4. Giriş yapılmış + profil henüz seçilmemiş → profil seçimi
-  //    (ProfileSelectionScreen çocuk yoksa otomatik parent mode'a geçer)
   if (!parentModeActive) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
@@ -78,7 +83,6 @@ export default function AppNavigator() {
     );
   }
 
-  // 5. Ebeveyn modu — ana uygulama
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
       <Stack.Screen name="UserTabs" component={UserNavigator} />

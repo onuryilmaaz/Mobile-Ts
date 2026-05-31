@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,13 +20,21 @@ export default function PendingApprovalsScreen() {
   if (pendingApprovals.length === 0) {
     return (
       <Screen safeAreaEdges={['left', 'right']}>
-        <View className="flex-1 items-center justify-center bg-slate-50 gap-4 dark:bg-slate-950">
+        <View className="flex-1 items-center justify-center gap-4 bg-slate-50 dark:bg-slate-950">
           <View className="h-20 w-20 items-center justify-center rounded-3xl bg-teal-50 dark:bg-teal-500/10">
-            <Ionicons name="checkmark-done-circle-outline" size={40} color={isDark ? '#2dd4bf' : '#0f766e'} />
+            <Ionicons
+              name="checkmark-done-circle-outline"
+              size={40}
+              color={isDark ? '#2dd4bf' : '#0f766e'}
+            />
           </View>
           <View className="items-center gap-1">
-            <Text className="text-base font-black text-slate-900 dark:text-white">Onay Bekleyen Yok</Text>
-            <Text className="text-sm text-slate-500 dark:text-slate-400">Çocuklarının tüm görevleri incelendi.</Text>
+            <Text className="text-base font-black text-slate-900 dark:text-white">
+              Onay Bekleyen Yok
+            </Text>
+            <Text className="text-sm text-slate-500 dark:text-slate-400">
+              Çocuklarının tüm görevleri incelendi.
+            </Text>
           </View>
         </View>
       </Screen>
@@ -45,7 +54,6 @@ export default function PendingApprovalsScreen() {
           />
         }
         showsVerticalScrollIndicator={false}>
-
         {pendingApprovals.map((item, i) => {
           const meta = TASK_TYPE_META[item.task_type ?? 'custom'];
           return (
@@ -57,7 +65,9 @@ export default function PendingApprovalsScreen() {
                       <Text style={{ fontSize: 24 }}>{item.avatar_emoji ?? '🌙'}</Text>
                     </View>
                     <View className="flex-1">
-                      <Text className="font-black text-slate-900 dark:text-white">{item.child_name}</Text>
+                      <Text className="font-black text-slate-900 dark:text-white">
+                        {item.child_name}
+                      </Text>
                       <View className="mt-1 flex-row items-center gap-1.5">
                         <View
                           className="h-5 w-5 items-center justify-center rounded-full border"
@@ -67,7 +77,9 @@ export default function PendingApprovalsScreen() {
                           }}>
                           <Text style={{ fontSize: 10 }}>{meta.emoji}</Text>
                         </View>
-                        <Text className="text-sm text-slate-600 dark:text-slate-300">{item.title}</Text>
+                        <Text className="text-sm text-slate-600 dark:text-slate-300">
+                          {item.title}
+                        </Text>
                       </View>
                     </View>
                     <View className="rounded-full bg-amber-50 px-2.5 py-1 dark:bg-amber-500/10">
@@ -84,8 +96,12 @@ export default function PendingApprovalsScreen() {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       reviewCompletion(item.id, false);
                     }}
-                    className="flex-1 flex-row items-center justify-center gap-2 py-3.5 border-r border-slate-100 dark:border-slate-800">
-                    <Ionicons name="close-circle-outline" size={16} color={isDark ? '#f87171' : '#ef4444'} />
+                    className="flex-1 flex-row items-center justify-center gap-2 border-r border-slate-100 py-3.5 dark:border-slate-800">
+                    <Ionicons
+                      name="close-circle-outline"
+                      size={16}
+                      color={isDark ? '#f87171' : '#ef4444'}
+                    />
                     <Text className="text-sm font-bold text-red-500 dark:text-red-400">Reddet</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -94,8 +110,14 @@ export default function PendingApprovalsScreen() {
                       reviewCompletion(item.id, true);
                     }}
                     className="flex-1 flex-row items-center justify-center gap-2 py-3.5">
-                    <Ionicons name="checkmark-circle-outline" size={16} color={isDark ? '#2dd4bf' : '#0f766e'} />
-                    <Text className="text-sm font-black text-teal-700 dark:text-teal-400">Onayla</Text>
+                    <Ionicons
+                      name="checkmark-circle-outline"
+                      size={16}
+                      color={isDark ? '#2dd4bf' : '#0f766e'}
+                    />
+                    <Text className="text-sm font-black text-teal-700 dark:text-teal-400">
+                      Onayla
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>

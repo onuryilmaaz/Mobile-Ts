@@ -87,7 +87,6 @@ function StreakCelebration({
             },
             overlayStyle,
           ]}>
-          {/* glow halo */}
           <Animated.View
             style={[
               {
@@ -119,12 +118,10 @@ function StreakCelebration({
               },
               cardStyle,
             ]}>
-            {/* moon */}
             <Animated.View entering={ZoomIn.delay(60).duration(220)}>
               <Text style={{ fontSize: 58, marginBottom: 16 }}>🌙</Text>
             </Animated.View>
 
-            {/* title */}
             <Animated.Text
               entering={FadeInDown.delay(100).duration(200)}
               style={{
@@ -138,7 +135,6 @@ function StreakCelebration({
               Tüm Namazlar Tamamlandı!
             </Animated.Text>
 
-            {/* streak ring */}
             <Animated.View
               style={[
                 {
@@ -172,7 +168,6 @@ function StreakCelebration({
               </Text>
             </Animated.View>
 
-            {/* subtitle */}
             <Animated.Text
               entering={FadeInDown.delay(160).duration(200)}
               style={{
@@ -298,7 +293,6 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
     const kaza = stats.kaza_prayers ?? [];
     const prev = prevTrackerRef.current;
 
-    // Show celebration when prayer count transitions to 5 (widget-triggered path)
     if (prev !== null && prev.prayers.length < 5 && prayers.length >= 5) {
       if (!celebrationHandledRef.current) {
         const streak = Number(stats.current_streak ?? 0);
@@ -470,7 +464,6 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
         </View>
 
         <View className="p-3.5">
-          {/* Özel gün banner */}
           {isAuthenticated && isOzelGun && (
             <View className="mb-3 flex-row items-center justify-between rounded-2xl border border-pink-200 bg-pink-50 px-3.5 py-2.5 dark:border-pink-900/50 dark:bg-pink-950/40">
               <View className="flex-row items-center gap-2">
@@ -530,7 +523,7 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
                           ? 'border-orange-500/50 bg-orange-500/10 shadow-sm shadow-orange-500/30'
                           : 'border-teal-500/50 bg-teal-500/10 shadow-sm shadow-teal-500/30'
                         : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/30'
-                    }`}> 
+                    }`}>
                     {(isKazaLog || (isAuthenticated && !isTracked && isExpired)) && (
                       <View
                         className={`absolute -right-1.5 -top-1.5 z-10 rounded-full px-1.5 py-0.5 ${isKazaLog ? 'bg-orange-500' : 'bg-white/25'}`}>
@@ -607,7 +600,6 @@ export function PrayerTrackerCard({ focusNonce }: { focusNonce?: number }) {
             })}
           </View>
 
-          {/* Özel gün başlatma butonu — sadece kadin kullanıcılara */}
           {isAuthenticated && gender === 'kadin' && !isOzelGun && (
             <TouchableOpacity
               onPress={() =>

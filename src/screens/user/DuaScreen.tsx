@@ -50,7 +50,6 @@ export default function DuaScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Header */}
         <View className="mx-4 mb-5 mt-4">
           <Text className="text-2xl font-black text-slate-900 dark:text-white">
             Dua Koleksiyonu
@@ -60,7 +59,6 @@ export default function DuaScreen() {
           </Text>
         </View>
 
-        {/* Favoriler */}
         {favoriteDuas.length > 0 && (
           <View className="mx-4 mb-5">
             <View className="mb-3 flex-row items-center gap-2">
@@ -92,7 +90,6 @@ export default function DuaScreen() {
           </View>
         )}
 
-        {/* Kategoriler */}
         <View className="mx-4">
           <Text className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Kategoriler
@@ -130,7 +127,6 @@ export default function DuaScreen() {
         </View>
       </ScrollView>
 
-      {/* Kategori Modal */}
       <Modal
         visible={!!selectedCategory}
         animationType="slide"
@@ -215,7 +211,6 @@ export default function DuaScreen() {
         </View>
       </Modal>
 
-      {/* Dua Detay Modal */}
       <Modal
         visible={!!selectedDua}
         animationType="slide"

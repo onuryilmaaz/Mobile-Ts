@@ -37,7 +37,6 @@ export default function ProfileSelectionScreen() {
     fetchChildren().finally(() => setFetching(false));
   }, []);
 
-  // Fetch tamamlandıktan sonra çocuk yoksa ebeveyn moduna geç
   useEffect(() => {
     if (!fetching && children.length === 0) {
       selectParentMode();
@@ -104,7 +103,6 @@ export default function ProfileSelectionScreen() {
           </Text>
         </Animated.View>
 
-        {/* Ebeveyn profili */}
         <Animated.View entering={FadeInDown.delay(80).duration(300)}>
           <TouchableOpacity
             onPress={() => {
@@ -135,7 +133,6 @@ export default function ProfileSelectionScreen() {
           </TouchableOpacity>
         </Animated.View>
 
-        {/* Çocuk profilleri */}
         {children.length > 0 && (
           <>
             <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -186,7 +183,6 @@ export default function ProfileSelectionScreen() {
         )}
       </ScrollView>
 
-      {/* PIN Modal */}
       <Modal
         visible={!!selectedChildId}
         transparent
@@ -215,7 +211,6 @@ export default function ProfileSelectionScreen() {
               </Text>
             </View>
 
-            {/* PIN dots */}
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => pinInputRef.current?.focus()}
@@ -234,7 +229,6 @@ export default function ProfileSelectionScreen() {
               ))}
             </TouchableOpacity>
 
-            {/* Gizli input */}
             <TextInput
               ref={pinInputRef}
               value={pin}

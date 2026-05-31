@@ -1,7 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import {
-  View, Text, ScrollView, TouchableOpacity, Modal,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useFamilyStore } from '@/modules/family/family.store';
@@ -87,8 +86,6 @@ export default function ChildRewardsScreen() {
       className="flex-1 bg-slate-50 dark:bg-slate-950"
       contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}>
-
-      {/* Yıldız + Seviye kartı */}
       <Animated.View entering={FadeInDown.duration(300)}>
         <View
           className="overflow-hidden rounded-3xl p-5"
@@ -107,9 +104,7 @@ export default function ChildRewardsScreen() {
               <Text className="mt-1 text-4xl font-black" style={{ color: a.primary }}>
                 {stars} ⭐
               </Text>
-              <Text
-                className="mt-0.5 text-sm font-bold"
-                style={{ color: `${a.primary}cc` }}>
+              <Text className="mt-0.5 text-sm font-bold" style={{ color: `${a.primary}cc` }}>
                 Lv.{level} — {levelName}
               </Text>
             </View>
@@ -142,7 +137,6 @@ export default function ChildRewardsScreen() {
         </View>
       </Animated.View>
 
-      {/* Rozetler */}
       {(childStats?.badges ?? []).length > 0 && (
         <Animated.View entering={FadeInDown.delay(80).duration(300)}>
           <View className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
@@ -173,7 +167,6 @@ export default function ChildRewardsScreen() {
         </Animated.View>
       )}
 
-      {/* Mevcut ödüller */}
       {availableRewards.length > 0 && (
         <>
           <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -210,9 +203,7 @@ export default function ChildRewardsScreen() {
                           <View
                             className="rounded-full px-2 py-0.5"
                             style={{ backgroundColor: `${a.primary}20` }}>
-                            <Text
-                              className="text-[10px] font-bold"
-                              style={{ color: a.primary }}>
+                            <Text className="text-[10px] font-bold" style={{ color: a.primary }}>
                               Alabilirsin!
                             </Text>
                           </View>
@@ -231,9 +222,7 @@ export default function ChildRewardsScreen() {
                       disabled={!canAfford || redeeming === reward.id}
                       className="rounded-2xl px-4 py-3"
                       style={{
-                        backgroundColor: canAfford
-                          ? a.primary
-                          : isDark ? '#1e293b' : '#f1f5f9',
+                        backgroundColor: canAfford ? a.primary : isDark ? '#1e293b' : '#f1f5f9',
                       }}>
                       <Text
                         className="text-sm font-black"
@@ -260,7 +249,6 @@ export default function ChildRewardsScreen() {
         </View>
       )}
 
-      {/* Kullanılan ödüller */}
       {redeemedRewards.length > 0 && (
         <>
           <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -286,7 +274,6 @@ export default function ChildRewardsScreen() {
         </>
       )}
 
-      {/* Onay modalı */}
       <Modal visible={!!confirmReward} transparent animationType="fade">
         <View className="flex-1 items-center justify-center bg-black/50 px-6">
           <Animated.View entering={ZoomIn.duration(250)} className="w-full">
@@ -297,9 +284,10 @@ export default function ChildRewardsScreen() {
               </Text>
               <Text className="mb-5 text-center text-slate-500 dark:text-slate-400">
                 <Text className="font-bold text-slate-900 dark:text-white">
-                  "{confirmReward?.title}"
+                  &rdquo;{confirmReward?.title}&rdquo;
                 </Text>
-                {'\n'}{confirmReward?.cost} ⭐ yıldız harcanacak.
+                {'\n'}
+                {confirmReward?.cost} ⭐ yıldız harcanacak.
               </Text>
               <View className="flex-row gap-3">
                 <TouchableOpacity
@@ -322,7 +310,6 @@ export default function ChildRewardsScreen() {
         </View>
       </Modal>
 
-      {/* Başarı modalı */}
       <Modal visible={!!redeemSuccess} transparent animationType="fade">
         <View className="flex-1 items-center justify-center bg-black/50 px-8">
           <Animated.View entering={ZoomIn.duration(300)}>
@@ -332,7 +319,7 @@ export default function ChildRewardsScreen() {
                 Tebrikler!
               </Text>
               <Text className="text-center text-base font-semibold text-slate-600 dark:text-slate-300">
-                "{redeemSuccess}"{'\n'}ödülünü kazandın! Maşa'Allah! 🌟
+                &rdquo;{redeemSuccess}&rdquo;{'\n'}ödülünü kazandın! Maşa&rsquo;Allah! 🌟
               </Text>
             </View>
           </Animated.View>

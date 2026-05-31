@@ -1,7 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import {
-  View, Text, ScrollView, TouchableOpacity, RefreshControl, Modal,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -16,10 +15,14 @@ type Gender = 'erkek' | 'kız' | null | undefined;
 function getGreeting(name: string) {
   const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul' }));
   const h = now.getHours();
-  if (h >= 4 && h < 12) return { text: `Hayırlı Sabahlar, ${name}! 🌅`, sub: 'Bismillah ile başlayalım!' };
-  if (h >= 12 && h < 15) return { text: `Hayırlı Öğleler, ${name}! ☀️`, sub: 'Öğle vakti, devam et!' };
-  if (h >= 15 && h < 18) return { text: `Hayırlı İkindiler, ${name}! 🌤`, sub: 'Harika gidiyorsun!' };
-  if (h >= 18 && h < 21) return { text: `Hayırlı Akşamlar, ${name}! 🌇`, sub: 'Bugün çok güzel geçiyor!' };
+  if (h >= 4 && h < 12)
+    return { text: `Hayırlı Sabahlar, ${name}! 🌅`, sub: 'Bismillah ile başlayalım!' };
+  if (h >= 12 && h < 15)
+    return { text: `Hayırlı Öğleler, ${name}! ☀️`, sub: 'Öğle vakti, devam et!' };
+  if (h >= 15 && h < 18)
+    return { text: `Hayırlı İkindiler, ${name}! 🌤`, sub: 'Harika gidiyorsun!' };
+  if (h >= 18 && h < 21)
+    return { text: `Hayırlı Akşamlar, ${name}! 🌇`, sub: 'Bugün çok güzel geçiyor!' };
   return { text: `Hayırlı Geceler, ${name}! 🌙`, sub: 'Güzel bir gün geçirdin!' };
 }
 
@@ -49,10 +52,8 @@ function genderAccent(gender: Gender, isDark: boolean) {
 }
 
 export default function ChildTasksScreen() {
-  const {
-    todayTasks, fetchTodayTasks, completeTask, isLoading,
-    childStats, fetchChildStats, childSession,
-  } = useFamilyStore();
+  const { todayTasks, fetchTodayTasks, completeTask, isLoading, fetchChildStats, childSession } =
+    useFamilyStore();
   const { isDark } = useTheme();
   const [completing, setCompleting] = useState<string | null>(null);
   const [celebrateTask, setCelebrateTask] = useState<{ id: string; stars: number } | null>(null);
@@ -95,14 +96,8 @@ export default function ChildTasksScreen() {
       contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
       refreshControl={
-        <RefreshControl
-          refreshing={isLoading}
-          onRefresh={fetchTodayTasks}
-          tintColor={a.primary}
-        />
+        <RefreshControl refreshing={isLoading} onRefresh={fetchTodayTasks} tintColor={a.primary} />
       }>
-
-      {/* Selamlama */}
       <Animated.View entering={FadeInDown.duration(300)}>
         <View
           className="rounded-3xl p-5"
@@ -120,7 +115,6 @@ export default function ChildTasksScreen() {
         </View>
       </Animated.View>
 
-      {/* İlerleme kartı */}
       {totalTasks > 0 && (
         <Animated.View entering={FadeInDown.delay(60).duration(300)}>
           <View
@@ -159,14 +153,13 @@ export default function ChildTasksScreen() {
               <Text
                 className="mt-2.5 text-center text-base font-black"
                 style={{ color: a.primary }}>
-                Maşa'Allah! Harika bir gün! 🌟
+                Maşa&rsquo;Allah! Harika bir gün! 🌟
               </Text>
             )}
           </View>
         </Animated.View>
       )}
 
-      {/* Bekleyen görevler */}
       {pending.length > 0 && (
         <>
           <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -216,9 +209,7 @@ export default function ChildTasksScreen() {
                     disabled={isCompleting}
                     className="mx-4 mb-4 items-center rounded-2xl py-4"
                     style={{
-                      backgroundColor: isCompleting
-                        ? (isDark ? '#1e293b' : '#f1f5f9')
-                        : a.primary,
+                      backgroundColor: isCompleting ? (isDark ? '#1e293b' : '#f1f5f9') : a.primary,
                     }}>
                     <Text
                       className="text-base font-black"
@@ -235,7 +226,6 @@ export default function ChildTasksScreen() {
         </>
       )}
 
-      {/* Tamamlanan görevler */}
       {done.length > 0 && (
         <>
           <Text className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -275,16 +265,13 @@ export default function ChildTasksScreen() {
       {totalTasks === 0 && !isLoading && (
         <View className="items-center gap-4 py-16">
           <Text style={{ fontSize: 56 }}>🌙</Text>
-          <Text className="text-lg font-black text-slate-900 dark:text-white">
-            Bugün görev yok
-          </Text>
+          <Text className="text-lg font-black text-slate-900 dark:text-white">Bugün görev yok</Text>
           <Text className="text-center text-sm text-slate-400 dark:text-slate-600">
             Annen veya baban görev eklediğinde{'\n'}burada görünecek.
           </Text>
         </View>
       )}
 
-      {/* Kutlama modalı */}
       <Modal visible={!!celebrateTask} transparent animationType="fade">
         <View className="flex-1 items-center justify-center bg-black/50 px-8">
           <Animated.View entering={ZoomIn.duration(300)}>
@@ -294,7 +281,7 @@ export default function ChildTasksScreen() {
                 Harika!
               </Text>
               <Text className="text-center text-base font-semibold text-slate-600 dark:text-slate-300">
-                Maşa'Allah, görevi tamamladın!
+                Maşa&rsquo;Allah, görevi tamamladın!
               </Text>
               <View
                 className="rounded-full px-5 py-2"

@@ -131,16 +131,12 @@ export function GamificationScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}>
         <View className="px-6 pb-4 pt-6">
-          <View
-            className="flex-row justify-between rounded-[32px] bg-teal-700 p-5 shadow-lg shadow-teal-900/20 dark:border dark:border-slate-700 dark:bg-slate-800 dark:shadow-none">
+          <View className="flex-row justify-between rounded-[32px] bg-teal-700 p-5 shadow-lg shadow-teal-900/20 dark:border dark:border-slate-700 dark:bg-slate-800 dark:shadow-none">
             <View className="flex-1 items-center">
-              <View
-                className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20 dark:bg-amber-500/10">
+              <View className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20 dark:bg-amber-500/10">
                 <Ionicons name="star" size={20} color="#fbbf24" />
               </View>
-              <Text className="text-lg font-black text-white">
-                {stats?.total_points || 0}
-              </Text>
+              <Text className="text-lg font-black text-white">{stats?.total_points || 0}</Text>
               <Text className="text-[9px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400">
                 Puan
               </Text>
@@ -150,9 +146,7 @@ export function GamificationScreen() {
               <View className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20 dark:bg-rose-500/10">
                 <Ionicons name="flame" size={20} color="#fb7185" />
               </View>
-              <Text className="text-lg font-black text-white">
-                {stats?.current_streak || 0}
-              </Text>
+              <Text className="text-lg font-black text-white">{stats?.current_streak || 0}</Text>
               <Text className="text-[9px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400">
                 Seri
               </Text>
@@ -162,9 +156,7 @@ export function GamificationScreen() {
               <View className="mb-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/20 dark:bg-sky-500/10">
                 <Ionicons name="medal" size={20} color="#38bdf8" />
               </View>
-              <Text className="text-lg font-black text-white">
-                {badges?.length || 0}
-              </Text>
+              <Text className="text-lg font-black text-white">{badges?.length || 0}</Text>
               <Text className="text-[9px] font-bold uppercase tracking-widest text-teal-100 dark:text-teal-400">
                 Rozet
               </Text>
@@ -173,8 +165,7 @@ export function GamificationScreen() {
         </View>
 
         {level && (
-          <View
-            className="mx-6 mb-6 overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
+          <View className="mx-6 mb-6 overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
             <View className="mb-3 flex-row items-center justify-between">
               <View>
                 <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -312,8 +303,7 @@ export function GamificationScreen() {
               />
             </View>
 
-            <View
-              className="rounded-[32px] border border-slate-200 bg-white p-2 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
+            <View className="rounded-[32px] border border-slate-200 bg-white p-2 shadow-sm shadow-black/5 dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
               {rest.map((item: any, idx: number) => {
                 const isMe = user?.id === item.id;
                 return (

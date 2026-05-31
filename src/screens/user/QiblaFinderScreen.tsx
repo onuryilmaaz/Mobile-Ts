@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
@@ -40,8 +39,6 @@ export default function QiblaFinderScreen() {
       setQiblaBearing(bearing);
       setLoading(false);
 
-      // watchHeadingAsync: OS-seviyesi sensör füzyonu (ivmeölçer + manyetometre + jiroskop).
-      // trueHeading coğrafi kuzeyi verir (manyetik sapma otomatik düzeltilir).
       sub = await Location.watchHeadingAsync((data) => {
         const raw = data.trueHeading >= 0 ? data.trueHeading : data.magHeading;
         setHeading((prev) => smoothAngle(prev, raw));
@@ -55,8 +52,6 @@ export default function QiblaFinderScreen() {
   }, []);
 
   const arrowRotation = qiblaBearing - heading;
-  // ((x % 360) + 360) % 360 her zaman [0, 360) aralığına normalize eder;
-  // min(n, 360-n) ile her iki kenardaki sarma durumunu yakalar (örn. 357° = 3° uzakta).
   const normalizedRotation = ((arrowRotation % 360) + 360) % 360;
   const isAligned = Math.min(normalizedRotation, 360 - normalizedRotation) < 5;
 
@@ -72,7 +67,7 @@ export default function QiblaFinderScreen() {
   if (errorMsg) {
     return (
       <Screen className="items-center justify-center p-6">
-        <Ionicons name="warning-outline" size={48} color={isDark ? "#fca5a5" : "#ef4444"} />
+        <Ionicons name="warning-outline" size={48} color={isDark ? '#fca5a5' : '#ef4444'} />
         <Text className="mt-4 text-center text-slate-900 dark:text-white">{errorMsg}</Text>
       </Screen>
     );
@@ -98,7 +93,6 @@ export default function QiblaFinderScreen() {
               borderRadius: (width * 0.75) / 2,
             }}
             className="relative items-center justify-center rounded-full border-4 border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800/70 dark:shadow-none">
-            
             <View className="absolute top-4 items-center">
               <Text className="mb-1 text-xl font-bold text-red-500 dark:text-red-400">N</Text>
               <View className="h-4 w-1 rounded-full bg-red-500 dark:bg-red-400" />
@@ -126,7 +120,13 @@ export default function QiblaFinderScreen() {
                   left: '50%',
                   width: 2,
                   height: deg % 90 === 0 ? 12 : 8,
-                  backgroundColor: isDark ? (deg % 90 === 0 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)') : (deg % 90 === 0 ? '#94a3b8' : '#cbd5e1'),
+                  backgroundColor: isDark
+                    ? deg % 90 === 0
+                      ? 'rgba(255,255,255,0.4)'
+                      : 'rgba(255,255,255,0.15)'
+                    : deg % 90 === 0
+                      ? '#94a3b8'
+                      : '#cbd5e1',
                   transform: [
                     { translateX: -1 },
                     { translateY: -4 },
@@ -141,7 +141,9 @@ export default function QiblaFinderScreen() {
               <Ionicons
                 name="arrow-up"
                 size={70}
-                color={isAligned ? (isDark ? '#34d399' : '#10b981') : (isDark ? '#fcd34d' : '#fbbf24')}
+                color={
+                  isAligned ? (isDark ? '#34d399' : '#10b981') : isDark ? '#fcd34d' : '#fbbf24'
+                }
                 style={{
                   transform: [{ rotate: `${arrowRotation}deg` }],
                 }}

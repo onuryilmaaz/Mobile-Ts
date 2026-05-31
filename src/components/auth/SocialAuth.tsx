@@ -62,15 +62,16 @@ export function SocialAuth({ onError }: SocialAuthProps) {
     try {
       setLoading(strategy);
 
-      // Edge case: Clerk session active but app tokens lost (e.g. after logout/reload).
-      // Use the existing Clerk session instead of starting a new SSO flow.
       if (isSignedIn) {
         try {
           await exchangeClerkTokenForBackend();
           return;
         } catch (e) {
-          // Stale Clerk session — clear it and fall back to a fresh SSO flow
-          try { await signOut(); } catch {}
+          try {
+            await signOut();
+          } catch {
+            console.error('Mevcut oturumu kapatırken hata oluştu, devam ediliyor...', e);
+          }
         }
       }
 
@@ -116,7 +117,6 @@ export function SocialAuth({ onError }: SocialAuthProps) {
           <ActivityIndicator size="small" color="#0d9488" />
         ) : (
           <>
-            {/* <FontAwesome5 name="google" size={18} color="#EA4335" /> */}
             <GoogleIcon size={18} />
             <Text className="ml-3 text-base font-semibold text-slate-800 dark:text-white">
               Google ile devam et

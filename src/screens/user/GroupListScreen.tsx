@@ -66,7 +66,6 @@ export default function GroupListScreen({ navigation }: Props) {
         className="flex-1"
         contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={fetchMyGroups} />}>
-        {/* Başlık + butonlar */}
         <View className="mb-6 flex-row items-center justify-between">
           <Text className="text-2xl font-black text-slate-900 dark:text-white">
             İbadet Grupları
@@ -85,7 +84,6 @@ export default function GroupListScreen({ navigation }: Props) {
           </View>
         </View>
 
-        {/* Boş durum */}
         {!isLoading && myGroups.length === 0 && (
           <View className="items-center py-16">
             <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-teal-500/10">
@@ -105,7 +103,6 @@ export default function GroupListScreen({ navigation }: Props) {
           </View>
         )}
 
-        {/* Gruplar */}
         {myGroups.map((group: Group) => (
           <TouchableOpacity
             key={group.id}
@@ -145,7 +142,6 @@ export default function GroupListScreen({ navigation }: Props) {
         ))}
       </ScrollView>
 
-      {/* Davet kodu ile katıl modal */}
       <Modal
         visible={joinModalVisible}
         transparent

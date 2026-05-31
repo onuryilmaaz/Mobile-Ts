@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
@@ -228,7 +229,7 @@ export default function DhikrScreen() {
   const [showHistory, setShowHistory] = useState(false);
   const [milestoneMsg, setMilestoneMsg] = useState('');
   const [showMilestone, setShowMilestone] = useState(false);
-  const milestoneTimer = useRef<NodeJS.Timeout | null>(null);
+  const milestoneTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { isDark } = useTheme();
 
   const target = presets[activePreset]?.target ?? 33;
@@ -361,7 +362,7 @@ export default function DhikrScreen() {
       },
       'Sil',
       'İptal',
-      true,
+      true
     );
   };
 

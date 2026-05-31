@@ -99,7 +99,6 @@ export default function ChildNavigator() {
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
-      {/* Çocuk modu header */}
       <View
         className="w-full flex-row items-center justify-between px-4"
         style={{
@@ -171,7 +170,6 @@ export default function ChildNavigator() {
         />
       </Tab.Navigator>
 
-      {/* Çıkış PIN Modalı */}
       <Modal
         visible={exitModalVisible}
         transparent
@@ -198,7 +196,6 @@ export default function ChildNavigator() {
               </Text>
             </View>
 
-            {/* PIN dots */}
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => pinInputRef.current?.focus()}

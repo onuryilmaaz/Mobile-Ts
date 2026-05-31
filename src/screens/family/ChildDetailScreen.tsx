@@ -76,16 +76,14 @@ export default function ChildDetailScreen() {
 
   const [activeTab, setActiveTab] = useState<'tasks' | 'stats'>('tasks');
 
-  // --- Çocuk modu açma PIN ---
   const [enterPinOpen, setEnterPinOpen] = useState(false);
   const [enterPin, setEnterPin] = useState('');
   const [enterPinLoading, setEnterPinLoading] = useState(false);
   const [enterPinError, setEnterPinError] = useState(false);
   const enterPinRef = useRef<TextInput>(null);
 
-  // --- PIN ayarlama ---
   const [changePinOpen, setChangePinOpen] = useState(false);
-  const [changePinStep, setChangePinStep] = useState<1 | 2>(1); // 1: yeni PIN, 2: onayla
+  const [changePinStep, setChangePinStep] = useState<1 | 2>(1);
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [changePinLoading, setChangePinLoading] = useState(false);
@@ -178,7 +176,6 @@ export default function ChildDetailScreen() {
         className="flex-1 bg-slate-50 dark:bg-slate-950"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}>
-        {/* Profil Header */}
         <View className="border-b border-slate-200 bg-white px-4 pb-5 pt-4 dark:border-slate-800 dark:bg-slate-900">
           <Animated.View entering={FadeInDown.duration(300)} className="items-center gap-3">
             <View
@@ -211,7 +208,6 @@ export default function ChildDetailScreen() {
               </View>
             </View>
 
-            {/* Ana aksiyon butonları */}
             <View className="flex-row gap-2">
               <TouchableOpacity
                 onPress={() => {
@@ -226,7 +222,11 @@ export default function ChildDetailScreen() {
               <TouchableOpacity
                 onPress={() => navigation.navigate('ChildReport', { childId })}
                 className="flex-row items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-slate-700 dark:bg-slate-800">
-                <Ionicons name="bar-chart-outline" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
+                <Ionicons
+                  name="bar-chart-outline"
+                  size={14}
+                  color={isDark ? '#94a3b8' : '#64748b'}
+                />
                 <Text className="text-sm font-semibold text-slate-600 dark:text-slate-300">
                   Rapor
                 </Text>
@@ -241,7 +241,6 @@ export default function ChildDetailScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* İkincil butonlar: düzenle, PIN, sil */}
             <View className="flex-row gap-2">
               <TouchableOpacity
                 onPress={() => {
@@ -278,7 +277,7 @@ export default function ChildDetailScreen() {
                     },
                     'Sil',
                     'İptal',
-                    true,
+                    true
                   );
                 }}
                 className="flex-row items-center gap-1.5 rounded-xl border border-red-200 px-3 py-2 dark:border-red-500/30">
@@ -289,13 +288,12 @@ export default function ChildDetailScreen() {
           </Animated.View>
         </View>
 
-        {/* Sekmeler */}
         <View className="flex-row border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
           {(['tasks', 'stats'] as const).map((tab) => (
             <TouchableOpacity
               key={tab}
               onPress={() => setActiveTab(tab)}
-              className={`flex-1 items-center border-b-2 py-3 border-transparent`}
+              className={`flex-1 items-center border-b-2 border-transparent py-3`}
               style={activeTab === tab ? { borderBottomColor: a.primary } : undefined}>
               <Text
                 className={`text-sm font-bold ${activeTab !== tab ? 'text-slate-500 dark:text-slate-400' : ''}`}
@@ -439,7 +437,9 @@ export default function ChildDetailScreen() {
                         </Text>
                       )}
                     </View>
-                    <View className="h-2 overflow-hidden rounded-full" style={{ backgroundColor: a.progressBg }}>
+                    <View
+                      className="h-2 overflow-hidden rounded-full"
+                      style={{ backgroundColor: a.progressBg }}>
                       <View
                         className="h-full rounded-full"
                         style={{
@@ -476,7 +476,6 @@ export default function ChildDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* Çocuk Modu Açma PIN Modal */}
       <Modal
         visible={enterPinOpen}
         transparent
@@ -576,7 +575,6 @@ export default function ChildDetailScreen() {
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* PIN Ayarlama Modal */}
       <Modal
         visible={changePinOpen}
         transparent
@@ -589,7 +587,7 @@ export default function ChildDetailScreen() {
           <View className="rounded-t-[32px] border-t border-slate-200 bg-white p-6 pb-10 dark:border-slate-700 dark:bg-slate-900">
             <View className="mb-5 flex-row items-center justify-between">
               <Text className="text-xl font-black text-slate-900 dark:text-white">
-                {changePinStep === 1 ? 'Yeni PIN Belirle' : 'PIN\'i Onayla'}
+                {changePinStep === 1 ? 'Yeni PIN Belirle' : "PIN'i Onayla"}
               </Text>
               <TouchableOpacity
                 onPress={closeChangePinModal}
@@ -603,7 +601,7 @@ export default function ChildDetailScreen() {
               <Text className="text-sm font-semibold text-slate-500 dark:text-slate-400">
                 {changePinStep === 1
                   ? `${child.name} için 4 haneli PIN girin`
-                  : 'Aynı PIN\'i tekrar girin'}
+                  : "Aynı PIN'i tekrar girin"}
               </Text>
             </View>
 
@@ -619,7 +617,6 @@ export default function ChildDetailScreen() {
               ))}
             </View>
 
-            {/* Adım 1 — Yeni PIN */}
             {changePinStep === 1 && (
               <>
                 <TouchableOpacity
@@ -650,7 +647,6 @@ export default function ChildDetailScreen() {
               </>
             )}
 
-            {/* Adım 2 — Onayla */}
             {changePinStep === 2 && (
               <>
                 <TouchableOpacity

@@ -48,7 +48,6 @@ export function StreakCard() {
   return (
     <Animated.View entering={FadeInUp.duration(400)} className="mx-4 mb-4">
       <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
-        {/* Header */}
         <View className="flex-row items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
           <View className="flex-row items-center gap-2">
             <View className="h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10">
@@ -65,7 +64,6 @@ export function StreakCard() {
         </View>
 
         <View className="p-5">
-          {/* Weekly grid */}
           <View className="mb-4 flex-row justify-between">
             {weekDays.map((day, i) => (
               <View key={i} className="items-center gap-1.5">
@@ -101,7 +99,6 @@ export function StreakCard() {
             ))}
           </View>
 
-          {/* Stats row */}
           <View className="flex-row gap-3">
             <View className="flex-1 items-center rounded-xl bg-slate-50 py-3 dark:bg-slate-800">
               <Text className="text-xl font-black text-amber-500">{streak}</Text>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
@@ -95,7 +96,6 @@ export default function SurahBrowserScreen({ navigation }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}>
-          {/* Quick access: Last Read + Bookmarks */}
           {!searchQuery && (lastRead || bookmarks.length > 0) && (
             <View className="mb-4 flex-row gap-3">
               {lastRead && (
@@ -116,7 +116,9 @@ export default function SurahBrowserScreen({ navigation }: Props) {
                       Devam Et
                     </Text>
                   </View>
-                  <Text className="mt-1.5 text-sm font-black text-slate-900 dark:text-white" numberOfLines={1}>
+                  <Text
+                    className="mt-1.5 text-sm font-black text-slate-900 dark:text-white"
+                    numberOfLines={1}>
                     {lastRead.surahName}
                   </Text>
                   <Text className="text-xs font-bold text-teal-600 dark:text-teal-400">
@@ -137,7 +139,9 @@ export default function SurahBrowserScreen({ navigation }: Props) {
                     Yer İmleri
                   </Text>
                 </View>
-                <Text className="mt-1.5 text-sm font-black text-slate-900 dark:text-white" numberOfLines={1}>
+                <Text
+                  className="mt-1.5 text-sm font-black text-slate-900 dark:text-white"
+                  numberOfLines={1}>
                   {bookmarks.length > 0 ? `${bookmarks.length} ayet` : 'Henüz yok'}
                 </Text>
                 <Text className="text-xs font-bold text-amber-600 dark:text-amber-400">

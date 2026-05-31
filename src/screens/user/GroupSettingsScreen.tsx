@@ -150,7 +150,6 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
           keyboardShouldPersistTaps="handled">
-          {/* Avatar */}
           <View className="mb-8 items-center">
             <TouchableOpacity
               onPress={handleAvatarUpload}
@@ -175,7 +174,6 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
             </Text>
           </View>
 
-          {/* Form */}
           <Text className="mb-6 text-xl font-black text-slate-900 dark:text-white">
             Grup Bilgileri
           </Text>
@@ -210,10 +208,8 @@ export default function GroupSettingsScreen({ navigation, route }: Props) {
             <Button title="Kaydet" onPress={handleSave} loading={saving} disabled={!name.trim()} />
           </View>
 
-          {/* Divider */}
           <View className="my-8 h-px bg-slate-100 dark:bg-slate-800" />
 
-          {/* Danger zone */}
           <Text className="mb-2 text-base font-bold text-red-600 dark:text-red-500">
             Tehlikeli Bölge
           </Text>

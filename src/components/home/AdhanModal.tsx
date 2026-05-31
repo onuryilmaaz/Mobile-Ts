@@ -15,7 +15,9 @@ export default function AdhanModal({ visible, prayerName, onDismiss }: Props) {
   useEffect(() => {
     if (!visible) return;
     const cleanup = adhanService.addFinishedListener(onDismiss);
-    return () => { cleanup?.(); };
+    return () => {
+      cleanup?.();
+    };
   }, [visible, onDismiss]);
 
   const handleStop = () => {
@@ -25,27 +27,22 @@ export default function AdhanModal({ visible, prayerName, onDismiss }: Props) {
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" statusBarTranslucent onRequestClose={handleStop}>
-      {/* Backdrop — tıklanınca da durduruyor */}
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={handleStop}>
       <Pressable className="flex-1 items-center justify-center" onPress={handleStop}>
-
-        {/* Blur/dim katmanı — pointerEvents none ki touch'u çalmıyor */}
         {Platform.OS === 'ios' ? (
-          <BlurView
-            intensity={60}
-            tint="dark"
-            className="absolute inset-0"
-            pointerEvents="none"
-          />
+          <BlurView intensity={60} tint="dark" className="absolute inset-0" pointerEvents="none" />
         ) : (
           <View className="absolute inset-0 bg-black/70" pointerEvents="none" />
         )}
 
-        {/* Kart — kendi touch'unu yönetiyor, backdrop'a geçirmiyor */}
         <Pressable
           className="mx-6 w-full max-w-xs items-center rounded-3xl border border-white/10 bg-slate-900/95 px-8 py-10"
           onPress={(e) => e.stopPropagation()}>
-
           <View className="mb-6 h-24 w-24 items-center justify-center rounded-full border-2 border-teal-400/30 bg-teal-500/10">
             <View className="h-16 w-16 items-center justify-center rounded-full bg-teal-500/20">
               <Ionicons name="moon" size={32} color="#14b8a6" />
@@ -55,12 +52,8 @@ export default function AdhanModal({ visible, prayerName, onDismiss }: Props) {
           <Text className="mb-1 text-xs font-bold uppercase tracking-widest text-teal-400">
             Ezan Vakti
           </Text>
-          <Text className="mb-2 text-2xl font-black text-white">
-            {prayerName} Ezanı
-          </Text>
-          <Text className="mb-8 text-center text-sm text-white/50">
-            Allah-u Ekber
-          </Text>
+          <Text className="mb-2 text-2xl font-black text-white">{prayerName} Ezanı</Text>
+          <Text className="mb-8 text-center text-sm text-white/50">Allah-u Ekber</Text>
 
           <TouchableOpacity
             onPress={handleStop}

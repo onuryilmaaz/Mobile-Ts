@@ -63,9 +63,7 @@ export default function RamadanScreen() {
   const [countdown, setCountdown] = useState('');
   const [countdownLabel, setCountdownLabel] = useState('');
   const [countdownDone, setCountdownDone] = useState(false);
-  // dateKey → done boolean (local + AsyncStorage)
   const [teravihDone, setTeravihDone] = useState<Record<string, boolean>>({});
-  // dateKey → tracker log id (for DELETE)
   const [teravihLogIds, setTeravihLogIds] = useState<Record<string, string>>({});
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -116,7 +114,6 @@ export default function RamadanScreen() {
         const localDone: Record<string, boolean> = teravihRaw ? JSON.parse(teravihRaw) : {};
         const localIds: Record<string, string> = idsRaw ? JSON.parse(idsRaw) : {};
 
-        // Fetch today's tracker logs from API to get accurate state + log ids
         if (isAuthenticated && today) {
           const todayKey = today.date.split('T')[0] ?? '';
           try {
@@ -129,11 +126,12 @@ export default function RamadanScreen() {
               localDone[todayKey] = true;
               localIds[todayKey] = teravihLog.id;
             } else {
-              // authoritative: if API says no entry, mark as not done
               localDone[todayKey] = false;
               delete localIds[todayKey];
             }
-          } catch {}
+          } catch {
+            console.error('Hata');
+          }
         }
 
         setTeravihDone(localDone);
@@ -164,7 +162,6 @@ export default function RamadanScreen() {
     const wasDone = !!teravihDone[dateKey];
     const logId = teravihLogIds[dateKey];
 
-    // Optimistic update
     const nextDone = { ...teravihDone, [dateKey]: !wasDone };
     setTeravihDone(nextDone);
     await AsyncStorage.setItem(TERAVIH_KEY, JSON.stringify(nextDone));
@@ -173,7 +170,6 @@ export default function RamadanScreen() {
 
     try {
       if (!wasDone) {
-        // Create log entry
         const res = await trackerApi.logActivity({
           activity_type: 'nafile',
           value: { subtype: 'teravih', rakaat: 20 },
@@ -187,7 +183,6 @@ export default function RamadanScreen() {
         }
         toast.success('Kaydedildi', 'Teravih namazı kaydedildi.');
       } else if (logId) {
-        // Delete log entry
         await trackerApi.deleteLog(logId);
         const nextIds = { ...teravihLogIds };
         delete nextIds[dateKey];
@@ -196,7 +191,6 @@ export default function RamadanScreen() {
         toast.info('Kaldırıldı', 'Teravih kaydı silindi.');
       }
     } catch {
-      // Revert optimistic update
       const reverted = { ...nextDone, [dateKey]: wasDone };
       setTeravihDone(reverted);
       await AsyncStorage.setItem(TERAVIH_KEY, JSON.stringify(reverted));
@@ -216,7 +210,6 @@ export default function RamadanScreen() {
         className="flex-1"
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}>
-
         {/* Banner */}
         <View className="overflow-hidden rounded-3xl bg-teal-700 p-6">
           <View className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
@@ -231,7 +224,7 @@ export default function RamadanScreen() {
           {daysToKadir > 0 && daysToKadir <= 30 && (
             <View className="mt-3 self-start rounded-full border border-amber-400/40 bg-amber-400/20 px-3 py-1">
               <Text className="text-xs font-bold text-amber-300">
-                ✨ Kadir Gecesi'ne {daysToKadir} gün kaldı
+                ✨ Kadir Gecesi&rsquo;ne {daysToKadir} gün kaldı
               </Text>
             </View>
           )}
@@ -249,7 +242,6 @@ export default function RamadanScreen() {
           </View>
         ) : (
           <>
-            {/* Countdown */}
             {todayData && (
               <View className="items-center rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
                 <Text className="mb-2 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -267,7 +259,6 @@ export default function RamadanScreen() {
               </View>
             )}
 
-            {/* Today imsak / iftar */}
             {todayData && (
               <View>
                 <Text className="mb-2 ml-1 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -296,7 +287,6 @@ export default function RamadanScreen() {
               </View>
             )}
 
-            {/* Weekly imsakiye */}
             {week.length > 0 && (
               <View>
                 <Text className="mb-2 ml-1 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -372,8 +362,14 @@ export default function RamadanScreen() {
                             size={22}
                             color={
                               !isRamazan
-                                ? isDark ? '#1e293b' : '#e2e8f0'
-                                : done ? teal : isDark ? '#475569' : '#cbd5e1'
+                                ? isDark
+                                  ? '#1e293b'
+                                  : '#e2e8f0'
+                                : done
+                                  ? teal
+                                  : isDark
+                                    ? '#475569'
+                                    : '#cbd5e1'
                             }
                           />
                         </TouchableOpacity>

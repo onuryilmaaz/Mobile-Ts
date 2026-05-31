@@ -9,7 +9,15 @@ import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from '@react-navigation/native';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 
-const SUMMARY_TYPES = ['quran', 'dhikr', 'nafile', 'fasting', 'sadaka', 'dua', 'memorization'] as const;
+const SUMMARY_TYPES = [
+  'quran',
+  'dhikr',
+  'nafile',
+  'fasting',
+  'sadaka',
+  'dua',
+  'memorization',
+] as const;
 
 function getTotal(type: string, logs: any[]): number {
   const entries = logs.filter((l) => l.activity_type === type);
@@ -30,7 +38,7 @@ function getTotal(type: string, logs: any[]): number {
     case 'memorization':
       return entries.reduce(
         (s, l) => s + (l.value?.new_ayets || 0) + (l.value?.revision_ayets || 0),
-        0,
+        0
       );
     default:
       return entries.length;
@@ -47,7 +55,6 @@ export function TodayTrackerCard() {
     if (isAuthenticated) fetchTodayLogs();
   }, [isAuthenticated]);
 
-  // Sync iBADET widget with current todayLogs
   useEffect(() => {
     if (!isAuthenticated) return;
     const types = [...new Set(todayLogs.map((l) => l.activity_type))];

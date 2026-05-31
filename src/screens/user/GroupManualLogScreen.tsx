@@ -34,9 +34,8 @@ export default function GroupManualLogScreen({ navigation, route }: Props) {
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Sadece base_type = null olan custom tipler manuel giriş için geçerli
   const customTypes: GroupActivityType[] = (currentGroup?.activity_types ?? []).filter(
-    (t) => t.base_type === null,
+    (t) => t.base_type === null
   );
 
   async function handleLog() {
@@ -77,7 +76,7 @@ export default function GroupManualLogScreen({ navigation, route }: Props) {
             Özel Aktivite Tipi Yok
           </Text>
           <Text className="text-center text-sm text-slate-500 dark:text-slate-400">
-            Manuel giriş yalnızca standart tracker'a bağlı olmayan özel aktivite tipleri için
+            Manuel giriş yalnızca standart tracker&rsquo;a bağlı olmayan özel aktivite tipleri için
             çalışır. Grup yöneticisi özel bir tip eklemedikçe buraya giriş yapılamaz.
           </Text>
         </View>
@@ -94,12 +93,11 @@ export default function GroupManualLogScreen({ navigation, route }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled">
-
           <Text className="mb-1 text-2xl font-black text-slate-900 dark:text-white">
             Manuel Giriş
           </Text>
           <Text className="mb-8 text-sm text-slate-500 dark:text-slate-400">
-            Standart tracker'a bağlı olmayan aktivitelerini buradan ekle
+            Standart tracker&rsquo;a bağlı olmayan aktivitelerini buradan ekle
           </Text>
 
           <Text className="mb-3 ml-1 text-sm font-medium text-slate-700 dark:text-slate-100">

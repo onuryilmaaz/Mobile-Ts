@@ -1,16 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TrackerStackParamList } from '@/navigation/types';
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -22,11 +14,8 @@ import { ACTIVITY_META, type ActivityType, type TrackerLog } from '@/modules/tra
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { DraggableBottomSheet } from '@/components/layout/DraggableBottomSheet';
 
-
 const TABS = ['Bugün', 'Haftalık', 'Aylık'] as const;
 type Tab = (typeof TABS)[number];
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
 
 function formatTurkishDate(dateStr?: string): string {
   const d = dateStr ? new Date(dateStr) : new Date();
@@ -101,8 +90,6 @@ function aggregateToday(logs: TrackerLog[], type: ActivityType): number {
   }
 }
 
-// ─── Log Entry Input Form ────────────────────────────────────────────────────
-
 interface LogFormProps {
   type: ActivityType;
   onSubmit: (value: Record<string, any>, notes?: string) => void;
@@ -116,27 +103,19 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
   const inputCls = `rounded-2xl border px-4 py-3 text-base ${isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-slate-50 text-slate-900'}`;
   const labelCls = `mb-1.5 text-sm font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`;
 
-  // Quran
   const [pages, setPages] = useState('');
   const [minutes, setMinutes] = useState('');
-  // Dhikr
   const [dhikrType, setDhikrType] = useState('subhanallah');
   const [dhikrCustomName, setDhikrCustomName] = useState('');
   const [dhikrCount, setDhikrCount] = useState('');
-  // Nafile
   const [nafileType, setNafileType] = useState('teheccud');
   const [rakaat, setRakaat] = useState('');
-  // Fasting
   const [fastingType, setFastingType] = useState('nafile');
-  // Sadaka
   const [sadakaAmount, setSadakaAmount] = useState('');
   const [sadakaDesc, setSadakaDesc] = useState('');
-  // Dua
   const [duaMinutes, setDuaMinutes] = useState('');
-  // Memorization
   const [newAyets, setNewAyets] = useState('');
   const [revisionAyets, setRevisionAyets] = useState('');
-  // Notes
   const [notes, setNotes] = useState('');
 
   const DHIKR_TYPES = [
@@ -214,7 +193,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
 
   return (
     <View className="flex-1 pt-3">
-      {/* Handle + title — tek sürükleme alanı */}
       <View {...panHandlers}>
         <View className="mb-3 items-center py-2">
           <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
@@ -241,7 +219,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 8, paddingTop: 4 }}>
-        {/* ── QURAN ── */}
         {type === 'quran' && (
           <View className="gap-4">
             <View>
@@ -262,7 +239,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* ── DHIKR ── */}
         {type === 'dhikr' && (
           <View className="gap-4">
             <View>
@@ -306,7 +282,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* ── NAFILE ── */}
         {type === 'nafile' && (
           <View className="gap-4">
             <View>
@@ -333,7 +308,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* ── FASTING ── */}
         {type === 'fasting' && (
           <View>
             <Text className={labelCls}>Oruç türü</Text>
@@ -354,7 +328,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* ── SADAKA ── */}
         {type === 'sadaka' && (
           <View className="gap-4">
             <View>
@@ -381,7 +354,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* ── DUA ── */}
         {type === 'dua' && (
           <View>
             <Text className={labelCls}>Kaç dakika? *</Text>
@@ -394,7 +366,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* ── MEMORIZATION ── */}
         {type === 'memorization' && (
           <View className="gap-4">
             <View>
@@ -412,7 +383,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
           </View>
         )}
 
-        {/* Notes */}
         <View className="mt-4">
           <Text className={labelCls}>Not (opsiyonel)</Text>
           <TextInput
@@ -426,7 +396,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
         </View>
       </ScrollView>
 
-      {/* Sabit alt butonlar */}
       <View className="flex-row gap-3 border-t border-slate-100 px-5 py-4 dark:border-slate-800">
         <TouchableOpacity
           onPress={onClose}
@@ -443,8 +412,6 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
     </View>
   );
 }
-
-// ─── Number Stepper ───────────────────────────────────────────────────────────
 
 function NumberStepper({
   value,
@@ -487,8 +454,6 @@ function NumberStepper({
     </View>
   );
 }
-
-// ─── Activity Card ────────────────────────────────────────────────────────────
 
 function ActivityCard({
   type,
@@ -552,8 +517,6 @@ function ActivityCard({
   );
 }
 
-// ─── Weekly Stats View ────────────────────────────────────────────────────────
-
 function WeeklyView({ isDark }: { isDark: boolean }) {
   const { weeklyStats } = useTrackerStore();
 
@@ -602,7 +565,6 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
         </View>
       </View>
 
-      {/* Per-activity totals */}
       <View
         className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
         <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -640,7 +602,6 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
         )}
       </View>
 
-      {/* Daily breakdown */}
       {weeklyStats.days
         .slice()
         .reverse()
@@ -677,8 +638,6 @@ function WeeklyView({ isDark }: { isDark: boolean }) {
     </ScrollView>
   );
 }
-
-// ─── Monthly Stats View ───────────────────────────────────────────────────────
 
 function MonthlyView({ isDark }: { isDark: boolean }) {
   const { monthlyStats, fetchMonthlyStats } = useTrackerStore();
@@ -722,7 +681,6 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
     <ScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, paddingTop: 8 }}>
-      {/* Month navigator */}
       <View
         className={`mx-4 mb-4 flex-row items-center justify-between rounded-3xl border px-5 py-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
         <TouchableOpacity
@@ -740,7 +698,6 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
         </TouchableOpacity>
       </View>
 
-      {/* Summary cards */}
       {monthlyStats && (
         <>
           <View className="mx-4 mb-4 flex-row gap-3">
@@ -764,7 +721,6 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
             </View>
           </View>
 
-          {/* Per-activity totals */}
           <View
             className={`mx-4 mb-4 rounded-3xl border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
             <Text className={`mb-4 font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -786,7 +742,6 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
                       {meta.unit ? ` ${meta.unit}` : ''}
                     </Text>
                   </View>
-                  {/* Mini progress bar relative to 30-day "ideal" */}
                   <View className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
                     <View
                       className="h-1.5 rounded-full"
@@ -801,7 +756,6 @@ function MonthlyView({ isDark }: { isDark: boolean }) {
             })}
           </View>
 
-          {/* Heatmap – active days in month grid */}
           <MonthHeatmap
             year={viewYear}
             month={viewMonth}
@@ -879,9 +833,9 @@ function MonthHeatmap({
   );
 }
 
-// ─── Main Screen ─────────────────────────────────────────────────────────────
-
-export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerStackParamList, 'TrackerMain'>) {
+export default function TrackerScreen({
+  route,
+}: NativeStackScreenProps<TrackerStackParamList, 'TrackerMain'>) {
   const { isAuthenticated } = useAuthStore();
   const { todayLogs, fetchTodayLogs, fetchWeeklyStats, fetchMonthlyStats, logActivity, deleteLog } =
     useTrackerStore();
@@ -951,7 +905,7 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
       },
       'Sil',
       'İptal',
-      true,
+      true
     );
   };
 
@@ -959,7 +913,6 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
-      {/* Tab Selector */}
       <View
         className={`mx-4 mt-3 flex-row rounded-2xl p-1 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
         {TABS.map((tab) => (
@@ -978,7 +931,6 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
         ))}
       </View>
 
-      {/* ── TODAY TAB ── */}
       {activeTab === 'Bugün' && (
         <ScrollView
           className="flex-1"
@@ -987,7 +939,6 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
           }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}>
-          {/* Date header */}
           <Animated.View entering={FadeIn.duration(300)} className="mb-4">
             <Text
               className={`text-lg font-black capitalize ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -999,7 +950,6 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
             </Text>
           </Animated.View>
 
-          {/* Activity cards */}
           {types.map((type, i) => (
             <Animated.View key={type} entering={FadeInDown.delay(i * 40).duration(300)}>
               <ActivityCard
@@ -1011,7 +961,6 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
             </Animated.View>
           ))}
 
-          {/* Today's log list */}
           {todayLogs.length > 0 && (
             <View
               className={`mt-2 rounded-3xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
@@ -1057,13 +1006,10 @@ export default function TrackerScreen({ route }: NativeStackScreenProps<TrackerS
         </ScrollView>
       )}
 
-      {/* ── WEEKLY TAB ── */}
       {activeTab === 'Haftalık' && <WeeklyView isDark={isDark} />}
 
-      {/* ── MONTHLY TAB ── */}
       {activeTab === 'Aylık' && <MonthlyView isDark={isDark} />}
 
-      {/* Log Form Modal */}
       <DraggableBottomSheet visible={!!modalType} onClose={closeSheet} isDark={isDark}>
         {(panHandlers) =>
           modalType ? (

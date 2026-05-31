@@ -95,7 +95,6 @@ const MosqueMapScreen = () => {
   const [currentRegion, setCurrentRegion] = useState<Region>(INITIAL_REGION);
   const [filter, setFilter] = useState<'mine' | 'all'>('all');
 
-  // Add/Edit sheet
   const [sheetMode, setSheetMode] = useState<'add' | 'edit'>('add');
   const [showFormSheet, setShowFormSheet] = useState(false);
   const [editingMosque, setEditingMosque] = useState<Mosque | null>(null);
@@ -103,7 +102,6 @@ const MosqueMapScreen = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Manage sheet (edit/delete for own mosque)
   const [showManageSheet, setShowManageSheet] = useState(false);
   const [managingMosque, setManagingMosque] = useState<Mosque | null>(null);
 
@@ -113,7 +111,10 @@ const MosqueMapScreen = () => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        alert.warning('İzin Gerekli', 'Harita özelliğini kullanmak için konum izni vermeniz gerekiyor.');
+        alert.warning(
+          'İzin Gerekli',
+          'Harita özelliğini kullanmak için konum izni vermeniz gerekiyor.'
+        );
         return;
       }
       const currentLocation = await Location.getCurrentPositionAsync({});
@@ -153,6 +154,7 @@ const MosqueMapScreen = () => {
       }
     } catch (error) {
       alert.error('Hata', 'Görsel yüklenemedi');
+      console.error(error);
     } finally {
       setIsUploading(false);
     }
@@ -229,7 +231,7 @@ const MosqueMapScreen = () => {
       },
       'Sil',
       'İptal',
-      true,
+      true
     );
   };
 
@@ -338,27 +340,27 @@ const MosqueMapScreen = () => {
         })}
       </MapView>
 
-      {/* Filter */}
       <View className="absolute left-4 right-4 top-4 flex-row items-center justify-between">
         <View className="flex-row items-center gap-2 rounded-full bg-white/90 p-1 shadow-sm dark:bg-slate-900/90">
           <TouchableOpacity
             onPress={() => setFilter('all')}
             className={`rounded-full px-4 py-2 ${filter === 'all' ? 'bg-teal-600' : ''}`}>
-            <Text className={`text-xs font-bold ${filter === 'all' ? 'text-white' : 'text-slate-600'}`}>
+            <Text
+              className={`text-xs font-bold ${filter === 'all' ? 'text-white' : 'text-slate-600'}`}>
               Herkes
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setFilter('mine')}
             className={`rounded-full px-4 py-2 ${filter === 'mine' ? 'bg-teal-600' : ''}`}>
-            <Text className={`text-xs font-bold ${filter === 'mine' ? 'text-white' : 'text-slate-600'}`}>
+            <Text
+              className={`text-xs font-bold ${filter === 'mine' ? 'text-white' : 'text-slate-600'}`}>
               Benimkiler
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Zoom + Locate + Add */}
       <View className="absolute bottom-10 right-6 gap-3">
         <View
           style={{
@@ -413,7 +415,6 @@ const MosqueMapScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Manage Sheet (kendi camisi: düzenle / sil) */}
       <DraggableBottomSheet
         visible={showManageSheet}
         onClose={() => setShowManageSheet(false)}
@@ -456,7 +457,6 @@ const MosqueMapScreen = () => {
         }
       </DraggableBottomSheet>
 
-      {/* Add / Edit Form Sheet */}
       <DraggableBottomSheet
         visible={showFormSheet}
         onClose={() => setShowFormSheet(false)}

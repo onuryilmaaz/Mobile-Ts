@@ -101,13 +101,52 @@ const PRAYER_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   Yatsı: 'star-outline',
 };
 
-const PRAYER_BOX_COLORS: Record<string, { bg: string; darkBg: string; border: string; darkBorder: string; icon: string }> = {
-  'İmsak':  { bg: 'rgba(99,102,241,0.06)',  darkBg: 'rgba(99,102,241,0.11)',  border: 'rgba(99,102,241,0.18)',  darkBorder: 'rgba(99,102,241,0.30)',  icon: '#818cf8' },
-  'Güneş':  { bg: 'rgba(249,115,22,0.06)',  darkBg: 'rgba(249,115,22,0.11)',  border: 'rgba(249,115,22,0.18)',  darkBorder: 'rgba(249,115,22,0.30)',  icon: '#fb923c' },
-  'Öğle':   { bg: 'rgba(245,158,11,0.06)',  darkBg: 'rgba(245,158,11,0.11)',  border: 'rgba(245,158,11,0.18)',  darkBorder: 'rgba(245,158,11,0.30)',  icon: '#fbbf24' },
-  'İkindi': { bg: 'rgba(234,179,8,0.06)',   darkBg: 'rgba(234,179,8,0.11)',   border: 'rgba(234,179,8,0.18)',   darkBorder: 'rgba(234,179,8,0.30)',   icon: '#fcd34d' },
-  'Akşam':  { bg: 'rgba(244,63,94,0.06)',   darkBg: 'rgba(244,63,94,0.11)',   border: 'rgba(244,63,94,0.18)',   darkBorder: 'rgba(244,63,94,0.30)',   icon: '#fb7185' },
-  'Yatsı':  { bg: 'rgba(139,92,246,0.06)',  darkBg: 'rgba(139,92,246,0.11)',  border: 'rgba(139,92,246,0.18)',  darkBorder: 'rgba(139,92,246,0.30)',  icon: '#a78bfa' },
+const PRAYER_BOX_COLORS: Record<
+  string,
+  { bg: string; darkBg: string; border: string; darkBorder: string; icon: string }
+> = {
+  İmsak: {
+    bg: 'rgba(99,102,241,0.06)',
+    darkBg: 'rgba(99,102,241,0.11)',
+    border: 'rgba(99,102,241,0.18)',
+    darkBorder: 'rgba(99,102,241,0.30)',
+    icon: '#818cf8',
+  },
+  Güneş: {
+    bg: 'rgba(249,115,22,0.06)',
+    darkBg: 'rgba(249,115,22,0.11)',
+    border: 'rgba(249,115,22,0.18)',
+    darkBorder: 'rgba(249,115,22,0.30)',
+    icon: '#fb923c',
+  },
+  Öğle: {
+    bg: 'rgba(245,158,11,0.06)',
+    darkBg: 'rgba(245,158,11,0.11)',
+    border: 'rgba(245,158,11,0.18)',
+    darkBorder: 'rgba(245,158,11,0.30)',
+    icon: '#fbbf24',
+  },
+  İkindi: {
+    bg: 'rgba(234,179,8,0.06)',
+    darkBg: 'rgba(234,179,8,0.11)',
+    border: 'rgba(234,179,8,0.18)',
+    darkBorder: 'rgba(234,179,8,0.30)',
+    icon: '#fcd34d',
+  },
+  Akşam: {
+    bg: 'rgba(244,63,94,0.06)',
+    darkBg: 'rgba(244,63,94,0.11)',
+    border: 'rgba(244,63,94,0.18)',
+    darkBorder: 'rgba(244,63,94,0.30)',
+    icon: '#fb7185',
+  },
+  Yatsı: {
+    bg: 'rgba(139,92,246,0.06)',
+    darkBg: 'rgba(139,92,246,0.11)',
+    border: 'rgba(139,92,246,0.18)',
+    darkBorder: 'rgba(139,92,246,0.30)',
+    icon: '#a78bfa',
+  },
 };
 
 const THEME_COLORS = {
@@ -469,22 +508,28 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
                 <View
                   key={item.key}
                   className={`w-[31%] items-center rounded-2xl border py-3 shadow-sm ${
-                    isNext ? 'border-teal-600/40 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/15' : ''
+                    isNext
+                      ? 'border-teal-600/40 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/15'
+                      : ''
                   }`}
-                  style={!isNext ? {
-                    backgroundColor: isDark
-                      ? PRAYER_BOX_COLORS[item.label].darkBg
-                      : PRAYER_BOX_COLORS[item.label].bg,
-                    borderColor: isDark
-                      ? PRAYER_BOX_COLORS[item.label].darkBorder
-                      : PRAYER_BOX_COLORS[item.label].border,
-                  } : undefined}>
+                  style={
+                    !isNext
+                      ? {
+                          backgroundColor: isDark
+                            ? PRAYER_BOX_COLORS[item.label].darkBg
+                            : PRAYER_BOX_COLORS[item.label].bg,
+                          borderColor: isDark
+                            ? PRAYER_BOX_COLORS[item.label].darkBorder
+                            : PRAYER_BOX_COLORS[item.label].border,
+                        }
+                      : undefined
+                  }>
                   <Ionicons
                     name={PRAYER_ICONS[item.label]}
                     size={17}
-                    color={isNext
-                      ? (isDark ? '#2dd4bf' : '#0f766e')
-                      : PRAYER_BOX_COLORS[item.label].icon}
+                    color={
+                      isNext ? (isDark ? '#2dd4bf' : '#0f766e') : PRAYER_BOX_COLORS[item.label].icon
+                    }
                     style={{ marginBottom: 5 }}
                   />
                   <Text

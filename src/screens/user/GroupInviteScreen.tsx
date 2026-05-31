@@ -47,7 +47,6 @@ export default function GroupInviteScreen({ navigation, route }: Props) {
           Arkadaşlarını bu kodu paylaşarak davet edebilirsin
         </Text>
 
-        {/* Davet kodu */}
         <TouchableOpacity
           onPress={handleCopy}
           className="mb-4 w-full items-center rounded-3xl border-2 border-teal-500 bg-teal-50 py-6 dark:bg-teal-500/10">
@@ -63,7 +62,6 @@ export default function GroupInviteScreen({ navigation, route }: Props) {
           </View>
         </TouchableOpacity>
 
-        {/* Paylaş butonu */}
         <TouchableOpacity
           onPress={handleShare}
           className="mb-4 w-full flex-row items-center justify-center gap-2 rounded-2xl bg-teal-600 py-4 dark:bg-teal-500">
@@ -71,7 +69,6 @@ export default function GroupInviteScreen({ navigation, route }: Props) {
           <Text className="text-base font-bold text-white">Paylaş</Text>
         </TouchableOpacity>
 
-        {/* Gruba git */}
         <TouchableOpacity
           onPress={() => navigation.replace('GroupDetail', { groupId })}
           className="w-full rounded-2xl border border-slate-200 py-4 dark:border-slate-700">

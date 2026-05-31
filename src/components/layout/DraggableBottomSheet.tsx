@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -72,8 +73,7 @@ export function DraggableBottomSheet({
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, g) =>
-        Math.abs(g.dy) > 5 && Math.abs(g.dy) > Math.abs(g.dx),
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 5 && Math.abs(g.dy) > Math.abs(g.dx),
       onPanResponderGrant: () => {
         sheetHeight.stopAnimation();
         gestureStartH.current = currentH.current;

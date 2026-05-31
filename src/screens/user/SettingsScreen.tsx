@@ -205,11 +205,7 @@ export default function SettingsScreen() {
     setReminderInterval(hours);
   };
 
-  const changeBlackoutHour = async (
-    type: 'start' | 'end',
-    delta: number,
-    current: number,
-  ) => {
+  const changeBlackoutHour = async (type: 'start' | 'end', delta: number, current: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const next = (current + delta + 24) % 24;
     if (type === 'start') {
@@ -274,7 +270,6 @@ export default function SettingsScreen() {
     <ScrollView
       className="flex-1 bg-slate-50 dark:bg-slate-950"
       contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
-      {/* Konum */}
       <Section title="Konum" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
@@ -311,7 +306,6 @@ export default function SettingsScreen() {
         />
       </View>
 
-      {/* Bildirimler */}
       <Section title="Bildirimler" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
@@ -400,7 +394,6 @@ export default function SettingsScreen() {
         )}
       </View>
 
-      {/* Ayet & Hadis Bildirimleri */}
       <Section title="Ayet & Hadis Bildirimleri" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row
@@ -420,7 +413,6 @@ export default function SettingsScreen() {
 
         {reminderEnabled && (
           <>
-            {/* Interval */}
             <View className="border-t border-slate-100 px-4 pb-3 pt-3 dark:border-white/[7%]">
               <Text className="mb-2.5 text-xs font-bold text-slate-400 dark:text-slate-500">
                 Kaç saatte bir gönderilsin?
@@ -445,7 +437,6 @@ export default function SettingsScreen() {
               </View>
             </View>
 
-            {/* Blackout */}
             <View className="border-t border-slate-100 px-4 pb-4 pt-3 dark:border-white/[7%]">
               <Text className="mb-3 text-xs font-bold text-slate-400 dark:text-slate-500">
                 Bu saatler arasında gönderme
@@ -477,7 +468,6 @@ export default function SettingsScreen() {
 
                 <Ionicons name="arrow-forward" size={14} color={sub} />
 
-                {/* End */}
                 <View className="flex-1 items-center gap-1.5">
                   <Text className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Bitiş
@@ -502,17 +492,15 @@ export default function SettingsScreen() {
                 </View>
               </View>
 
-              {/* Özet */}
               <Text className="mt-2.5 text-center text-[11px] text-slate-400 dark:text-slate-500">
-                {String(blackoutStart).padStart(2, '0')}:00 –{' '}
-                {String(blackoutEnd).padStart(2, '0')}:00 arası bildirim gönderilmez
+                {String(blackoutStart).padStart(2, '0')}:00 – {String(blackoutEnd).padStart(2, '0')}
+                :00 arası bildirim gönderilmez
               </Text>
             </View>
           </>
         )}
       </View>
 
-      {/* Ezan Sesi */}
       <Section title="Ezan Sesi" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <View className="border-b border-slate-100 px-4 py-3.5 dark:border-white/[7%]">
@@ -679,7 +667,6 @@ export default function SettingsScreen() {
         />
       </View> */}
 
-      {/* Uygulama */}
       <Section title="Uygulama" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
         <Row

@@ -11,7 +11,6 @@ import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
 import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { StreakCard } from '@/components/home/StreakCard';
 import { TodayTrackerCard } from '@/components/home/TodayTrackerCard';
-import { RamadanBannerCard } from '@/components/home/RamadanBannerCard';
 import { PersonalGoalsCard } from '@/components/home/PersonalGoalsCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -107,7 +106,6 @@ export default function HomeScreen({ navigation }: Props) {
         fetchData();
       }
       setFocusNonce((n) => n + 1);
-      // Widget'tan yapılan işlemler DB'ye yazılıyor; uygulamaya dönünce taze veri çek
       if (isAuthenticated) {
         fetchTodayLogs();
       }
@@ -129,12 +127,9 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
-        <RamadanBannerCard onPress={() => navigation.navigate('Ramadan')} />
+        {/* <RamadanBannerCard onPress={() => navigation.navigate('Ramadan')} /> */}
         <PrayerTrackerCard focusNonce={focusNonce} />
         <StreakCard />
-        <PersonalGoalsCard />
-        <TodayTrackerCard />
-
         {isAuthenticated && (
           <View className="mb-5 pl-4">
             <ScrollView
@@ -182,6 +177,9 @@ export default function HomeScreen({ navigation }: Props) {
             </ScrollView>
           </View>
         )}
+        <PersonalGoalsCard />
+        <TodayTrackerCard />
+
         <DailyInspirationCard />
         <ReligiousDaysCard />
       </ScrollView>

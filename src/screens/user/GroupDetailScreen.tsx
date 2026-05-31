@@ -132,7 +132,7 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
       },
       'Ayrıl',
       'İptal',
-      true,
+      true
     );
   }
 
@@ -164,7 +164,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
         className="flex-1"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Header */}
         <View className="border-b border-slate-100 px-4 pb-4 pt-2 dark:border-slate-800">
           <View className="flex-row items-start justify-between">
             <View className="flex-1 flex-row items-center gap-3">
@@ -239,7 +238,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
           </View>
         </View>
 
-        {/* Tabs */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -273,7 +271,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
         </ScrollView>
 
         <View className="px-4 pt-4">
-          {/* ── FEED ── */}
           {activeTab === 'feed' && (
             <>
               {currentGroup.activity_types?.some((t: any) => t.base_type === null) && (
@@ -294,7 +291,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
             </>
           )}
 
-          {/* ── GOALS ── */}
           {activeTab === 'goals' && (
             <GoalsTab
               goals={currentGoals}
@@ -305,7 +301,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
             />
           )}
 
-          {/* ── LEADERBOARD ── */}
           {activeTab === 'leaderboard' && (
             <LeaderboardTab
               leaderboard={currentLeaderboard}
@@ -316,7 +311,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
             />
           )}
 
-          {/* ── MEMBERS ── */}
           {activeTab === 'members' && (
             <MembersTab
               members={currentGroup.members}
@@ -344,8 +338,6 @@ export default function GroupDetailScreen({ navigation, route }: Props) {
     </Screen>
   );
 }
-
-// ── Sub-components ─────────────────────────────────────────────────────────────
 
 function FeedTab({ feed, isDark }: { feed: FeedItem[]; isDark: boolean }) {
   if (!feed.length) {
@@ -529,7 +521,6 @@ function LeaderboardTab({
 }) {
   return (
     <View>
-      {/* Period selector */}
       <View className="mb-4 flex-row gap-2">
         {(['all', 'week', 'month'] as LeaderboardPeriod[]).map((p) => (
           <TouchableOpacity
@@ -632,7 +623,7 @@ function MembersTab({
       () => onKick(member.user_id),
       'Çıkar',
       'İptal',
-      true,
+      true
     );
   }
 
@@ -644,7 +635,7 @@ function MembersTab({
       `${member.first_name} ${member.last_name} adlı kişiyi ${newRole === 'moderator' ? 'moderatör' : 'normal üye'} yapmak istiyor musunuz?`,
       () => onRoleChange(member.user_id, newRole),
       action,
-      'İptal',
+      'İptal'
     );
   }
 

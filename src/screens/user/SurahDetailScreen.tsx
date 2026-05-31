@@ -166,7 +166,6 @@ const AudioPlayer = React.forwardRef<
     }
   };
 
-  // playVerseAt ref — useImperativeHandle her zaman güncel versiyonu çağırsın
   const playVerseAtRef = useRef(playVerseAt);
   useEffect(() => {
     playVerseAtRef.current = playVerseAt;
@@ -273,7 +272,6 @@ const AudioPlayer = React.forwardRef<
             ))}
           </View>
 
-          {/* Seek bar — geniş dokunma alanı için py-3 wrapper */}
           <View
             onLayout={(e) => {
               barWidthRef.current = e.nativeEvent.layout.width;
@@ -335,7 +333,6 @@ export default function SurahDetailScreen({ route }: Props) {
     scrollViewRef.current?.scrollTo({ y: Math.max(0, y - 120), animated: true });
   }, [activeVerseIdx]);
 
-  // Save last read once verses load (after a small delay so user sees the screen)
   useEffect(() => {
     if (verses.length === 0 || lastReadSavedRef.current) return;
     lastReadSavedRef.current = true;
@@ -343,12 +340,10 @@ export default function SurahDetailScreen({ route }: Props) {
     setLastRead({ surahId, surahName, verseNumber: targetVerse });
   }, [verses, focusVerse, surahId, surahName]);
 
-  // Jump to focused verse after layout
   useEffect(() => {
     if (!focusVerse || verses.length === 0 || focusedRef.current) return;
     const idx = verses.findIndex((v) => v.verse_number === focusVerse);
     if (idx < 0) return;
-    // Wait for onLayout positions to populate
     const t = setTimeout(() => {
       const y = verseYPositions.current[idx];
       if (y != null) {
@@ -452,7 +447,6 @@ export default function SurahDetailScreen({ route }: Props) {
             onActiveVerseChange={setActiveVerseIdx}
           />
 
-          {/* Search bar */}
           <View className="mx-4 mb-4">
             {!searchVisible ? (
               <TouchableOpacity

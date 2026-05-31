@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { groupApi } from '@/modules/group/group.api';
 import { useGroupStore } from '@/modules/group/group.store';
-import { useTheme } from '@/hooks/useTheme';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { GroupStackParamList } from '@/navigation/types';
@@ -27,14 +26,17 @@ type Props = {
 type GoalType = 'group_total' | 'per_person' | 'streak';
 
 const GOAL_TYPE_OPTIONS: { value: GoalType; label: string; desc: string }[] = [
-  { value: 'group_total', label: 'Toplam Grup Hedefi', desc: 'Herkesin katkısı toplanarak tek hedef' },
+  {
+    value: 'group_total',
+    label: 'Toplam Grup Hedefi',
+    desc: 'Herkesin katkısı toplanarak tek hedef',
+  },
   { value: 'per_person', label: 'Kişi Başı Hedef', desc: 'Her üye kendi hedefini tamamlar' },
   { value: 'streak', label: 'Seri Hedefi', desc: 'Arka arkaya gün sayısı' },
 ];
 
 export default function GoalSuggestScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
-  const { isDark } = useTheme();
   const { currentGroup } = useGroupStore();
 
   const [title, setTitle] = useState('');
@@ -88,7 +90,6 @@ export default function GoalSuggestScreen({ navigation, route }: Props) {
           className="flex-1"
           contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled">
-
           <Text className="mb-1 text-2xl font-black text-slate-900 dark:text-white">
             Hedef Öner
           </Text>
@@ -104,7 +105,6 @@ export default function GoalSuggestScreen({ navigation, route }: Props) {
             maxLength={200}
           />
 
-          {/* Hedef tipi */}
           <Text className="mb-2 ml-1 text-sm font-medium text-slate-700 dark:text-slate-100">
             Hedef Tipi *
           </Text>
@@ -127,9 +127,7 @@ export default function GoalSuggestScreen({ navigation, route }: Props) {
                         ? 'border-teal-500 bg-teal-500'
                         : 'border-slate-300 dark:border-slate-600',
                     ].join(' ')}>
-                    {goalType === opt.value && (
-                      <View className="h-2 w-2 rounded-full bg-white" />
-                    )}
+                    {goalType === opt.value && <View className="h-2 w-2 rounded-full bg-white" />}
                   </View>
                   <View className="flex-1">
                     <Text
@@ -147,7 +145,6 @@ export default function GoalSuggestScreen({ navigation, route }: Props) {
             ))}
           </View>
 
-          {/* İbadet tipi seçimi */}
           {activityTypes.length > 0 && (
             <>
               <Text className="mb-2 ml-1 text-sm font-medium text-slate-700 dark:text-slate-100">

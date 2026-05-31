@@ -102,7 +102,6 @@ export default function EditChildScreen() {
         contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        {/* Avatar seçici */}
         <View className="items-center gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <View className={`h-20 w-20 items-center justify-center rounded-[24px] ${avatarBg}`}>
             <Text style={{ fontSize: 40 }}>{selectedEmoji}</Text>
@@ -129,7 +128,6 @@ export default function EditChildScreen() {
           </View>
         </View>
 
-        {/* İsim */}
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Label>İsim</Label>
           <Input
@@ -141,7 +139,6 @@ export default function EditChildScreen() {
           />
         </View>
 
-        {/* Doğum yılı & Cinsiyet */}
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Label>Doğum Yılı</Label>
           <Input
@@ -183,7 +180,6 @@ export default function EditChildScreen() {
           </View>
         </View>
 
-        {/* Kaydet */}
         <TouchableOpacity
           onPress={handleSave}
           disabled={loading || !name.trim() || !hasChanges}

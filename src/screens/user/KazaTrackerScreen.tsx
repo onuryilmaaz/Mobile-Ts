@@ -366,7 +366,6 @@ export default function KazaTrackerScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       const points = await quickCompleteKaza(prayer);
       if (points > 0) {
-        // Opsiyonel: Puan kazandın bildirimi
       }
     } catch (e) {
       alert.info('Bilgi', 'Bu vakit için bekleyen kaza namazınız bulunmuyor.');

@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/hooks/useTheme';
 import { usePrayerTimesStore } from '@/store/prayerTimes.store';
 import * as Haptics from 'expo-haptics';
 
@@ -43,13 +43,11 @@ function formatHMS(ms: number): string {
 type Props = { onPress: () => void };
 
 export function RamadanBannerCard({ onPress }: Props) {
-  const { isDark } = useTheme();
   const imsak = usePrayerTimesStore((s) => s.imsak);
   const aksam = usePrayerTimesStore((s) => s.aksam);
 
   const { isRamazan, day: ramazanDay, daysLeft } = getStatus();
 
-  // Ramazan dönemi için saat countdown state'i
   const [timeLabel, setTimeLabel] = useState('');
   const [timeValue, setTimeValue] = useState('');
   const [iftarDone, setIftarDone] = useState(false);
@@ -96,7 +94,6 @@ export function RamadanBannerCard({ onPress }: Props) {
       <View className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-violet-400/10" />
 
       <View className="flex-row items-center justify-between px-4 py-3.5">
-        {/* Sol: ikon + başlık */}
         <View className="flex-row items-center gap-3">
           <View className="h-10 w-10 items-center justify-center rounded-2xl border border-violet-300 bg-violet-100 dark:border-violet-500/40 dark:bg-violet-500/20">
             <Ionicons name="moon" size={20} color="#a78bfa" />
@@ -117,7 +114,6 @@ export function RamadanBannerCard({ onPress }: Props) {
           </View>
         </View>
 
-        {/* Sağ: sayı */}
         <View className="items-end">
           {isRamazan ? (
             iftarDone ? (

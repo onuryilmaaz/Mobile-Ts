@@ -166,14 +166,12 @@ export function DailyInspirationCard() {
             </View>
           )}
 
-          {/* Çeviri metni */}
           <Text
             className="text-center text-[15px] font-semibold italic leading-7 text-slate-800 dark:text-slate-200"
             numberOfLines={expanded ? 0 : 4}>
             &ldquo;{current.text}&rdquo;
           </Text>
 
-          {/* Daha Fazla / Daha Az */}
           {isLong && (
             <TouchableOpacity
               onPress={() => {
@@ -194,7 +192,6 @@ export function DailyInspirationCard() {
             </TouchableOpacity>
           )}
 
-          {/* Kaynak */}
           <View className="mt-5 flex-row items-center gap-2">
             <View className="h-[1px] flex-1 bg-slate-200 dark:bg-white/10" />
             <Text className="text-[10px] font-black uppercase tracking-tighter text-teal-700 dark:text-teal-400">
@@ -204,7 +201,6 @@ export function DailyInspirationCard() {
           </View>
         </Animated.View>
 
-        {/* Footer */}
         <View className="items-center bg-slate-50 px-6 py-4 dark:bg-white/[3%]">
           <Text className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">
             Manevi Huzur İçin Küçük Bir Hatırlatma

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
@@ -81,7 +79,7 @@ export default function EditTaskScreen() {
       },
       'Sil',
       'İptal',
-      true,
+      true
     );
   };
 
@@ -92,7 +90,6 @@ export default function EditTaskScreen() {
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <SectionLabel>Başlık</SectionLabel>
           <TextInput
@@ -119,54 +116,80 @@ export default function EditTaskScreen() {
             {[1, 2, 3, 5].map((n) => (
               <TouchableOpacity
                 key={n}
-                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setRewardStars(n); }}
-                className={`flex-1 rounded-2xl border py-3 items-center ${
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setRewardStars(n);
+                }}
+                className={`flex-1 items-center rounded-2xl border py-3 ${
                   rewardStars === n
                     ? 'border-amber-400 bg-amber-50 dark:border-amber-500/60 dark:bg-amber-500/10'
                     : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
                 }`}>
-                <Text className={`font-black ${
-                  rewardStars === n ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-600'
-                }`}>{'⭐'.repeat(n)}</Text>
+                <Text
+                  className={`font-black ${
+                    rewardStars === n
+                      ? 'text-amber-600 dark:text-amber-400'
+                      : 'text-slate-400 dark:text-slate-600'
+                  }`}>
+                  {'⭐'.repeat(n)}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-        <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none gap-3">
+        <View className="gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <TouchableOpacity
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setRequiresApproval(!requiresApproval); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setRequiresApproval(!requiresApproval);
+            }}
             className={`flex-row items-center gap-3 rounded-2xl border p-3.5 ${
               requiresApproval
                 ? 'border-teal-600/30 bg-teal-50 dark:border-teal-500/30 dark:bg-teal-500/10'
                 : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
             }`}>
-            <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${
-              requiresApproval ? 'border-teal-600 bg-teal-600 dark:border-teal-500 dark:bg-teal-500' : 'border-slate-300 dark:border-slate-600'
-            }`}>
+            <View
+              className={`h-5 w-5 items-center justify-center rounded-full border-2 ${
+                requiresApproval
+                  ? 'border-teal-600 bg-teal-600 dark:border-teal-500 dark:bg-teal-500'
+                  : 'border-slate-300 dark:border-slate-600'
+              }`}>
               {requiresApproval && <Ionicons name="checkmark" size={11} color="white" />}
             </View>
             <View className="flex-1">
-              <Text className="text-sm font-bold text-slate-900 dark:text-white">Ebeveyn onayı gereksin</Text>
-              <Text className="text-xs text-slate-500 dark:text-slate-400">Onay verilene kadar yıldız verilmez</Text>
+              <Text className="text-sm font-bold text-slate-900 dark:text-white">
+                Ebeveyn onayı gereksin
+              </Text>
+              <Text className="text-xs text-slate-500 dark:text-slate-400">
+                Onay verilene kadar yıldız verilmez
+              </Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setIsActive(!isActive); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setIsActive(!isActive);
+            }}
             className={`flex-row items-center gap-3 rounded-2xl border p-3.5 ${
               isActive
                 ? 'border-teal-600/30 bg-teal-50 dark:border-teal-500/30 dark:bg-teal-500/10'
                 : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800'
             }`}>
-            <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${
-              isActive ? 'border-teal-600 bg-teal-600 dark:border-teal-500 dark:bg-teal-500' : 'border-slate-300 dark:border-slate-600'
-            }`}>
+            <View
+              className={`h-5 w-5 items-center justify-center rounded-full border-2 ${
+                isActive
+                  ? 'border-teal-600 bg-teal-600 dark:border-teal-500 dark:bg-teal-500'
+                  : 'border-slate-300 dark:border-slate-600'
+              }`}>
               {isActive && <Ionicons name="checkmark" size={11} color="white" />}
             </View>
             <View className="flex-1">
               <Text className="text-sm font-bold text-slate-900 dark:text-white">Görev aktif</Text>
-              <Text className="text-xs text-slate-500 dark:text-slate-400">Pasif görevler çocuğa gösterilmez</Text>
+              <Text className="text-xs text-slate-500 dark:text-slate-400">
+                Pasif görevler çocuğa gösterilmez
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -174,17 +197,22 @@ export default function EditTaskScreen() {
         <TouchableOpacity
           onPress={handleSave}
           disabled={loading || !title.trim()}
-          className={`rounded-2xl py-4 items-center ${
-            loading || !title.trim() ? 'bg-slate-200 dark:bg-slate-800' : 'bg-teal-600 dark:bg-teal-500'
+          className={`items-center rounded-2xl py-4 ${
+            loading || !title.trim()
+              ? 'bg-slate-200 dark:bg-slate-800'
+              : 'bg-teal-600 dark:bg-teal-500'
           }`}>
-          <Text className={`text-base font-black ${
-            loading || !title.trim() ? 'text-slate-400 dark:text-slate-600' : 'text-white'
-          }`}>{loading ? 'Kaydediliyor...' : 'Kaydet'}</Text>
+          <Text
+            className={`text-base font-black ${
+              loading || !title.trim() ? 'text-slate-400 dark:text-slate-600' : 'text-white'
+            }`}>
+            {loading ? 'Kaydediliyor...' : 'Kaydet'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleDelete}
-          className="rounded-2xl border border-red-200 bg-red-50 py-4 items-center dark:border-red-500/20 dark:bg-red-500/10">
+          className="items-center rounded-2xl border border-red-200 bg-red-50 py-4 dark:border-red-500/20 dark:bg-red-500/10">
           <Text className="font-black text-red-500 dark:text-red-400">Görevi Sil</Text>
         </TouchableOpacity>
       </ScrollView>

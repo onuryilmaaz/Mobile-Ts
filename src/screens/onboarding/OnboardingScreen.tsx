@@ -70,7 +70,7 @@ const SLIDES: Slide[] = [
     icon: 'bar-chart-outline',
     title: 'İbadet Takibi',
     description:
-      'Namaz, Kur\'an, nafile, oruç, sadaka, dua ve ezber ibadetlerinizi kaydedin. Günlük ve haftalık istatistiklerinizi takip edin.',
+      "Namaz, Kur'an, nafile, oruç, sadaka, dua ve ezber ibadetlerinizi kaydedin. Günlük ve haftalık istatistiklerinizi takip edin.",
     accent: '#0ea5e9',
     accentDim: 'rgba(14,165,233,0.12)',
   },
@@ -158,15 +158,23 @@ export default function OnboardingScreen({ navigation }: Props) {
 
       <View
         style={{
-          position: 'absolute', top: -80, right: -80,
-          width: 280, height: 280, borderRadius: 140,
+          position: 'absolute',
+          top: -80,
+          right: -80,
+          width: 280,
+          height: 280,
+          borderRadius: 140,
           backgroundColor: orb1Color,
         }}
       />
       <View
         style={{
-          position: 'absolute', bottom: -60, left: -60,
-          width: 220, height: 220, borderRadius: 110,
+          position: 'absolute',
+          bottom: -60,
+          left: -60,
+          width: 220,
+          height: 220,
+          borderRadius: 110,
           backgroundColor: orb2Color,
         }}
       />
@@ -174,10 +182,15 @@ export default function OnboardingScreen({ navigation }: Props) {
       {!isLast && (
         <TouchableOpacity
           style={{
-            position: 'absolute', right: 24, top: insets.top + 16, zIndex: 10,
-            paddingHorizontal: 14, paddingVertical: 6,
+            position: 'absolute',
+            right: 24,
+            top: insets.top + 16,
+            zIndex: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 6,
             borderRadius: 999,
-            borderWidth: 1, borderColor: skipBorderColor,
+            borderWidth: 1,
+            borderColor: skipBorderColor,
             backgroundColor: skipBgColor,
           }}
           onPress={handleFinish}
@@ -207,13 +220,29 @@ export default function OnboardingScreen({ navigation }: Props) {
           const iconBg = isDark ? item.accentDim : item.accentDim.replace('0.12', '0.10');
 
           return (
-            <View style={{ width, flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
-              <Animated.View style={{ width: '100%', alignItems: 'center', opacity, transform: [{ translateY }] }}>
+            <View
+              style={{
+                width,
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 32,
+              }}>
+              <Animated.View
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  opacity,
+                  transform: [{ translateY }],
+                }}>
                 <View
                   style={{
-                    width: 140, height: 140, borderRadius: 70,
+                    width: 140,
+                    height: 140,
+                    borderRadius: 70,
                     backgroundColor: iconBg,
-                    alignItems: 'center', justifyContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     marginBottom: 40,
                     shadowColor: item.accent,
                     shadowOffset: { width: 0, height: 8 },
@@ -222,8 +251,11 @@ export default function OnboardingScreen({ navigation }: Props) {
                   }}>
                   <View
                     style={{
-                      width: 116, height: 116, borderRadius: 58,
-                      alignItems: 'center', justifyContent: 'center',
+                      width: 116,
+                      height: 116,
+                      borderRadius: 58,
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       borderWidth: 1.5,
                       borderColor: item.accent + '40',
                     }}>
@@ -231,11 +263,25 @@ export default function OnboardingScreen({ navigation }: Props) {
                   </View>
                 </View>
 
-                <Text style={{ fontSize: 28, fontWeight: '800', color: titleColor, textAlign: 'center', marginBottom: 16 }}>
+                <Text
+                  style={{
+                    fontSize: 28,
+                    fontWeight: '800',
+                    color: titleColor,
+                    textAlign: 'center',
+                    marginBottom: 16,
+                  }}>
                   {item.title}
                 </Text>
 
-                <Text style={{ fontSize: 15, lineHeight: 24, color: descColor, textAlign: 'center', maxWidth: 300 }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    lineHeight: 24,
+                    color: descColor,
+                    textAlign: 'center',
+                    maxWidth: 300,
+                  }}>
                   {item.description}
                 </Text>
               </Animated.View>
@@ -245,7 +291,14 @@ export default function OnboardingScreen({ navigation }: Props) {
       />
 
       <View style={{ paddingHorizontal: 28, paddingTop: 8, paddingBottom: insets.bottom + 24 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 28 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            marginBottom: 28,
+          }}>
           {SLIDES.map((_, i) => (
             <TouchableOpacity
               key={i}
@@ -267,8 +320,11 @@ export default function OnboardingScreen({ navigation }: Props) {
 
         <TouchableOpacity
           style={{
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-            borderRadius: 20, paddingVertical: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 20,
+            paddingVertical: 16,
             backgroundColor: activeSlide.accent,
             shadowColor: activeSlide.accent,
             shadowOffset: { width: 0, height: 6 },

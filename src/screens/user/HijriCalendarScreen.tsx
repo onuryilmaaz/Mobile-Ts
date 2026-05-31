@@ -12,10 +12,6 @@ import type { HomeStackParamList } from '@/navigation/types';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
-// ─── Calendar algorithms ────────────────────────────────────────────────────
-// Epoch: 1 Muharrem 1 AH = JDN 1948440
-// Verified reference: 26 Receb 1447 = Jan 15, 2026
-
 function gregorianToJDN(y: number, m: number, d: number): number {
   const a = Math.floor((14 - m) / 12);
   const yr = y + 4800 - a;
@@ -77,7 +73,7 @@ function jdnToHijri(jdn: number): { year: number; month: number; day: number } {
 function hijriFirstWeekday(year: number, month: number): number {
   const jdn = hijriToJDN(year, month, 1);
   const { year: gy, month: gm, day: gd } = jdnToGregorian(jdn);
-  return (new Date(gy, gm - 1, gd).getDay() + 6) % 7; // Mon=0 … Sun=6
+  return (new Date(gy, gm - 1, gd).getDay() + 6) % 7;
 }
 
 function todayHijri() {
@@ -89,8 +85,6 @@ function gregorianForHijri(year: number, month: number, day: number): Date {
   const { year: gy, month: gm, day: gd } = jdnToGregorian(hijriToJDN(year, month, day));
   return new Date(gy, gm - 1, gd);
 }
-
-// ─── Constants ───────────────────────────────────────────────────────────────
 
 const HIJRI_MONTHS = [
   'Muharrem',
@@ -115,8 +109,6 @@ function buildSpecialDayMap(): Map<string, string> {
   }
   return map;
 }
-
-// ─── Screen ──────────────────────────────────────────────────────────────────
 
 export default function HijriCalendarScreen() {
   const navigation = useNavigation<Nav>();
@@ -163,7 +155,6 @@ export default function HijriCalendarScreen() {
 
   const isViewingToday = viewMonth === today.month && viewYear === today.year;
 
-  // Grid: leading nulls + day numbers
   const cells: (number | null)[] = [
     ...Array(firstDOW).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
@@ -183,7 +174,6 @@ export default function HijriCalendarScreen() {
         className="flex-1"
         contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}>
-        {/* Today chip */}
         <View className="flex-row items-center justify-between">
           <View className="rounded-2xl border border-teal-200 bg-teal-50 px-4 py-2.5 dark:border-teal-500/30 dark:bg-teal-500/10">
             <Text className="text-xs font-black text-teal-700 dark:text-teal-400">
@@ -204,9 +194,7 @@ export default function HijriCalendarScreen() {
           )}
         </View>
 
-        {/* Calendar card */}
         <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-          {/* Month nav */}
           <View className="flex-row items-center justify-between border-b border-slate-100 px-4 py-4 dark:border-slate-800">
             <TouchableOpacity
               onPress={prevMonth}
@@ -228,7 +216,6 @@ export default function HijriCalendarScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Weekdays */}
           <View className="flex-row px-3 pt-3">
             {WEEKDAYS.map((wd, i) => (
               <Text
@@ -243,7 +230,6 @@ export default function HijriCalendarScreen() {
             ))}
           </View>
 
-          {/* Day grid */}
           <View className="px-3 pb-4 pt-2">
             {Array.from({ length: cells.length / 7 }, (_, row) => (
               <View key={row} className="flex-row">
@@ -287,7 +273,6 @@ export default function HijriCalendarScreen() {
             ))}
           </View>
 
-          {/* Legend */}
           <View className="flex-row gap-4 border-t border-slate-100 px-4 py-3 dark:border-slate-800">
             <View className="flex-row items-center gap-1.5">
               <View className="h-3 w-3 rounded-full bg-teal-600" />
@@ -300,7 +285,6 @@ export default function HijriCalendarScreen() {
           </View>
         </View>
 
-        {/* Events this month */}
         {monthEvents.length > 0 && (
           <View>
             <Text className="mb-2 ml-1 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -339,7 +323,6 @@ export default function HijriCalendarScreen() {
           </View>
         )}
 
-        {/* Upcoming events */}
         <View>
           <Text className="mb-2 ml-1 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
             YAKLAŞAN ÖZEL GÜNLER

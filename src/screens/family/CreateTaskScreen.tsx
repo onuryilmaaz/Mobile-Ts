@@ -98,7 +98,6 @@ export default function CreateTaskScreen() {
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       <View className="flex-1 bg-slate-50 dark:bg-slate-950">
-        {/* Sekme başlıkları */}
         <View className="flex-row border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
           {(['template', 'custom'] as const).map((t) => (
             <TouchableOpacity
@@ -163,7 +162,6 @@ export default function CreateTaskScreen() {
             contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
-            {/* Görev tipi */}
             <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
               <SectionLabel>Görev Tipi</SectionLabel>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -199,7 +197,6 @@ export default function CreateTaskScreen() {
               </ScrollView>
             </View>
 
-            {/* Başlık + Açıklama */}
             <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
               <SectionLabel>Başlık</SectionLabel>
               <Input
@@ -218,7 +215,6 @@ export default function CreateTaskScreen() {
               />
             </View>
 
-            {/* Tekrar */}
             <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
               <SectionLabel>Tekrar Sıklığı</SectionLabel>
               <View className="flex-row gap-2">
@@ -280,7 +276,6 @@ export default function CreateTaskScreen() {
               )}
             </View>
 
-            {/* Yıldız + Onay */}
             <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
               <SectionLabel>Yıldız Ödülü</SectionLabel>
               <View className="mb-4 flex-row gap-2">
