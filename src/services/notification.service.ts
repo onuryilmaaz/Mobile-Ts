@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { hadithService } from './hadith.service';
 import { quranService } from './quran.service';
+import { calendarService } from './calendar.service';
 
 const NOTIFICATION_ENABLED_KEY = 'PRAYER_NOTIFICATIONS_ENABLED';
 const NOTIFICATION_OFFSET_KEY = 'PRAYER_NOTIFICATION_OFFSET'; // dakika: 0 | 5 | 10 | 15 | 30
@@ -14,6 +15,8 @@ const REMINDER_ENABLED_KEY = 'REMINDER_ENABLED';
 const REMINDER_INTERVAL_KEY = 'REMINDER_INTERVAL'; // saat: 1 | 2 | 3 | 4 | 6
 const REMINDER_BLACKOUT_START_KEY = 'REMINDER_BLACKOUT_START'; // 0-23
 const REMINDER_BLACKOUT_END_KEY = 'REMINDER_BLACKOUT_END'; // 0-23
+
+const RELIGIOUS_DAY_ENABLED_KEY = 'RELIGIOUS_DAY_NOTIFICATIONS_ENABLED';
 
 export const DEFAULT_REMINDER_INTERVAL = 2;
 export const DEFAULT_BLACKOUT_START = 23;
@@ -173,8 +176,84 @@ export const notificationService = {
 
       console.log(`Prayer notifications scheduled: ${scheduled} slots used`);
       await this.scheduleHourlyReminders();
+      await this.scheduleReligiousDayReminders();
     } catch (error) {
       console.error('Error scheduling notifications:', error);
+    }
+  },
+
+  async getReligiousDayEnabled(): Promise<boolean> {
+    const val = await AsyncStorage.getItem(RELIGIOUS_DAY_ENABLED_KEY);
+    return val === null ? true : val === 'true';
+  },
+
+  async setReligiousDayEnabled(value: boolean): Promise<void> {
+    await AsyncStorage.setItem(RELIGIOUS_DAY_ENABLED_KEY, String(value));
+  },
+
+  async scheduleReligiousDayReminders() {
+    try {
+      if (Platform.OS === 'android' && isExpoGo) return;
+      const [masterEnabled, relEnabled] = await Promise.all([
+        AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY),
+        this.getReligiousDayEnabled(),
+      ]);
+      if (masterEnabled !== 'true' || !relEnabled) return;
+
+      const days = calendarService.getReligiousDays();
+      const now = new Date();
+      // Stay within iOS 64-notification budget: 6 closest events × 2 slots = 12
+      const upcoming = days.filter((d) => d.date >= now).slice(0, 6);
+
+      for (const day of upcoming) {
+        // Slot 1 — gün öncesi akşam 20:00
+        const dayBefore = new Date(day.date);
+        dayBefore.setDate(dayBefore.getDate() - 1);
+        dayBefore.setHours(20, 0, 0, 0);
+        if (dayBefore > now) {
+          const body = day.hijriDate
+            ? `Yarın ${day.name} (${day.hijriDate}). Hayırlı bir gün diliyoruz.`
+            : `Yarın ${day.name}. Hayırlı bir gün diliyoruz.`;
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: `🌙 ${day.name} Yaklaşıyor`,
+              subtitle: 'Mübarek Gün',
+              body,
+              sound: 'default',
+              data: { type: 'religious_day', dayId: day.id, when: 'before' },
+            } as any,
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: dayBefore,
+            },
+          });
+        }
+
+        // Slot 2 — günün sabahı 08:00
+        const morning = new Date(day.date);
+        morning.setHours(8, 0, 0, 0);
+        if (morning > now) {
+          const body = day.hijriDate
+            ? `Bugün ${day.name} (${day.hijriDate}). Hayırlı olsun.`
+            : `Bugün ${day.name}. Hayırlı olsun.`;
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: `🕌 Bugün ${day.name}`,
+              subtitle: 'Mübarek Gün',
+              body,
+              sound: 'default',
+              data: { type: 'religious_day', dayId: day.id, when: 'morning' },
+            } as any,
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: morning,
+            },
+          });
+        }
+      }
+      console.log(`Religious day reminders scheduled: ${upcoming.length} events`);
+    } catch (e) {
+      console.error('Error scheduling religious day reminders:', e);
     }
   },
 

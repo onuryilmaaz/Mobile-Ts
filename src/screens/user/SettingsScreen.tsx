@@ -73,6 +73,7 @@ export default function SettingsScreen() {
 
   const [reminderEnabled, setReminderEnabled] = useState(true);
   const [reminderInterval, setReminderInterval] = useState(DEFAULT_REMINDER_INTERVAL);
+  const [religiousDayEnabled, setReligiousDayEnabled] = useState(true);
   const [blackoutStart, setBlackoutStart] = useState(DEFAULT_BLACKOUT_START);
   const [blackoutEnd, setBlackoutEnd] = useState(DEFAULT_BLACKOUT_END);
 
@@ -84,7 +85,7 @@ export default function SettingsScreen() {
   const state = stateId ? getStateById(stateId) : null;
 
   const load = useCallback(async () => {
-    const [en, off, prayers, adhan, savedStateId, savedDistrictId, remEn, remInt, blackout] =
+    const [en, off, prayers, adhan, savedStateId, savedDistrictId, remEn, remInt, blackout, relDayEn] =
       await Promise.all([
         notificationService.isEnabled(),
         notificationService.getOffset(),
@@ -95,6 +96,7 @@ export default function SettingsScreen() {
         notificationService.getReminderEnabled(),
         notificationService.getReminderInterval(),
         notificationService.getReminderBlackout(),
+        notificationService.getReligiousDayEnabled(),
       ]);
     setNotifEnabled(en);
     setOffset(off);
@@ -106,6 +108,7 @@ export default function SettingsScreen() {
     setReminderInterval(remInt);
     setBlackoutStart(blackout.start);
     setBlackoutEnd(blackout.end);
+    setReligiousDayEnabled(relDayEn);
   }, []);
 
   useEffect(() => {
@@ -528,6 +531,32 @@ export default function SettingsScreen() {
             </View>
           </>
         )}
+      </View>
+
+      {/* Kandil ve Mübarek Gün Bildirimleri */}
+      <Section title="Kandil ve Mübarek Günler" />
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+        <Row
+          icon="moon-outline"
+          iconColor="#8b5cf6"
+          label="Kandil & Bayram Bildirimleri"
+          sublabel="Kandiller, kutsal geceler ve bayramlardan bir gün önce ve o gün sabahı hatırlatma"
+          right={
+            <Switch
+              value={religiousDayEnabled}
+              onValueChange={async (val) => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                await notificationService.setReligiousDayEnabled(val);
+                setReligiousDayEnabled(val);
+                if (val) {
+                  await notificationService.scheduleReligiousDayReminders();
+                }
+              }}
+              trackColor={{ false: '#334155', true: '#8b5cf6' }}
+              thumbColor="#fff"
+            />
+          }
+        />
       </View>
 
       <Section title="Ezan Sesi" />
