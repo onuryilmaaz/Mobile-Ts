@@ -24,6 +24,7 @@ import {
   getDefaultDistrictForState,
 } from '@/constants/locations';
 import { rootNavigate } from '@/navigation/rootNavigation';
+import { useOzelGunStore } from '@/modules/ozel_gun/ozel_gun.store';
 
 const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
 const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
@@ -44,6 +45,11 @@ export default function SettingsScreen() {
   const user = useAuthStore((s) => s.user);
   const isAdmin = user?.roles?.includes('admin') ?? false;
   const showAdhan = useAdhanStore((s) => s.show);
+  const { gender, isActive: ozelGunActive, fetch: fetchOzelGun } = useOzelGunStore();
+
+  useEffect(() => {
+    fetchOzelGun();
+  }, []);
 
   const [notifEnabled, setNotifEnabled] = useState(false);
   const [offset, setOffset] = useState(15);
@@ -305,6 +311,29 @@ export default function SettingsScreen() {
           }
         />
       </View>
+
+      {/* Kişisel — sadece kadın kullanıcılar */}
+      {gender === 'kadin' && (
+        <>
+          <Section title="Kişisel" />
+          <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+            <Row
+              icon="heart-outline"
+              iconColor={ozelGunActive ? '#f43f5e' : '#ec4899'}
+              label="Özel Gün Takibi"
+              sublabel={ozelGunActive ? 'Aktif dönem — streak korunuyor' : 'Dönem başlat/bitir, streak koruması'}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                rootNavigate('UserTabs', {
+                  screen: 'Home',
+                  params: { screen: 'OzelGun' },
+                } as any);
+              }}
+              right={<Ionicons name="chevron-forward" size={16} color={sub} />}
+            />
+          </View>
+        </>
+      )}
 
       <Section title="Bildirimler" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">

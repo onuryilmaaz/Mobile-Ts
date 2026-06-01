@@ -46,8 +46,14 @@ function getValueLabel(log: TrackerLog): string {
 
 function nafileLabel(type: string) {
   const map: Record<string, string> = {
+    sabah_sunnet: 'Sabah Sünneti',
+    ogle_sunnet: 'Öğle Sünneti',
+    ikindi_sunnet: 'İkindi Sünneti',
+    aksam_sunnet: 'Akşam Sünneti',
+    yatsi_sunnet: 'Yatsı Sünneti',
+    vitir: 'Vitir',
     teheccud: 'Teheccüd',
-    duha: 'Duha',
+    duha: 'Duha (Kuşluk)',
     evvabin: 'Evvabin',
     teravih: 'Teravih',
     diger: 'Diğer',
@@ -128,11 +134,17 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
   ];
 
   const NAFILE_TYPES = [
-    { value: 'teheccud', label: 'Teheccüd' },
-    { value: 'duha', label: 'Duha' },
-    { value: 'evvabin', label: 'Evvabin' },
-    { value: 'teravih', label: 'Teravih' },
-    { value: 'diger', label: 'Diğer' },
+    { value: 'sabah_sunnet',  label: 'Sabah Sünneti' },
+    { value: 'ogle_sunnet',   label: 'Öğle Sünneti' },
+    { value: 'ikindi_sunnet', label: 'İkindi Sünneti' },
+    { value: 'aksam_sunnet',  label: 'Akşam Sünneti' },
+    { value: 'yatsi_sunnet',  label: 'Yatsı Sünneti' },
+    { value: 'vitir',         label: 'Vitir' },
+    { value: 'teheccud',      label: 'Teheccüd' },
+    { value: 'duha',          label: 'Duha (Kuşluk)' },
+    { value: 'evvabin',       label: 'Evvabin' },
+    { value: 'teravih',       label: 'Teravih' },
+    { value: 'diger',         label: 'Diğer' },
   ];
 
   const FASTING_TYPES = [

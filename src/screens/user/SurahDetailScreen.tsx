@@ -23,6 +23,9 @@ import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import type { AudioPlayer as ExpoAudioPlayer } from 'expo-audio';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuranStore } from '@/store/quran.store';
+import { useHifzStore } from '@/modules/hifz/hifz.store';
+import { useAuthStore } from '@/modules/auth/auth.store';
+import type { HifzStatus } from '@/modules/hifz/hifz.api';
 
 const SURAH_CACHE_PREFIX = 'QURAN_SURAH_CACHE_';
 
@@ -308,6 +311,7 @@ export default function SurahDetailScreen({ route }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchVisible, setSearchVisible] = useState(false);
   const { isDark } = useTheme();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const {
     addBookmark,
     removeBookmark,
@@ -315,6 +319,28 @@ export default function SurahDetailScreen({ route }: Props) {
     setLastRead,
     load: loadQuran,
   } = useQuranStore();
+  const { load: loadHifz, setStatus: setHifzStatus, remove: removeHifz, getStatusFor } = useHifzStore();
+
+  useEffect(() => {
+    if (isAuthenticated) loadHifz();
+  }, [isAuthenticated]);
+
+  const hifzStatus = getStatusFor(surahId);
+
+  const cycleHifz = async () => {
+    if (!isAuthenticated) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const next: HifzStatus | null =
+      hifzStatus === null ? 'in_progress'
+      : hifzStatus === 'in_progress' ? 'memorized'
+      : hifzStatus === 'memorized' ? 'reviewing'
+      : null;
+    if (next === null) {
+      await removeHifz(surahId);
+    } else {
+      await setHifzStatus(surahId, next);
+    }
+  };
 
   const scrollViewRef = useRef<ScrollView>(null);
   const audioPlayerRef = useRef<AudioPlayerRef>(null);
@@ -446,6 +472,63 @@ export default function SurahDetailScreen({ route }: Props) {
             verses={verses}
             onActiveVerseChange={setActiveVerseIdx}
           />
+
+          {/* Hıfz status toggle */}
+          {isAuthenticated && (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={cycleHifz}
+              className={`mx-4 mb-4 flex-row items-center rounded-2xl border px-4 py-3 ${
+                hifzStatus === 'memorized'
+                  ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10'
+                  : hifzStatus === 'reviewing'
+                  ? 'border-violet-300 bg-violet-50 dark:border-violet-500/40 dark:bg-violet-500/10'
+                  : hifzStatus === 'in_progress'
+                  ? 'border-amber-300 bg-amber-50 dark:border-amber-500/40 dark:bg-amber-500/10'
+                  : 'border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900'
+              }`}>
+              <View
+                className="mr-3 h-9 w-9 items-center justify-center rounded-xl"
+                style={{
+                  backgroundColor:
+                    hifzStatus === 'memorized' ? '#10b98125'
+                    : hifzStatus === 'reviewing' ? '#a78bfa25'
+                    : hifzStatus === 'in_progress' ? '#f59e0b25'
+                    : isDark ? '#1e293b' : '#e2e8f0',
+                }}>
+                <Ionicons
+                  name={
+                    hifzStatus === 'memorized' ? 'checkmark-circle'
+                    : hifzStatus === 'reviewing' ? 'repeat'
+                    : 'library-outline'
+                  }
+                  size={18}
+                  color={
+                    hifzStatus === 'memorized' ? '#10b981'
+                    : hifzStatus === 'reviewing' ? '#a78bfa'
+                    : hifzStatus === 'in_progress' ? '#f59e0b'
+                    : isDark ? '#94a3b8' : '#64748b'
+                  }
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  Hafızlık
+                </Text>
+                <Text className="mt-0.5 text-sm font-black text-slate-900 dark:text-white">
+                  {hifzStatus === 'memorized' ? 'Ezberlendi'
+                    : hifzStatus === 'reviewing' ? 'Tekrar Ediliyor'
+                    : hifzStatus === 'in_progress' ? 'Ezberleme Devam Ediyor'
+                    : 'Bu sureyi ezberlemeye başla'}
+                </Text>
+              </View>
+              <View className="rounded-lg bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                <Text className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                  {hifzStatus === null ? 'Başlat' : hifzStatus === 'reviewing' ? 'Kaldır' : 'İlerlet'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
 
           <View className="mx-4 mb-4">
             {!searchVisible ? (

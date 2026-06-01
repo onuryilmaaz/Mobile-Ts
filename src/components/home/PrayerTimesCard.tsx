@@ -382,7 +382,11 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         dataRef.current = prayerData;
         setData(prayerData);
         calculateNextPrayer(prayerData);
-        setTodayTimes(prayerData.times.imsak, prayerData.times.aksam);
+        setTodayTimes({
+          imsak: prayerData.times.imsak,
+          aksam: prayerData.times.aksam,
+          yatsi: prayerData.times.yatsi,
+        });
       }
       if (week.length > 0) {
         notificationService.schedulePrayerNotifications(

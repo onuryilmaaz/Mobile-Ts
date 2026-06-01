@@ -57,6 +57,7 @@ export type HomeStackParamList = {
   HijriCalendar: undefined;
   Settings: undefined;
   Ramadan: undefined;
+  OzelGun: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   Family: NavigatorScreenParams<FamilyStackParamList>;
 };
@@ -65,6 +66,7 @@ export type SurahsStackParamList = {
   SurahsMain: undefined;
   SurahDetail: { surahId: number; surahName: string; focusVerse?: number };
   Bookmarks: undefined;
+  Hafizlik: undefined;
 };
 
 export type TrackerStackParamList = {

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar as RNStatusBar } from 'react-native';
-import { SurahBrowserScreen, SurahDetailScreen, BookmarksScreen } from '@/screens/user';
+import { SurahBrowserScreen, SurahDetailScreen, BookmarksScreen, HafizlikScreen } from '@/screens/user';
 import type { SurahsStackParamList } from './types';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { useTheme } from '@/hooks/useTheme';
@@ -48,6 +48,11 @@ export default function SurahsNavigator() {
         <Stack.Screen
           name="Bookmarks"
           component={BookmarksScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Hafizlik"
+          component={HafizlikScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -25,6 +25,7 @@ import {
   DhikrScreen,
   RamadanScreen,
   HijriCalendarScreen,
+  OzelGunScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import FamilyNavigator from './FamilyNavigator';
@@ -255,6 +256,11 @@ export default function HomeNavigator() {
         <Stack.Screen
           name="HijriCalendar"
           component={HijriCalendarScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OzelGun"
+          component={OzelGunScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
