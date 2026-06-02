@@ -384,6 +384,9 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
         calculateNextPrayer(prayerData);
         setTodayTimes({
           imsak: prayerData.times.imsak,
+          gunes: prayerData.times.gunes,
+          ogle: prayerData.times.ogle,
+          ikindi: prayerData.times.ikindi,
           aksam: prayerData.times.aksam,
           yatsi: prayerData.times.yatsi,
         });
