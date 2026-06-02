@@ -14,6 +14,7 @@ import { TodayTrackerCard } from '@/components/home/TodayTrackerCard';
 import { PersonalGoalsCard } from '@/components/home/PersonalGoalsCard';
 import { TeheccudCard } from '@/components/home/TeheccudCard';
 import { ForbiddenTimeBanner } from '@/components/home/ForbiddenTimeBanner';
+import { CumaHutbesiCard } from '@/components/home/CumaHutbesiCard';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
@@ -30,14 +31,6 @@ const QUICK_ACTIONS = [
     color: '#818cf8',
     glow: 'rgba(129,140,248,0.18)',
     screen: 'KazaTracker' as const,
-  },
-  {
-    key: 'history',
-    label: 'Geçmiş Düzenle',
-    icon: 'calendar-outline' as const,
-    color: '#06b6d4',
-    glow: 'rgba(6,182,212,0.18)',
-    screen: 'PrayerHistoryEdit' as const,
   },
   {
     key: 'mosques',
@@ -86,6 +79,22 @@ const QUICK_ACTIONS = [
     color: '#a78bfa',
     glow: 'rgba(167,139,250,0.18)',
     screen: 'Ramadan' as const,
+  },
+  {
+    key: 'esma',
+    label: 'Esmaül Hüsna',
+    icon: 'sparkles-outline' as const,
+    color: '#d97706',
+    glow: 'rgba(217,119,6,0.18)',
+    screen: 'EsmaulHusna' as const,
+  },
+  {
+    key: 'history',
+    label: 'Geçmiş',
+    icon: 'calendar-outline' as const,
+    color: '#06b6d4',
+    glow: 'rgba(6,182,212,0.18)',
+    screen: 'PrayerHistoryEdit' as const,
   },
 ];
 
@@ -138,6 +147,7 @@ export default function HomeScreen({ navigation }: Props) {
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
         <ForbiddenTimeBanner />
+        <CumaHutbesiCard />
         {/* <RamadanBannerCard onPress={() => navigation.navigate('Ramadan')} /> */}
         <TeheccudCard />
         <PrayerTrackerCard focusNonce={focusNonce} />

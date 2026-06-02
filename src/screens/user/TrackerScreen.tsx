@@ -398,13 +398,32 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
         <View className="mt-4">
           <Text className={labelCls}>Not (opsiyonel)</Text>
           <TextInput
-            className={`${inputCls} min-h-[60px]`}
-            placeholder="Bir not ekle..."
+            className={`${inputCls} min-h-[64px]`}
+            placeholder={
+              type === 'quran'
+                ? 'Örn: Bakara 15–18. sayfa'
+                : type === 'dhikr'
+                ? 'Örn: Sabah dersinin ardından'
+                : type === 'dua'
+                ? 'Örn: Hasta dostlar için'
+                : type === 'fasting'
+                ? 'Örn: Pazartesi nafile orucu'
+                : type === 'memorization'
+                ? 'Örn: Yâsîn 1–5. ayet ezber'
+                : 'Bir not ekle…'
+            }
             multiline
+            maxLength={500}
+            textAlignVertical="top"
             value={notes}
             onChangeText={setNotes}
             placeholderTextColor="#94a3b8"
           />
+          {notes.length > 0 && (
+            <Text className="mt-1 text-right text-[10px] text-slate-400">
+              {notes.length}/500
+            </Text>
+          )}
         </View>
       </ScrollView>
 
@@ -1000,6 +1019,23 @@ export default function TrackerScreen({
                       <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                         {getValueLabel(log)}
                       </Text>
+                      {log.notes ? (
+                        <View
+                          className="mt-1 flex-row items-start gap-1 rounded-lg px-2 py-1"
+                          style={{ backgroundColor: `${meta.color}12` }}>
+                          <Ionicons
+                            name="document-text-outline"
+                            size={10}
+                            color={meta.color}
+                            style={{ marginTop: 2 }}
+                          />
+                          <Text
+                            className={`flex-1 text-[11px] italic leading-4 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}
+                            numberOfLines={3}>
+                            {log.notes}
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
                     <TouchableOpacity
                       onPress={() => handleDelete(log)}

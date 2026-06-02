@@ -69,7 +69,7 @@ const toastConfig: Record<
 > = {
   success: {
     bg: '#f0fdf4',
-    darkBg: 'rgba(22, 163, 74, 0.1)',
+    darkBg: 'rgba(22, 163, 74, 0.9)',
     border: '#bbf7d0',
     darkBorder: 'rgba(22, 163, 74, 0.2)',
     icon: 'checkmark-circle',
@@ -80,7 +80,7 @@ const toastConfig: Record<
   },
   error: {
     bg: '#fef2f2',
-    darkBg: 'rgba(220, 38, 38, 0.1)',
+    darkBg: 'rgba(220, 38, 38, 0.9)',
     border: '#fecaca',
     darkBorder: 'rgba(220, 38, 38, 0.2)',
     icon: 'close-circle',
@@ -91,7 +91,7 @@ const toastConfig: Record<
   },
   warning: {
     bg: '#fffbeb',
-    darkBg: 'rgba(217, 119, 6, 0.1)',
+    darkBg: 'rgba(217, 119, 6, 0.9)',
     border: '#fde68a',
     darkBorder: 'rgba(217, 119, 6, 0.2)',
     icon: 'warning',
@@ -102,7 +102,7 @@ const toastConfig: Record<
   },
   info: {
     bg: '#eff6ff',
-    darkBg: 'rgba(37, 99, 235, 0.1)',
+    darkBg: 'rgba(37, 99, 235, 0.9)',
     border: '#bfdbfe',
     darkBorder: 'rgba(37, 99, 235, 0.2)',
     icon: 'information-circle',
