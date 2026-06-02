@@ -58,6 +58,7 @@ export type HomeStackParamList = {
   Settings: undefined;
   Ramadan: undefined;
   OzelGun: undefined;
+  PrayerHistoryEdit: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   Family: NavigatorScreenParams<FamilyStackParamList>;
 };

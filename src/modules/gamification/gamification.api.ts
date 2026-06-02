@@ -9,13 +9,16 @@ export const gamificationApi = {
 
   trackPrayer: (
     prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha',
-    isKaza: boolean = false
-  ) => api.post('/prayer/track', { prayer_time: prayerTime, is_kaza: isKaza }),
+    isKaza: boolean = false,
+    date?: string, // YYYY-MM-DD, default = bugün
+  ) => api.post('/prayer/track', { prayer_time: prayerTime, is_kaza: isKaza, date }),
 
-  untrackPrayer: (prayerTime: string) =>
-    api.delete('/prayer/track', { data: { prayer_time: prayerTime } }),
+  untrackPrayer: (prayerTime: string, date?: string) =>
+    api.delete('/prayer/track', { data: { prayer_time: prayerTime, date } }),
 
   getPrayerHistory: (days = 7) => api.get(`/prayer/history?days=${days}`),
+
+  getPrayerLogsForDate: (date: string) => api.get(`/prayer/by-date/${date}`),
 
   getKazaList: () => api.get('/prayer/kaza'),
   addKaza: (prayerTime: string, missedDate: string) =>

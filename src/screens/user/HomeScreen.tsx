@@ -31,6 +31,14 @@ const QUICK_ACTIONS = [
     screen: 'KazaTracker' as const,
   },
   {
+    key: 'history',
+    label: 'Geçmiş Düzenle',
+    icon: 'calendar-outline' as const,
+    color: '#06b6d4',
+    glow: 'rgba(6,182,212,0.18)',
+    screen: 'PrayerHistoryEdit' as const,
+  },
+  {
     key: 'mosques',
     label: 'Cami Atlası',
     icon: 'map-outline' as const,

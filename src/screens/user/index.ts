@@ -21,6 +21,7 @@ export { default as HijriCalendarScreen } from './HijriCalendarScreen';
 export { default as BookmarksScreen } from './BookmarksScreen';
 export { default as OzelGunScreen } from './OzelGunScreen';
 export { default as HafizlikScreen } from './HafizlikScreen';
+export { default as PrayerHistoryEditScreen } from './PrayerHistoryEditScreen';
 export { default as GroupListScreen } from './GroupListScreen';
 export { default as GroupDetailScreen } from './GroupDetailScreen';
 export { default as GroupCreateScreen } from './GroupCreateScreen';
