@@ -18,4 +18,6 @@ export const userApi = {
   deactivate: () => api.post('/user/deactivate'),
 
   savePushToken: (token: string) => api.put('/user/push-token', { token }),
+
+  exportData: () => api.get('/user/export'),
 };

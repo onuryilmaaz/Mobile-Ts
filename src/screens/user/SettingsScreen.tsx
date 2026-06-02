@@ -17,6 +17,10 @@ import { useAdhanStore } from '@/services/adhan.store';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import { Share } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
+import { userApi } from '@/modules/user/user.api';
+import { toast } from '@/components/feedback/Toast';
 import {
   getDistrictById,
   getStateById,
@@ -223,6 +227,32 @@ export default function SettingsScreen() {
     } else {
       setBlackoutEnd(next);
       await notificationService.setReminderBlackout(blackoutStart, next);
+    }
+  };
+
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    if (exporting) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setExporting(true);
+    try {
+      const res = await userApi.exportData();
+      const json = JSON.stringify(res.data, null, 2);
+      const stamp = new Date().toISOString().slice(0, 10);
+      const fileUri = `${FileSystem.documentDirectory}salah-yedek-${stamp}.json`;
+      await FileSystem.writeAsStringAsync(fileUri, json, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      await Share.share({
+        url: fileUri,
+        title: `Salah Yedek (${stamp})`,
+        message: `Salah uygulamasındaki tüm verilerin (${stamp})`,
+      });
+    } catch (e: any) {
+      console.error('export error:', e?.response?.status, e?.message);
+      toast.error('Hata', 'Yedek oluşturulamadı.');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -724,6 +754,25 @@ export default function SettingsScreen() {
           }
         />
       </View> */}
+
+      {/* Verilerim */}
+      <Section title="Verilerim" />
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+        <Row
+          icon="cloud-download-outline"
+          iconColor="#06b6d4"
+          label={exporting ? 'Yedek hazırlanıyor…' : 'Verilerimi Yedekle'}
+          sublabel="Tüm namaz, ibadet, hedef ve hıfz kayıtlarını JSON olarak dışa aktar"
+          onPress={exporting ? undefined : handleExport}
+          right={
+            exporting ? (
+              <Ionicons name="hourglass-outline" size={16} color={sub} />
+            ) : (
+              <Ionicons name="share-outline" size={16} color={sub} />
+            )
+          }
+        />
+      </View>
 
       <Section title="Uygulama" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
