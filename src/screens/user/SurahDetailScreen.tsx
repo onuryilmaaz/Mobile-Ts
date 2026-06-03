@@ -25,6 +25,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuranStore } from '@/store/quran.store';
 import { useHifzStore } from '@/modules/hifz/hifz.store';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import {
+  useQuranSettingsStore,
+  FONT_SIZE_SCALE,
+  FONT_SIZE_LABELS,
+  type FontSize,
+} from '@/store/quranSettings.store';
 import type { HifzStatus } from '@/modules/hifz/hifz.api';
 
 const SURAH_CACHE_PREFIX = 'QURAN_SURAH_CACHE_';
@@ -320,6 +326,21 @@ export default function SurahDetailScreen({ route }: Props) {
     load: loadQuran,
   } = useQuranStore();
   const { load: loadHifz, setStatus: setHifzStatus, remove: removeHifz, getStatusFor } = useHifzStore();
+  const {
+    fontSize,
+    load: loadQuranSettings,
+    setFontSize,
+  } = useQuranSettingsStore();
+  const fontScale = FONT_SIZE_SCALE[fontSize];
+
+  useEffect(() => { loadQuranSettings(); }, []);
+
+  const cycleFontSize = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const order: FontSize[] = ['sm', 'md', 'lg', 'xl'];
+    const idx = order.indexOf(fontSize);
+    setFontSize(order[(idx + 1) % order.length]!);
+  };
 
   useEffect(() => {
     if (isAuthenticated) loadHifz();
@@ -532,17 +553,30 @@ export default function SurahDetailScreen({ route }: Props) {
 
           <View className="mx-4 mb-4">
             {!searchVisible ? (
-              <TouchableOpacity
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  setSearchVisible(true);
-                }}
-                className="flex-row items-center gap-2 self-start rounded-2xl border border-slate-200 bg-white px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
-                <Ionicons name="search" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
-                <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                  Ayet ara
-                </Text>
-              </TouchableOpacity>
+              <View className="flex-row items-center gap-2">
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setSearchVisible(true);
+                  }}
+                  className="flex-row items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
+                  <Ionicons name="search" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
+                  <Text className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                    Ayet ara
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Font size cycler */}
+                <TouchableOpacity
+                  onPress={cycleFontSize}
+                  accessibilityLabel="Yazı boyutu"
+                  className="flex-row items-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
+                  <Ionicons name="text" size={14} color={isDark ? '#94a3b8' : '#64748b'} />
+                  <Text className="text-[11px] font-black text-teal-600 dark:text-teal-400">
+                    {FONT_SIZE_LABELS[fontSize]}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             ) : (
               <View className="flex-row items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
                 <Ionicons name="search" size={16} color={isDark ? '#94a3b8' : '#64748b'} />
@@ -647,24 +681,34 @@ export default function SurahDetailScreen({ route }: Props) {
 
                   <View className="px-4 py-1">
                     <Text
-                      className={`mb-1 text-2xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
-                      style={{ lineHeight: 50 }}>
+                      className={`mb-1 text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
+                      style={{
+                        fontSize: 24 * fontScale,
+                        lineHeight: 50 * fontScale,
+                      }}>
                       {verse.transcription}
                     </Text>
                     <Text
-                      className={`mb-1 text-right text-xl text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
-                      style={{ lineHeight: 50 }}>
+                      className={`mb-1 text-right text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
+                      style={{
+                        fontSize: 22 * fontScale,
+                        lineHeight: 50 * fontScale,
+                      }}>
                       {verse.verse_simplified}
                     </Text>
 
                     <View className="my-2 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
 
                     <Text
-                      className={`text-base font-medium italic leading-7 ${
+                      className={`font-medium italic ${
                         isActive
                           ? 'text-teal-700 dark:text-teal-300'
                           : 'text-slate-600 dark:text-slate-300'
-                      }`}>
+                      }`}
+                      style={{
+                        fontSize: 16 * fontScale,
+                        lineHeight: 28 * fontScale,
+                      }}>
                       {`"${verse.translation.text}"`}
                     </Text>
                   </View>
