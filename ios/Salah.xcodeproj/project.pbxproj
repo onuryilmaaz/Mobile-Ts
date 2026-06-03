@@ -30,6 +30,7 @@
 		FE9AD7512F4D4D66ABD8D467 /* SitePongLiveActivityWidget.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = A671890171FA42BC828537F3 /* SitePongLiveActivityWidget.appex */; };
 		FF052449B78E400A9CD65DD5 /* GoalsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */; };
 		2CCE03DED4814E9193314F26 /* MarkGoalIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */; };
+		AB5855E0DF08424B91F8EE12 /* StandbyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -77,6 +78,7 @@
 		F11748442D0722820044C1D9 /* Salah-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Salah-Bridging-Header.h"; path = "Salah/Salah-Bridging-Header.h"; sourceTree = "<group>"; };
 		2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GoalsWidget.swift"; path = "GoalsWidget.swift"; sourceTree = "<group>"; };
 		80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MarkGoalIntent.swift"; path = "MarkGoalIntent.swift"; sourceTree = "<group>"; };
+		4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "StandbyWidget.swift"; path = "StandbyWidget.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +152,7 @@
 				881B01E9B01E44EFA11D7EDC /* Info.plist */,
 				2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */,
 				80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */,
+				4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */,
 			);
 			name = SitePongLiveActivityWidget;
 			path = SitePongLiveActivityWidget;
@@ -465,6 +468,7 @@
 				DA3047B1F73A4D7599A07CFC /* MarkPrayerIntent.swift in Sources */,
 				FF052449B78E400A9CD65DD5 /* GoalsWidget.swift in Sources */,
 				2CCE03DED4814E9193314F26 /* MarkGoalIntent.swift in Sources */,
+				AB5855E0DF08424B91F8EE12 /* StandbyWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

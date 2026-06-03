@@ -21,6 +21,7 @@ const EXTENSION_SWIFT_FILES = [
   'InspirationWidget.swift',
   'GoalsWidget.swift',
   'MarkGoalIntent.swift',
+  'StandbyWidget.swift',
   'SharedData.swift',
   'SharedColors.swift',
   'MarkPrayerIntent.swift',

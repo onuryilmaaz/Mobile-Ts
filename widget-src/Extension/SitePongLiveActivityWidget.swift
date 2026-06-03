@@ -22,6 +22,9 @@ struct SitePongLiveActivityWidgetBundle: WidgetBundle {
     SalahNextPrayerLockWidget()
     SalahTrackerLockWidget()
 
+    // Standby (iOS 17+)
+    StandbyPrayerWidget()
+
     // Live Activity
     SitePongLiveActivityWidgetLiveActivity()
   }
