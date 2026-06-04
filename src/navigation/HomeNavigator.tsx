@@ -158,113 +158,65 @@ export default function HomeNavigator() {
           name="QiblaFinder"
           component={QiblaFinderScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Kıble Bulucu',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="LocationSelection"
           component={LocationSelectionScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Konum Seç',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="KazaTracker"
           component={KazaTrackerScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Kaza Namazlar',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="Stats"
           component={StatsScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'İstatistikler',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="MosqueMap"
           component={MosqueMapScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Cami Atlası',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="Dua"
           component={DuaScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Dua Koleksiyonu',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="Dhikr"
           component={DhikrScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Zikir',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
           options={{
-            headerShown: true,
-            header: undefined,
-            title: 'Ayarlar',
-            headerStyle: { backgroundColor: headerColor },
-            headerTintColor: headerTintColor,
-            headerBackTitle: '',
+            headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="Ramadan"
-          component={RamadanScreen}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Ramadan" component={RamadanScreen} options={{ headerShown: false }} />
         <Stack.Screen
           name="HijriCalendar"
           component={HijriCalendarScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="OzelGun"
-          component={OzelGunScreen}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="OzelGun" component={OzelGunScreen} options={{ headerShown: false }} />
         <Stack.Screen
           name="PrayerHistoryEdit"
           component={PrayerHistoryEditScreen}

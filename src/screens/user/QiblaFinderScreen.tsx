@@ -5,6 +5,12 @@ import { Screen } from '@/components/layout/Screen';
 import { qiblaService } from '@/services/qibla.service';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
+import { StandardHeader } from '@/components/layout/StandardHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '@/navigation';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
 const { width } = Dimensions.get('window');
 
@@ -22,6 +28,7 @@ export default function QiblaFinderScreen() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { isDark } = useTheme();
+  const navigation = useNavigation<Nav>();
 
   useEffect(() => {
     let sub: Location.LocationSubscription | null = null;
@@ -75,6 +82,7 @@ export default function QiblaFinderScreen() {
 
   return (
     <Screen>
+      <StandardHeader title="Kıble Bulucu" navigation={navigation} />
       <View className="flex-1 items-center justify-center px-6">
         <View className="mb-12 items-center">
           <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">

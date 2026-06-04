@@ -6,6 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { BarChart } from 'react-native-chart-kit';
 import { useTheme } from '@/hooks/useTheme';
+import { StandardHeader } from '@/components/layout/StandardHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '@/navigation';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
 const { width } = Dimensions.get('window');
 const CHART_WIDTH = width - 48;
@@ -52,8 +58,7 @@ function StatCard({
   twBg: string;
 }) {
   return (
-    <View
-      className="mx-1.5 flex-1 items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
+    <View className="mx-1.5 flex-1 items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
       <View className={`mb-2 h-10 w-10 items-center justify-center rounded-2xl ${twBg}`}>
         <Ionicons name={icon} size={20} color={color} />
       </View>
@@ -69,6 +74,7 @@ export default function StatsScreen() {
   const { stats, weeklyStats, monthlyStats, fetchWeeklyStats, fetchMonthlyStats, fetchStats } =
     useGamificationStore();
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<Nav>();
   const { isDark } = useTheme();
 
   const load = async () => {
@@ -129,6 +135,7 @@ export default function StatsScreen() {
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
+      <StandardHeader title="İstatistikler" navigation={navigation} />
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -171,8 +178,7 @@ export default function StatsScreen() {
         </View>
 
         {weeklyData && (
-          <View
-            className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
+          <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
             <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">
               Haftalık Namaz Grafiği
             </Text>
@@ -209,8 +215,7 @@ export default function StatsScreen() {
           </View>
         )}
 
-        <View
-          className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
+        <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
           <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">
             Vakit Bazlı Analiz
           </Text>
@@ -269,8 +274,7 @@ export default function StatsScreen() {
           )}
         </View>
 
-        <View
-          className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+        <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <Text className="mb-4 text-base font-black text-slate-900 dark:text-white">
             Genel Bilgiler
           </Text>

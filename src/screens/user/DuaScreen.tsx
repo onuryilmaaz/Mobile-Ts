@@ -8,12 +8,18 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Screen } from '@/components/layout/Screen';
 import { useTheme } from '@/hooks/useTheme';
 import { DUA_CATEGORIES, type Dua, type DuaCategory } from '@/data/duas';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { StandardHeader } from '@/components/layout/StandardHeader';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '@/navigation';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
 const FAVORITES_KEY = 'DUA_FAVORITES';
 
 export default function DuaScreen() {
   const { isDark } = useTheme();
+  const navigation = useNavigation<Nav>();
   const [selectedCategory, setSelectedCategory] = useState<DuaCategory | null>(null);
   const [selectedDua, setSelectedDua] = useState<Dua | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -47,6 +53,7 @@ export default function DuaScreen() {
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
+      <StandardHeader title="Dua Koleksiyonu" navigation={navigation} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}>

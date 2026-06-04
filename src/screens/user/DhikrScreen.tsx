@@ -30,6 +30,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/hooks/useTheme';
 import { trackerApi } from '@/modules/tracker/tracker.api';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { StandardHeader } from '@/components/layout/StandardHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '@/navigation';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.72;
@@ -231,6 +237,7 @@ export default function DhikrScreen() {
   const [showMilestone, setShowMilestone] = useState(false);
   const milestoneTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { isDark } = useTheme();
+  const navigation = useNavigation<Nav>();
 
   const target = presets[activePreset]?.target ?? 33;
   const scale = useSharedValue(1);
@@ -380,6 +387,7 @@ export default function DhikrScreen() {
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
+      <StandardHeader title="Zikir" navigation={navigation} />
       <MilestoneToast message={milestoneMsg} visible={showMilestone} />
 
       <ScrollView

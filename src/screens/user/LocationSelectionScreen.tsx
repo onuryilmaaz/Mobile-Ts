@@ -13,6 +13,7 @@ import {
   isDistrictsDataLoaded,
 } from '@/constants/locations';
 import { useTheme } from '@/hooks/useTheme';
+import { StandardHeader } from '@/components/layout/StandardHeader';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'LocationSelection'>;
 
@@ -96,6 +97,7 @@ export default function LocationSelectionScreen({ navigation }: Props) {
 
   return (
     <Screen safeAreaEdges={['right', 'left']}>
+      <StandardHeader title="Konum Seç" navigation={navigation} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1"

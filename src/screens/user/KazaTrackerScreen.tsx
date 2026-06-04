@@ -17,6 +17,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
 import { useTheme } from '@/hooks/useTheme';
+import { StandardHeader } from '@/components/layout/StandardHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '@/navigation';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
 const PRAYERS = [
   { key: 'fajr', label: 'Sabah', icon: 'moon-outline' as const, color: '#1e293b' },
@@ -330,6 +336,7 @@ export default function KazaTrackerScreen() {
     completeKaza,
     deleteKaza,
   } = useGamificationStore();
+  const navigation = useNavigation<Nav>();
   const { isDark } = useTheme();
 
   const load = useCallback(async () => {
@@ -439,6 +446,7 @@ export default function KazaTrackerScreen() {
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
+      <StandardHeader title="Kaza Namazlar" navigation={navigation} />
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}

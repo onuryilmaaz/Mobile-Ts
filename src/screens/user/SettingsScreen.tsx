@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Share } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
@@ -17,7 +18,6 @@ import { useAdhanStore } from '@/services/adhan.store';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { Share } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import { userApi } from '@/modules/user/user.api';
 import { toast } from '@/components/feedback/Toast';
@@ -89,19 +89,29 @@ export default function SettingsScreen() {
   const state = stateId ? getStateById(stateId) : null;
 
   const load = useCallback(async () => {
-    const [en, off, prayers, adhan, savedStateId, savedDistrictId, remEn, remInt, blackout, relDayEn] =
-      await Promise.all([
-        notificationService.isEnabled(),
-        notificationService.getOffset(),
-        notificationService.getPrayerEnabled(),
-        adhanService.getAdhanPrayers(),
-        AsyncStorage.getItem(STORAGE_STATE_ID_KEY),
-        AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY),
-        notificationService.getReminderEnabled(),
-        notificationService.getReminderInterval(),
-        notificationService.getReminderBlackout(),
-        notificationService.getReligiousDayEnabled(),
-      ]);
+    const [
+      en,
+      off,
+      prayers,
+      adhan,
+      savedStateId,
+      savedDistrictId,
+      remEn,
+      remInt,
+      blackout,
+      relDayEn,
+    ] = await Promise.all([
+      notificationService.isEnabled(),
+      notificationService.getOffset(),
+      notificationService.getPrayerEnabled(),
+      adhanService.getAdhanPrayers(),
+      AsyncStorage.getItem(STORAGE_STATE_ID_KEY),
+      AsyncStorage.getItem(STORAGE_DISTRICT_ID_KEY),
+      notificationService.getReminderEnabled(),
+      notificationService.getReminderInterval(),
+      notificationService.getReminderBlackout(),
+      notificationService.getReligiousDayEnabled(),
+    ]);
     setNotifEnabled(en);
     setOffset(off);
     setPrayerEnabled(prayers);
@@ -354,7 +364,11 @@ export default function SettingsScreen() {
               icon="heart-outline"
               iconColor={ozelGunActive ? '#f43f5e' : '#ec4899'}
               label="Özel Gün Takibi"
-              sublabel={ozelGunActive ? 'Aktif dönem — streak korunuyor' : 'Dönem başlat/bitir, streak koruması'}
+              sublabel={
+                ozelGunActive
+                  ? 'Aktif dönem — streak korunuyor'
+                  : 'Dönem başlat/bitir, streak koruması'
+              }
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 rootNavigate('UserTabs', {
