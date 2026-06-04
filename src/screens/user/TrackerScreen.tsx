@@ -101,10 +101,9 @@ interface LogFormProps {
   onSubmit: (value: Record<string, any>, notes?: string) => void;
   onClose: () => void;
   isDark: boolean;
-  panHandlers: Record<string, any>;
 }
 
-function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps) {
+function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
   const meta = ACTIVITY_META[type];
   const inputCls = `rounded-2xl border px-4 py-3 text-base ${isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-slate-50 text-slate-900'}`;
   const labelCls = `mb-1.5 text-sm font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`;
@@ -204,25 +203,20 @@ function LogForm({ type, onSubmit, onClose, isDark, panHandlers }: LogFormProps)
   };
 
   return (
-    <View className="flex-1 pt-3">
-      <View {...panHandlers}>
-        <View className="mb-3 items-center py-2">
-          <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
+    <View className="flex-1">
+      <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
+        <View
+          className="h-10 w-10 items-center justify-center rounded-2xl"
+          style={{ backgroundColor: meta.bgColor }}>
+          <Ionicons name={meta.icon as any} size={20} color={meta.color} />
         </View>
-        <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
-          <View
-            className="h-10 w-10 items-center justify-center rounded-2xl"
-            style={{ backgroundColor: meta.bgColor }}>
-            <Ionicons name={meta.icon as any} size={20} color={meta.color} />
-          </View>
-          <View>
-            <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              {meta.label}
-            </Text>
-            <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              {meta.description}
-            </Text>
-          </View>
+        <View>
+          <Text className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {meta.label}
+          </Text>
+          <Text className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            {meta.description}
+          </Text>
         </View>
       </View>
 
@@ -1059,17 +1053,14 @@ export default function TrackerScreen({
       {activeTab === 'Aylık' && <MonthlyView isDark={isDark} />}
 
       <DraggableBottomSheet visible={!!modalType} onClose={closeSheet} isDark={isDark}>
-        {(panHandlers) =>
-          modalType ? (
-            <LogForm
-              type={modalType}
-              onSubmit={handleLogSubmit}
-              onClose={closeSheet}
-              isDark={isDark}
-              panHandlers={panHandlers}
-            />
-          ) : null
-        }
+        {modalType ? (
+          <LogForm
+            type={modalType}
+            onSubmit={handleLogSubmit}
+            onClose={closeSheet}
+            isDark={isDark}
+          />
+        ) : null}
       </DraggableBottomSheet>
     </View>
   );

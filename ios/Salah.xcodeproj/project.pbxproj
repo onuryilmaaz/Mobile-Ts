@@ -11,6 +11,7 @@
 		106564E2A98B4F66BECFF3A8 /* SalahLiveActivityModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD45FA425BA41839E915965 /* SalahLiveActivityModule.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1BB4BCE95D981A5010273CFF /* libPods-Salah.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C834422C6B70F1E97703C70 /* libPods-Salah.a */; };
+		2CCE03DED4814E9193314F26 /* MarkGoalIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		490AEA1E55EB477281D60DA0 /* SalahLiveActivityModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D5D038EA375411F888A4395 /* SalahLiveActivityModule.m */; };
 		5908F37D919A47678A60ECF8 /* PrayerTimesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E301A37E78448CB83A97561 /* PrayerTimesWidget.swift */; };
@@ -20,6 +21,7 @@
 		86F57480F9234C5A82E58503 /* SitePongLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39A6779C0D943818F97C620 /* SitePongLiveActivityWidget.swift */; };
 		8C9CE95F2DF34721B2590BF5 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C09EF28A842B6BD2DDD7D /* SharedData.swift */; };
 		9E0E8B087A4E4EB98072A8C1 /* SitePongLiveActivityWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D65FF46ACF947A384D8A777 /* SitePongLiveActivityWidgetLiveActivity.swift */; };
+		AB5855E0DF08424B91F8EE12 /* StandbyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		C4DD01859F5A485FBD43A6CD /* PrayerTrackerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8D14E1E8524E27B8732AC7 /* PrayerTrackerWidget.swift */; };
 		DA3047B1F73A4D7599A07CFC /* MarkPrayerIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88CD69BFDEC4E519770B4A7 /* MarkPrayerIntent.swift */; };
@@ -29,8 +31,6 @@
 		F82D7C0161D14B5C91AB5C1E /* SitePongActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF2A17FE6FF40D7BCFE5398 /* SitePongActivityAttributes.swift */; };
 		FE9AD7512F4D4D66ABD8D467 /* SitePongLiveActivityWidget.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = A671890171FA42BC828537F3 /* SitePongLiveActivityWidget.appex */; };
 		FF052449B78E400A9CD65DD5 /* GoalsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */; };
-		2CCE03DED4814E9193314F26 /* MarkGoalIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */; };
-		AB5855E0DF08424B91F8EE12 /* StandbyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,10 +56,13 @@
 		1D5D038EA375411F888A4395 /* SalahLiveActivityModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SalahLiveActivityModule.m; path = Salah/SalahLiveActivityModule.m; sourceTree = "<group>"; };
 		1E80723307ADF3E1F24F233B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Salah/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1F05DCD1A9F1406389DA942B /* SharedColors.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = SharedColors.swift; path = SharedColors.swift; sourceTree = "<group>"; };
+		2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoalsWidget.swift; path = GoalsWidget.swift; sourceTree = "<group>"; };
 		3C834422C6B70F1E97703C70 /* libPods-Salah.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Salah.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E301A37E78448CB83A97561 /* PrayerTimesWidget.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = PrayerTimesWidget.swift; path = PrayerTimesWidget.swift; sourceTree = "<group>"; };
+		4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StandbyWidget.swift; path = StandbyWidget.swift; sourceTree = "<group>"; };
 		4DD45FA425BA41839E915965 /* SalahLiveActivityModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SalahLiveActivityModule.swift; path = Salah/SalahLiveActivityModule.swift; sourceTree = "<group>"; };
 		7C4C09EF28A842B6BD2DDD7D /* SharedData.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = SharedData.swift; path = SharedData.swift; sourceTree = "<group>"; };
+		80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MarkGoalIntent.swift; path = MarkGoalIntent.swift; sourceTree = "<group>"; };
 		830BE3904FDB48EB9B2BE7E2 /* InspirationWidget.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = InspirationWidget.swift; path = InspirationWidget.swift; sourceTree = "<group>"; };
 		881B01E9B01E44EFA11D7EDC /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		9D65FF46ACF947A384D8A777 /* SitePongLiveActivityWidgetLiveActivity.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = SitePongLiveActivityWidgetLiveActivity.swift; path = SitePongLiveActivityWidgetLiveActivity.swift; sourceTree = "<group>"; };
@@ -76,9 +79,6 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Salah/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Salah-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Salah-Bridging-Header.h"; path = "Salah/Salah-Bridging-Header.h"; sourceTree = "<group>"; };
-		2C4FBE30A6EF4D59A6739507 /* GoalsWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GoalsWidget.swift"; path = "GoalsWidget.swift"; sourceTree = "<group>"; };
-		80D1202A9E9341B4961DB533 /* MarkGoalIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MarkGoalIntent.swift"; path = "MarkGoalIntent.swift"; sourceTree = "<group>"; };
-		4232DC4CDC9D46588F57E6E8 /* StandbyWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "StandbyWidget.swift"; path = "StandbyWidget.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -503,7 +503,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onur6541.salah;
-				PRODUCT_NAME = "Salah";
+				PRODUCT_NAME = Salah;
 				SWIFT_OBJC_BRIDGING_HEADER = "Salah/Salah-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -535,7 +535,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onur6541.salah;
-				PRODUCT_NAME = "Salah";
+				PRODUCT_NAME = Salah;
 				SWIFT_OBJC_BRIDGING_HEADER = "Salah/Salah-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

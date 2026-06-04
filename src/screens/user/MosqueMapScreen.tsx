@@ -420,66 +420,53 @@ const MosqueMapScreen = () => {
         onClose={() => setShowManageSheet(false)}
         isDark={isDark}
         snapPartial={280}>
-        {(panHandlers) =>
-          managingMosque ? (
-            <View className="flex-1 pt-3">
-              <View {...panHandlers}>
-                <View className="mb-3 items-center py-2">
-                  <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
-                </View>
-                <View className="mb-4 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
-                  <Text className="text-xl font-black text-slate-900 dark:text-white">
-                    {managingMosque.name}
-                  </Text>
-                  {managingMosque.description ? (
-                    <Text className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                      {managingMosque.description}
-                    </Text>
-                  ) : null}
-                </View>
-              </View>
-              <View className="gap-3 px-5 pb-6">
-                <TouchableOpacity
-                  onPress={() => openEditSheet(managingMosque)}
-                  className="flex-row items-center gap-3 rounded-2xl bg-teal-600 p-4">
-                  <Ionicons name="pencil" size={20} color="white" />
-                  <Text className="text-base font-bold text-white">Düzenle</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleDelete(managingMosque)}
-                  className="flex-row items-center gap-3 rounded-2xl bg-red-500 p-4">
-                  <Ionicons name="trash" size={20} color="white" />
-                  <Text className="text-base font-bold text-white">Sil</Text>
-                </TouchableOpacity>
-              </View>
+        {managingMosque ? (
+          <View className="flex-1">
+            <View className="mb-4 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
+              <Text className="text-xl font-black text-slate-900 dark:text-white">
+                {managingMosque.name}
+              </Text>
+              {managingMosque.description ? (
+                <Text className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  {managingMosque.description}
+                </Text>
+              ) : null}
             </View>
-          ) : null
-        }
+            <View className="gap-3 px-5 pb-6">
+              <TouchableOpacity
+                onPress={() => openEditSheet(managingMosque)}
+                className="flex-row items-center gap-3 rounded-2xl bg-teal-600 p-4">
+                <Ionicons name="pencil" size={20} color="white" />
+                <Text className="text-base font-bold text-white">Düzenle</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleDelete(managingMosque)}
+                className="flex-row items-center gap-3 rounded-2xl bg-red-500 p-4">
+                <Ionicons name="trash" size={20} color="white" />
+                <Text className="text-base font-bold text-white">Sil</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
       </DraggableBottomSheet>
 
       <DraggableBottomSheet
         visible={showFormSheet}
         onClose={() => setShowFormSheet(false)}
         isDark={isDark}>
-        {(panHandlers) => (
-          <View className="flex-1 pt-3">
-            <View {...panHandlers}>
-              <View className="mb-3 items-center py-2">
-                <View className="h-1 w-12 rounded-full bg-slate-300 dark:bg-slate-600" />
-              </View>
-              <View className="mb-4 flex-row items-center justify-between border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
-                <Text className="text-xl font-black text-slate-900 dark:text-white">
-                  {sheetMode === 'add' ? 'Cami İşaretle' : 'Camiyi Düzenle'}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setShowFormSheet(false)}
-                  className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-                  <Ionicons name="close" size={22} color={isDark ? '#94a3b8' : '#64748b'} />
-                </TouchableOpacity>
-              </View>
-            </View>
+        <View className="flex-1">
+          <View className="mb-4 flex-row items-center justify-between border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
+            <Text className="text-xl font-black text-slate-900 dark:text-white">
+              {sheetMode === 'add' ? 'Cami İşaretle' : 'Camiyi Düzenle'}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowFormSheet(false)}
+              className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              <Ionicons name="close" size={22} color={isDark ? '#94a3b8' : '#64748b'} />
+            </TouchableOpacity>
+          </View>
 
-            <ScrollView
+          <ScrollView
               className="flex-1 px-5"
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
@@ -556,8 +543,7 @@ const MosqueMapScreen = () => {
                 )}
               </TouchableOpacity>
             </View>
-          </View>
-        )}
+        </View>
       </DraggableBottomSheet>
     </View>
   );

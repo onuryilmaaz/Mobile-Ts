@@ -28,6 +28,7 @@ import { useAdhanStore } from '@/services/adhan.store';
 import AdhanModal from '@/components/home/AdhanModal';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import * as SecureStore from 'expo-secure-store';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const _warn = console.warn;
 console.warn = (...args) => {
@@ -290,13 +291,15 @@ function App() {
   }, [logout]);
 
   return (
-    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <AppContent />
-        <ToastContainer />
-        <AlertDialog />
-      </SafeAreaProvider>
-    </ClerkProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <AppContent />
+          <ToastContainer />
+          <AlertDialog />
+        </SafeAreaProvider>
+      </ClerkProvider>
+    </GestureHandlerRootView>
   );
 }
 
