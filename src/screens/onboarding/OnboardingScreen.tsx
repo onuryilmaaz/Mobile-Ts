@@ -12,13 +12,28 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
+import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { useOnboardingStore } from '@/store/onboarding.store';
+import { notificationService } from '@/services/notification.service';
+import {
+  getStateByName,
+  getDefaultDistrictForState,
+  STATES,
+} from '@/constants/locations';
+
+const STORAGE_STATE_ID_KEY = 'SELECTED_STATE_ID';
+const STORAGE_DISTRICT_ID_KEY = 'SELECTED_DISTRICT_ID';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Onboarding'>;
 
 const { width } = Dimensions.get('window');
+
+type SlideKind = 'info' | 'permission_location' | 'permission_notifications';
 
 interface Slide {
   id: string;
@@ -27,6 +42,7 @@ interface Slide {
   description: string;
   accent: string;
   accentDim: string;
+  kind?: SlideKind;
 }
 
 const SLIDES: Slide[] = [
@@ -101,6 +117,26 @@ const SLIDES: Slide[] = [
     accent: '#ec4899',
     accentDim: 'rgba(236,72,153,0.12)',
   },
+  {
+    id: '9',
+    icon: 'location-outline',
+    title: 'Konumunuzu Ayarlayın',
+    description:
+      'Doğru namaz vakitleri için konumunuza ihtiyacımız var. İzin verirseniz şehrinizi otomatik buluruz; istemezseniz daha sonra elle seçebilirsiniz.',
+    accent: '#0ea5e9',
+    accentDim: 'rgba(14,165,233,0.12)',
+    kind: 'permission_location',
+  },
+  {
+    id: '10',
+    icon: 'notifications-outline',
+    title: 'Bildirimleri Aç',
+    description:
+      'Her namaz vaktinde nazikçe hatırlatma alın. Ezan sesi ve ayet/hadis bildirimleri opsiyoneldir, her zaman ayarlardan kapatabilirsiniz.',
+    accent: '#a855f7',
+    accentDim: 'rgba(168,85,247,0.12)',
+    kind: 'permission_notifications',
+  },
 ];
 
 export default function OnboardingScreen({ navigation }: Props) {
@@ -132,12 +168,15 @@ export default function OnboardingScreen({ navigation }: Props) {
 
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
+  const [permissionBusy, setPermissionBusy] = useState(false);
+  const [permissionGranted, setPermissionGranted] = useState<Record<string, boolean>>({});
+
   async function handleFinish() {
     await complete();
     navigation.replace('UserTabs', undefined as any);
   }
 
-  function handleNext() {
+  function goNextSlide() {
     if (currentIndex < SLIDES.length - 1) {
       flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
     } else {
@@ -145,8 +184,93 @@ export default function OnboardingScreen({ navigation }: Props) {
     }
   }
 
+  async function requestLocation() {
+    setPermissionBusy(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        try {
+          const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+          const geo = await Location.reverseGeocodeAsync({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          });
+          const region = geo[0]?.region ?? geo[0]?.city ?? '';
+          const normalize = (s: string) =>
+            s.toUpperCase().replace(/İ/g, 'I').replace(/Ğ/g, 'G').replace(/Ş/g, 'S').replace(/Ç/g, 'C').replace(/Ö/g, 'O').replace(/Ü/g, 'U');
+          const state =
+            getStateByName(region) ??
+            (STATES as any[]).find(
+              (s) => normalize(s.name) === normalize(region) || normalize(s.name_en) === normalize(region),
+            );
+          if (state) {
+            const district = getDefaultDistrictForState(state._id);
+            if (district) {
+              await AsyncStorage.setItem(STORAGE_STATE_ID_KEY, state._id);
+              await AsyncStorage.setItem(STORAGE_DISTRICT_ID_KEY, district._id);
+            }
+          }
+        } catch {
+          // Geocoding hatası — kullanıcı sonradan elle seçebilir
+        }
+        setPermissionGranted((p) => ({ ...p, location: true }));
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    } catch {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setPermissionBusy(false);
+      goNextSlide();
+    }
+  }
+
+  async function requestNotifications() {
+    setPermissionBusy(true);
+    try {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status === 'granted') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        await notificationService.enableNotifications();
+        setPermissionGranted((p) => ({ ...p, notifications: true }));
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    } catch {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setPermissionBusy(false);
+      goNextSlide();
+    }
+  }
+
+  function handleNext() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const slide = SLIDES[currentIndex];
+    if (slide?.kind === 'permission_location' && !permissionGranted.location) {
+      requestLocation();
+      return;
+    }
+    if (slide?.kind === 'permission_notifications' && !permissionGranted.notifications) {
+      requestNotifications();
+      return;
+    }
+    goNextSlide();
+  }
+
+  function handleSkipPermission() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    goNextSlide();
+  }
+
   const isLast = currentIndex === SLIDES.length - 1;
   const activeSlide = SLIDES[currentIndex]!;
+  const isPermissionSlide =
+    activeSlide.kind === 'permission_location' || activeSlide.kind === 'permission_notifications';
+  const alreadyGranted =
+    (activeSlide.kind === 'permission_location' && permissionGranted.location) ||
+    (activeSlide.kind === 'permission_notifications' && permissionGranted.notifications);
 
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
@@ -179,7 +303,7 @@ export default function OnboardingScreen({ navigation }: Props) {
         }}
       />
 
-      {!isLast && (
+      {!isLast && !isPermissionSlide && (
         <TouchableOpacity
           style={{
             position: 'absolute',
@@ -319,6 +443,7 @@ export default function OnboardingScreen({ navigation }: Props) {
         </View>
 
         <TouchableOpacity
+          disabled={permissionBusy}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -326,6 +451,7 @@ export default function OnboardingScreen({ navigation }: Props) {
             borderRadius: 20,
             paddingVertical: 16,
             backgroundColor: activeSlide.accent,
+            opacity: permissionBusy ? 0.7 : 1,
             shadowColor: activeSlide.accent,
             shadowOffset: { width: 0, height: 6 },
             shadowOpacity: 0.35,
@@ -335,15 +461,43 @@ export default function OnboardingScreen({ navigation }: Props) {
           onPress={handleNext}
           activeOpacity={0.85}>
           <Text style={{ fontSize: 16, fontWeight: '800', letterSpacing: 0.5, color: '#fff' }}>
-            {isLast ? 'Başla' : 'İleri'}
+            {alreadyGranted
+              ? 'Devam Et'
+              : activeSlide.kind === 'permission_location'
+                ? 'Konum İznini Ver'
+                : activeSlide.kind === 'permission_notifications'
+                  ? 'Bildirimleri Aç'
+                  : isLast
+                    ? 'Başla'
+                    : 'İleri'}
           </Text>
           <Ionicons
-            name={isLast ? 'checkmark' : 'arrow-forward'}
+            name={
+              alreadyGranted
+                ? 'checkmark-circle'
+                : isPermissionSlide
+                  ? 'shield-checkmark'
+                  : isLast
+                    ? 'checkmark'
+                    : 'arrow-forward'
+            }
             size={20}
             color="#fff"
             style={{ marginLeft: 8 }}
           />
         </TouchableOpacity>
+
+        {/* Skip permission link — only on permission slides */}
+        {isPermissionSlide && !alreadyGranted && (
+          <TouchableOpacity
+            onPress={handleSkipPermission}
+            activeOpacity={0.6}
+            style={{ alignSelf: 'center', marginTop: 14, paddingVertical: 6, paddingHorizontal: 14 }}>
+            <Text style={{ fontSize: 13, fontWeight: '600', color: skipTextColor }}>
+              Şimdilik atla
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

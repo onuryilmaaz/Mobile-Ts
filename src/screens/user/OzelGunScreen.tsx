@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Skeleton } from '@/components/feedback/Skeleton';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
@@ -71,9 +72,33 @@ export default function OzelGunScreen() {
     return (
       <Screen safeAreaEdges={['left', 'right']}>
         <StandardHeader title="Özel Gün Takibi" navigation={navigation} />
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={teal} />
-        </View>
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, gap: 16 }}
+          showsVerticalScrollIndicator={false}>
+          {/* Status banner skeleton */}
+          <View className="rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+            <View className="flex-row items-center gap-3">
+              <Skeleton width={56} height={56} radius={20} />
+              <View className="flex-1 gap-2">
+                <Skeleton width="40%" height={10} />
+                <Skeleton width="60%" height={22} />
+                <Skeleton width="50%" height={10} />
+              </View>
+            </View>
+          </View>
+
+          {/* Info card skeleton */}
+          <View className="rounded-3xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 gap-3">
+            <Skeleton width="40%" height={14} />
+            <Skeleton width="100%" height={10} />
+            <Skeleton width="90%" height={10} />
+            <Skeleton width="60%" height={10} />
+          </View>
+
+          {/* Action button skeleton */}
+          <Skeleton width="100%" height={56} radius={16} />
+        </ScrollView>
       </Screen>
     );
   }

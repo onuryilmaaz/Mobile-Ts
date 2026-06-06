@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
+import { Skeleton } from '@/components/feedback/Skeleton';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -501,11 +502,18 @@ export function PrayerTimesCard({ focusNonce }: PrayerTimesCardProps) {
 
       <View className="mb-3 rounded-3xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-950">
         {loading && !data ? (
-          <View className="items-center py-7">
-            <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
-            <Text className="mt-2.5 text-[13px] text-slate-400 dark:text-slate-500">
-              Vakitler yükleniyor...
-            </Text>
+          <View className="flex-row flex-wrap justify-between gap-y-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <View
+                key={i}
+                className="w-[31%] items-center rounded-2xl border border-slate-100 bg-slate-50/40 py-3 dark:border-slate-800 dark:bg-slate-900/40">
+                <Skeleton width={18} height={18} radius={9} />
+                <View className="mt-1.5 mb-1.5">
+                  <Skeleton width={48} height={9} />
+                </View>
+                <Skeleton width={52} height={16} />
+              </View>
+            ))}
           </View>
         ) : (
           <View className="flex-row flex-wrap justify-between gap-y-2">

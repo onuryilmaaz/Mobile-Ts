@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SurahsStackParamList } from '@/navigation/types';
@@ -19,6 +18,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useQuranStore } from '@/store/quran.store';
 import { useHifzStore } from '@/modules/hifz/hifz.store';
 import { useAuthStore } from '@/modules/auth/auth.store';
+import { Skeleton, SkeletonLine } from '@/components/feedback/Skeleton';
 
 type Props = NativeStackScreenProps<SurahsStackParamList, 'SurahsMain'>;
 
@@ -98,12 +98,23 @@ export default function SurahBrowserScreen({ navigation }: Props) {
       </View>
 
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
-          <Text className="mt-4 text-base font-semibold text-slate-600 dark:text-slate-400">
-            Sureler yükleniyor...
-          </Text>
-        </View>
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <View
+              key={i}
+              className="mb-3 flex-row items-center rounded-3xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
+              <Skeleton width={48} height={48} radius={16} />
+              <View className="ml-4 flex-1 gap-2">
+                <SkeletonLine width="60%" />
+                <SkeletonLine width="30%" />
+              </View>
+              <Skeleton width={56} height={20} radius={4} />
+            </View>
+          ))}
+        </ScrollView>
       ) : (
         <ScrollView
           className="flex-1"

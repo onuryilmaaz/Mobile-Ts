@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Skeleton } from '@/components/feedback/Skeleton';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
@@ -77,9 +78,41 @@ export default function HafizlikScreen() {
     return (
       <Screen safeAreaEdges={['left', 'right']}>
         <StandardHeader title="Hafızlık" navigation={navigation as any} />
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={teal} />
-        </View>
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, gap: 16 }}
+          showsVerticalScrollIndicator={false}>
+          {/* Overall progress skeleton */}
+          <View className="rounded-3xl border border-emerald-200 bg-emerald-50/40 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+            <View className="flex-row items-center gap-3">
+              <Skeleton width={48} height={48} radius={16} />
+              <View className="flex-1 gap-2">
+                <Skeleton width="40%" height={10} />
+                <Skeleton width="60%" height={20} />
+              </View>
+              <Skeleton width={60} height={28} radius={6} />
+            </View>
+            <View className="mt-3">
+              <Skeleton width="100%" height={8} radius={4} />
+            </View>
+          </View>
+
+          {/* Filter chips skeleton */}
+          <View className="flex-row gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} width={80} height={32} radius={12} />
+            ))}
+          </View>
+
+          {/* Surah grid skeleton */}
+          <View className="rounded-3xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
+            <View className="flex-row flex-wrap gap-1.5">
+              {Array.from({ length: 48 }).map((_, i) => (
+                <Skeleton key={i} width={44} height={44} radius={12} />
+              ))}
+            </View>
+          </View>
+        </ScrollView>
       </Screen>
     );
   }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Skeleton } from '@/components/feedback/Skeleton';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
@@ -177,8 +178,20 @@ export default function PrayerHistoryEditScreen() {
             BEŞ VAKİT
           </Text>
           {loading ? (
-            <View className="items-center py-8 rounded-3xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-              <ActivityIndicator color={teal} />
+            <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <View
+                  key={i}
+                  className={`flex-row items-center px-4 py-3.5 ${
+                    i < 4 ? 'border-b border-slate-100 dark:border-slate-800' : ''
+                  }`}>
+                  <Skeleton width={40} height={40} radius={14} />
+                  <View className="ml-3 flex-1 gap-2">
+                    <Skeleton width="40%" height={14} />
+                  </View>
+                  <Skeleton width={32} height={32} radius={16} />
+                </View>
+              ))}
             </View>
           ) : (
             <View className="overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
