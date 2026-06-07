@@ -80,6 +80,7 @@ export default function SettingsScreen() {
   const [religiousDayEnabled, setReligiousDayEnabled] = useState(true);
   const [blackoutStart, setBlackoutStart] = useState(DEFAULT_BLACKOUT_START);
   const [blackoutEnd, setBlackoutEnd] = useState(DEFAULT_BLACKOUT_END);
+  const [muteUntil, setMuteUntil] = useState<number | null>(null);
 
   const [districtId, setDistrictId] = useState<string | null>(null);
   const [stateId, setStateId] = useState<string | null>(null);
@@ -100,6 +101,7 @@ export default function SettingsScreen() {
       remInt,
       blackout,
       relDayEn,
+      mutedUntilTs,
     ] = await Promise.all([
       notificationService.isEnabled(),
       notificationService.getOffset(),
@@ -111,6 +113,7 @@ export default function SettingsScreen() {
       notificationService.getReminderInterval(),
       notificationService.getReminderBlackout(),
       notificationService.getReligiousDayEnabled(),
+      notificationService.getMuteUntil(),
     ]);
     setNotifEnabled(en);
     setOffset(off);
@@ -123,7 +126,58 @@ export default function SettingsScreen() {
     setBlackoutStart(blackout.start);
     setBlackoutEnd(blackout.end);
     setReligiousDayEnabled(relDayEn);
+    setMuteUntil(mutedUntilTs);
   }, []);
+
+  // ─── Sessiz Mod / Mute handlers ─────────────────────────────────────────────
+
+  function formatMuteRemaining(until: number): string {
+    const ms = until - Date.now();
+    if (ms <= 0) return 'sona erdi';
+    const totalMin = Math.ceil(ms / 60_000);
+    if (totalMin < 60) return `${totalMin} dk`;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return m === 0 ? `${h} sa` : `${h} sa ${m} dk`;
+  }
+
+  function untilEndOfDayMs(): number {
+    const now = new Date();
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    return Math.max(60_000, end.getTime() - now.getTime());
+  }
+
+  async function applyMute(durationMs: number) {
+    const minutes = Math.max(1, Math.round(durationMs / 60_000));
+    const until = await notificationService.muteFor(minutes);
+    setMuteUntil(until);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    toast.success('Sessize Alındı', `Bildirimler ${formatMuteRemaining(until)} boyunca susturuldu.`);
+  }
+
+  async function handleUnmute() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await notificationService.unmute();
+    setMuteUntil(null);
+    toast.success('Aktifleştirildi', 'Bildirimler tekrar açıldı. Sonraki vakit yenilenince planlanır.');
+  }
+
+  function handleMutePress() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    alert.show({
+      type: 'info',
+      title: 'Sessiz Mod',
+      message: 'Bildirimler ne kadar süre sessize alınsın?',
+      buttons: [
+        { text: '15 dakika',           style: 'default', onPress: () => applyMute(15 * 60_000) },
+        { text: '1 saat',              style: 'default', onPress: () => applyMute(60 * 60_000) },
+        { text: '3 saat',              style: 'default', onPress: () => applyMute(3 * 60 * 60_000) },
+        { text: 'Gün sonuna kadar',    style: 'default', onPress: () => applyMute(untilEndOfDayMs()) },
+        { text: 'İptal',               style: 'cancel' },
+      ],
+    });
+  }
 
   useEffect(() => {
     load();
@@ -381,6 +435,40 @@ export default function SettingsScreen() {
           </View>
         </>
       )}
+
+      {/* Sessiz Mod — geçici toplu bildirim sustur */}
+      <Section title="Sessiz Mod" />
+      <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">
+        {muteUntil ? (
+          <>
+            <Row
+              icon="moon"
+              iconColor="#6366f1"
+              label={`Sessiz: ${formatMuteRemaining(muteUntil)}`}
+              sublabel={`${new Date(muteUntil).toLocaleString('tr-TR', {
+                hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'long',
+              })} tarihinde aktifleşir`}
+            />
+            <Row
+              icon="close-circle-outline"
+              iconColor="#ef4444"
+              label="Sessiz Modu Kapat"
+              sublabel="Bildirimleri hemen geri aç"
+              onPress={handleUnmute}
+              right={<Ionicons name="chevron-forward" size={16} color={sub} />}
+            />
+          </>
+        ) : (
+          <Row
+            icon="moon-outline"
+            iconColor="#6366f1"
+            label="Sessize Al"
+            sublabel="Toplantı, uyku veya yolculuk için bildirimleri geçici olarak sustur"
+            onPress={handleMutePress}
+            right={<Ionicons name="chevron-forward" size={16} color={sub} />}
+          />
+        )}
+      </View>
 
       <Section title="Bildirimler" />
       <View className="mb-6 overflow-hidden rounded-3xl border border-slate-100 bg-white dark:border-white/[7%] dark:bg-slate-800">

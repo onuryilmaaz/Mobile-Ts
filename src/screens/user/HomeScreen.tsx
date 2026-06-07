@@ -15,6 +15,7 @@ import { PersonalGoalsCard } from '@/components/home/PersonalGoalsCard';
 import { TeheccudCard } from '@/components/home/TeheccudCard';
 import { ForbiddenTimeBanner } from '@/components/home/ForbiddenTimeBanner';
 import { CumaHutbesiCard } from '@/components/home/CumaHutbesiCard';
+import { MuteBanner } from '@/components/home/MuteBanner';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
@@ -146,6 +147,7 @@ export default function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}>
         <PrayerTimesCard focusNonce={focusNonce} />
+        <MuteBanner />
         <ForbiddenTimeBanner />
         <CumaHutbesiCard />
         {/* <RamadanBannerCard onPress={() => navigation.navigate('Ramadan')} /> */}

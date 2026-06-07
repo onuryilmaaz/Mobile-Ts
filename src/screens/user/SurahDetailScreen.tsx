@@ -29,7 +29,11 @@ import {
   useQuranSettingsStore,
   FONT_SIZE_SCALE,
   FONT_SIZE_LABELS,
+  READING_PALETTES,
+  READING_THEME_LABELS,
   type FontSize,
+  type ReadingTheme,
+  type LayoutMode,
 } from '@/store/quranSettings.store';
 import type { HifzStatus } from '@/modules/hifz/hifz.api';
 
@@ -328,10 +332,20 @@ export default function SurahDetailScreen({ route }: Props) {
   const { load: loadHifz, setStatus: setHifzStatus, remove: removeHifz, getStatusFor } = useHifzStore();
   const {
     fontSize,
+    readingTheme,
+    layoutMode,
     load: loadQuranSettings,
     setFontSize,
+    setReadingTheme,
+    setLayoutMode,
   } = useQuranSettingsStore();
   const fontScale = FONT_SIZE_SCALE[fontSize];
+
+  // Effective palette: system → fall back to global isDark; explicit themes use their own palette
+  const palette =
+    readingTheme === 'system'
+      ? null
+      : READING_PALETTES[readingTheme];
 
   useEffect(() => { loadQuranSettings(); }, []);
 
@@ -340,6 +354,19 @@ export default function SurahDetailScreen({ route }: Props) {
     const order: FontSize[] = ['sm', 'md', 'lg', 'xl'];
     const idx = order.indexOf(fontSize);
     setFontSize(order[(idx + 1) % order.length]!);
+  };
+
+  const cycleReadingTheme = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const order: ReadingTheme[] = ['system', 'sepia', 'night'];
+    const idx = order.indexOf(readingTheme);
+    setReadingTheme(order[(idx + 1) % order.length]!);
+  };
+
+  const toggleLayoutMode = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const next: LayoutMode = layoutMode === 'verses' ? 'mushaf' : 'verses';
+    setLayoutMode(next);
   };
 
   useEffect(() => {
@@ -476,9 +503,16 @@ export default function SurahDetailScreen({ route }: Props) {
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={isDark ? '#14b8a6' : '#0f766e'} />
-          <Text className="mt-4 text-base font-semibold text-slate-600 dark:text-slate-400">
+        <View
+          className="flex-1 items-center justify-center"
+          style={palette ? { backgroundColor: palette.bg } : undefined}>
+          <ActivityIndicator
+            size="large"
+            color={palette?.accent ?? (isDark ? '#14b8a6' : '#0f766e')}
+          />
+          <Text
+            className="mt-4 text-base font-semibold"
+            style={{ color: palette?.textSecondary ?? (isDark ? '#94a3b8' : '#64748b') }}>
             Ayetler yükleniyor...
           </Text>
         </View>
@@ -486,6 +520,7 @@ export default function SurahDetailScreen({ route }: Props) {
         <ScrollView
           ref={scrollViewRef}
           className="flex-1"
+          style={palette ? { backgroundColor: palette.bg } : undefined}
           contentContainerStyle={{ paddingTop: 16, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}>
           <AudioPlayer
@@ -576,6 +611,57 @@ export default function SurahDetailScreen({ route }: Props) {
                     {FONT_SIZE_LABELS[fontSize]}
                   </Text>
                 </TouchableOpacity>
+
+                {/* Layout mode toggle */}
+                <TouchableOpacity
+                  onPress={toggleLayoutMode}
+                  accessibilityLabel="Görünüm modu"
+                  className="flex-row items-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
+                  <Ionicons
+                    name={layoutMode === 'mushaf' ? 'book' : 'list'}
+                    size={14}
+                    color={isDark ? '#94a3b8' : '#64748b'}
+                  />
+                  <Text className="text-[11px] font-black text-teal-600 dark:text-teal-400">
+                    {layoutMode === 'mushaf' ? 'Mushaf' : 'Ayet'}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Reading theme cycler */}
+                <TouchableOpacity
+                  onPress={cycleReadingTheme}
+                  accessibilityLabel="Okuma teması"
+                  className="flex-row items-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
+                  <Ionicons
+                    name={
+                      readingTheme === 'night'
+                        ? 'moon'
+                        : readingTheme === 'sepia'
+                          ? 'sunny-outline'
+                          : 'contrast-outline'
+                    }
+                    size={14}
+                    color={
+                      readingTheme === 'night'
+                        ? '#f59e0b'
+                        : readingTheme === 'sepia'
+                          ? '#a06c2a'
+                          : isDark ? '#94a3b8' : '#64748b'
+                    }
+                  />
+                  <Text
+                    className="text-[11px] font-black"
+                    style={{
+                      color:
+                        readingTheme === 'night'
+                          ? '#f59e0b'
+                          : readingTheme === 'sepia'
+                            ? '#a06c2a'
+                            : isDark ? '#94a3b8' : '#64748b',
+                    }}>
+                    {READING_THEME_LABELS[readingTheme]}
+                  </Text>
+                </TouchableOpacity>
               </View>
             ) : (
               <View className="flex-row items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
@@ -614,7 +700,43 @@ export default function SurahDetailScreen({ route }: Props) {
             </View>
           )}
 
-          {displayedVerses.map((verse) => {
+          {/* ─── Mushaf mode: continuous Arabic flow with inline verse badges ─ */}
+          {layoutMode === 'mushaf' && displayedVerses.length > 0 && (
+            <View
+              className={`mx-4 mb-6 overflow-hidden rounded-3xl border p-5 ${
+                palette ? '' : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950'
+              }`}
+              style={
+                palette
+                  ? { backgroundColor: palette.surface, borderColor: palette.border }
+                  : undefined
+              }>
+              <Text
+                className={`text-right ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'} ${palette ? '' : 'text-slate-900 dark:text-white'}`}
+                style={{
+                  fontSize: 26 * fontScale,
+                  lineHeight: 64 * fontScale,
+                  writingDirection: 'rtl',
+                  ...(palette && { color: palette.textArabic }),
+                }}>
+                {displayedVerses.map((verse, i) => (
+                  <Text key={verse.id}>
+                    {verse.verse_simplified}
+                    <Text
+                      style={{
+                        fontSize: 14 * fontScale,
+                        color: palette?.accent ?? (isDark ? '#14b8a6' : '#0f766e'),
+                      }}>
+                      {' '}﴿{verse.verse_number}﴾{i < displayedVerses.length - 1 ? ' ' : ''}
+                    </Text>
+                  </Text>
+                ))}
+              </Text>
+            </View>
+          )}
+
+          {/* ─── Verses mode: existing per-verse cards ─────────────────────── */}
+          {layoutMode === 'verses' && displayedVerses.map((verse) => {
             const index = verses.indexOf(verse);
             const isActive = index === activeVerseIdx;
             return (
@@ -630,25 +752,51 @@ export default function SurahDetailScreen({ route }: Props) {
                 }}>
                 <Animated.View
                   entering={FadeInUp.delay(index * 50).duration(400)}
-                  className={`mx-4 mb-6 overflow-hidden rounded-3xl border shadow-sm shadow-black/5 dark:shadow-none ${
-                    isActive
-                      ? 'border-teal-500/60 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/10'
-                      : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950'
-                  }`}>
+                  className={
+                    palette
+                      ? 'mx-4 mb-6 overflow-hidden rounded-3xl border'
+                      : `mx-4 mb-6 overflow-hidden rounded-3xl border shadow-sm shadow-black/5 dark:shadow-none ${
+                          isActive
+                            ? 'border-teal-500/60 bg-teal-50 dark:border-teal-500/40 dark:bg-teal-500/10'
+                            : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950'
+                        }`
+                  }
+                  style={
+                    palette
+                      ? {
+                          backgroundColor: palette.surface,
+                          borderColor: isActive ? palette.accent : palette.border,
+                        }
+                      : undefined
+                  }>
                   {isActive && (
-                    <View className="absolute left-0 top-0 h-full w-1 rounded-l-3xl bg-teal-500" />
+                    <View
+                      className="absolute left-0 top-0 h-full w-1 rounded-l-3xl"
+                      style={{ backgroundColor: palette?.accent ?? '#14b8a6' }}
+                    />
                   )}
 
                   <View
-                    className={`flex-row items-center justify-between border-b px-6 py-3 ${
-                      isActive
-                        ? 'border-teal-200 bg-teal-100/60 dark:border-teal-500/30 dark:bg-teal-500/15'
-                        : 'border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950'
-                    }`}>
+                    className={
+                      palette
+                        ? 'flex-row items-center justify-between border-b px-6 py-3'
+                        : `flex-row items-center justify-between border-b px-6 py-3 ${
+                            isActive
+                              ? 'border-teal-200 bg-teal-100/60 dark:border-teal-500/30 dark:bg-teal-500/15'
+                              : 'border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950'
+                          }`
+                    }
+                    style={
+                      palette
+                        ? {
+                            backgroundColor: isActive ? palette.accent + '18' : palette.bg,
+                            borderColor: palette.border,
+                          }
+                        : undefined
+                    }>
                     <View
-                      className={`h-6 w-6 items-center justify-center rounded-full ${
-                        isActive ? 'bg-teal-500' : 'bg-teal-600 dark:bg-teal-500'
-                      }`}>
+                      className="h-6 w-6 items-center justify-center rounded-full"
+                      style={{ backgroundColor: palette?.accent ?? (isActive ? '#14b8a6' : '#0f766e') }}>
                       <Text className="text-xs font-black text-white">{verse.verse_number}</Text>
                     </View>
                     <View className="flex-row items-center gap-4">
@@ -663,9 +811,7 @@ export default function SurahDetailScreen({ route }: Props) {
                           color={
                             isBookmarked(surahId, verse.verse_number)
                               ? '#f59e0b'
-                              : isDark
-                                ? 'rgba(240,244,255,0.55)'
-                                : '#475569'
+                              : palette?.textSecondary ?? (isDark ? 'rgba(240,244,255,0.55)' : '#475569')
                           }
                         />
                       </TouchableOpacity>
@@ -673,7 +819,9 @@ export default function SurahDetailScreen({ route }: Props) {
                         <Ionicons
                           name="share-outline"
                           size={18}
-                          color={isDark ? 'rgba(240,244,255,0.55)' : '#475569'}
+                          color={
+                            palette?.textSecondary ?? (isDark ? 'rgba(240,244,255,0.55)' : '#475569')
+                          }
                         />
                       </TouchableOpacity>
                     </View>
@@ -681,33 +829,45 @@ export default function SurahDetailScreen({ route }: Props) {
 
                   <View className="px-4 py-1">
                     <Text
-                      className={`mb-1 text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
+                      className={`mb-1 ${palette ? '' : 'text-slate-900 dark:text-white'} ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
                       style={{
                         fontSize: 24 * fontScale,
                         lineHeight: 50 * fontScale,
+                        ...(palette && { color: palette.textPrimary }),
                       }}>
                       {verse.transcription}
                     </Text>
                     <Text
-                      className={`mb-1 text-right text-slate-900 dark:text-white ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
+                      className={`mb-1 text-right ${palette ? '' : 'text-slate-900 dark:text-white'} ${Platform.OS === 'ios' ? 'font-sans' : 'font-serif'}`}
                       style={{
                         fontSize: 22 * fontScale,
                         lineHeight: 50 * fontScale,
+                        ...(palette && { color: palette.textArabic }),
                       }}>
                       {verse.verse_simplified}
                     </Text>
 
-                    <View className="my-2 h-[1px] w-full bg-slate-200 dark:bg-white/10" />
+                    <View
+                      className={`my-2 h-[1px] w-full ${palette ? '' : 'bg-slate-200 dark:bg-white/10'}`}
+                      style={palette ? { backgroundColor: palette.border } : undefined}
+                    />
 
                     <Text
-                      className={`font-medium italic ${
-                        isActive
-                          ? 'text-teal-700 dark:text-teal-300'
-                          : 'text-slate-600 dark:text-slate-300'
-                      }`}
+                      className={
+                        palette
+                          ? 'font-medium italic'
+                          : `font-medium italic ${
+                              isActive
+                                ? 'text-teal-700 dark:text-teal-300'
+                                : 'text-slate-600 dark:text-slate-300'
+                            }`
+                      }
                       style={{
                         fontSize: 16 * fontScale,
                         lineHeight: 28 * fontScale,
+                        ...(palette && {
+                          color: isActive ? palette.accent : palette.textSecondary,
+                        }),
                       }}>
                       {`"${verse.translation.text}"`}
                     </Text>

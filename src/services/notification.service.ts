@@ -15,6 +15,7 @@ const REMINDER_ENABLED_KEY = 'REMINDER_ENABLED';
 const REMINDER_INTERVAL_KEY = 'REMINDER_INTERVAL'; // saat: 1 | 2 | 3 | 4 | 6
 const REMINDER_BLACKOUT_START_KEY = 'REMINDER_BLACKOUT_START'; // 0-23
 const REMINDER_BLACKOUT_END_KEY = 'REMINDER_BLACKOUT_END'; // 0-23
+const MUTE_UNTIL_KEY = 'NOTIFICATION_MUTE_UNTIL'; // epoch ms
 
 const RELIGIOUS_DAY_ENABLED_KEY = 'RELIGIOUS_DAY_NOTIFICATIONS_ENABLED';
 
@@ -109,6 +110,13 @@ export const notificationService = {
       const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
       if (enabled !== 'true') return;
 
+      // Sessiz mod aktifse hiçbir vakit bildirimi schedule etme — mute süresi
+      // dolduğunda PrayerTimesCard tekrar bu fonksiyonu çağırıyor.
+      if (await this.isMuted()) {
+        console.log('Prayer notifications skipped — mute is active');
+        return;
+      }
+
       const offset = await this.getOffset();
       const prayerEnabled = await this.getPrayerEnabled();
       const now = new Date();
@@ -199,6 +207,7 @@ export const notificationService = {
         this.getReligiousDayEnabled(),
       ]);
       if (masterEnabled !== 'true' || !relEnabled) return;
+      if (await this.isMuted()) return;
 
       const days = calendarService.getReligiousDays();
       const now = new Date();
@@ -302,6 +311,7 @@ export const notificationService = {
         this.getReminderEnabled(),
       ]);
       if (masterEnabled !== 'true' || !reminderEnabled) return;
+      if (await this.isMuted()) return;
 
       const [interval, blackout] = await Promise.all([
         this.getReminderInterval(),
@@ -396,6 +406,49 @@ export const notificationService = {
   async isEnabled() {
     const enabled = await AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY);
     return enabled === 'true';
+  },
+
+  // ─── Mute / Sessiz Mod ─────────────────────────────────────────────────────
+
+  /**
+   * Returns the timestamp (epoch ms) until which notifications are muted, or
+   * `null` if mute is not active. Auto-cleans expired entries.
+   */
+  async getMuteUntil(): Promise<number | null> {
+    const raw = await AsyncStorage.getItem(MUTE_UNTIL_KEY);
+    if (!raw) return null;
+    const ts = Number(raw);
+    if (!Number.isFinite(ts) || ts <= Date.now()) {
+      // expired — clear it so the rest of the app sees a clean state
+      await AsyncStorage.removeItem(MUTE_UNTIL_KEY);
+      return null;
+    }
+    return ts;
+  },
+
+  async isMuted(): Promise<boolean> {
+    return (await this.getMuteUntil()) !== null;
+  },
+
+  /**
+   * Mute all future notifications for `durationMinutes` minutes.
+   * - Cancels every already-scheduled notification
+   * - Saves the resume timestamp so UI can show a countdown
+   */
+  async muteFor(durationMinutes: number): Promise<number> {
+    const until = Date.now() + durationMinutes * 60_000;
+    await AsyncStorage.setItem(MUTE_UNTIL_KEY, String(until));
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    console.log(`Notifications muted for ${durationMinutes} min (until ${new Date(until).toLocaleString('tr-TR')})`);
+    return until;
+  },
+
+  /**
+   * Lift mute immediately. Does NOT re-schedule by itself — caller should re-run
+   * schedulePrayerNotifications() with fresh prayer times.
+   */
+  async unmute(): Promise<void> {
+    await AsyncStorage.removeItem(MUTE_UNTIL_KEY);
   },
 
   async cancelAll() {
