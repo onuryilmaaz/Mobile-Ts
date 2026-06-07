@@ -60,6 +60,7 @@ export type HomeStackParamList = {
   OzelGun: undefined;
   PrayerHistoryEdit: undefined;
   EsmaulHusna: undefined;
+  Wrapped: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   Family: NavigatorScreenParams<FamilyStackParamList>;
 };

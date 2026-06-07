@@ -5,7 +5,13 @@ export const gamificationApi = {
   getLeaderboard: (limit = 10) => api.get(`/gamification/leaderboard?limit=${limit}`),
   getLevel: () => api.get('/gamification/level'),
   getWeeklyStats: () => api.get('/gamification/stats/weekly'),
-  getMonthlyStats: () => api.get('/gamification/stats/monthly'),
+  getMonthlyStats: (year?: number, month?: number) => {
+    const qs = year && month ? `?year=${year}&month=${month}` : '';
+    return api.get(`/gamification/stats/monthly${qs}`);
+  },
+
+  getYearlyWrap: (year?: number) =>
+    api.get(`/gamification/yearly-wrap${year ? `?year=${year}` : ''}`),
 
   trackPrayer: (
     prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha',

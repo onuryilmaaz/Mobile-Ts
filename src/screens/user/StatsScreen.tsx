@@ -1,15 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, Dimensions } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, Dimensions, TouchableOpacity } from 'react-native';
 import { Screen } from '@/components/layout/Screen';
 import { Ionicons } from '@expo/vector-icons';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
+import { gamificationApi } from '@/modules/gamification/gamification.api';
 import { BarChart } from 'react-native-chart-kit';
 import { useTheme } from '@/hooks/useTheme';
 import { StandardHeader } from '@/components/layout/StandardHeader';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@/navigation';
+import { HeatmapCalendar } from '@/components/stats/HeatmapCalendar';
+import { WeakestPrayerCard, MonthlyTrendCard } from '@/components/stats/InsightsCards';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
@@ -74,18 +77,73 @@ export default function StatsScreen() {
   const { stats, weeklyStats, monthlyStats, fetchWeeklyStats, fetchMonthlyStats, fetchStats } =
     useGamificationStore();
   const [loading, setLoading] = useState(false);
+  const [history90, setHistory90] = useState<any[]>([]);
+  const [lastMonthData, setLastMonthData] = useState<{ prayers: number; days: number }>({
+    prayers: 0,
+    days: 0,
+  });
   const navigation = useNavigation<Nav>();
   const { isDark } = useTheme();
 
   const load = async () => {
     setLoading(true);
-    await Promise.all([fetchStats(), fetchWeeklyStats(), fetchMonthlyStats()]);
-    setLoading(false);
+    try {
+      const now = new Date();
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+      const [, , , historyRes, lastMonthRes] = await Promise.all([
+        fetchStats(),
+        fetchWeeklyStats(),
+        fetchMonthlyStats(),
+        gamificationApi.getPrayerHistory(90),
+        gamificationApi.getMonthlyStats
+          ? gamificationApi.getMonthlyStats()
+          : Promise.resolve({ data: { data: null } }),
+      ]);
+
+      setHistory90(historyRes.data?.data ?? []);
+
+      // Build previous month figure by re-using monthly stats endpoint with year/month params
+      try {
+        const lmRes = await (gamificationApi as any).getMonthlyStats?.(
+          lastMonth.getFullYear(),
+          lastMonth.getMonth() + 1,
+        );
+        const lm = lmRes?.data?.data?.totals;
+        setLastMonthData({
+          prayers: Number(lm?.total_prayers ?? 0),
+          days: Number(lm?.active_days ?? 0),
+        });
+      } catch {
+        setLastMonthData({ prayers: 0, days: 0 });
+      }
+
+      // Silence unused warning from spread destructure
+      void lastMonthRes;
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     load();
   }, []);
+
+  // Aggregate 90-day history into { 'YYYY-MM-DD': prayerCount }
+  const heatmapData: Record<string, number> = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const row of history90) {
+      const dateStr =
+        typeof row.date === 'string'
+          ? row.date.split('T')[0]
+          : new Date(row.date).toISOString().split('T')[0];
+      if (!dateStr) continue;
+      // Don't count sunrise — it's not a fard prayer
+      if (row.prayer_time === 'sunrise') continue;
+      map[dateStr] = (map[dateStr] ?? 0) + 1;
+    }
+    return map;
+  }, [history90]);
 
   const buildWeeklyChartData = () => {
     if (!weeklyStats?.daily) return null;
@@ -148,6 +206,57 @@ export default function StatsScreen() {
           />
         }
         contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}>
+        {/* Yıllık özet (Wrapped) — kullanıcı veri biriktirdikçe görünür */}
+        {(totalMonthPrayers > 0 || activeDays > 0) && (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('Wrapped')}
+            className="mx-4 mb-5 overflow-hidden rounded-3xl"
+            style={{ backgroundColor: '#0f172a' }}>
+            <View
+              style={{
+                position: 'absolute',
+                top: -40,
+                right: -40,
+                width: 140,
+                height: 140,
+                borderRadius: 70,
+                backgroundColor: '#a855f7',
+                opacity: 0.25,
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                bottom: -30,
+                left: -30,
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                backgroundColor: '#3b82f6',
+                opacity: 0.2,
+              }}
+            />
+            <View className="flex-row items-center gap-3 px-5 py-4">
+              <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+                <Text className="text-2xl">🌙</Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-[10px] font-black uppercase tracking-widest text-purple-300">
+                  {new Date().getFullYear()} Yıllık Özetin
+                </Text>
+                <Text className="mt-0.5 text-base font-black text-white">
+                  Bu yılın hikayesini gör
+                </Text>
+                <Text className="text-xs text-white/60">
+                  Animasyonlu özet · Paylaşılabilir
+                </Text>
+              </View>
+              <Ionicons name="arrow-forward-circle" size={28} color="#a855f7" />
+            </View>
+          </TouchableOpacity>
+        )}
+
         <View className="mb-6 px-4">
           <Text className="mb-3 text-lg font-black text-slate-900 dark:text-white">
             30 Günlük Özet
@@ -176,6 +285,32 @@ export default function StatsScreen() {
             />
           </View>
         </View>
+
+        {/* Aylık trend — bu ay vs geçen ay */}
+        {(totalMonthPrayers > 0 || lastMonthData.prayers > 0) && (
+          <MonthlyTrendCard
+            thisMonthPrayers={totalMonthPrayers}
+            lastMonthPrayers={lastMonthData.prayers}
+            thisMonthActiveDays={activeDays}
+            lastMonthActiveDays={lastMonthData.days}
+          />
+        )}
+
+        {/* En zayıf vakit motivasyon kartı */}
+        {breakdown.length >= 3 && <WeakestPrayerCard data={breakdown} />}
+
+        {/* 12 haftalık heatmap */}
+        {Object.keys(heatmapData).length > 0 && (
+          <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">
+            <Text className="mb-1 text-base font-black text-slate-900 dark:text-white">
+              Son 12 Hafta
+            </Text>
+            <Text className="mb-4 text-xs text-slate-500 dark:text-slate-400">
+              Her kutu bir gün — koyu yeşil = 5 vakit tam
+            </Text>
+            <HeatmapCalendar data={heatmapData} days={84} />
+          </View>
+        )}
 
         {weeklyData && (
           <View className="mx-4 mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-800 dark:shadow-none">

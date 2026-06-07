@@ -23,6 +23,7 @@ export { default as OzelGunScreen } from './OzelGunScreen';
 export { default as HafizlikScreen } from './HafizlikScreen';
 export { default as PrayerHistoryEditScreen } from './PrayerHistoryEditScreen';
 export { default as EsmaulHusnaScreen } from './EsmaulHusnaScreen';
+export { default as WrappedScreen } from './WrappedScreen';
 export { default as GroupListScreen } from './GroupListScreen';
 export { default as GroupDetailScreen } from './GroupDetailScreen';
 export { default as GroupCreateScreen } from './GroupCreateScreen';

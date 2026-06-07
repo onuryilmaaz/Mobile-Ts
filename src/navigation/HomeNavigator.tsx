@@ -28,6 +28,7 @@ import {
   OzelGunScreen,
   PrayerHistoryEditScreen,
   EsmaulHusnaScreen,
+  WrappedScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import FamilyNavigator from './FamilyNavigator';
@@ -226,6 +227,11 @@ export default function HomeNavigator() {
           name="EsmaulHusna"
           component={EsmaulHusnaScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Wrapped"
+          component={WrappedScreen}
+          options={{ headerShown: false, animation: 'fade' }}
         />
         <Stack.Screen
           name="Profile"
