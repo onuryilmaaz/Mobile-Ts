@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   RefreshControl,
   Modal,
-  TextInput,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
+import { Input } from '@/components/ui/Input';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useGamificationStore } from '@/modules/gamification/gamification.store';
@@ -249,11 +249,10 @@ function KazaWizard({
                 <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
                   Borcun başladığı yaş (Buluğ):
                 </Text>
-                <TextInput
+                <Input
                   value={startAge}
                   onChangeText={setStartAge}
                   keyboardType="numeric"
-                  className="rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
                   placeholder="Örn: 13"
                 />
               </View>
@@ -262,11 +261,10 @@ function KazaWizard({
                 <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
                   Namazın düzene girdiği yaş:
                 </Text>
-                <TextInput
+                <Input
                   value={regularAge}
                   onChangeText={setRegularAge}
                   keyboardType="numeric"
-                  className="rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
                   placeholder="Örn: 25"
                 />
               </View>
@@ -276,13 +274,14 @@ function KazaWizard({
                   Muafiyet / Kılınmış Tahmini Oran (%):
                 </Text>
                 <View className="flex-row items-center gap-4">
-                  <TextInput
-                    value={discountPercent}
-                    onChangeText={setDiscountPercent}
-                    keyboardType="numeric"
-                    className="flex-1 rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
-                    placeholder="Örn: 20"
-                  />
+                  <View className="flex-1">
+                    <Input
+                      value={discountPercent}
+                      onChangeText={setDiscountPercent}
+                      keyboardType="numeric"
+                      placeholder="Örn: 20"
+                    />
+                  </View>
                   <View className="rounded-xl bg-slate-100 px-3 py-2 dark:bg-slate-800">
                     <Text className="text-xs font-bold text-slate-500">Düşülecek</Text>
                   </View>

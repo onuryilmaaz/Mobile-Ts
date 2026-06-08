@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
+import { Input } from '@/components/ui/Input';
 import { useFamilyStore } from '@/modules/family/family.store';
 import type { FamilyStackParamList } from '@/navigation/types';
 import { useTheme } from '@/hooks/useTheme';
@@ -86,14 +87,12 @@ export default function CompletionDetailScreen() {
           <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Mesaj (Opsiyonel)
           </Text>
-          <TextInput
+          <Input
             value={note}
             onChangeText={setNote}
             placeholder="Çocuğuna bir mesaj bırak..."
             multiline
             numberOfLines={3}
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-            placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
           />
         </View>
 

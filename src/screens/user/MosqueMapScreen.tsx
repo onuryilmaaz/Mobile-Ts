@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   Image,
   ScrollView,
   ActivityIndicator,
@@ -12,6 +11,7 @@ import {
 } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { DraggableBottomSheet } from '@/components/layout/DraggableBottomSheet';
+import { Input } from '@/components/ui/Input';
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import { cssInterop } from 'nativewind';
 import * as Location from 'expo-location';
@@ -485,12 +485,10 @@ const MosqueMapScreen = () => {
                   <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
                     Cami Adı
                   </Text>
-                  <TextInput
+                  <Input
                     value={form.name}
-                    onChangeText={(text) => setForm((p) => ({ ...p, name: text }))}
-                    className="rounded-2xl bg-slate-50 p-4 font-bold text-slate-900 dark:bg-slate-800 dark:text-white"
+                    onChangeText={(text: string) => setForm((p) => ({ ...p, name: text }))}
                     placeholder="Örn: Sultanahmet Camii"
-                    placeholderTextColor="#94a3b8"
                   />
                 </View>
 
@@ -498,14 +496,12 @@ const MosqueMapScreen = () => {
                   <Text className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
                     Not / Açıklama
                   </Text>
-                  <TextInput
+                  <Input
                     value={form.description}
-                    onChangeText={(text) => setForm((p) => ({ ...p, description: text }))}
+                    onChangeText={(text: string) => setForm((p) => ({ ...p, description: text }))}
                     multiline
                     numberOfLines={3}
-                    className="rounded-2xl bg-slate-50 p-4 font-medium text-slate-900 dark:bg-slate-800 dark:text-white"
                     placeholder="Burada namaz kılmak çok huzurluydu..."
-                    placeholderTextColor="#94a3b8"
                   />
                 </View>
 

@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { groupApi } from '@/modules/group/group.api';
 import { useGroupStore } from '@/modules/group/group.store';
 import { useTheme } from '@/hooks/useTheme';
@@ -140,19 +140,13 @@ export default function GroupManualLogScreen({ navigation, route }: Props) {
             ))}
           </View>
 
-          <Text className="mb-2 ml-1 text-sm font-medium text-slate-700 dark:text-slate-100">
-            Değer {selectedType ? `(${selectedType.unit})` : ''} *
-          </Text>
-          <View className="mb-6 h-12 rounded-2xl border border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-900/60">
-            <TextInput
-              value={value}
-              onChangeText={setValue}
-              keyboardType="decimal-pad"
-              placeholder="0"
-              placeholderTextColor={isDark ? '#4b5563' : '#94a3b8'}
-              className="h-full flex-1 text-lg text-slate-900 dark:text-white"
-            />
-          </View>
+          <Input
+            label={`Değer ${selectedType ? `(${selectedType.unit})` : ''} *`}
+            value={value}
+            onChangeText={setValue}
+            keyboardType="decimal-pad"
+            placeholder="0"
+          />
 
           <Button
             title="Gruba Kaydet"

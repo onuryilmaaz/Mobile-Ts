@@ -13,6 +13,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { ACTIVITY_META, type ActivityType, type TrackerLog } from '@/modules/tracker/tracker.types';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
 import { DraggableBottomSheet } from '@/components/layout/DraggableBottomSheet';
+import { Input } from '@/components/ui/Input';
 
 const TABS = ['Bugün', 'Haftalık', 'Aylık'] as const;
 type Tab = (typeof TABS)[number];
@@ -233,13 +234,11 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             </View>
             <View>
               <Text className={labelCls}>Kaç dakika? (opsiyonel)</Text>
-              <TextInput
-                className={inputCls}
+              <Input
                 placeholder="örn: 20"
                 keyboardType="numeric"
                 value={minutes}
                 onChangeText={setMinutes}
-                placeholderTextColor="#94a3b8"
               />
             </View>
           </View>
@@ -267,12 +266,10 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             {dhikrType === 'custom' && (
               <View>
                 <Text className={labelCls}>Zikir adı</Text>
-                <TextInput
-                  className={inputCls}
+                <Input
                   placeholder="örn: Estağfirullah"
                   value={dhikrCustomName}
                   onChangeText={setDhikrCustomName}
-                  placeholderTextColor="#94a3b8"
                 />
               </View>
             )}
@@ -338,23 +335,19 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
           <View className="gap-4">
             <View>
               <Text className={labelCls}>Miktar (₺) *</Text>
-              <TextInput
-                className={inputCls}
+              <Input
                 placeholder="örn: 100"
                 keyboardType="numeric"
                 value={sadakaAmount}
                 onChangeText={setSadakaAmount}
-                placeholderTextColor="#94a3b8"
               />
             </View>
             <View>
               <Text className={labelCls}>Açıklama (opsiyonel)</Text>
-              <TextInput
-                className={inputCls}
+              <Input
                 placeholder="örn: yemek yardımı"
                 value={sadakaDesc}
                 onChangeText={setSadakaDesc}
-                placeholderTextColor="#94a3b8"
               />
             </View>
           </View>
@@ -391,8 +384,7 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
 
         <View className="mt-4">
           <Text className={labelCls}>Not (opsiyonel)</Text>
-          <TextInput
-            className={`${inputCls} min-h-[64px]`}
+          <Input
             placeholder={
               type === 'quran'
                 ? 'Örn: Bakara 15–18. sayfa'
@@ -411,7 +403,6 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
             textAlignVertical="top"
             value={notes}
             onChangeText={setNotes}
-            placeholderTextColor="#94a3b8"
           />
           {notes.length > 0 && (
             <Text className="mt-1 text-right text-[10px] text-slate-400">

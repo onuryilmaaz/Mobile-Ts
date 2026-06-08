@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
+import { Input } from '@/components/ui/Input';
 import { useFamilyStore } from '@/modules/family/family.store';
 import { alert } from '@/store/alert.store';
 import type { FamilyStackParamList } from '@/navigation/types';
-import { useTheme } from '@/hooks/useTheme';
 
 type Nav = NativeStackNavigationProp<FamilyStackParamList>;
 type Route = RouteProp<FamilyStackParamList, 'EditTask'>;
@@ -27,7 +27,6 @@ export default function EditTaskScreen() {
   const route = useRoute<Route>();
   const { childId, taskId } = route.params;
   const { tasks, updateTask, deleteTask } = useFamilyStore();
-  const { isDark } = useTheme();
 
   const task = tasks.find((t) => t.id === taskId);
 
@@ -92,21 +91,14 @@ export default function EditTaskScreen() {
         showsVerticalScrollIndicator={false}>
         <View className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-black/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
           <SectionLabel>Başlık</SectionLabel>
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-            placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
-          />
+          <Input value={title} onChangeText={setTitle} />
           <SectionLabel>Açıklama</SectionLabel>
-          <TextInput
+          <Input
             value={description}
             onChangeText={setDescription}
             placeholder="Opsiyonel"
             multiline
             numberOfLines={2}
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-            placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
           />
         </View>
 

@@ -8,7 +8,6 @@ import {
   Share,
   ScrollView,
   Modal,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -16,6 +15,7 @@ import { alert } from '@/store/alert.store';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/layout/Screen';
+import { Input } from '@/components/ui/Input';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -113,13 +113,7 @@ function AddPresetModal({
           <Text className="mb-2 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Zikir Adı
           </Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder="örn. Kelime-i Tevhid"
-            placeholderTextColor={isDark ? '#4b5563' : '#94a3b8'}
-            className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 dark:border-slate-800 dark:bg-slate-800/50 dark:text-white"
-          />
+          <Input value={name} onChangeText={setName} placeholder="örn. Kelime-i Tevhid" />
 
           <Text className="mb-2 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Hedef Sayı

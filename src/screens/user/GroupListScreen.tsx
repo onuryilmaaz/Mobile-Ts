@@ -6,12 +6,12 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
-  TextInput,
   Modal,
   Image,
 } from 'react-native';
 import { alert } from '@/store/alert.store';
 import { Screen } from '@/components/layout/Screen';
+import { Input } from '@/components/ui/Input';
 import { Ionicons } from '@expo/vector-icons';
 import { useGroupStore } from '@/modules/group/group.store';
 import { useTheme } from '@/hooks/useTheme';
@@ -161,15 +161,13 @@ export default function GroupListScreen({ navigation }: Props) {
               <Text className="mb-4 text-sm text-slate-500 dark:text-slate-400">
                 Sana iletilen davet kodunu gir
               </Text>
-              <TextInput
+              <Input
                 value={inviteCode}
-                onChangeText={(t) => setInviteCode(t.toUpperCase())}
+                onChangeText={(t: string) => setInviteCode(t.toUpperCase())}
                 placeholder="Davet Kodu (örn. AB3K7P2Q)"
                 autoCapitalize="characters"
                 autoCorrect={false}
                 maxLength={10}
-                className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xl font-black tracking-widest text-teal-700 dark:border-slate-400 dark:bg-slate-900 dark:text-teal-400"
-                placeholderTextColor={isDark ? '#4b5563' : '#94a3b8'}
               />
               <TouchableOpacity
                 onPress={handleJoin}
