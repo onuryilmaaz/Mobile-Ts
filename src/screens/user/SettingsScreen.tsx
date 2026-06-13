@@ -78,6 +78,7 @@ export default function SettingsScreen() {
   const [reminderEnabled, setReminderEnabled] = useState(true);
   const [reminderInterval, setReminderInterval] = useState(DEFAULT_REMINDER_INTERVAL);
   const [religiousDayEnabled, setReligiousDayEnabled] = useState(true);
+  const [cumaReminderEnabled, setCumaReminderEnabled] = useState(true);
   const [blackoutStart, setBlackoutStart] = useState(DEFAULT_BLACKOUT_START);
   const [blackoutEnd, setBlackoutEnd] = useState(DEFAULT_BLACKOUT_END);
   const [muteUntil, setMuteUntil] = useState<number | null>(null);
@@ -102,6 +103,7 @@ export default function SettingsScreen() {
       blackout,
       relDayEn,
       mutedUntilTs,
+      cumaEn,
     ] = await Promise.all([
       notificationService.isEnabled(),
       notificationService.getOffset(),
@@ -114,6 +116,7 @@ export default function SettingsScreen() {
       notificationService.getReminderBlackout(),
       notificationService.getReligiousDayEnabled(),
       notificationService.getMuteUntil(),
+      notificationService.getCumaReminderEnabled(),
     ]);
     setNotifEnabled(en);
     setOffset(off);
@@ -127,6 +130,7 @@ export default function SettingsScreen() {
     setBlackoutEnd(blackout.end);
     setReligiousDayEnabled(relDayEn);
     setMuteUntil(mutedUntilTs);
+    setCumaReminderEnabled(cumaEn);
   }, []);
 
   // ─── Sessiz Mod / Mute handlers ─────────────────────────────────────────────
@@ -689,6 +693,29 @@ export default function SettingsScreen() {
             />
           }
         />
+        <View className="border-t border-slate-100 dark:border-white/[7%]">
+          <Row
+            icon="book-outline"
+            iconColor="#0d9488"
+            label="Cuma Hatırlatması"
+            sublabel="Perşembe akşamı ve Cuma sabahı Cuma namazı + hutbe hatırlatması"
+            right={
+              <Switch
+                value={cumaReminderEnabled}
+                onValueChange={async (val) => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  await notificationService.setCumaReminderEnabled(val);
+                  setCumaReminderEnabled(val);
+                  if (val) {
+                    await notificationService.scheduleCumaReminders();
+                  }
+                }}
+                trackColor={{ false: '#334155', true: '#0d9488' }}
+                thumbColor="#fff"
+              />
+            }
+          />
+        </View>
       </View>
 
       <Section title="Ezan Sesi" />

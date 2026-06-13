@@ -18,6 +18,7 @@ const REMINDER_BLACKOUT_END_KEY = 'REMINDER_BLACKOUT_END'; // 0-23
 const MUTE_UNTIL_KEY = 'NOTIFICATION_MUTE_UNTIL'; // epoch ms
 
 const RELIGIOUS_DAY_ENABLED_KEY = 'RELIGIOUS_DAY_NOTIFICATIONS_ENABLED';
+const CUMA_REMINDER_ENABLED_KEY = 'CUMA_REMINDER_ENABLED';
 
 export const DEFAULT_REMINDER_INTERVAL = 2;
 export const DEFAULT_BLACKOUT_START = 23;
@@ -185,6 +186,7 @@ export const notificationService = {
       console.log(`Prayer notifications scheduled: ${scheduled} slots used`);
       await this.scheduleHourlyReminders();
       await this.scheduleReligiousDayReminders();
+      await this.scheduleCumaReminders();
     } catch (error) {
       console.error('Error scheduling notifications:', error);
     }
@@ -263,6 +265,85 @@ export const notificationService = {
       console.log(`Religious day reminders scheduled: ${upcoming.length} events`);
     } catch (e) {
       console.error('Error scheduling religious day reminders:', e);
+    }
+  },
+
+  async getCumaReminderEnabled(): Promise<boolean> {
+    const val = await AsyncStorage.getItem(CUMA_REMINDER_ENABLED_KEY);
+    return val === null ? true : val === 'true';
+  },
+
+  async setCumaReminderEnabled(value: boolean): Promise<void> {
+    await AsyncStorage.setItem(CUMA_REMINDER_ENABLED_KEY, String(value));
+  },
+
+  /**
+   * Cuma hatırlatmaları: önümüzdeki birkaç Cuma için
+   * - Perşembe akşamı 20:00 → "Yarın Cuma"
+   * - Cuma sabahı 09:00 → "Bugün Cuma" + hutbe hatırlatması
+   */
+  async scheduleCumaReminders() {
+    try {
+      if (Platform.OS === 'android' && isExpoGo) return;
+      const [masterEnabled, cumaEnabled] = await Promise.all([
+        AsyncStorage.getItem(NOTIFICATION_ENABLED_KEY),
+        this.getCumaReminderEnabled(),
+      ]);
+      if (masterEnabled !== 'true' || !cumaEnabled) return;
+      if (await this.isMuted()) return;
+
+      const now = new Date();
+      const WEEKS = 3; // önümüzdeki 3 Cuma (iOS 64 bildirim bütçesi için sınırlı)
+
+      // Bu haftanın (veya bugünün) Cuma gününü bul — gün 5
+      const firstFriday = new Date(now);
+      firstFriday.setHours(0, 0, 0, 0);
+      const delta = (5 - firstFriday.getDay() + 7) % 7;
+      firstFriday.setDate(firstFriday.getDate() + delta);
+
+      let scheduled = 0;
+      for (let w = 0; w < WEEKS; w++) {
+        const friday = new Date(firstFriday);
+        friday.setDate(friday.getDate() + w * 7);
+
+        // Perşembe akşamı 20:00
+        const thuEve = new Date(friday);
+        thuEve.setDate(thuEve.getDate() - 1);
+        thuEve.setHours(20, 0, 0, 0);
+        if (thuEve > now) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: '🕌 Yarın Cuma',
+              subtitle: 'Cuma Hazırlığı',
+              body: 'Yarın Cuma günü. Cuma namazını ve Kehf Suresi okumayı unutmayın. Hayırlı Cumalar.',
+              sound: 'default',
+              data: { type: 'cuma_reminder', when: 'thursday_evening' },
+            } as any,
+            trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: thuEve },
+          });
+          scheduled++;
+        }
+
+        // Cuma sabahı 09:00
+        const friMorning = new Date(friday);
+        friMorning.setHours(9, 0, 0, 0);
+        if (friMorning > now) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: '🌙 Bugün Cuma',
+              subtitle: 'Hayırlı Cumalar',
+              body: 'Bugün Cuma. Cuma namazına hazırlanın; bu haftanın Diyanet hutbesini uygulamadan okuyabilirsiniz.',
+              sound: 'default',
+              data: { type: 'cuma_reminder', when: 'friday_morning' },
+            } as any,
+            trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: friMorning },
+          });
+          scheduled++;
+        }
+      }
+      console.log(`Cuma reminders scheduled: ${scheduled} slots`);
+    } catch (e) {
+      console.error('Error scheduling cuma reminders:', e);
     }
   },
 
