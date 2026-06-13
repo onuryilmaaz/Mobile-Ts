@@ -204,7 +204,7 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
   };
 
   return (
-    <View className="flex-1">
+    <View className="shrink">
       <View className="mb-4 flex-row items-center gap-3 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
         <View
           className="h-10 w-10 items-center justify-center rounded-2xl"
@@ -222,7 +222,7 @@ function LogForm({ type, onSubmit, onClose, isDark }: LogFormProps) {
       </View>
 
       <ScrollView
-        className="flex-1 px-5"
+        className="shrink px-5"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 8, paddingTop: 4 }}>

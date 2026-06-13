@@ -427,10 +427,9 @@ const MosqueMapScreen = () => {
         <DraggableBottomSheet
           visible={showManageSheet}
           onClose={() => setShowManageSheet(false)}
-          isDark={isDark}
-          snapPartial={280}>
+          isDark={isDark}>
           {managingMosque ? (
-            <View className="flex-1">
+            <View>
               <View className="mb-4 border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
                 <Text className="text-xl font-black text-slate-900 dark:text-white">
                   {managingMosque.name}
@@ -463,7 +462,7 @@ const MosqueMapScreen = () => {
           visible={showFormSheet}
           onClose={() => setShowFormSheet(false)}
           isDark={isDark}>
-          <View className="flex-1">
+          <View className="shrink">
             <View className="mb-4 flex-row items-center justify-between border-b border-slate-100 px-5 pb-4 dark:border-slate-800">
               <Text className="text-xl font-black text-slate-900 dark:text-white">
                 {sheetMode === 'add' ? 'Cami İşaretle' : 'Camiyi Düzenle'}
@@ -476,7 +475,7 @@ const MosqueMapScreen = () => {
             </View>
 
             <ScrollView
-              className="flex-1 px-5"
+              className="shrink px-5"
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ paddingBottom: 8 }}>
@@ -531,7 +530,7 @@ const MosqueMapScreen = () => {
               </View>
             </ScrollView>
 
-            <View className="px-5 pb-6 pt-4">
+            <View className="px-5 pb-3 pt-4">
               <TouchableOpacity
                 onPress={handleSave}
                 disabled={isUploading || isSaving}

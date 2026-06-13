@@ -22,7 +22,7 @@ i18n
     resources,
     lng: defaultLanguage,
     fallbackLng: 'en',
-    compatibilityJSON: 'v3', // React Native (Hermes) uyumluluğu için gerekli
+    compatibilityJSON: 'v4', // i18next v4+ JSON formatı (modern Hermes Intl.PluralRules destekler)
     interpolation: {
       escapeValue: false, // React XSS korumasını zaten yapıyor
     },
