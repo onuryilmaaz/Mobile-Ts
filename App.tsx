@@ -29,7 +29,7 @@ import AdhanModal from '@/components/home/AdhanModal';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import * as SecureStore from 'expo-secure-store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { initSentry, Sentry } from '@/services/sentry';
+import { initSentry, sentryEnabled, Sentry } from '@/services/sentry';
 
 // Hata izlemeyi component ağacından önce başlat (DSN yoksa no-op).
 initSentry();
@@ -307,4 +307,6 @@ function App() {
   );
 }
 
-registerRootComponent(Sentry.wrap(App));
+// Sentry yalnızca DSN ayarlıyken (init yapıldıysa) wrap'lenmeli; aksi halde
+// "Sentry.wrap was called before Sentry.init" uyarısı oluşur.
+registerRootComponent(sentryEnabled ? Sentry.wrap(App) : App);
