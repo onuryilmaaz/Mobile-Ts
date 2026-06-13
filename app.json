@@ -47,7 +47,8 @@
       "expo-audio",
       "./plugins/removeApsEnvironment",
       "./plugins/withSalahWidgets",
-      "expo-web-browser"
+      "expo-web-browser",
+      "@sentry/react-native/expo"
     ],
     "extra": {
       "expo-navigation-bar": {},

@@ -29,6 +29,10 @@ import AdhanModal from '@/components/home/AdhanModal';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import * as SecureStore from 'expo-secure-store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { initSentry, Sentry } from '@/services/sentry';
+
+// Hata izlemeyi component ağacından önce başlat (DSN yoksa no-op).
+initSentry();
 
 const _warn = console.warn;
 console.warn = (...args) => {
@@ -303,4 +307,4 @@ function App() {
   );
 }
 
-registerRootComponent(App);
+registerRootComponent(Sentry.wrap(App));
