@@ -61,6 +61,7 @@ export type HomeStackParamList = {
   PrayerHistoryEdit: undefined;
   EsmaulHusna: undefined;
   Wrapped: undefined;
+  Assistant: undefined;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
   Family: NavigatorScreenParams<FamilyStackParamList>;
 };

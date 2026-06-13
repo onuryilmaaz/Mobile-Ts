@@ -10,6 +10,7 @@ import { PrayerTrackerCard } from '@/components/home/PrayerTrackerCard';
 import { ReligiousDaysCard } from '@/components/home/ReligiousDaysCard';
 import { DailyInspirationCard } from '@/components/home/DailyInspirationCard';
 import { StreakCard } from '@/components/home/StreakCard';
+import { MotivationCard } from '@/components/home/MotivationCard';
 import { TodayTrackerCard } from '@/components/home/TodayTrackerCard';
 import { PersonalGoalsCard } from '@/components/home/PersonalGoalsCard';
 import { TeheccudCard } from '@/components/home/TeheccudCard';
@@ -25,6 +26,14 @@ import { useTrackerStore } from '@/modules/tracker/tracker.store';
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
 const QUICK_ACTIONS = [
+  {
+    key: 'assistant',
+    label: 'Sor (AI)',
+    icon: 'sparkles' as const,
+    color: '#0d9488',
+    glow: 'rgba(13,148,136,0.18)',
+    screen: 'Assistant' as const,
+  },
   {
     key: 'kaza',
     label: 'Kaza Takip',
@@ -154,6 +163,7 @@ export default function HomeScreen({ navigation }: Props) {
         <TeheccudCard />
         <PrayerTrackerCard focusNonce={focusNonce} />
         <StreakCard />
+        <MotivationCard />
         {isAuthenticated && (
           <View className="mb-5 pl-4">
             <ScrollView

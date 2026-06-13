@@ -172,6 +172,7 @@ export default function WrappedScreen() {
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<WrapData | null>(null);
+  const [narrative, setNarrative] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
   const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -179,7 +180,24 @@ export default function WrappedScreen() {
     (async () => {
       try {
         const res = await gamificationApi.getYearlyWrap();
-        setData(res.data?.data);
+        const wrap = res.data?.data;
+        setData(wrap);
+
+        // AI anlatısını arka planda getir (kritik değil, sessizce geç).
+        if (wrap) {
+          gamificationApi
+            .getYearlyNarrative({
+              year: wrap.year,
+              totalPrayers: wrap.prayers?.total ?? 0,
+              activeDays: wrap.prayers?.active_days ?? 0,
+              highestStreak: wrap.streaks?.highest ?? 0,
+              topMonth: wrap.prayers?.top_month?.name ?? null,
+              quranPages: wrap.tracker?.quran_pages ?? 0,
+              memorizedSurahs: wrap.hifz?.memorized_surahs ?? 0,
+            })
+            .then((r) => setNarrative(r.data?.data?.message ?? null))
+            .catch(() => {});
+        }
       } catch {
         toast.error('Hata', 'Yıllık özet alınamadı.');
       } finally {
@@ -188,7 +206,7 @@ export default function WrappedScreen() {
     })();
   }, []);
 
-  const scenes = data ? buildScenes(data) : [];
+  const scenes = data ? buildScenes(data, narrative) : [];
 
   // Auto-advance every 5s
   useEffect(() => {
@@ -357,7 +375,10 @@ export default function WrappedScreen() {
 
 // ─── Scene builder ───────────────────────────────────────────────────────────
 
-function buildScenes(d: WrapData): { theme: number; render: () => React.ReactElement }[] {
+function buildScenes(
+  d: WrapData,
+  narrative: string | null,
+): { theme: number; render: () => React.ReactElement }[] {
   const list: { theme: number; render: () => React.ReactElement }[] = [];
 
   // 0 — Hello
@@ -491,6 +512,28 @@ function buildScenes(d: WrapData): { theme: number; render: () => React.ReactEle
             .filter(Boolean)
             .join(' · ')}
         />
+      ),
+    });
+  }
+
+  // AI anlatısı — finale'den hemen önce (varsa)
+  if (narrative) {
+    list.push({
+      theme: 6,
+      render: () => (
+        <View className="flex-1 items-center justify-center px-8">
+          <Animated.View entering={FadeInUp.duration(500)}>
+            <Text className="text-center text-5xl">✨</Text>
+          </Animated.View>
+          <Animated.View entering={FadeInUp.delay(200).duration(600)}>
+            <Text className="mt-6 text-center text-xs font-black uppercase tracking-widest text-white/50">
+              Yılın Hikayesi
+            </Text>
+            <Text className="mt-4 max-w-[300px] text-center text-xl font-bold leading-8 text-white">
+              {narrative}
+            </Text>
+          </Animated.View>
+        </View>
       ),
     });
   }

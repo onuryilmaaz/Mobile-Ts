@@ -29,6 +29,7 @@ import {
   PrayerHistoryEditScreen,
   EsmaulHusnaScreen,
   WrappedScreen,
+  AssistantScreen,
 } from '@/screens/user';
 import ProfileNavigator from './ProfileNavigator';
 import FamilyNavigator from './FamilyNavigator';
@@ -232,6 +233,11 @@ export default function HomeNavigator() {
           name="Wrapped"
           component={WrappedScreen}
           options={{ headerShown: false, animation: 'fade' }}
+        />
+        <Stack.Screen
+          name="Assistant"
+          component={AssistantScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Profile"

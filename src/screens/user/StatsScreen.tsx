@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@/navigation';
 import { HeatmapCalendar } from '@/components/stats/HeatmapCalendar';
 import { WeakestPrayerCard, MonthlyTrendCard } from '@/components/stats/InsightsCards';
+import { AiInsightCard } from '@/components/stats/AiInsightCard';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList>;
 
@@ -206,6 +207,7 @@ export default function StatsScreen() {
           />
         }
         contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}>
+        <AiInsightCard />
         {/* Yıllık özet (Wrapped) — kullanıcı veri biriktirdikçe görünür */}
         {(totalMonthPrayers > 0 || activeDays > 0) && (
           <TouchableOpacity

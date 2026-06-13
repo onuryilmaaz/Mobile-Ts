@@ -13,6 +13,18 @@ export const gamificationApi = {
   getYearlyWrap: (year?: number) =>
     api.get(`/gamification/yearly-wrap${year ? `?year=${year}` : ''}`),
 
+  getMotivation: () => api.get('/gamification/motivation'),
+  getInsight: () => api.get('/gamification/insight'),
+  getYearlyNarrative: (payload: {
+    year: number;
+    totalPrayers: number;
+    activeDays: number;
+    highestStreak: number;
+    topMonth?: string | null;
+    quranPages?: number;
+    memorizedSurahs?: number;
+  }) => api.post('/gamification/yearly-narrative', payload),
+
   trackPrayer: (
     prayerTime: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha',
     isKaza: boolean = false,

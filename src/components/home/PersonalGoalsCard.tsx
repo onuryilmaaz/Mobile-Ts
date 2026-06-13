@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/hooks/useTheme';
 import { useGoalsStore, type Goal, type GoalActivity } from '@/store/goals.store';
+import { goalsApi } from '@/modules/goals/goals.api';
 import { useTrackerStore } from '@/modules/tracker/tracker.store';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { liveActivityService } from '@/modules/liveActivity/liveActivity.service';
@@ -100,6 +101,7 @@ function EditModal({
 }) {
   const { isDark } = useTheme();
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [suggesting, setSuggesting] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -110,6 +112,33 @@ function EditModal({
       setDrafts(d);
     }
   }, [visible]);
+
+  const handleSuggest = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSuggesting(true);
+    try {
+      const res = await goalsApi.suggestGoals();
+      const suggestions: { activity_type: string; target: number }[] =
+        res.data?.data ?? [];
+      if (suggestions.length === 0) {
+        toast.info('AI Önerisi', 'Şu an öneri oluşturulamadı.');
+        return;
+      }
+      suggestions.forEach((s) => {
+        const activity = s.activity_type as GoalActivity;
+        const target = Math.max(1, Math.round(Number(s.target)));
+        setDrafts((p) => ({ ...p, [activity]: String(target) }));
+        onTargetChange(activity, target);
+        onToggle(activity, true);
+      });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      toast.success('AI Önerisi', `${suggestions.length} hedef senin için güncellendi.`);
+    } catch {
+      toast.error('Hata', 'Öneri alınamadı.');
+    } finally {
+      setSuggesting(false);
+    }
+  };
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -134,6 +163,20 @@ function EditModal({
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 40 }}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              disabled={suggesting}
+              onPress={handleSuggest}
+              className="mb-1 flex-row items-center justify-center gap-2 rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 dark:border-teal-500/30 dark:bg-teal-500/10">
+              {suggesting ? (
+                <ActivityIndicator size="small" color={isDark ? '#2dd4bf' : '#0f766e'} />
+              ) : (
+                <Ionicons name="sparkles" size={16} color={isDark ? '#2dd4bf' : '#0f766e'} />
+              )}
+              <Text className="text-sm font-black text-teal-700 dark:text-teal-300">
+                {suggesting ? 'Öneriler hazırlanıyor…' : 'AI ile hedef öner'}
+              </Text>
+            </TouchableOpacity>
             {goals.map((g) => (
               <View
                 key={g.activity}

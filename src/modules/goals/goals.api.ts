@@ -5,4 +5,5 @@ export const goalsApi = {
   upsertGoal: (payload: { activity_type: string; target: number; enabled: boolean }) =>
     api.put('/goals', payload),
   deleteGoal: (activityType: string) => api.delete(`/goals/${activityType}`),
+  suggestGoals: () => api.get('/goals/suggest'),
 };
